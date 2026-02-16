@@ -68,3 +68,9 @@ Format Spec
     Should Be Equal    ${result}    ***********centered***********
     ${result} =    Format String    {0:{width}{base}}    ${42}    base=X    width=10
     Should Be Equal    ${result}    ${SPACE*8}2A
+
+Format bytes
+    ${result} =    Format String    ${{b"Hello, {name}!"}}    name=${{b"Robot"}}
+    Should Be Equal    ${result}    Hello, Robot!    type=bytes
+    ${result} =    Format String    ${{b"Hello, {}{x:?^3}"}}    ${42}    x=!
+    Should Be Equal    ${result}    Hello, 42?!?    type=bytes

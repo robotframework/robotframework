@@ -1,5 +1,5 @@
 from numbers import Rational
-from typing import TypedDict
+from typing import Any, TypedDict
 
 
 class MyObject:
@@ -48,6 +48,14 @@ def union_with_abc(argument: Rational | None, expected):
 
 
 def union_with_str_and_abc(argument: str | Rational, expected):
+    assert argument == expected
+
+
+def union_with_any(argument: int | Any | float, expected):
+    assert argument == expected
+
+
+def union_with_object(argument: int | object | float, expected):
     assert argument == expected
 
 

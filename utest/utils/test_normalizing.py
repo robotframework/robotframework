@@ -91,6 +91,26 @@ class TestNormalizedDict(unittest.TestCase):
         assert_equal(nd["K EY"], "value")
         assert_equal(nd["foo"], "bar")
 
+    def test_fromkeys(self):
+        nd = NormalizedDict.fromkeys(["a", "B"])
+        assert_equal(dict(nd), dict.fromkeys(["a", "B"]))
+        assert_equal(nd["a"], None)
+        assert_equal(nd["b"], None)
+        nd = NormalizedDict.fromkeys(["a", "B"], "value")
+        assert_equal(dict(nd), dict.fromkeys(["a", "B"], "value"))
+        assert_equal(nd["a"], "value")
+        assert_equal(nd["b"], "value")
+
+    def test_fromkeys_with_config(self):
+        nd = NormalizedDict.fromkeys(
+            ["RF"], ignore="_", caseless=False, spaceless=False
+        )
+        assert_equal(dict(nd), dict.fromkeys(["RF"]))
+        assert_equal(nd["RF"], None)
+        assert_equal(nd["R_F"], None)
+        for key in "rf", "R F", "r_f":
+            assert_true(key not in nd, f"{key!r} found")
+
     def test_setdefault(self):
         nd = NormalizedDict({"a": NormalizedDict()})
         nd.setdefault("a").setdefault("B", []).append(1)

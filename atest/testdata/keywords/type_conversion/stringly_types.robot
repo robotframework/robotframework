@@ -23,9 +23,9 @@ Parameterized set
     Parameterized set    set()    set()
     Parameterized set    {1, 2.3, '4.5'}    {1.0, 2.3, 4.5}
     Conversion should fail
-    ...    Parameterized set    [1, 2]
+    ...    Parameterized set    666
     ...    type=set[float]
-    ...    error=Value is list, not set.
+    ...    error=Value is integer, not set.
 
 Parameterized tuple
     Parameterized tuple    (1, 2.3, 'xxx')    (1, 2.3, 'xxx')

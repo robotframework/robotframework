@@ -1,10 +1,10 @@
 import unittest
+from collections.abc import Callable, Mapping, Sequence
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 from typing import (
-    Any, Dict, Generic, List, Literal, Mapping, Sequence, Set, Tuple, TypedDict,
-    TypeVar, Union
+    Any, Dict, Generic, get_args, List, Literal, Set, Tuple, TypedDict, TypeVar, Union
 )
 
 from robot.variables.search import search_variable
@@ -59,12 +59,12 @@ class TestTypeInfo(unittest.TestCase):
             ("path", Path),
             ("none", type(None)),
             ("list", list),
-            ("sequence", list),
+            ("sequence", Sequence),
             ("tuple", tuple),
             ("dictionary", dict),
             ("dict", dict),
-            ("map", dict),
-            ("mapping", dict),
+            ("map", Mapping),
+            ("mapping", Mapping),
             ("set", set),
             ("frozenset", frozenset),
             ("union", Union),
@@ -80,7 +80,7 @@ class TestTypeInfo(unittest.TestCase):
             Union[int, Union[str, float]],
             (int, [str, float]),
         ]:
-            info = TypeInfo.from_type_hint(union)
+            info = TypeInfo.from_type_hint(union, sequence_is_union=True)
             assert_equal(info.name, "Union")
             assert_equal(info.is_union, True)
             assert_equal(len(info.nested), 3)
@@ -90,7 +90,7 @@ class TestTypeInfo(unittest.TestCase):
 
     def test_union_with_one_type_is_reduced_to_the_type(self):
         for union in Union[int], (int,):
-            info = TypeInfo.from_type_hint(union)
+            info = TypeInfo.from_type_hint(union, sequence_is_union=True)
             assert_info(info, "int", int)
             assert_equal(info.is_union, False)
 
@@ -101,9 +101,12 @@ class TestTypeInfo(unittest.TestCase):
                 "Union cannot be empty.",
                 TypeInfo.from_type_hint,
                 union,
+                sequence_is_union=True,
             )
 
     def test_valid_params(self):
+        from typing import Mapping, Sequence  # Python 3.8 compatibility
+
         for typ in (
             List[int],
             Sequence[int],
@@ -141,6 +144,21 @@ class TestTypeInfo(unittest.TestCase):
         assert_info(info, "Annotated", Annotated, (int_info, TypeInfo("xxx")))
         info = TypeInfo.from_type_hint(TypeForm[int])
         assert_info(info, "TypeForm", TypeForm, (int_info,))
+
+    def test_callable(self):
+        from typing import Callable as InputCallable  # Python 3.8 compatibility
+
+        for hint, string_repr in [
+            (InputCallable[..., None], "Callable[..., None]"),
+            (InputCallable[[], int], "Callable[[], int]"),
+            (InputCallable[[int], str], "Callable[[int], str]"),
+            (InputCallable[[str, int], None], "Callable[[str, int], None]"),
+        ]:
+            info = TypeInfo.from_type_hint(hint)
+            arg_types = TypeInfo.from_type_hint(get_args(hint)[0])
+            return_type = TypeInfo.from_type_hint(get_args(hint)[1])
+            assert_info(info, "Callable", Callable, (arg_types, return_type))
+            assert_equal(str(info), string_repr)
 
     def test_invalid_sequence_params(self):
         for typ in "list[int, str]", "SEQUENCE[x, y]", "Set[x, y]", "frozenset[x, y]":
@@ -181,8 +199,9 @@ class TestTypeInfo(unittest.TestCase):
         )
 
     def test_params_with_invalid_type(self):
+        accepts_params = (Sequence, Mapping, list, tuple, dict, set, frozenset, Literal)
         for name in TYPE_NAMES:
-            if TYPE_NAMES[name] not in (list, tuple, dict, set, frozenset, Literal):
+            if TYPE_NAMES[name] not in accepts_params:
                 assert_raises_with_msg(
                     DataError,
                     f"'{name}' does not accept parameters, '{name}[int]' has 1.",

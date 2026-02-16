@@ -2,7 +2,10 @@ import os
 import unittest
 from os.path import abspath
 
-from robot.utils.asserts import assert_equal, assert_true
+from robot.utils import expand_variables
+from robot.utils.asserts import (
+    assert_equal, assert_raises, assert_raises_with_msg, assert_true
+)
 from robot.utils.text import (
     _ERROR_CUT_EXPLN, _get_virtual_line_length, _MAX_ERROR_LINE_LENGTH,
     cut_long_message, get_console_length, getdoc, getshortdoc, MAX_ERROR_LINES,
@@ -444,6 +447,48 @@ This is the remainder of the doc.
     def _verify(self, doc, expected):
         assert_equal(getshortdoc(doc), expected)
         assert_equal(getshortdoc(doc, linesep=" "), expected.replace("\n", " "))
+
+
+class TestExtendVariables(unittest.TestCase):
+
+    def test_existing(self):
+        for inp, exp in [
+            ("$NAME", "Robot"),
+            ("I'm $NAME!", "I'm Robot!"),
+            ("I'm ${NAME}Man!", "I'm RobotMan!"),
+        ]:
+            self._verify(inp, exp)
+
+    def test_non_ascii_values(self):
+        self._verify("$A$B$C", "1, två", {"A": 1, "B": ", ", "C": "två"})
+
+    def test_defaults(self):
+        for inp in [
+            "I'm ${NAME=default not used}!",
+            "I'm ${NON_EXISTING=Robot}!",
+            "I'm ${NAME=}${_=!}",
+        ]:
+            self._verify(inp, "I'm Robot!")
+
+    def test_escaping(self):
+        self._verify("$NAME and $$NAME and $$$NAME", "Robot and $NAME and $Robot")
+
+    def test_non_existing(self):
+        assert_raises_with_msg(
+            ValueError,
+            "Variable 'NONEX' does not exist.",
+            expand_variables,
+            "I'm $NONEX!",
+            {},
+        )
+
+    def test_invalid(self):
+        for inp in ["$", "$123", "$3m", "${bad", "${bad[}", "$ä"]:
+            err = assert_raises(ValueError, expand_variables, inp)
+            assert_true(err.args[0].startswith("Invalid placeholder in string:"))
+
+    def _verify(self, string, expected, variables=None):
+        assert_equal(expand_variables(string, variables or {"NAME": "Robot"}), expected)
 
 
 if __name__ == "__main__":

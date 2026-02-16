@@ -100,33 +100,27 @@ Should Contain and collapse spaces
     ${LIST4}      \tb\n     collapse_spaces=TRUE
     ${LIST4}      \tc\n     collapse_spaces=TRUE
 
-Should Contain with bytes
-    [Documentation]    FAIL Several failures occurred:
-    ...
-    ...    1) ValueError: '\u0666' cannot be encoded into bytes.
-    ...
-    ...    2) ValueError: Byte must be in range 0-255, got 666.
+Should Contain with recursive normalization
     [Template]    Should Contain
-    ${{b'hyva'}}                     yva
-    ${{b'h\xfcv\xe4'}}               üvä
-    ${{bytes([0, 1, 2])}}            \x01
-    ${{bytes([0, 1, 2])}}            ${1}
-    ${{bytes([0, 1, 2])}}            \u0666
-    ${{bytes([0, 1, 2])}}            ${666}
+    ${{(['a', 'B'], ['c'])}}                  ${{['A', 'b']}}       ignore_case=True
+    ${{([' a ', 'B '], ['c'])}}               ${{['a', ' B']}}      strip_spaces=True
+    ${{[['a${SPACE*7}a', 'B${SPACE*7}']]}}    ${{['a a', 'B ']}}    collapse_spaces=True
 
-Should Contain with bytearray
+Should Contain with bytes auto conversion
     [Documentation]    FAIL Several failures occurred:
     ...
-    ...    1) ValueError: '\u0666' cannot be encoded into bytes.
+    ...    1) ValueError: Argument 'ab\u0666' cannot be converted to bytes: Character '\u0666' cannot be mapped to a byte.
     ...
-    ...    2) ValueError: Byte must be in range 0-255, got 666.
+    ...    2) ValueError: Argument '666' (integer) cannot be converted to bytes: 666 is not in range 0-255.
     [Template]    Should Contain
-    ${{bytearray(b'hyva')}}          yva
-    ${{bytearray(b'h\xfcv\xe4')}}    üvä
-    ${{bytearray([0, 1, 2])}}        \x01
-    ${{bytearray([0, 1, 2])}}        ${1}
-    ${{bytearray([0, 1, 2])}}        \u0666
-    ${{bytearray([0, 1, 2])}}        ${666}
+    ${{b'good'}}                 oo
+    ${{bytearray(b'good')}}      oo
+    ${{b'h\xfcv\xe4'}}           üvä
+    ${{bytes([0, 1, 2])}}        \x01
+    ${{bytes([0, 1, 2])}}        ${1}
+    ${{bytearray([0, 1, 2])}}    ${{[1, 2]}}
+    ${{bytes([0, 1, 2])}}        ab\u0666
+    ${{bytearray([0, 1, 2])}}    ${666}
 
 Should Not Contain
     [Documentation]    FAIL 'Hello yet again' contains 'yet'
@@ -233,3 +227,18 @@ Should Not Contain and collapse spaces
     ${DICT4}     a\tb    collapse_spaces=${TRUE}
     ${LIST4}     \ a     collapse_spaces=Yes
     ${LIST4}     b\t     collapse_spaces=TRue
+
+Should Not Contain with bytes auto conversion
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) ValueError: Argument 'ab\u0666' cannot be converted to bytes: Character '\u0666' cannot be mapped to a byte.
+    ...
+    ...    2) ValueError: Argument '666' (integer) cannot be converted to bytes: 666 is not in range 0-255.
+    [Template]    Should Not Contain
+    ${{b'hyva'}}                 ä
+    ${{bytearray(b'hyva')}}      ä
+    ${{bytes([0, 1, 2])}}        \x03
+    ${{bytes([0, 1, 2])}}        ${3}
+    ${{bytearray([0, 1, 2])}}    ${{[1, 2, 3]}}
+    ${{bytes([0, 1, 2])}}        ab\u0666
+    ${{bytearray([0, 1, 2])}}    ${666}

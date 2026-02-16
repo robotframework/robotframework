@@ -261,6 +261,21 @@ class TestTypeRepr(unittest.TestCase):
         ]:
             assert_equal(type_repr(item), exp)
 
+    def test_underscore_name_is_not_used(self):
+        class StrName:
+            _name = "Don't use me!"
+
+            def __str__(self):
+                return "type_repr should only be used with types"
+
+        class NoneName(StrName):
+            _name = None
+
+        assert_equal(type_repr(StrName), "StrName")
+        assert_equal(type_repr(StrName()), "type_repr should only be used with types")
+        assert_equal(type_repr(NoneName), "NoneName")
+        assert_equal(type_repr(NoneName()), "type_repr should only be used with types")
+
 
 class TestIsTruthyFalsy(unittest.TestCase):
 

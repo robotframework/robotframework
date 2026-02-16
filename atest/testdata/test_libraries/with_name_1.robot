@@ -6,6 +6,11 @@ Library           libraryscope.Global    WITH NAME    GlobalScope
 Library           libraryscope.Suite    AS    Suite Scope
 Library           libraryscope.Test    WITH NAME    TEST SCOPE
 Library           ParameterLibrary    ${1}    2
+# Duplicate import handling
+Library           DateTime    AS    OperatingSystem
+Library           Collections    AS    Params
+Library           ParameterLibrary    AS    Params
+Library           ParameterLibrary    before1with    before2with    AS    Params
 
 *** Test Cases ***
 Import Library Normally Before Importing With Name In Another Suite

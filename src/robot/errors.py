@@ -119,6 +119,10 @@ TimeoutError = TimeoutExceeded
 class Information(RobotError):
     """Used by argument parser with --help or --version."""
 
+    def __init__(self, message: str, status_rc: bool = True):
+        super().__init__(message)
+        self.rc = INFO_PRINTED if status_rc else 0
+
 
 class ExecutionStatus(RobotError):
     """Base class for exceptions communicating status in test execution."""

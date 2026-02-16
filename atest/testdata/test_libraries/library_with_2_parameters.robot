@@ -1,10 +1,8 @@
 *** Settings ***
-Library         ParameterLibrary  myhost  1000
+Library         ParameterLibrary    myhost    1000
 
 *** Test Cases ***
-Two Set Parameters
-    [Documentation]  Checks that parameters can be given to library PASS
-    ${host}  ${port} =  parameters
-    should be equal  ${host}  myhost
-    should be equal  ${port}  1000
-
+Two set parameters
+    ${host}    ${port} =    Parameters
+    Should Be Equal    ${host}    myhost
+    Should Be Equal    ${port}    1000

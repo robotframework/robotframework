@@ -29,11 +29,22 @@ Do not collapse spaces
 Collapse spaces
     Check Test Case     ${TESTNAME}
 
+Normalization with bytes
+    Check Test Case     ${TESTNAME}
+
+Auto conversion with bytes
+    Check Test Case     ${TESTNAME}
+
 Fails with values
     Check test case    ${TESTNAME}
 
 Fails without values
     Check test case    ${TESTNAME}
+
+NO VALUES is deprecated
+    ${tc} =    Check test case    ${TESTNAME}
+    Check Log Message    ${tc[0, 1]}   Using 'NO VALUES' for disabling the 'values' argument is deprecated. Use 'values=False' instead.    WARN
+    Check Log Message    ${tc[1, 1]}   Using 'no values' for disabling the 'values' argument is deprecated. Use 'values=False' instead.    WARN
 
 Multiline comparison uses diff
     ${tc} =    Check test case    ${TESTNAME}
@@ -66,8 +77,9 @@ formatter=repr with multiline and different line endings
 
 formatter=repr/ascii with multiline and non-ASCII characters
     ${tc} =    Check test case    ${TESTNAME}
-    Check Log Message    ${tc[0, 1]}    Å\nÄ\n\Ö\n\n!=\n\nÅ\nÄ\n\Ö
-    Check Log Message    ${tc[1, 1]}    Å\nÄ\n\Ö\n\n!=\n\nÅ\nÄ\n\Ö
+    Check Log Message    ${tc[0, 1]}    Å\nÄ\n\Ö\n\n!=\n\nÅ\nA\u0308\n\Ö
+    Check Log Message    ${tc[1, 1]}    Å\nÄ\n\Ö\n\n!=\n\nÅ\nA\u0308\n\Ö
+    Check Log Message    ${tc[2, 1]}    Å\nÄ\n\Ö\n\n!=\n\nÅ\nA\u0308\n\Ö
 
 Invalid formatter
     Check test case    ${TESTNAME}
@@ -97,6 +109,17 @@ Should Not Be Equal
     Verify argument type message    ${tc[1, 0]}    str    int
     Verify argument type message    ${tc[2, 0]}    str    str
 
+Should Not Be Equal with custom message
+    Check Test Case     ${TESTNAME}
+
+Should Not Be Equal with custom message without values
+    Check Test Case     ${TESTNAME}
+
+Should Not Be Equal with deprecated NO VALUES
+    ${tc} =    Check test case    ${TESTNAME}
+    Check Log Message    ${tc[0, 1]}   Using 'no values' for disabling the 'values' argument is deprecated. Use 'values=False' instead.    WARN
+    Check Log Message    ${tc[1, 1]}   Using 'NO VALUES' for disabling the 'values' argument is deprecated. Use 'values=False' instead.    WARN
+
 Should Not Be Equal case-insensitive
     Check Test Case     ${TESTNAME}
 
@@ -113,6 +136,12 @@ Should Not Be Equal and do not collapse spaces
     Check Test Case     ${TESTNAME}
 
 Should Not Be Equal and collapse spaces
+    Check Test Case     ${TESTNAME}
+
+Should Not Be Equal with bytes normalization
+    Check Test Case     ${TESTNAME}
+
+Should Not Be Equal with bytes auto conversion
     Check Test Case     ${TESTNAME}
 
 Should Not Be Equal with bytes containing non-ascii characters

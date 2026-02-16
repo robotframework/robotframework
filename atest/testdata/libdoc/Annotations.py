@@ -1,6 +1,8 @@
 from enum import Enum
 from typing import Any, Dict, List, Literal, Tuple, Union
 
+from robot.api.types import Secret
+
 
 class UnknownType:
     pass
@@ -42,7 +44,7 @@ def B_enum(small: Small, many_small: ManySmall, big: Big):
     pass
 
 
-def C_annotation_and_default(integer: int = 42, list_: list = None, enum: Small = None):
+def C_annotation_and_default(i: int = 42, t: tuple = (), e: Small = Small.one):
     pass
 
 
@@ -73,7 +75,7 @@ def I_union_from_typing(a: Union[int, str, Union[list, tuple]]):
     pass
 
 
-def J_union_from_typing_with_default(a: Union[int, str, Union[list, tuple]] = None):
+def J_union_from_typing_with_default(a: Union[int, str, Union[list, None]] = None):
     pass
 
 
@@ -93,14 +95,18 @@ def L_iteral(
     pass
 
 
+def M_secret(token: Secret) -> str:
+    return str(token.value)
+
+
 try:
     exec(
         """
-def M_union_syntax(a: int | str | list | tuple):
+def X_union_syntax(a: int | str | list | tuple):
     pass
 
 
-def N_union_syntax_with_default(a: int | str | list | tuple = None):
+def Y_union_syntax_with_default(a: int | str | list | None = None):
     pass
 """
     )

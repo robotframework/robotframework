@@ -21,12 +21,21 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, ForwardRef, get_args, get_origin, get_type_hints, Literal, Union
 
+# Standard get_args and get_origin handle at least Annotated wrong in Python 3.8.
 if sys.version_info < (3, 9):
     try:
-        # get_args and get_origin handle at least Annotated wrong in Python 3.8.
         from typing_extensions import get_args, get_origin
     except ImportError:
         pass
+# typing_extensions.Literal is typing.Literal with Python 3.10.1 and newer.
+if sys.version_info < (3, 10, 1):
+    try:
+        from typing_extensions import Literal as ExtLiteral
+    except ImportError:
+        ExtLiteral = Literal
+else:
+    ExtLiteral = Literal
+# NotRequired and Required are new in Python 3.11.
 if sys.version_info >= (3, 11):
     from typing import NotRequired, Required
 else:
@@ -38,7 +47,7 @@ else:
 from robot.conf import Languages, LanguagesLike
 from robot.errors import DataError
 from robot.utils import (
-    is_union, NOT_SET, plural_or_not as s, setter, SetterAwareType, type_name,
+    is_union, NOT_SET, plural_or_not as s, Secret, setter, SetterAwareType, type_name,
     type_repr, typeddict_types
 )
 from robot.variables import search_variable, VariableMatch
@@ -51,6 +60,7 @@ TYPE_NAMES = {
     "...": Ellipsis,
     "ellipsis": Ellipsis,
     "any": Any,
+    "object": object,
     "str": str,
     "string": str,
     "unicode": str,
@@ -69,17 +79,18 @@ TYPE_NAMES = {
     "timedelta": timedelta,
     "path": Path,
     "none": type(None),
+    "sequence": Sequence,
     "list": list,
-    "sequence": list,
     "tuple": tuple,
-    "dictionary": dict,
-    "dict": dict,
-    "mapping": dict,
-    "map": dict,
     "set": set,
     "frozenset": frozenset,
+    "mapping": Mapping,
+    "map": Mapping,
+    "dictionary": dict,
+    "dict": dict,
     "union": Union,
     "literal": Literal,
+    "secret": Secret,
 }
 LITERAL_TYPES = (int, str, bytes, bool, Enum, type(None))
 
@@ -188,7 +199,7 @@ class TypeInfo(metaclass=SetterAwareType):
         return self.name == "Union"
 
     @classmethod
-    def from_type_hint(cls, hint: Any) -> "TypeInfo":
+    def from_type_hint(cls, hint: Any, sequence_is_union: bool = False) -> "TypeInfo":
         """Construct a ``TypeInfo`` based on a type hint.
 
         The type hint can be in various different formats:
@@ -198,11 +209,15 @@ class TypeInfo(metaclass=SetterAwareType):
         - a union such as ``int | float``
         - a string such as ``'int'``, ``'list[int]'`` or ``'int | float'``
         - a ``TypedDict`` (represented as a :class:`TypedDictInfo`)
-        - a sequence of supported type hints to create a union from such as
-          ``[int, float]`` or ``('int', 'list[int]')``
+        - if ``sequence_is_union`` is ``True``, a sequence of type hints like
+          ``[int, float]`` or ``('int', 'list[int]')`` creates a union
 
-        In special cases using a more specialized method like :meth:`from_sequence`
+        In special cases using a more specialized method like :meth:`from_type`
         may be more appropriate than using this generic method.
+
+        Prior to Robot Framework 7.4, sequences always created a union. If you
+        need to handle sequences as unions, it is recommended to call
+        :meth:`from_sequence` explicitly.
         """
         if hint is NOT_SET:
             return cls()
@@ -217,30 +232,36 @@ class TypeInfo(metaclass=SetterAwareType):
             return cls("Union", nested=nested)
         origin = get_origin(hint)
         if origin:
-            if origin is Literal:
+            args = get_args(hint)
+            if origin is Literal or origin is ExtLiteral:
+                origin = Literal
                 nested = [
-                    cls(repr(a) if not isinstance(a, Enum) else a.name, a)
-                    for a in get_args(hint)
+                    cls(a.name if isinstance(a, Enum) else repr(a), a) for a in args
                 ]
-            elif get_args(hint):
-                nested = [cls.from_type_hint(a) for a in get_args(hint)]
+            elif args:
+                nested = [cls.from_type_hint(a) for a in args]
             else:
                 nested = None
             return cls(type_repr(hint, nested=False), origin, nested)
         if isinstance(hint, str):
             return cls.from_string(hint)
-        if isinstance(hint, (tuple, list)):
-            return cls.from_sequence(hint)
-        if isinstance(hint, type):
-            return cls(type_repr(hint), hint)
-        if hint is None:
-            return cls("None", type(None))
-        if hint is Union:  # Plain `Union` without params.
-            return cls("Union")
         if hint is Any:
             return cls("Any", hint)
+        if hint is None:
+            return cls("None", type(None))
         if hint is Ellipsis:
             return cls("...", hint)
+        if hint is Union:  # Plain Union without params.
+            return cls("Union")
+        if isinstance(hint, type):
+            return cls(type_repr(hint), hint)
+        if isinstance(hint, Sequence):
+            if sequence_is_union:
+                return cls.from_sequence(hint)
+            if isinstance(hint, list):
+                # Better string representation with Callable params and other lists.
+                items = [t.__name__ if isinstance(t, type) else repr(t) for t in hint]
+                return cls(f"[{', '.join(items)}]")
         return cls(str(hint))
 
     @classmethod
@@ -248,7 +269,7 @@ class TypeInfo(metaclass=SetterAwareType):
         """Construct a ``TypeInfo`` based on an actual type.
 
         Use :meth:`from_type_hint` if the type hint can also be something else
-        than a concrete type such as a string.
+        than a concrete type such as a string or a type expression.
         """
         return cls(type_repr(hint), hint)
 
@@ -272,7 +293,7 @@ class TypeInfo(metaclass=SetterAwareType):
             raise DataError(str(err))
 
     @classmethod
-    def from_sequence(cls, sequence: "tuple|list") -> "TypeInfo":
+    def from_sequence(cls, sequence: Sequence) -> "TypeInfo":
         """Construct a ``TypeInfo`` based on a sequence of types.
 
         Types can be actual types, strings, or anything else accepted by
@@ -286,7 +307,7 @@ class TypeInfo(metaclass=SetterAwareType):
         """
         infos = []
         for typ in sequence:
-            info = cls.from_type_hint(typ)
+            info = cls.from_type_hint(typ, sequence_is_union=True)
             if info.is_union:
                 infos.extend(info.nested)
             else:

@@ -18,6 +18,7 @@ import re
 import sys
 
 from robot.errors import DataError
+from robot.model import Tags
 from robot.running import (
     ArgumentSpec, ResourceFileBuilder, TestLibrary, TestSuiteBuilder, TypeInfo
 )
@@ -45,7 +46,7 @@ class LibraryDocBuilder:
         )
         libdoc.inits = self._get_initializers(lib)
         libdoc.keywords = KeywordDocBuilder().build_keywords(lib)
-        libdoc.type_docs = self._get_type_docs(
+        libdoc.type_docs = TypeDocBuilder().build(
             libdoc.inits + libdoc.keywords,
             lib.converters,
         )
@@ -70,8 +71,11 @@ class LibraryDocBuilder:
             return [KeywordDocBuilder().build_keyword(lib.init)]
         return []
 
-    def _get_type_docs(self, keywords, custom_converters):
-        all_type_docs = {}
+
+class TypeDocBuilder:
+
+    def build(self, keywords, custom_converters=None):
+        all_type_docs: dict[TypeDoc, set[str]] = {}
         for kw in keywords:
             for name, type_info in self._yield_names_and_infos(kw.args):
                 type_docs = kw.type_docs.setdefault(name, {})
@@ -113,6 +117,7 @@ class ResourceDocBuilder:
             lineno=1,
         )
         libdoc.keywords = KeywordDocBuilder(resource=True).build_keywords(resource)
+        libdoc.type_docs = TypeDocBuilder().build(libdoc.keywords)
         return libdoc
 
     def _import_resource(self, path):
@@ -205,9 +210,10 @@ class KeywordDocBuilder:
         return result + match.string
 
     def _get_doc_and_tags(self, kw):
-        doc = self._get_doc(kw)
-        doc, tags = split_tags_from_doc(doc)
-        return doc, kw.tags + tags
+        doc, doc_tags = split_tags_from_doc(self._get_doc(kw))
+        tags = Tags(kw.tags)
+        tags.add(doc_tags, remove_negated=self._resource)
+        return doc, tags
 
     def _get_doc(self, kw):
         if self._resource:

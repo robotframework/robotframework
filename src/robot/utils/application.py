@@ -16,7 +16,7 @@
 import sys
 
 from robot.errors import (
-    DATA_ERROR, DataError, FRAMEWORK_ERROR, INFO_PRINTED, Information, STOPPED_BY_USER
+    DATA_ERROR, DataError, FRAMEWORK_ERROR, Information, STOPPED_BY_USER
 )
 
 from .argumentparser import ArgumentParser
@@ -69,8 +69,8 @@ class Application:
     def _parse_arguments(self, cli_args):
         try:
             options, arguments = self.parse_arguments(cli_args)
-        except Information as msg:
-            self._report_info(msg.message)
+        except Information as info:
+            self._report_info(info)
         except DataError as err:
             self._report_error(err.message, help=True, exit=True)
         else:
@@ -107,9 +107,9 @@ class Application:
         else:
             return rc or 0
 
-    def _report_info(self, message):
-        self.console(message)
-        self._exit(INFO_PRINTED)
+    def _report_info(self, info):
+        self.console(info.message)
+        self._exit(info.rc)
 
     def _report_error(
         self,

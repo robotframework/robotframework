@@ -23,6 +23,9 @@ Linking to keywords in importing and keywords
     ${MODEL['inits'][0]}       Keyword           keyword
     ${MODEL['keywords'][1]}    Second%20Keyword    Second Keyword
 
+Linking to types
+    ${MODEL}    type-integer    Integer
+
 Non-matching text in backticks gets formatting
     [Template]    Doc Should Contain Name
     ${MODEL}    backticks

@@ -152,6 +152,10 @@ def any_(argument: Any = 1, expected=None):
     _validate_type(argument, expected)
 
 
+def object_(argument: object = 1, expected=None):
+    _validate_type(argument, expected)
+
+
 def none_as_default(argument: List = None, expected=None):
     _validate_type(argument, expected)
 

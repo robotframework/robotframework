@@ -13,14 +13,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from typing import Any
+from typing import Generic, Iterator, Literal, NoReturn, TypeVar
 
 from .normalizing import NormalizedDict
 
-Connection = Any
+C = TypeVar("C")
 
 
-class ConnectionCache:
+class ConnectionCache(Generic[C]):
     """Cache for libraries to use with concurrent connections, processes, etc.
 
     The cache stores the registered connections (or other objects) and allows
@@ -32,28 +32,29 @@ class ConnectionCache:
     SSHLibrary, etc. Backwards compatibility is thus important when doing changes.
     """
 
-    def __init__(self, no_current_msg="No open connection."):
+    def __init__(self, no_current_msg: str = "No open connection."):
         self._no_current = NoConnection(no_current_msg)
-        self.current = self._no_current  #: Current active connection.
-        self._connections = []
+        self.current: C | NoConnection = self._no_current
+        self._connections: list[C] = []
         self._aliases = NormalizedDict[int]()
 
     @property
-    def current_index(self) -> "int|None":
+    def current_index(self) -> "int | None":
         if not self:
             return None
         for index, conn in enumerate(self):
             if conn is self.current:
                 return index + 1
+        return None
 
     @current_index.setter
-    def current_index(self, index: "int|None"):
+    def current_index(self, index: "int | None"):
         if index is None:
             self.current = self._no_current
         else:
             self.current = self._connections[index - 1]
 
-    def register(self, connection: Connection, alias: "str|None" = None):
+    def register(self, connection: C, alias: "str | None" = None) -> int:
         """Registers given connection with optional alias and returns its index.
 
         Given connection is set to be the :attr:`current` connection.
@@ -71,7 +72,7 @@ class ConnectionCache:
             self._aliases[alias] = index
         return index
 
-    def switch(self, identifier: "int|str|Connection") -> Connection:
+    def switch(self, identifier: "int | str | C") -> C:
         """Switches to the connection specified using the ``identifier``.
 
         Identifier can be an index, an alias, or a registered connection.
@@ -84,8 +85,8 @@ class ConnectionCache:
 
     def get_connection(
         self,
-        identifier: "int|str|Connection|None" = None,
-    ) -> Connection:
+        identifier: "int | str | C | None" = None,
+    ) -> C:
         """Returns the connection specified using the ``identifier``.
 
         Identifier can be an index (integer or string), an alias, a registered
@@ -103,7 +104,7 @@ class ConnectionCache:
             raise RuntimeError(err.args[0])
         return self._connections[index - 1]
 
-    def get_connection_index(self, identifier: "int|str|Connection") -> int:
+    def get_connection_index(self, identifier: "int | str | C") -> int:
         """Returns the index of the connection specified using the ``identifier``.
 
         Identifier can be an index (integer or string), an alias, or a registered
@@ -124,7 +125,7 @@ class ConnectionCache:
             return index
         raise ValueError(f"Non-existing index or alias '{identifier}'.")
 
-    def resolve_alias_or_index(self, alias_or_index):
+    def resolve_alias_or_index(self, alias_or_index: "str | int") -> int:
         """Deprecated in RF 7.0. Use :meth:`get_connection_index` instead."""
         # This was initially added for SeleniumLibrary in RF 3.1.2.
         # https://github.com/robotframework/robotframework/issues/3125
@@ -155,28 +156,28 @@ class ConnectionCache:
 
     __getitem__ = get_connection
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[C]:
         return iter(self._connections)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self._connections)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return self.current is not self._no_current
 
 
 class NoConnection:
 
-    def __init__(self, message):
+    def __init__(self, message: str):
         self.message = message
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str) -> NoReturn:
         if name.startswith("__") and name.endswith("__"):
             raise AttributeError
         self.raise_error()
 
-    def raise_error(self):
+    def raise_error(self) -> NoReturn:
         raise RuntimeError(self.message)
 
-    def __bool__(self):
+    def __bool__(self) -> Literal[False]:
         return False

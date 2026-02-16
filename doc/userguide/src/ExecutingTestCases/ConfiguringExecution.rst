@@ -217,13 +217,13 @@ specified tests in specified suites are selected::
 
 Using the :option:`--suite` option is more or less the same as executing
 the appropriate suite file or directory directly. The main difference is
-that if a file or directory is run directly, possible suite setups and teardowns
-on higher level are not executed::
+that if a file or directory is run directly, possible higher level
+`suite initialization files`_ are ignored::
 
-  # Root suite is 'Tests' and its possible setup and teardown are run.
+  # Root suite is 'Tests' and its possible initialization file is used.
   robot --suite example path/to/tests
 
-  # Root suite is 'Example' and possible higher level setups and teardowns are ignored.
+  # Root suite is 'Example' and higher level initialization files are ignored.
   robot path/to/tests/example.robot
 
 Prior to Robot Framework 6.1, files not matching the :option:`--suite` option
@@ -640,6 +640,7 @@ Examples::
 __ `Free suite metadata`_
 
 .. _pre-run modifier:
+.. _pre-run modifiers:
 
 Programmatic modification of test data
 --------------------------------------
@@ -686,6 +687,14 @@ executed test suite and test cases. Most importantly, options related to
 use options like :option:`--include` also with possible dynamically added
 tests.
 
+Another way to modify tests is using the `listener version 3`_ interface.
+Modifying the `data` argument passed to the `start_suite` listener method
+when it is called for the first time has in practice the same effect as using
+a pre-run modifier. The main difference is that `--include/--exclude` and other
+such options do not have an effect to the added tests. The main benefit of using
+listeners is that they allow making modifications dynamically based on what
+happens during the execution.
+
 .. tip:: Modifiers are taken into use from the command line exactly the same
          way as listeners_. See the `Registering listeners from command line`_
          section for more information and examples.
@@ -715,9 +724,6 @@ the file is in the `module search path`_, it could be used like this::
 
     # Specify the modifier as a name. Run every third test, starting from the second.
     robot --prerunmodifier SelectEveryXthTest:3:1 tests.robot
-
-.. note:: Argument conversion based on type hints like `x: int` in the above
-          example is new in Robot Framework 4.0 and requires Python 3.
 
 Example: Exclude tests by name
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

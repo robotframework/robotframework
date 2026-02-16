@@ -23,18 +23,17 @@ from robot.utils.htmlformatters import HeaderFormatter
 
 class DocFormatter:
     _header_regexp = re.compile(r"<h([234])>(.+?)</h\1>")
-    _name_regexp = re.compile("`(.+?)`")
 
     def __init__(self, keywords, type_info, introduction, doc_format="ROBOT"):
-        self._doc_to_html = DocToHtml(doc_format)
-        self._targets = self._get_targets(
+        targets = self._get_targets(
             keywords,
+            type_info,
             introduction,
             robot_format=doc_format == "ROBOT",
         )
-        self._type_info_targets = self._get_type_info_targets(type_info)
+        self._doc_to_html = DocToHtml(doc_format, targets)
 
-    def _get_targets(self, keywords, introduction, robot_format):
+    def _get_targets(self, keywords, type_info, introduction, robot_format):
         targets = {
             "introduction": "Introduction",
             "library introduction": "Introduction",
@@ -42,16 +41,17 @@ class DocFormatter:
             "library importing": "Importing",
             "keywords": "Keywords",
         }
-        for kw in keywords:
-            targets[kw.name] = kw.name
+        for info in type_info:
+            targets[info.name] = "type-" + info.name
         if robot_format:
             for header in self._yield_header_targets(introduction):
                 targets[header] = header
-        return self._escape_and_encode_targets(targets)
-
-    def _get_type_info_targets(self, type_info):
-        targets = {info.name: info.name for info in type_info}
-        return self._escape_and_encode_targets(targets)
+        for kw in keywords:
+            targets[kw.name] = kw.name
+        return {
+            html_escape(key): "#" + self._encode_uri_component(value)
+            for key, value in targets.items()
+        }
 
     def _yield_header_targets(self, introduction):
         headers = HeaderFormatter()
@@ -59,12 +59,6 @@ class DocFormatter:
             match = headers.match(line.strip())
             if match:
                 yield match.group(2)
-
-    def _escape_and_encode_targets(self, targets):
-        return NormalizedDict(
-            (html_escape(key), self._encode_uri_component(value))
-            for key, value in targets.items()
-        )
 
     def _encode_uri_component(self, value):
         # Emulates encodeURIComponent javascript function
@@ -74,23 +68,15 @@ class DocFormatter:
         doc = self._doc_to_html(doc)
         if intro:
             doc = self._header_regexp.sub(r'<h\1 id="\2">\2</h\1>', doc)
-        return self._name_regexp.sub(self._link_keywords, doc)
-
-    def _link_keywords(self, match):
-        name = match.group(1)
-        targets = self._targets
-        types = self._type_info_targets
-        if name in targets:
-            return f'<a href="#{targets[name]}" class="name">{name}</a>'
-        if name in types:
-            return f'<a href="#type-{types[name]}" class="name">{name}</a>'
-        return f'<span class="name">{name}</span>'
+        return doc
 
 
 class DocToHtml:
+    _name_regexp = re.compile("`(.+?)`")
 
-    def __init__(self, doc_format):
+    def __init__(self, doc_format, targets=None):
         self._formatter = self._get_formatter(doc_format)
+        self._targets = NormalizedDict(targets)
 
     def _get_formatter(self, doc_format):
         try:
@@ -119,7 +105,15 @@ class DocToHtml:
         return parts["html_body"]
 
     def __call__(self, doc):
-        return self._formatter(doc)
+        doc = self._formatter(doc)
+        return self._name_regexp.sub(self._link_keywords, doc)
+
+    def _link_keywords(self, match):
+        name = match.group(1)
+        target = self._targets.get(name)
+        if target:
+            return f'<a href="{target}" class="name">{name}</a>'
+        return f'<span class="name">{name}</span>'
 
 
 class HtmlToText:

@@ -24,7 +24,7 @@ Should Not Be Equal As Integers
     [Template]    Should Not Be Equal As Integers
     1    0
     0    ${1}
-    1    ${1}    This message only    No values
+    1    ${1}    This message only    values=False
 
 Should Not Be Equal As Integers with base
     [Documentation]    Conversion functionality tested with `Convert To Integer`

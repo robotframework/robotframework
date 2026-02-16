@@ -8,6 +8,7 @@ Convert second argument using `type`
     ${False}            no               type=Boolean
     ${{[1, 2, 'x']}}    [1, 2.0, 'x']    type=list[int|str]
     Cat                 cat              type=Literal["Dog", "Cat", "Cow"]
+    Cat                 cat              type=${{typing.Literal["Dog", "Cat", "Cow"]}}
 
 Automatic `type`
     ${42}               42               type=auto

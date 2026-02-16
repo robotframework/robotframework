@@ -68,7 +68,7 @@ Suite initialization files
 
 A test suite created from a directory can have similar settings as a suite
 created from a test case file. Because a directory alone cannot have that
-kind of information, it must be placed into a special test suite initialization
+kind of information, it must be placed into a special suite initialization
 file. An initialization file name must always be of the format
 :file:`__init__.ext`, where the extension must be one of the `supported
 file formats`_ (typically :file:`__init__.robot`).
@@ -82,11 +82,11 @@ execution by giving multiple paths__.
 Initialization files have the same structure and syntax as test case files,
 except that they cannot have test case sections and not all settings are
 supported. Variables and keywords created or imported in initialization files
-*are not* available in the lower level test suites. If you need to share
+*are not* available in the lower level suites. If you need to share
 variables or keywords, you can put them into `resource files`_ that can be
 imported both by initialization and test case files.
 
-The main usage for initialization files is specifying test suite related
+The main usage for initialization files is specifying suite related
 settings similarly as in `suite files`_, but setting some `test case
 related settings`__ is also possible. How to use different settings in the
 initialization files is explained below.
@@ -108,7 +108,7 @@ initialization files is explained below.
    Aliases for `Test Setup`:setting:, `Test Teardown`:setting:, `Test Tags`:setting:
    and `Test Timeout`:setting:, respectively, that can be used when
    `creating tasks`_, not tests.
-`Default Tags`:setting:, `Test Template`:setting:
+`Test Template`:setting:, `Default Tags`:setting:
    Not supported in initialization files.
 
 .. sourcecode:: robotframework
@@ -130,6 +130,13 @@ initialization files is explained below.
 
 __ `Specifying test data to be executed`_
 __ `Test case related settings in the Setting section`_
+
+.. note:: When you run a suite file or directory, possible suite initialization
+          files in higher level directories are not taken into account. If that
+          is not desired, run the appropriate higher level suite directory and use
+          the `--suite`__ option to select which child suite inside it is executed.
+
+__ `By suite names`_
 
 Suite name
 ----------

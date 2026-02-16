@@ -12,7 +12,7 @@ Documentation   This resource file has documentation.
 ...  | ${NONEX} | ${CURDIR} | ${TEMPDIR} |
 ...  | foo      |    bar    |
 ...  tabs \t\t\t here
-
+Keyword Tags    common
 
 *** Keywords ***
 kw  [Documentation]  foo bar `kw 2`.
@@ -29,7 +29,7 @@ kw 3
     No Operation
 
 kw 4  [Arguments]  ${positional}=default  @{varargs}  &{kwargs}
-      [Tags]    kw4    Has    tags    ?!?!??
+      [Tags]    kw4    Has    tags    -common    ?!?!??
       No Operation
 
 kw 5  [DocumeNtation]   foo bar `kw`.
@@ -49,7 +49,7 @@ kw 5  [DocumeNtation]   foo bar `kw`.
       ...  | = first = | = second = |
       ...  | foo       |    bar     |
       ...
-      ...  tags: a, b, ${3}
+      ...  tags: a, b, ${3}, -common
   No Operation
 
 kw 6
@@ -58,14 +58,19 @@ kw 6
     ...                Another line.
     ...                Tags: foo, bar
     [Tags]             foo    dar
+    [Arguments]    ${a: int}    ${b: Literal["R", "F"]}    ${c: int | None}=None
     No Operation
 
 Different argument types
     [Arguments]    ${mandatory}    ${optional}=default    @{varargs}
-    ...            ${kwo}=default    ${another}    &{kwargs}
+    ...            ${kwo: int}=default    ${another}    &{kwargs}
     No Operation
 
 Embedded ${arguments}
+    No Operation
+
+With embedded ${arg: int} and normal arg
+    [Arguments]    ${normal}
     No Operation
 
 curdir  [Documentation]  ${CURDIR}
@@ -80,5 +85,5 @@ Deprecation
     No Operation
 
 Private
-    [Tags]    robot:private
+    [Tags]    robot:private    tags    tag-in-private
     No Operation

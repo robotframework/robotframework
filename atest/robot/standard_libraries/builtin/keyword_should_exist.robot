@@ -3,7 +3,6 @@ Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/keyword_should_e
 Resource        atest_resource.robot
 
 *** Test Cases ***
-
 Library keyword exists with short name
     Check Test Case  ${TESTNAME}
 
@@ -48,4 +47,3 @@ Empty keyword name
 
 Non-string keyword name
     Check Test Case  ${TESTNAME}
-

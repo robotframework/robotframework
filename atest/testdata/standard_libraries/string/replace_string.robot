@@ -21,8 +21,16 @@ Replace String With Count 0
     Should Be Equal    ${result}    Robot Framework
 
 Replace String With Invalid Count
-    [Documentation]    FAIL ValueError: Cannot convert 'count' argument 'invalid' to an integer.
+    [Documentation]    FAIL ValueError: Argument 'count' got value 'invalid' that cannot be converted to integer.
     Replace String    abc    b    c    invalid
+
+Replace String with bytes
+    ${result} =    Replace String    ${{b"foobar"}}    ${{b"foo"}}    ${{b"a "}}
+    Should be equal    ${result}    a bar    type=bytes
+    ${result} =    Replace String    ${{b"foobar"}}    foo    ${{b"a "}}
+    Should be equal    ${result}    a bar    type=bytes
+    ${result} =    Replace String    ${{b"foobar"}}    ${{b"o"}}    i    count=1
+    Should be equal    ${result}    fiobar    type=bytes
 
 Replace String Using Regexp
     ${result} =    Replace String Using Regexp    Robot Framework    F.*k    Class
@@ -42,6 +50,14 @@ Replace String Using Regexp Not Found
     ${result} =    Replace String Using Regexp    Robot Framework    Fnot.*k    Class
     Should be equal    ${result}    Robot Framework
 
-Replace String Using Regexp When Count Is Invalid
-    [Documentation]    FAIL ValueError: Cannot convert 'count' argument 'invalid' to an integer.
+Replace String Using Regexp with invalid count
+    [Documentation]    FAIL ValueError: Argument 'count' got value 'invalid' that cannot be converted to integer.
     Replace String Using Regexp    Robot Framework    .*    foo    invalid
+
+Replace String Using Regexp with bytes
+    ${result} =    Replace String Using Regexp    ${{b"foobar"}}    ${{b"f.."}}    ${{b"a "}}
+    Should be equal    ${result}    a bar    type=bytes
+    ${result} =    Replace String Using Regexp    ${{b"foobar"}}    f..    ${{b"a "}}
+    Should be equal    ${result}    a bar    type=bytes
+    ${result} =    Replace String Using Regexp    ${{b"foobar"}}    ${{b"[of]"}}    -    count=2
+    Should be equal    ${result}    --obar    type=bytes

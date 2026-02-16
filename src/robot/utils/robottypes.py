@@ -65,9 +65,7 @@ def type_name(item, capitalize=False):
     """
     if is_union(item):
         return "Union"
-    origin = get_origin(item)
-    if origin:
-        item = origin
+    item = get_origin(item) or item
     if isinstance(item, _SpecialForm):
         # Prior to Python 3.10, typing special forms (Any, Union, ...) didn't
         # have `__name__` but instead they had `_name`.
@@ -109,12 +107,16 @@ def type_repr(typ, nested=True):
 
 
 def _get_type_name(typ, try_origin=True):
-    # See comment in `type_name` for explanation about `_name`.
-    for attr in "__name__", "_name":
-        name = getattr(typ, attr, None)
-        if name:
-            return name
-    # Special forms may not have name directly but their origin can have it.
+    try:
+        return typ.__name__
+    except AttributeError:
+        # Prior to Python 3.10, all typing constructs (e.g. Any, Union, ...) didn't
+        # have `__name__`, but they had `_name` that we can use instead.
+        if getattr(typ, "__module__", None) in ("typing", "typing_extensions"):
+            name = getattr(typ, "_name", None)
+            if name:
+                return name
+    # Typing constructs may not name themselves, but their origin can still have it.
     origin = get_origin(typ)
     if origin and try_origin:
         return _get_type_name(origin, try_origin=False)

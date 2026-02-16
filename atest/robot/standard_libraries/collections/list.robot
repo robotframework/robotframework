@@ -13,22 +13,16 @@ Convert To List With Invalid Type
 Append To List
     Check Test Case    ${TEST NAME}
 
-Insert Into List With String Index
+Append To List with immutable
     Check Test Case    ${TEST NAME}
 
-Insert Into List With Int Index
+Insert Into List
     Check Test Case    ${TEST NAME}
 
-Insert Into List With Index Over Lists Size
+Insert Into List with immutable
     Check Test Case    ${TEST NAME}
 
-Insert Into List With Index Negative Index
-    Check Test Case    ${TEST NAME}
-
-Insert Into List With Index Under Lists Size
-    Check Test Case    ${TEST NAME}
-
-Insert Into List With Invalid Index
+Insert Into List with invalid index
     Check Test Case    ${TEST NAME}
 
 Combine Lists
@@ -37,51 +31,48 @@ Combine Lists
 Set List Value
     Check Test Case    ${TEST NAME}
 
-Set List Value Index Out Of List
+Set List Value with immutable
     Check Test Case    ${TEST NAME}
 
-Set List Value With Invalid Index
+Set List Value with invalid index
     Check Test Case    ${TEST NAME}
 
 Remove Values From List
     Check Test Case    ${TEST NAME}
 
-Remove Non Existing Values From List
+Remove Values From List with immutable
     Check Test Case    ${TEST NAME}
 
 Remove From List
     Check Test Case    ${TEST NAME}
 
-Remove From List Index Out Of List
+Remove From List with immutable
     Check Test Case    ${TEST NAME}
 
-Remove From List With Invalid Index
+Remove From List with invalid index
     Check Test Case    ${TEST NAME}
 
 Remove Duplicates
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc[0, 0]}    0 duplicates removed.
-    Check Log Message    ${tc[2, 0]}    3 duplicates removed.
+    Check Log Message    ${tc[0, 0, 0, 0]}    0 duplicates removed.
+    Check Log Message    ${tc[1, 0, 0, 0]}    3 duplicates removed.
 
 Count Values In List
     Check Test Case    ${TEST NAME}
 
-Count Values In List With Invalid Start Index
-    Check Test Case    ${TEST NAME}
-
-Count Values In List With Invalid Stop Index
+Count Values In List with invalid index
     Check Test Case    ${TEST NAME}
 
 Get Index From List
     Check Test Case    ${TEST NAME}
 
-Get Index From List With Non Existing Value
-    Check Test Case    ${TEST NAME}
+Get Index From List with empty string as start index is deprecated
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc[0, 0, 0, 0]}
+    ...    Using an empty string as a start index with the 'Get Index From List' keyword is deprecated. Use '0' instead.
+    ...    WARN
 
-Get Index From List With Invalid Start Index
-    Check Test Case    ${TEST NAME}
-
-Get Index From List With Invalid Stop Index
+Get Index From List with invalid index
     Check Test Case    ${TEST NAME}
 
 Copy List
@@ -93,10 +84,16 @@ Shallow Copy List
 Deep Copy List
     Check Test Case    ${TEST NAME}
 
-Reserve List
+Reverse List
+    Check Test Case    ${TEST NAME}
+
+Reverse List with immutable
     Check Test Case    ${TEST NAME}
 
 Sort List
+    Check Test Case    ${TEST NAME}
+
+Sort List with immutable
     Check Test Case    ${TEST NAME}
 
 Sorting Unsortable List Fails
@@ -105,22 +102,19 @@ Sorting Unsortable List Fails
 Get From List
     Check Test Case    ${TEST NAME}
 
-Get From List With Invalid Index
-    Check Test Case    ${TEST NAME}
-
-Get From List Out Of List Index
+Get From List with invalid index
     Check Test Case    ${TEST NAME}
 
 Get Slice From List
     Check Test Case    ${TEST NAME}
 
-Get Slice From List With Invalid Start Index
-    Check Test Case    ${TEST NAME}
+Get Slice From List with empty string as start index is deprecated
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc[0, 0, 0, 0]}
+    ...    Using an empty string as a start index with the 'Get Slice From List' keyword is deprecated. Use '0' instead.
+    ...    WARN
 
-Get Slice From List With Invalid Stop Index
-    Check Test Case    ${TEST NAME}
-
-Get Slice From List With Out Of List Index
+Get Slice From List with invalid index
     Check Test Case    ${TEST NAME}
 
 List Should Contain Value
@@ -161,12 +155,9 @@ List Should Not Contain Duplicates With Multiple Duplicates
 
 List Should Not Contain Duplicates With Custom Error Message
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc[2, 0]}    '42' found 42 times.
+    Check Log Message    ${tc[1, 0]}    '6' found 7 times.
 
 Lists Should Be Equal
-    Check Test Case    ${TEST NAME}
-
-List and Tuple should be equal
     Check Test Case    ${TEST NAME}
 
 Lists Should Be equal With Different Lengths
@@ -220,25 +211,25 @@ List Should Contain Sub List With Missing Values And Own Error Message
 List Should Contain Sub List With Missing Values And Own and Default Error Messages
     Check Test Case    ${TEST NAME}
 
-Log List With Different Log Levels
+'NO VALUES' is deprecated
     ${tc} =    Check Test Case    ${TEST NAME}
-    ${expected} =    Catenate    SEPARATOR=\n
+    Check Log Message    ${tc[0, 0]}   Using 'NO VALUES' for disabling the 'values' argument is deprecated. Use 'values=False' instead.    WARN
+    Check Log Message    ${tc[1, 0]}   Using 'no values' for disabling the 'values' argument is deprecated. Use 'values=False' instead.    WARN
+
+Log List
+    ${tc} =    Check Test Case    ${TEST NAME}
+    VAR    ${three items}
     ...    List length is 3 and it contains following items:
     ...    0: 11
     ...    1: 12
     ...    2: 13
-    Check Log Message    ${tc[0, 0]}    ${expected}    INFO
-    Variable Should Not Exist    ${tc[1, 0]}
-    Check Log Message    ${tc[2, 0]}    ${expected}    WARN
-    Check Log Message    ${tc[3, 0]}    ${expected}    DEBUG
-    Check Log Message    ${tc[4, 0]}    ${expected}    INFO
-
-Log List With Different Lists
-    ${tc} =    Check Test Case    ${TEST NAME}
+    ...    separator=\n
     Check Log Message    ${tc[0, 0]}    List is empty.    INFO
-    Check Log Message    ${tc[1, 0]}    List has one item:\n1
-    Check Log Message    ${tc[4, 0]}    List has one item:\n(1, 2, 3)
-    Check Log Message    ${tc[6, 0]}    List length is 2 and it contains following items:\n0: (1, 2, 3)\n1: 3.12
+    Check Log Message    ${tc[1, 0]}    ${three items}    INFO
+    Check Log Message    ${tc[2, 0]}    ${three items}    INFO
+    Should Be Empty      ${tc[3].body}
+    Check Log Message    ${tc[4, 0]}    ${three items}    WARN
+    Check Log Message    ${tc[5, 0]}    ${three items}    DEBUG
 
 Count Matches In List Case Insensitive
     Check Test Case    ${TEST NAME}
@@ -333,9 +324,6 @@ List Should Not Contain Value, Value Found and Own Error Message Regexp
 List Should Not Contain Value, Value Found and Own Error Message Glob
     Check Test Case    ${TEST NAME}
 
-Check List Error
-    Check Test Case    ${TEST NAME}
-
 Lists Should Be Equal With Ignore Case
     Check Test Case    ${TEST NAME}
 
@@ -355,4 +343,10 @@ List Should Contain Value With Ignore Case And Nested List and Dictionary
     Check Test Case    ${TEST NAME}
 
 Lists Should be equal with Ignore Case and Order
+    Check Test Case    ${TEST NAME}
+
+Validate argument conversion errors
+    Check Test Case    ${TEST NAME}
+
+Bytes normalization
     Check Test Case    ${TEST NAME}

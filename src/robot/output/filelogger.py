@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.errors import DataError
 from robot.utils import file_writer
 
 from .loggerapi import LoggerApi
@@ -23,7 +24,10 @@ from .loglevel import LogLevel
 class FileLogger(AbstractLogger, LoggerApi):
 
     def __init__(self, path, level):
-        self._log_level = LogLevel(level)
+        try:
+            self._log_level = LogLevel(level)
+        except ValueError as err:
+            raise DataError(err)
         self._writer = self._get_writer(path)  # unit test hook
 
     def _get_writer(self, path):

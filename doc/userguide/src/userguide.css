@@ -591,6 +591,9 @@ h4 {
 h5 {
     font-size: 1em;
 }
+h6 {
+    font-size: 0.9em;
+}
 cite {
     font-size: 0.95em;
 }

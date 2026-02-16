@@ -83,7 +83,7 @@ class ArgumentSpec(metaclass=SetterAwareType):
             return None
         if isinstance(hint, TypeInfo):
             return hint
-        return TypeInfo.from_type_hint(hint)
+        return TypeInfo.from_type_hint(hint, sequence_is_union=True)
 
     @property
     def positional(self) -> "tuple[str, ...]":

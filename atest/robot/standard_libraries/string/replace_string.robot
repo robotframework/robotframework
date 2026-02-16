@@ -18,6 +18,9 @@ Replace String With Count 0
 Replace String With Invalid Count
     Check Test Case    ${TESTNAME}
 
+Replace String with bytes
+    Check Test Case    ${TESTNAME}
+
 Replace String Using Regexp
     Check Test Case    ${TESTNAME}
 
@@ -27,6 +30,8 @@ Replace String Using Regexp With Count 0
 Replace String Using Regexp Not Found
     Check Test Case    ${TESTNAME}
 
-Replace String Using Regexp When Count Is Invalid
+Replace String Using Regexp with invalid count
     Check Test Case    ${TESTNAME}
 
+Replace String Using Regexp with bytes
+    Check Test Case    ${TESTNAME}

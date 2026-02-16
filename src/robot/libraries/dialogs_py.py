@@ -15,6 +15,7 @@
 
 import time
 import tkinter as tk
+from collections.abc import Sequence
 from importlib.resources import read_binary
 
 from robot.utils import WINDOWS
@@ -34,7 +35,12 @@ class TkDialog(tk.Toplevel):
     padding = 8 if WINDOWS else 16
     background = None  # Can be used to change the dialog background.
 
-    def __init__(self, message, value=None, **config):
+    def __init__(
+        self,
+        message: str,
+        value: "str | Sequence[str] | None" = None,
+        **config,
+    ):
         super().__init__(self._get_root())
         self._button_bindings = {}
         self._initialize_dialog()
@@ -76,7 +82,12 @@ class TkDialog(tk.Toplevel):
         if self.widget:
             self.widget.focus_set()
 
-    def _create_body(self, message, value, **config) -> "tk.Entry|tk.Listbox|None":
+    def _create_body(
+        self,
+        message: str,
+        value: "str | Sequence[str] | None",
+        **config,
+    ) -> "tk.Entry|tk.Listbox|None":
         frame = tk.Frame(self, background=self.background)
         max_width = self.winfo_screenwidth() // 2
         label = tk.Label(
@@ -96,7 +107,7 @@ class TkDialog(tk.Toplevel):
         frame.pack(expand=1, fill=tk.BOTH)
         return widget
 
-    def _create_widget(self, frame, value) -> "tk.Entry|tk.Listbox|None":
+    def _create_widget(self, parent, value, **config) -> "tk.Entry | tk.Listbox | None":
         return None
 
     def _create_buttons(self):
@@ -128,20 +139,20 @@ class TkDialog(tk.Toplevel):
     def _validate_value(self) -> bool:
         return True
 
-    def _get_value(self) -> "str|list[str]|bool|None":
+    def _get_value(self) -> "str | list[str] | bool | None":
         return None
 
     def _right_button_clicked(self, event=None):
         self._result = self._get_right_button_value()
         self._close()
 
-    def _get_right_button_value(self) -> "str|list[str]|bool|None":
+    def _get_right_button_value(self) -> "str | list[str] | bool | None":
         return None
 
     def _close(self, event=None):
         self._closed = True
 
-    def show(self) -> "str|list[str]|bool|None":
+    def show(self) -> "str | list[str] | bool | None":
         # Use a loop with `update()` instead of `wait_window()` to allow
         # timeouts and signals stop execution.
         try:
@@ -160,7 +171,7 @@ class MessageDialog(TkDialog):
 
 class InputDialog(TkDialog):
 
-    def __init__(self, message, default="", hidden=False):
+    def __init__(self, message: str, default: str = "", hidden: bool = False):
         super().__init__(message, default, hidden=hidden)
 
     def _create_widget(self, parent, default, hidden=False) -> tk.Entry:
@@ -185,7 +196,12 @@ class InputDialog(TkDialog):
 
 class SelectionDialog(TkDialog):
 
-    def __init__(self, message, values, default=None):
+    def __init__(
+        self,
+        message: str,
+        values: "Sequence[str]",
+        default: "str | int | None" = None,
+    ):
         super().__init__(message, values, default=default)
 
     def _create_widget(self, parent, values, default=None) -> tk.Listbox:

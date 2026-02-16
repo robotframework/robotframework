@@ -16,7 +16,7 @@
 import inspect
 import re
 from pathlib import Path
-from typing import cast, Iterable, Iterator, Union
+from typing import Iterable, Iterator, Union
 
 from robot.errors import DataError
 from robot.utils import classproperty, Importer, is_list_like, normalize
@@ -148,8 +148,8 @@ class Languages:
     def _get_available_languages(self) -> "dict[str, type[Language]]":
         available = {}
         for lang in Language.__subclasses__():
-            available[normalize(cast(str, lang.code), ignore="-")] = lang
-            available[normalize(cast(str, lang.name))] = lang
+            available[normalize(lang.code, ignore="-")] = lang
+            available[normalize(lang.name)] = lang
         if "" in available:
             available.pop("")
         return available
@@ -252,7 +252,7 @@ class Language:
         """
         if cls is Language:
             return cls.__dict__["code"]
-        code = cast(type, cls).__name__.lower()
+        code = cls.__name__.lower()
         if len(code) < 3:
             return code
         return f"{code[:2]}-{code[2:].upper()}"

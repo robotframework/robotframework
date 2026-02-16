@@ -421,6 +421,12 @@ These methods get actual running and result model objects that used by Robot
 Framework itself, and listeners can both query information they need and
 change the model objects on the fly.
 
+.. note:: Modifications to the data can also be done using `pre-run modifiers`_.
+          The main benefit of using listeners is that changes can be done
+          dynamically based on what happens during the execution. Another
+          difference is that command like options related to `selecting test cases`_
+          affect tests added by pre-run modifiers but not tests added by listeners.
+
 Listener version 3 was enhanced heavily in Robot Framework 7.0 when it got
 methods related to keywords and control structures. It was enhanced further
 in Robot Framework 7.1 when it got methods related to library, resource file

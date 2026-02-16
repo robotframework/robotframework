@@ -12,7 +12,7 @@ Should Match with extra trailing newline
 Should Match case-insensitive
     Check test case    ${TESTNAME}
 
-Should Match does not work with bytes
+ Should Match with bytes
     Check test case    ${TESTNAME}
 
 Should Not Match
@@ -21,14 +21,26 @@ Should Not Match
 Should Not Match case-insensitive
     Check test case    ${TESTNAME}
 
+ Should Not Match with bytes
+    Check test case    ${TESTNAME}
+
 Should Match Regexp
     Check test case    ${TESTNAME}
 
 Should Match Regexp returns match and groups
     Check test case    ${TESTNAME}
 
-Should Match Regexp with bytes containing non-ascii characters
+Should Match Regexp with bytes
+    Check test case    ${TESTNAME}
+
+Should Match Regexp with bytes autoconversion
     Check test case    ${TESTNAME}
 
 Should Not Match Regexp
+    Check test case    ${TESTNAME}
+
+Should Not Match Regexp with bytes
+    Check test case    ${TESTNAME}
+
+Should Not Match Regexp with bytes auto conversion
     Check test case    ${TESTNAME}

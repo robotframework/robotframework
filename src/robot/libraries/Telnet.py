@@ -44,6 +44,17 @@ class Telnet:
 
     %TOC%
 
+    = Dependencies =
+
+    ``Telnet`` uses the ``telnetlib`` module internally. This module was
+    part of the Python standard library until Python 3.12, but with newer
+    versions the [https://pypi.org/project/telnetlib-313-and-up|telnetlib-313-and-up]
+    package needs to be installed separately.
+
+    If there is a need to do `terminal emulation`, the
+    [https://pypi.org/project/pyte|pyte] module needs to be installed. It is
+    an optional dependency and only needed with terminal emulation.
+
     = Connections =
 
     The first step of using ``Telnet`` is opening a connection with `Open
@@ -193,7 +204,7 @@ class Telnet:
     = Terminal emulation =
 
     Telnet library supports terminal
-    emulation with [http://pyte.readthedocs.io|Pyte]. Terminal emulation
+    emulation with [http://pyte.readthedocs.io|pyte]. Terminal emulation
     will process the output in a virtual screen. This means that ANSI escape
     codes, like cursor movements, and also control characters, like
     carriage returns and backspaces, have the same effect on the result as they
@@ -204,7 +215,7 @@ class Telnet:
     argument a true value (see `Boolean arguments`) either in the library
     initialization or with `Open Connection`.
 
-    As Pyte approximates vt-style terminal, you may also want to set the
+    As ``pyte`` approximates vt-style terminal, you may also want to set the
     terminal type as ``vt100``. We also recommend that you increase the window
     size, as the terminal emulation will break all lines that are longer than
     the window row length.
@@ -215,15 +226,8 @@ class Telnet:
     Examples:
     | `Open Connection` | lolcathost | terminal_emulation=True | terminal_type=vt100 | window_size=400x100 |
 
-    As a prerequisite for using terminal emulation, you need to have Pyte
-    installed. Due to backwards incompatible changes in Pyte, different
-    Robot Framework versions support different Pyte versions:
-
-    - Pyte 0.6 and newer are supported by Robot Framework 3.0.3.
-      Latest Pyte version can be installed (or upgraded) with
-      ``pip install --upgrade pyte``.
-    - Pyte 0.5.2 and older are supported by Robot Framework 3.0.2 and earlier.
-      Pyte 0.5.2 can be installed with ``pip install pyte==0.5.2``.
+    As discussed in the `Dependencies` section, ``pyte`` is an optional dependency.
+    It needs to be installed separately to be able to use terminal emulation.
 
     = Logging =
 

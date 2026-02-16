@@ -18,11 +18,22 @@ import re
 from fnmatch import fnmatchcase
 from random import randint
 from string import ascii_lowercase, ascii_uppercase, digits
+from typing import Callable, Literal
 
 from robot.api import logger
-from robot.api.deco import keyword
 from robot.utils import FileReader, parse_re_flags, plural_or_not as s, type_name
 from robot.version import get_version
+
+from .normalizer import Normalizer
+
+MARKERS = {
+    "[LOWER]": ascii_lowercase,
+    "[UPPER]": ascii_uppercase,
+    "[LETTERS]": ascii_lowercase + ascii_uppercase,
+    "[NUMBERS]": digits,
+    "[ARABIC]": "".join(chr(c) for c in range(0x0600, 0x0700)),
+    "[POLISH]": ascii_lowercase + ascii_uppercase + "ąćęłńóśźżĄĆĘŁŃÓŚŹŻ",
+}
 
 
 class String:
@@ -32,9 +43,12 @@ class String:
     strings (e.g. `Replace String Using Regexp`, `Split To Lines`) and
     verifying their contents (e.g. `Should Be String`).
 
-    Following keywords from ``BuiltIn`` library can also be used with strings:
+    In addition to strings, most of the keywords work also with bytes.
+    Bytes support was heavily enhanced in Robot Framework 7.4.
 
-    - `Catenate`
+    Following keywords from ``BuiltIn`` library can also be used with strings
+    and bytes:
+
     - `Get Length`
     - `Length Should Be`
     - `Should (Not) Be Empty`
@@ -50,7 +64,7 @@ class String:
     ROBOT_LIBRARY_SCOPE = "GLOBAL"
     ROBOT_LIBRARY_VERSION = get_version()
 
-    def convert_to_lower_case(self, string):
+    def convert_to_lower_case(self, string: "str | bytes") -> "str | bytes":
         """Converts string to lower case.
 
         Uses Python's standard
@@ -62,10 +76,12 @@ class String:
         | ${str2} = | Convert To Lower Case | 1A2c3D |
         | Should Be Equal | ${str1} | abc |
         | Should Be Equal | ${str2} | 1a2c3d |
+
+        If this keyword is used with bytes, only ASCII characters are lower cased.
         """
         return string.lower()
 
-    def convert_to_upper_case(self, string):
+    def convert_to_upper_case(self, string: "str | bytes") -> "str | bytes":
         """Converts string to upper case.
 
         Uses Python's standard
@@ -77,11 +93,16 @@ class String:
         | ${str2} = | Convert To Upper Case | 1a2C3d |
         | Should Be Equal | ${str1} | ABC |
         | Should Be Equal | ${str2} | 1A2C3D |
+
+        If this keyword is used with bytes, only ASCII characters are upper cased.
         """
         return string.upper()
 
-    @keyword(types=None)
-    def convert_to_title_case(self, string, exclude=None):
+    def convert_to_title_case(
+        self,
+        string: "str | bytes",
+        exclude: "str | bytes | list[str | bytes] | None" = None,
+    ) -> "str | bytes":
         """Converts string to title case.
 
         Uses the following algorithm:
@@ -118,27 +139,45 @@ class String:
         strings contain upper case letters or special characters like
         apostrophes. It would, for example, convert "it's an OK iPhone"
         to "It'S An Ok Iphone".
+
+        If this keyword is used with bytes, only ASCII characters are title cased.
+        Bytes support is new in Robot Framework 7.4.
         """
-        if not isinstance(string, str):
-            raise TypeError("This keyword works only with strings.")
         if isinstance(exclude, str):
             exclude = [e.strip() for e in exclude.split(",")]
+        elif isinstance(exclude, bytes):
+            exclude = [e.strip() for e in exclude.split(b",")]
         elif not exclude:
             exclude = []
-        exclude = [re.compile(f"^{e}$") for e in exclude]
+        if isinstance(string, bytes):
+            exclude = [
+                e.encode("latin-1") if isinstance(e, str) else e for e in exclude
+            ]
+            split, join = rb"(\s+)", b""
+        else:
+            split, join = r"(\s+)", ""
+        exclude = [re.compile(e) for e in exclude]
 
         def title(word):
-            if any(e.match(word) for e in exclude) or not word.islower():
+            if any(e.fullmatch(word) for e in exclude) or not word.islower():
                 return word
-            for index, char in enumerate(word):
+            for i, char in enumerate(word):
+                if isinstance(char, int):  # iterating bytes
+                    char = bytes([char])
                 if char.isalpha():
-                    return word[:index] + word[index].title() + word[index + 1 :]
+                    j = i + 1
+                    return word[:i] + word[i:j].title() + word[j:]
             return word
 
-        tokens = re.split(r"(\s+)", string, flags=re.UNICODE)
-        return "".join(title(token) for token in tokens)
+        tokens = re.split(split, string)
+        return join.join(title(t) if i % 2 == 0 else t for i, t in enumerate(tokens))
 
-    def encode_string_to_bytes(self, string, encoding, errors="strict"):
+    def encode_string_to_bytes(
+        self,
+        string: str,
+        encoding: str,
+        errors: str = "strict",
+    ) -> bytes:
         """Encodes the given ``string`` to bytes using the given ``encoding``.
 
         ``errors`` argument controls what to do if encoding some characters fails.
@@ -161,7 +200,12 @@ class String:
         """
         return bytes(string.encode(encoding, errors))
 
-    def decode_bytes_to_string(self, bytes, encoding, errors="strict"):
+    def decode_bytes_to_string(
+        self,
+        bytes: bytes,
+        encoding: str,
+        errors: str = "strict",
+    ) -> str:
         """Decodes the given ``bytes`` to a string using the given ``encoding``.
 
         ``errors`` argument controls what to do if decoding some bytes fails.
@@ -181,11 +225,15 @@ class String:
         and `Convert To String` in ``BuiltIn`` if you need to
         convert arbitrary objects to strings.
         """
-        if isinstance(bytes, str):
-            raise TypeError("Cannot decode strings.")
         return bytes.decode(encoding, errors)
 
-    def format_string(self, template, /, *positional, **named):
+    def format_string(
+        self,
+        template: "str | bytes",
+        /,
+        *positional: object,
+        **named: object,
+    ) -> "str | bytes":
         """Formats a ``template`` using the given ``positional`` and ``named`` arguments.
 
         The template can be either be a string or an absolute path to
@@ -207,8 +255,10 @@ class String:
         | ${yy} = | Format String | {0:{width}{base}}              | ${42}        | base=X | width=10 |
         | ${zz} = | Format String | ${CURDIR}/template.txt         | positional   | named=value |
 
-        Prior to Robot Framework 7.1, possible equal signs in the template string must
-        be escaped with a backslash like ``x\\={}`.
+        Prior to Robot Framework 7.1, possible equal signs in the template string
+        needed to be escaped with a backslash like ``x\\={}`.
+
+        Support for bytes is new in Robot Framework 7.4.
         """
         if os.path.isabs(template) and os.path.isfile(template):
             template = template.replace("/", os.sep)
@@ -218,15 +268,38 @@ class String:
             )
             with FileReader(template) as reader:
                 template = reader.read()
-        return template.format(*positional, **named)
+        if isinstance(template, bytes):
+            template = self._bytes_to_string(template)
+            positional = [self._bytes_to_string(p) for p in positional]
+            named = {n: self._bytes_to_string(named[n]) for n in named}
+            return_bytes = True
+        else:
+            return_bytes = False
+        result = template.format(*positional, **named)
+        if return_bytes:
+            return self._ensure_bytes(result)
+        return result
 
-    def get_line_count(self, string):
+    def _bytes_to_string(self, value: object) -> object:
+        return value.decode("latin-1") if isinstance(value, bytes) else value
+
+    def _ensure_bytes(self, value: "str | bytes | None") -> "bytes | None":
+        if isinstance(value, bytes) or value is None:
+            return value
+        return value.encode("latin-1")
+
+    def get_line_count(self, string: "str | bytes") -> int:
         """Returns and logs the number of lines in the given string."""
         count = len(string.splitlines())
         logger.info(f"{count} lines.")
         return count
 
-    def split_to_lines(self, string, start=0, end=None):
+    def split_to_lines(
+        self,
+        string: "str | bytes",
+        start: "int | Literal[''] | None" = 0,
+        end: "int | Literal[''] | None" = None,
+    ) -> "list[str] | list[bytes]":
         """Splits the given string to lines.
 
         It is possible to get only a selection of lines from ``start``
@@ -238,22 +311,22 @@ class String:
         returned lines is automatically logged.
 
         Examples:
-        | @{lines} =        | Split To Lines | ${manylines} |    |    |
-        | @{ignore first} = | Split To Lines | ${manylines} | 1  |    |
-        | @{ignore last} =  | Split To Lines | ${manylines} |    | -1 |
-        | @{5th to 10th} =  | Split To Lines | ${manylines} | 4  | 10 |
-        | @{first two} =    | Split To Lines | ${manylines} |    | 1  |
-        | @{last two} =     | Split To Lines | ${manylines} | -2 |    |
+        | @{lines} =        | Split To Lines | ${manylines} |        |
+        | @{ignore first} = | Split To Lines | ${manylines} | 1      |
+        | @{ignore last} =  | Split To Lines | ${manylines} | end=-1 |
+        | @{5th to 10th} =  | Split To Lines | ${manylines} | 4      | 10 |
+        | @{first two} =    | Split To Lines | ${manylines} | end=1  |
+        | @{last two} =     | Split To Lines | ${manylines} | -2     |
 
         Use `Get Line` if you only need to get a single line.
         """
-        start = self._convert_to_index(start, "start")
-        end = self._convert_to_index(end, "end")
+        start = self._deprecate_empty_string("start", start, 0)
+        end = self._deprecate_empty_string("end", end, 0)
         lines = string.splitlines()[start:end]
         logger.info(f"{len(lines)} line{s(lines)} returned.")
         return lines
 
-    def get_line(self, string, line_number):
+    def get_line(self, string: "str | bytes", line_number: int) -> "str | bytes":
         """Returns the specified line from the given ``string``.
 
         Line numbering starts from 0, and it is possible to use
@@ -266,16 +339,15 @@ class String:
 
         Use `Split To Lines` if all lines are needed.
         """
-        line_number = self._convert_to_integer(line_number, "line_number")
         return string.splitlines()[line_number]
 
     def get_lines_containing_string(
         self,
-        string: str,
-        pattern: str,
-        case_insensitive: "bool|None" = None,
+        string: "str | bytes",
+        pattern: "str | bytes",
+        case_insensitive: "bool | None" = None,
         ignore_case: bool = False,
-    ):
+    ) -> "str | bytes":
         """Returns lines of the given ``string`` that contain the ``pattern``.
 
         The ``pattern`` is always considered to be a normal string, not a glob
@@ -297,23 +369,27 @@ class String:
 
         See `Get Lines Matching Pattern` and `Get Lines Matching Regexp`
         if you need more complex pattern matching.
+
+        If the first argument is bytes, the second argument is automatically
+        converted to bytes as well.
+
+        Bytes support is new in Robot Framework 7.4.
         """
+        if isinstance(string, bytes):
+            pattern = self._ensure_bytes(pattern)
         if case_insensitive is not None:
             ignore_case = case_insensitive
-        if ignore_case:
-            pattern = pattern.casefold()
-            contains = lambda line: pattern in line.casefold()
-        else:
-            contains = lambda line: pattern in line
-        return self._get_matching_lines(string, contains)
+        normalize = Normalizer(ignore_case=ignore_case).normalize
+        pattern = normalize(pattern)
+        return self._get_matching_lines(string, lambda line: pattern in normalize(line))
 
     def get_lines_matching_pattern(
         self,
-        string: str,
-        pattern: str,
-        case_insensitive: "bool|None" = None,
+        string: "str | bytes",
+        pattern: "str | bytes",
+        case_insensitive: "bool | None" = None,
         ignore_case: bool = False,
-    ):
+    ) -> "str | bytes":
         """Returns lines of the given ``string`` that match the ``pattern``.
 
         The ``pattern`` is a _glob pattern_ where:
@@ -340,23 +416,30 @@ class String:
         See `Get Lines Matching Regexp` if you need more complex
         patterns and `Get Lines Containing String` if searching
         literal strings is enough.
+
+        If the first argument is bytes, the second argument is automatically
+        converted to bytes as well.
+
+        Bytes support is new in Robot Framework 7.4.
         """
+        if isinstance(string, bytes):
+            pattern = self._ensure_bytes(pattern)
         if case_insensitive is not None:
             ignore_case = case_insensitive
-        if ignore_case:
-            pattern = pattern.casefold()
-            matches = lambda line: fnmatchcase(line.casefold(), pattern)
-        else:
-            matches = lambda line: fnmatchcase(line, pattern)
-        return self._get_matching_lines(string, matches)
+        normalize = Normalizer(ignore_case=ignore_case).normalize
+        pattern = normalize(pattern)
+        return self._get_matching_lines(
+            string,
+            lambda line: fnmatchcase(normalize(line), pattern),
+        )
 
     def get_lines_matching_regexp(
         self,
-        string,
-        pattern,
-        partial_match=False,
-        flags=None,
-    ):
+        string: "str | bytes",
+        pattern: "str | bytes",
+        partial_match: bool = False,
+        flags: "str | None" = None,
+    ) -> "str | bytes":
         """Returns lines of the given ``string`` that match the regexp ``pattern``.
 
         See `BuiltIn.Should Match Regexp` for more information about
@@ -389,18 +472,33 @@ class String:
         do not need the full regular expression powers (and complexity).
 
         The ``flags`` argument is new in Robot Framework 6.0.
+
+        If the first argument is bytes, the second argument is automatically
+        converted to bytes as well. This is new in Robot Framework 7.4.
         """
+        if isinstance(string, bytes):
+            pattern = self._ensure_bytes(pattern)
         regexp = re.compile(pattern, flags=parse_re_flags(flags))
         match = regexp.search if partial_match else regexp.fullmatch
         return self._get_matching_lines(string, match)
 
-    def _get_matching_lines(self, string, matches):
+    def _get_matching_lines(
+        self,
+        string: "str | bytes",
+        matches: "Callable[[str | bytes], bool | re.Match[str] | None]",
+    ) -> "str | bytes":
         lines = string.splitlines()
         matching = [line for line in lines if matches(line)]
         logger.info(f"{len(matching)} out of {len(lines)} lines matched.")
-        return "\n".join(matching)
+        return ("\n" if isinstance(string, str) else b"\n").join(matching)
 
-    def get_regexp_matches(self, string, pattern, *groups, flags=None):
+    def get_regexp_matches(
+        self,
+        string: "str | bytes",
+        pattern: "str | bytes",
+        *groups: "int | str",
+        flags: "str | None" = None,
+    ) -> "list[str] | list[tuple[str, ...]] | list[bytes] | list[tuple[bytes, ...]]":
         """Returns a list of all non-overlapping matches in the given string.
 
         ``string`` is the string to find matches from and ``pattern`` is the
@@ -433,19 +531,30 @@ class String:
         | ${named group} = ['he', 'ri']
         | ${two groups} = [('h', 'e'), ('r', 'i')]
 
+        If the first argument is bytes, the second argument is automatically
+        converted to bytes as well. This is new in Robot Framework 7.4.
+
         The ``flags`` argument is new in Robot Framework 6.0.
         """
+        if isinstance(string, bytes):
+            pattern = self._ensure_bytes(pattern)
         regexp = re.compile(pattern, flags=parse_re_flags(flags))
         groups = [self._parse_group(g) for g in groups]
         return [m.group(*groups) for m in regexp.finditer(string)]
 
-    def _parse_group(self, group):
+    def _parse_group(self, group: "str | int") -> "str | int":
         try:
             return int(group)
         except ValueError:
             return group
 
-    def replace_string(self, string, search_for, replace_with, count=-1):
+    def replace_string(
+        self,
+        string: "str | bytes",
+        search_for: "str | bytes",
+        replace_with: "str | bytes",
+        count: int = -1,
+    ) -> "str | bytes":
         """Replaces ``search_for`` in the given ``string`` with ``replace_with``.
 
         ``search_for`` is used as a literal string. See `Replace String
@@ -465,18 +574,23 @@ class String:
         | Should Be Equal | ${str}         | Hello, tellus! |       |          |
         | ${str} =        | Replace String | Hello, world!  | l     | ${EMPTY} | count=1 |
         | Should Be Equal | ${str}         | Helo, world!   |       |          |
+
+        If the first argument is bytes, the following two arguments are automatically
+        converted to bytes as well. This is new in Robot Framework 7.4.
         """
-        count = self._convert_to_integer(count, "count")
+        if isinstance(string, bytes):
+            search_for = self._ensure_bytes(search_for)
+            replace_with = self._ensure_bytes(replace_with)
         return string.replace(search_for, replace_with, count)
 
     def replace_string_using_regexp(
         self,
-        string,
-        pattern,
-        replace_with,
-        count=-1,
-        flags=None,
-    ):
+        string: "str | bytes",
+        pattern: "str | bytes",
+        replace_with: "str | bytes",
+        count: int = -1,
+        flags: "str | None" = None,
+    ) -> "str | bytes":
         """Replaces ``pattern`` in the given ``string`` with ``replace_with``.
 
         This keyword is otherwise identical to `Replace String`, but
@@ -496,12 +610,17 @@ class String:
         | ${str} = | Replace String Using Regexp | ${str} | 20\\\\d\\\\d-\\\\d\\\\d-\\\\d\\\\d | <DATE> |
         | ${str} = | Replace String Using Regexp | ${str} | (Hello|Hi) | ${EMPTY} | count=1 |
 
+        If the first argument is bytes, the following two arguments are automatically
+        converted to bytes as well. This is new in Robot Framework 7.4.
+
         The ``flags`` argument is new in Robot Framework 6.0.
         """
-        count = self._convert_to_integer(count, "count")
         # re.sub handles 0 and negative counts differently than string.replace
         if count == 0:
             return string
+        if isinstance(string, bytes):
+            pattern = self._ensure_bytes(pattern)
+            replace_with = self._ensure_bytes(replace_with)
         return re.sub(
             pattern,
             replace_with,
@@ -510,7 +629,11 @@ class String:
             flags=parse_re_flags(flags),
         )
 
-    def remove_string(self, string, *removables):
+    def remove_string(
+        self,
+        string: "str | bytes",
+        *removables: "str | bytes",
+    ) -> "str | bytes":
         """Removes all ``removables`` from the given ``string``.
 
         ``removables`` are used as literal strings. Each removable will be
@@ -529,12 +652,22 @@ class String:
         | Should Be Equal | ${str}        | Robot Frame     |
         | ${str} =        | Remove String | Robot Framework | o | bt |
         | Should Be Equal | ${str}        | R Framewrk      |
+
+        If the first argument is bytes, the second argument is automatically
+        converted to bytes as well.
+
+        Bytes support is new in Robot Framework 7.4.
         """
         for removable in removables:
             string = self.replace_string(string, removable, "")
         return string
 
-    def remove_string_using_regexp(self, string, *patterns, flags=None):
+    def remove_string_using_regexp(
+        self,
+        string: "str | bytes",
+        *patterns: "str | bytes",
+        flags: "str | None" = None,
+    ) -> "str | bytes":
         """Removes ``patterns`` from the given ``string``.
 
         This keyword is otherwise identical to `Remove String`, but
@@ -549,14 +682,22 @@ class String:
         ``flags=IGNORECASE | MULTILINE``) or embedded to the pattern (e.g.
         ``(?im)pattern``).
 
+        If the first argument is bytes, the second argument is automatically
+        converted to bytes as well.
+
         The ``flags`` argument is new in Robot Framework 6.0.
+        Bytes support is new in Robot Framework 7.4.
         """
         for pattern in patterns:
             string = self.replace_string_using_regexp(string, pattern, "", flags=flags)
         return string
 
-    @keyword(types=None)
-    def split_string(self, string, separator=None, max_split=-1):
+    def split_string(
+        self,
+        string: "str | bytes",
+        separator: "str | bytes | None" = None,
+        max_split: int = -1,
+    ) -> "list[str] | list[bytes]":
         """Splits the ``string`` using ``separator`` as a delimiter string.
 
         If a ``separator`` is not given, any whitespace string is a
@@ -575,14 +716,21 @@ class String:
         See `Split String From Right` if you want to start splitting
         from right, and `Fetch From Left` and `Fetch From Right` if
         you only want to get first/last part of the string.
+
+        If the first argument is bytes, the second argument is automatically
+        converted to bytes as well. This is new in Robot Framework 7.4.
         """
-        if separator == "":
-            separator = None
-        max_split = self._convert_to_integer(max_split, "max_split")
+        separator = self._deprecate_empty_string("separator", separator, None)
+        if isinstance(string, bytes) and separator is not None:
+            separator = self._ensure_bytes(separator)
         return string.split(separator, max_split)
 
-    @keyword(types=None)
-    def split_string_from_right(self, string, separator=None, max_split=-1):
+    def split_string_from_right(
+        self,
+        string: "str | bytes",
+        separator: "str | bytes | None" = None,
+        max_split: int = -1,
+    ) -> "list[str] | list[bytes]":
         """Splits the ``string`` using ``separator`` starting from right.
 
         Same as `Split String`, but splitting is started from right. This has
@@ -591,41 +739,71 @@ class String:
         Examples:
         | ${first} | ${rest} = | Split String            | ${string} | - | 1 |
         | ${rest}  | ${last} = | Split String From Right | ${string} | - | 1 |
+
+        If the first argument is bytes, the second argument is automatically
+        converted to bytes as well. This is new in Robot Framework 7.4.
         """
-        if separator == "":
-            separator = None
-        max_split = self._convert_to_integer(max_split, "max_split")
+        separator = self._deprecate_empty_string("separator", separator, None)
+        if isinstance(string, bytes) and separator is not None:
+            separator = self._ensure_bytes(separator)
         return string.rsplit(separator, max_split)
 
-    def split_string_to_characters(self, string):
+    def split_string_to_characters(
+        self,
+        string: "str | bytes",
+    ) -> "list[str] | list[bytes]":
         """Splits the given ``string`` to characters.
 
         Example:
         | @{characters} = | Split String To Characters | ${string} |
+
+        Bytes support is new in Robot Framework 7.4.
         """
+        if isinstance(string, bytes):
+            return [bytes([o]) for o in string]
         return list(string)
 
-    def fetch_from_left(self, string, marker):
+    def fetch_from_left(
+        self,
+        string: "str | bytes",
+        marker: "str | bytes",
+    ) -> "str | bytes":
         """Returns contents of the ``string`` before the first occurrence of ``marker``.
 
         If the ``marker`` is not found, whole string is returned.
 
-        See also `Fetch From Right`, `Split String` and `Split String
-        From Right`.
+        If the first argument is bytes, the second argument is automatically
+        converted to bytes as well. This is new in Robot Framework 7.4.
+
+        See also `Fetch From Right`, `Split String` and `Split String From Right`.
         """
+        if isinstance(string, bytes):
+            marker = self._ensure_bytes(marker)
         return string.split(marker)[0]
 
-    def fetch_from_right(self, string, marker):
+    def fetch_from_right(
+        self,
+        string: "str | bytes",
+        marker: "str | bytes",
+    ) -> "str | bytes":
         """Returns contents of the ``string`` after the last occurrence of ``marker``.
 
         If the ``marker`` is not found, whole string is returned.
 
-        See also `Fetch From Left`, `Split String` and `Split String
-        From Right`.
+        If the first argument is bytes, the second argument is automatically
+        converted to bytes as well. This is new in Robot Framework 7.4.
+
+        See also `Fetch From Left`, `Split String` and `Split String From Right`.
         """
+        if isinstance(string, bytes):
+            marker = self._ensure_bytes(marker)
         return string.split(marker)[-1]
 
-    def generate_random_string(self, length=8, chars="[LETTERS][NUMBERS]"):
+    def generate_random_string(
+        self,
+        length: "int | str" = 8,
+        chars: str = "[LETTERS][NUMBERS]",
+    ) -> str:
         """Generates a string with a desired ``length`` from the given ``chars``.
 
         ``length`` can be given as a number, a string representation of a number,
@@ -642,6 +820,8 @@ class String:
         | ``[UPPER]``   | Uppercase ASCII characters from ``A`` to ``Z``. |
         | ``[LETTERS]`` | Lowercase and uppercase ASCII characters.       |
         | ``[NUMBERS]`` | Numbers from 0 to 9.                            |
+        | ``[ARABIC]``  | Arabic characters from U+0600 to U+06FF (inclusive). |
+        | ``[POLISH]``  | ASCII characters and Polish diacritical signs.  |
 
         Examples:
         | ${ret} = | Generate Random String |
@@ -651,28 +831,36 @@ class String:
         | ${rnd} = | Generate Random String | 5-10 | # Generates a string 5 to 10 characters long |
 
         Giving ``length`` as a range of values is new in Robot Framework 5.0.
+        Support for markers ``[POLISH]`` and ``[ARABIC]`` is new in Robot Framework 7.4.
         """
-        if length == "":
-            length = 8
+        length = self._deprecate_empty_string("length", length, 8)
         if isinstance(length, str) and re.match(r"^\d+-\d+$", length):
             min_length, max_length = length.split("-")
             length = randint(
-                self._convert_to_integer(min_length, "length"),
-                self._convert_to_integer(max_length, "length"),
+                self._length_to_int(min_length),
+                self._length_to_int(max_length),
             )
         else:
-            length = self._convert_to_integer(length, "length")
-        for name, value in [
-            ("[LOWER]", ascii_lowercase),
-            ("[UPPER]", ascii_uppercase),
-            ("[LETTERS]", ascii_lowercase + ascii_uppercase),
-            ("[NUMBERS]", digits),
-        ]:
+            length = self._length_to_int(length)
+        for name, value in MARKERS.items():
             chars = chars.replace(name, value)
         maxi = len(chars) - 1
         return "".join(chars[randint(0, maxi)] for _ in range(length))
 
-    def get_substring(self, string, start, end=None):
+    def _length_to_int(self, value: "int | str") -> int:
+        try:
+            return int(value)
+        except ValueError:
+            raise ValueError(
+                f"Cannot convert 'length' argument {value!r} to an integer."
+            )
+
+    def get_substring(
+        self,
+        string: "str | bytes",
+        start: "int | Literal[''] | None" = 0,
+        end: "int | Literal[''] | None" = None,
+    ) -> "str | bytes":
         """Returns a substring from ``start`` index to ``end`` index.
 
         The ``start`` index is inclusive and ``end`` is exclusive.
@@ -685,13 +873,19 @@ class String:
         | ${5th to 10th} =  | Get Substring | ${string} | 4  | 10 |
         | ${first two} =    | Get Substring | ${string} | 0  | 1  |
         | ${last two} =     | Get Substring | ${string} | -2 |    |
+
+        Default value with ``start`` is new in Robot Framework 7.4.
         """
-        start = self._convert_to_index(start, "start")
-        end = self._convert_to_index(end, "end")
+        start = self._deprecate_empty_string("start", start, 0)
+        end = self._deprecate_empty_string("end", end, 0)
         return string[start:end]
 
-    @keyword(types=None)
-    def strip_string(self, string, mode="both", characters=None):
+    def strip_string(
+        self,
+        string: "str | bytes",
+        mode: Literal["left", "right", "both", "none"] = "both",
+        characters: "str | bytes | None" = None,
+    ) -> "str | bytes":
         """Remove leading and/or trailing whitespaces from the given string.
 
         ``mode`` is either ``left`` to remove leading characters, ``right`` to
@@ -711,19 +905,23 @@ class String:
         | Should Be Equal | ${stripped} | Hello${SPACE} | |
         | ${stripped}=  | Strip String | aabaHelloeee | characters=abe |
         | Should Be Equal | ${stripped} | Hello | |
+
+        If the first argument is bytes, the ``characters`` argument is automatically
+        converted to bytes as well.
+
+        Bytes support is new in Robot Framework 7.4.
         """
-        try:
-            method = {
-                "BOTH": string.strip,
-                "LEFT": string.lstrip,
-                "RIGHT": string.rstrip,
-                "NONE": lambda characters: string,
-            }[mode.upper()]
-        except KeyError:
-            raise ValueError(f"Invalid mode '{mode}'.")
+        if isinstance(string, bytes) and characters is not None:
+            characters = self._ensure_bytes(characters)
+        method = {
+            "both": string.strip,
+            "left": string.lstrip,
+            "right": string.rstrip,
+            "none": lambda chars: string,
+        }[mode.lower()]
         return method(characters)
 
-    def should_be_string(self, item, msg=None):
+    def should_be_string(self, item: object, msg: "str | None" = None):
         """Fails if the given ``item`` is not a string.
 
         The default error message can be overridden with the optional ``msg`` argument.
@@ -731,7 +929,7 @@ class String:
         if not isinstance(item, str):
             raise AssertionError(msg or f"{item!r} is {type_name(item)}, not a string.")
 
-    def should_not_be_string(self, item, msg=None):
+    def should_not_be_string(self, item: object, msg: "str | None" = None):
         """Fails if the given ``item`` is a string.
 
         The default error message can be overridden with the optional ``msg`` argument.
@@ -739,7 +937,7 @@ class String:
         if isinstance(item, str):
             raise AssertionError(msg or f"{item!r} is a string.")
 
-    def should_be_unicode_string(self, item, msg=None):
+    def should_be_unicode_string(self, item: object, msg: "str | None" = None):
         """Fails if the given ``item`` is not a Unicode string.
 
         On Python 3 this keyword behaves exactly the same way `Should Be String`.
@@ -747,7 +945,7 @@ class String:
         """
         self.should_be_string(item, msg)
 
-    def should_be_byte_string(self, item, msg=None):
+    def should_be_byte_string(self, item: object, msg: "str | None" = None):
         """Fails if the given ``item`` is not a byte string.
 
         Use `Should Be String` if you want to verify the ``item`` is a string.
@@ -757,7 +955,7 @@ class String:
         if not isinstance(item, bytes):
             raise AssertionError(msg or f"{item!r} is not a byte string.")
 
-    def should_be_lower_case(self, string, msg=None):
+    def should_be_lower_case(self, string: "str | bytes", msg: "str | None" = None):
         """Fails if the given ``string`` is not in lower case.
 
         For example, ``'string'`` and ``'with specials!'`` would pass, and
@@ -771,7 +969,7 @@ class String:
         if not string.islower():
             raise AssertionError(msg or f"{string!r} is not lower case.")
 
-    def should_be_upper_case(self, string, msg=None):
+    def should_be_upper_case(self, string: "str | bytes", msg: "str | None" = None):
         """Fails if the given ``string`` is not in upper case.
 
         For example, ``'STRING'`` and ``'WITH SPECIALS!'`` would pass, and
@@ -785,8 +983,12 @@ class String:
         if not string.isupper():
             raise AssertionError(msg or f"{string!r} is not upper case.")
 
-    @keyword(types=None)
-    def should_be_title_case(self, string, msg=None, exclude=None):
+    def should_be_title_case(
+        self,
+        string: "str | bytes",
+        msg: "str | None" = None,
+        exclude: "str | bytes | list[str | bytes] | None" = None,
+    ):
         """Fails if given ``string`` is not title.
 
         ``string`` is a title cased string if there is at least one upper case
@@ -818,17 +1020,14 @@ class String:
         if string != self.convert_to_title_case(string, exclude):
             raise AssertionError(msg or f"{string!r} is not title case.")
 
-    def _convert_to_index(self, value, name):
+    def _deprecate_empty_string(
+        self, name: str, value: object, instead: object
+    ) -> object:
+        # Deprecated in RF 7.4. TODO: Remove in RF 9.
         if value == "":
-            return 0
-        if value is None:
-            return None
-        return self._convert_to_integer(value, name)
-
-    def _convert_to_integer(self, value, name):
-        try:
-            return int(value)
-        except ValueError:
-            raise ValueError(
-                f"Cannot convert {name!r} argument {value!r} to an integer."
+            logger.warn(
+                f"Using an empty string as a value with argument '{name}' is "
+                f"deprecated. Use '{instead}' instead."
             )
+            return instead
+        return value

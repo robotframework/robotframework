@@ -81,7 +81,7 @@ that is relevant in the automation context is the `selenium` module that is
 implemented, at least at the time of this writing, so that just importing
 `selenium` does not import the `selenium.webdriver` submodule.
 Another limitation is that modules cannot be used in the expression part of
-a list comprehension when using Python 3. A workaround to both of these problems
+a list comprehension. A workaround to both of these problems
 is using the BuiltIn_ keyword :name:`Evaluate` that accepts modules to be imported
 and added to the evaluation namespace as an argument:
 

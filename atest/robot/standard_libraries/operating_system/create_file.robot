@@ -35,6 +35,11 @@ Create File With Space In Name
 Create File To Non-Existing Directory
     Check Test Case    ${TESTNAME}
 
+Create File with Secret as Content
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc[1][0]}    Arguments: [[] * | Secret(value=<secret>) ]    pattern=True    level=TRACE
+    Check Log Message    ${tc[1][1]}    Created file '<a href="file://*">*</a>'.       pattern=True    html=True
+
 Creating File Fails If Encoding Is Incorrect
     Check Test Case    ${TESTNAME}
 
@@ -49,6 +54,11 @@ Creating Binary File Using Unicode With Ordinal > 255 Fails
 
 Append To File
     Check Test Case    ${TESTNAME}
+
+Append To File with Secret as Content
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc[1][0]}    Arguments: [[] * | Secret(value=<secret>) ]     pattern=True    level=TRACE
+    Check Log Message    ${tc[1][1]}    Appended to file '<a href="file://*">*</a>'.    pattern=True    html=True
 
 Path as `pathlib.Path`
     Check Test Case    ${TESTNAME}

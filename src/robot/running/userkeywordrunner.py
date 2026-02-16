@@ -19,6 +19,7 @@ from robot.errors import (
     DataError, ExecutionFailed, ExecutionPassed, ExecutionStatus, PassExecution,
     ReturnFromKeyword, UserKeywordExecutionFailed, VariableError
 )
+from robot.model import Tags
 from robot.model.metadata import Metadata
 from robot.result import Keyword as KeywordResult
 from robot.utils import DotDict, getshortdoc, prepr, split_tags_from_doc
@@ -49,11 +50,12 @@ class UserKeywordRunner:
             self._validate(kw)
             if kw.private:
                 context.warn_on_invalid_private_call(kw)
+            if not run:
+                return None
             with assignment.assigner(context) as assigner:
-                if run:
-                    return_value = self._run(data, kw, result, context)
-                    assigner.assign(return_value)
-                    return return_value
+                return_value = self._run(data, kw, result, context)
+                assigner.assign(return_value)
+                return return_value
 
     def _config_result(
         self,
@@ -66,16 +68,16 @@ class UserKeywordRunner:
         args = tuple(data.args)
         if data.named_args:
             args += tuple(f"{n}={v}" for n, v in data.named_args.items())
-        doc = variables.replace_string(kw.doc, ignore_errors=True)
-        doc, tags = split_tags_from_doc(doc)
-        tags = variables.replace_list(kw.tags, ignore_errors=True) + tags
+        doc, doc_tags = split_tags_from_doc(kw.doc)
+        tags = Tags(kw.tags)
+        tags.add(doc_tags, remove_negated=True)
         result.config(
             name=self.name,
             owner=kw.owner.name,
-            doc=getshortdoc(doc),
+            doc=getshortdoc(variables.replace_string(doc, ignore_errors=True)),
             args=args,
             assign=tuple(assignment),
-            tags=tags,
+            tags=variables.replace_list(tags, ignore_errors=True),
             type=data.type,
         )
         # Copy custom metadata from running model to result model with variable resolution
@@ -209,11 +211,23 @@ class UserKeywordRunner:
                 td_error = self._run_setup_or_teardown(
                     kw.teardown, result.teardown, context
                 )
+            if context.timeouts and not (error or td_error):
+                td_error = self._handle_timeout_exceeded_during_teardown(context)
         else:
             td_error = None
         if error or td_error:
             error = UserKeywordExecutionFailed(error, td_error)
         return error or success, return_value
+
+    def _handle_timeout_exceeded_during_teardown(self, context):
+        timeout = min(context.timeouts)
+        if timeout.timed_out():
+            return ExecutionFailed(
+                timeout.get_message(),
+                test_timeout=timeout.kind == "TEST",
+                keyword_timeout=timeout.kind == "KEYWORD",
+            )
+        return None
 
     def _handle_return_value(self, return_value, variables):
         if not return_value:

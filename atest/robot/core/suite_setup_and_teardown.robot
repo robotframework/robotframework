@@ -93,6 +93,18 @@ Failing Suite Teardown when using JSON
     Should Be Equal    ${SUITE.teardown.status}    FAIL
     JSON output should contain teardown error    ${error}
 
+Failing Suite Teardown when using JSON and all tests pass
+    Run Tests    --output output.json --test passing   core/failing_suite_teardown.robot    output=${OUTDIR}/output.json
+    ${error} =    Catenate    SEPARATOR=\n\n
+    ...    Several failures occurred:
+    ...    1) first
+    ...    2) second
+    Check Suite Status    ${SUITE}    FAIL
+    ...    Suite teardown failed:\n${error}\n\n1 test, 0 passed, 1 failed
+    ...    Passing
+    Should Be Equal    ${SUITE.teardown.status}    FAIL
+    JSON output should contain teardown error    ${error}
+
 Erroring Suite Teardown
     Run Tests    ${EMPTY}    core/erroring_suite_teardown.robot
     Check Suite Status    ${SUITE}    FAIL

@@ -166,6 +166,12 @@ class ExecutionResultBuilder:
             else:
                 end(elem)
                 elem.clear()
+        # Python 3.15 emits a warning if context is not closed, but `close` is
+        # new in Python 3.13.
+        try:
+            context.close()
+        except AttributeError:
+            pass
 
     def _omit_keywords(self, context):
         omitted_elements = {"kw", "for", "while", "if", "try", "group", "variable"}

@@ -105,6 +105,9 @@ Invalid Set
 Any
     Check Test Case    ${TESTNAME}
 
+object
+    Check Test Case    ${TESTNAME}
+
 None as default
     Check Test Case    ${TESTNAME}
 

@@ -8,11 +8,11 @@ Log Levels
     [Teardown]  Set log level  INFO
 
 Invalid level
-    [Documentation]    FAIL Invalid log level 'INVALID'.
+    [Documentation]    FAIL ValueError: Invalid log level 'INVALID'.
     Write    This fails    INVALID
 
 FAIL is not valid log level
-    [Documentation]    FAIL Invalid log level 'FAIL'.
+    [Documentation]    FAIL ValueError: Invalid log level 'FAIL'.
     Write    This fails too    FAIL
 
 Timestamps are accurate
@@ -23,8 +23,8 @@ Log HTML
     Log HTML
     [Teardown]  Set log level  INFO
 
-Write messages to console
-    Write messages to console
+Write messages to log and console
+    Write messages to log and console
 
 Log Non-Strings
     Log Non Strings

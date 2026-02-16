@@ -1,15 +1,26 @@
 *** Settings ***
 Test Setup        Create Dictionaries For Testing
-Resource          collections_resources.robot
+Library           Collections
 Library           CollectionsHelperLibrary.py
 
+*** Variables ***
+${IMMUTABLE}      ${{type('Immutable', (collections.abc.Mapping,), {'__getitem__': lambda s, k: {'a': 1, 'b': 2}[k], '__iter__': lambda s: iter(['a', 'b']), '__len__': lambda s: 2})()}}
+
 *** Test Cases ***
-Convert To Dictionary
+Convert To Dictionary with mappings
     ${dotted} =    Create Dictionary    a=1    b=2
     Should Be True    type($dotted) is not dict
     ${normal} =    Convert To Dictionary    ${dotted}
     Should Be True    type($normal) is dict
     Should Be Equal    ${dotted}    ${normal}
+    ${normal} =    Convert To Dictionary    ${IMMUTABLE}
+    Should Be Equal    ${normal}    {'a': 1, 'b': 2}    type=dict
+
+Convert To Dictionary with list of tuples
+    ${from_empty_list} =    Convert To Dictionary    ${{()}}
+    Should Be Equal    ${from_empty_list}    ${D0}
+    ${from_tuple_list} =    Convert To Dictionary    ${{[('a', 1), ('b', 2)]}}
+    Should Be Equal    ${from_tuple_list}    ${D2}
 
 Set To Dictionary
     Set To Dictionary    ${D0}    a    ${1}
@@ -23,23 +34,44 @@ Set To Dictionary With wrong number of arguments
 
 Set To Dictionary With **kwargs
     Set To Dictionary    ${D0}    k1    ${1}    over    write    k2=${2}    over=written
-    Compare To Expected String    ${D0}    {'k1': 1, 'k2': 2, 'over': 'written'}
+    Should Be Equal    ${D0}    {'k1': 1, 'k2': 2, 'over': 'written'}    type=dict
+
+Set To Dictionary with immutable
+    ${x} =    Set To Dictionary    ${IMMUTABLE}    b    ${2}
+    ${y} =    Set To Dictionary    ${IMMUTABLE}    a    replace    c=new
+    Should Be Equal    ${x}            {'a': 1, 'b': 2}                        type=dict
+    Should Be Equal    ${y}            {'a': 'replace', 'b': 2, 'c': 'new'}    type=dict
+    Should Be Equal    ${IMMUTABLE}    {'a': 1, 'b': 2}                        type=Mapping
 
 Remove From Dictionary
     Remove From Dictionary    ${D3}    b    x    ${2}
-    Compare To Expected String    ${D3}    {'a': 1, 3: None}
+    Should Be Equal    ${D3}    {'a': 1, 3: None}    type=dict
     Remove From Dictionary    ${D3}    ${TUPLE}
-    Compare To Expected String    ${D3}    {'a': 1, 3: None}
+    Should Be Equal    ${D3}    {'a': 1, 3: None}    type=dict
+
+Remove From Dictionary with immutable
+    ${x} =    Remove From Dictionary    ${IMMUTABLE}    b
+    ${y} =    Remove From Dictionary    ${IMMUTABLE}    a    b    c    d
+    Should Be Equal    ${x}            {'a': 1}            type=dict
+    Should Be Equal    ${y}            {}                  type=dict
+    Should Be Equal    ${IMMUTABLE}    {'a': 1, 'b': 2}    type=Mapping
 
 Keep In Dictionary
     Keep In Dictionary    ${D3}    a    x    ${2}    ${3}
-    Compare To Expected String    ${D3}    {'a': 1, 3: None}
+    Should Be Equal    ${D3}    {'a': 1, 3: None}    type=dict
+
+Keep In Dictionary with immutable
+    ${x} =    Keep In Dictionary    ${IMMUTABLE}    b
+    ${y} =    Keep In Dictionary    ${IMMUTABLE}    a    b    c    d
+    Should Be Equal    ${x}            {'b': 2}            type=dict
+    Should Be Equal    ${y}            {'a': 1, 'b': 2}    type=dict
+    Should Be Equal    ${IMMUTABLE}    {'a': 1, 'b': 2}    type=Mapping
 
 Copy Dictionary
     ${copy} =    Copy Dictionary    ${D3}
     Remove From Dictionary    ${copy}    a    ${3}
-    Compare To Expected String    ${copy}    {'b':2}
-    Compare To Expected String    ${D3}    {'a': 1, 'b': 2, 3: None}
+    Should Be Equal    ${copy}    {'b': 2}                     type=dict
+    Should Be Equal    ${D3}      {'a': 1, 'b': 2, 3: None}    type=dict
 
 Shallow Copy Dictionary
     ${x2} =    Create Dictionary    x2    1
@@ -60,36 +92,36 @@ Deep Copy Dictionary
 
 Get Dictionary Keys Sorted
     ${keys} =    Get Dictionary Keys    ${D3B}
-    Compare To Expected String    ${keys}    ['a', 'b', 'c']
+    Should Be Equal    ${keys}    ['a', 'b', 'c']    type=list
 
 Get Dictionary Keys Unsorted
     ${keys} =    Get Dictionary Keys    ${D3B}    sort_keys=${False}
-    Compare To Expected String    ${keys}    ['b', 'a', 'c']
+    Should Be Equal    ${keys}    ['b', 'a', 'c']    type=list
 
 Get Dictionary Values Sorted
     ${values} =    Get Dictionary Values    ${D3B}
-    Compare To Expected String    ${values}    [1, 2, '']
+    Should Be Equal    ${values}    [1, 2, '']    type=list
 
 Get Dictionary Values Unsorted
-    ${values} =    Get Dictionary Values    ${D3B}  sort_keys=False
-    Compare To Expected String    ${values}    [2, 1, '']
+    ${values} =    Get Dictionary Values    ${D3B}    sort_keys=False
+    Should Be Equal    ${values}    [2, 1, '']    type=list
 
 Get Dictionary Items Sorted
     ${items} =    Get Dictionary Items    ${D3B}
-    Compare To Expected String    ${items}    ['a', 1, 'b', 2, 'c', '']
+    Should Be Equal    ${items}    ['a', 1, 'b', 2, 'c', '']    type=list
 
 Get Dictionary Items Unsorted
     ${items} =    Get Dictionary Items    ${D3B}    sort_keys=NO
-    Compare To Expected String    ${items}    ['b', 2, 'a', 1, 'c', '']
+    Should Be Equal    ${items}    ['b', 2, 'a', 1, 'c', '']    type=list
 
 Get Dictionary Keys/Values/Items When Keys Are Unorderable
     ${unorderable} =    Evaluate    {complex(1): 1, complex(2): 2, complex(3): 3}
-    ${keys} =    Get Dictionary Keys    ${unorderable}
-    Compare To Expected String    ${keys}    list(d)    d=${unorderable}
+    ${keys} =      Get Dictionary Keys      ${unorderable}
     ${values} =    Get Dictionary Values    ${unorderable}
-    Compare To Expected String    ${values}    list(d.values())    d=${unorderable}
-    ${items} =    Get Dictionary Items    ${unorderable}
-    Compare To Expected String    ${items}    [i for item in d.items() for i in item]    d=${unorderable}
+    ${items} =     Get Dictionary Items     ${unorderable}
+    Should Be Equal    ${keys}      ${{[complex(1), complex(2), complex(3)]}}
+    Should Be Equal    ${values}    ${{[1, 2, 3]}}
+    Should Be Equal    ${items}     ${{[complex(1), 1, complex(2), 2, complex(3), 3]}}
 
 Get From Dictionary
     ${value} =    Get From Dictionary    ${D3}    b
@@ -120,53 +152,66 @@ Log Dictionary With Different Log Levels
 Log Dictionary With Different Dictionaries
     Log Dictionary    ${D0}
     Log Dictionary    ${D1}
-    ${dict} =    Evaluate    collections.OrderedDict(((True, 'xxx'), ('foo', []), ((1, 2, 3), 3.14)))   modules=collections
+    ${dict} =    Evaluate    collections.OrderedDict(((True, 'xxx'), ('foo', []), ((1, 2, 3), 3.14)))
     Log Dictionary    ${dict}
+    Log Dictionary    ${IMMUTABLE}
 
 Pop From Dictionary Without Default
     [Documentation]   FAIL Dictionary does not contain key 'a'.
     ${dict} =    Create Dictionary    a=val    b=val2
     ${a} =    Pop From Dictionary    ${dict}    a
-    Should be equal    ${a}    val
-    Should be True   $dict == {'b': 'val2'}
+    Should Be Equal    ${a}    val
+    Should Be Equal    ${dict}    {'b': 'val2'}    type=dict
     Pop From Dictionary    ${dict}    a
 
 Pop From Dictionary With Default
     ${dict} =    Create Dictionary    a=val    b=val2
     ${a} =    Pop From Dictionary    ${dict}    a   foo
-    Should be equal    ${a}    val
-    Should be True   $dict == {'b': 'val2'}
+    Should Be Equal    ${a}    val
+    Should Be Equal    ${dict}    {'b': 'val2'}    type=dict
     ${a} =    Pop From Dictionary    ${dict}    a   foo
-    Should be equal    ${a}    foo
-    Should be True   $dict == {'b': 'val2'}
+    Should Be Equal    ${a}    foo
+    Should Be Equal    ${dict}    {'b': 'val2'}    type=dict
+
+Pop From Dictionary with immutable
+    ${a} =    Pop From Dictionary    ${IMMUTABLE}    a
+    Should Be Equal    ${a}    1    type=int
+    Should Be Equal    ${IMMUTABLE}    {'a': 1, 'b': 2}    type=Mapping
 
 Check invalid dictionary argument errors
     [Template]    Validate invalid argument error
+    VAR    ${invalid_arg}    I'm not a dict, I'm string.
     Copy dictionary
-    Dictionary Should Contain Item             I'm not a dict, I'm string.    a    b
-    Dictionaries Should Be Equal               I'm not a dict, I'm string.    ${D2}
-    Dictionaries Should Be Equal               ${D2}    I'm not a dict, I'm string.    position=2
-    Dictionary Should Contain Key              I'm not a dict, I'm string.    a
-    Dictionary Should Contain Sub Dictionary   I'm not a dict, I'm string.    ${D2}
-    Dictionary Should Contain Sub Dictionary   ${D2}    I'm not a dict, I'm string.    position=2
-    Dictionary Should Contain Value            I'm not a dict, I'm string.    a
-    Dictionary Should Not Contain Key          I'm not a dict, I'm string.    a
-    Dictionary Should Not Contain Value        I'm not a dict, I'm string.    a
+    Dictionary Should Contain Item             ${invalid_arg}    a    b
+    Dictionaries Should Be Equal               ${invalid_arg}    ${D2}    arg_name=dict1
+    Dictionaries Should Be Equal               ${D2}    ${invalid_arg}    arg_name=dict2   invalid_argument=${invalid_arg}
+    Dictionary Should Contain Key              ${invalid_arg}    a
+    Dictionary Should Contain Sub Dictionary   ${invalid_arg}    ${D2}    arg_name=dict1
+    Dictionary Should Contain Sub Dictionary   ${D2}    ${invalid_arg}    arg_name=dict2    invalid_argument=${invalid_arg}
+    Dictionary Should Contain Value            ${invalid_arg}    a
+    Dictionary Should Not Contain Key          ${invalid_arg}    a
+    Dictionary Should Not Contain Value        ${invalid_arg}    a
     Get Dictionary Items
     Get Dictionary Keys
     Get Dictionary Values
-    Get from dictionary                        I'm not a dict, I'm string.    a
-    Keep in dictionary                         I'm not a dict, I'm string.    a
+    Get from dictionary                        ${invalid_arg}    a
+    Keep in dictionary                         ${invalid_arg}    a
     Log Dictionary
-    Pop From Dictionary                        I'm not a dict, I'm string.    a
-    Remove From Dictionary                     I'm not a dict, I'm string.    a
-    Set To Dictionary                          I'm not a dict, I'm string.    a    b
+    Pop From Dictionary                        ${invalid_arg}    a
+    Remove From Dictionary                     ${invalid_arg}    a
+    Set To Dictionary                          ${invalid_arg}    a    b
+
+Bytes normalization
+    Dictionary Should Contain Key             ${{{b'RF': 1}}}    ${{b'rf'}}      ignore_case=True
 
 *** Keywords ***
 Validate invalid argument error
-    [Arguments]  ${keyword}    ${argument}=I'm not a dict, I'm a string.    @{args}    ${type}=string    ${position}=1
+    [Arguments]  ${keyword}    ${argument}=I'm not a dict, I'm a string.    @{args}    ${arg_name}=dictionary    ${annotation}=Mapping    ${invalid_argument}=${NONE}
+    IF    not $invalid_argument
+        VAR    ${invalid_argument}    ${argument}
+    END
     Run keyword and expect error
-    ...    TypeError: Expected argument ${position} to be a dictionary, got ${type} instead.
+    ...    ValueError: Argument '${arg_name}' got value '${invalid_argument}' that cannot be converted to ${annotation}: Invalid expression.
     ...    ${keyword}    ${argument}    @{args}
 
 Create Dictionaries For Testing

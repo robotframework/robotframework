@@ -33,6 +33,9 @@ Currently exposed APIs are:
 * :mod:`.interfaces` module containing optional base classes that can be used
   when creating libraries and other extensions. New in Robot Framework 6.1.
 
+* :mod:`.types` module with types exposed for libraries and other extensions.
+  New in Robot Framework 7.4.
+
 * :mod:`.parsing` module exposing the parsing APIs. This module is new in Robot
   Framework 4.0. Various parsing related functions and classes were exposed
   directly via :mod:`robot.api` already in Robot Framework 3.2, but they are

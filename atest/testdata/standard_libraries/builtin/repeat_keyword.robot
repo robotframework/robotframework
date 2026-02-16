@@ -20,32 +20,38 @@ Times With 'x' Postfix
 
 Zero And Negative Times
     Repeat Keyword    0 times    This is not executed
-    ${name} =    Set Variable    This is not executed
-    Repeat Keyword    ${-1}    ${name}    ${nonex}
+    Repeat Keyword    ${-1}    ${nonex}    ${nonex}
     Repeat Keyword    0 secs    This is not executed
 
 Invalid Times 1
-    [Documentation]    FAIL STARTS: '1.3' cannot be converted to an integer: ValueError:
+    [Documentation]    FAIL STARTS: ValueError: '1.3' cannot be converted to an integer:
     Repeat Keyword    ${1.3}    Log    Not an integer
 
 Invalid Times 2
-    [Documentation]    FAIL STARTS: 'notaninteger' cannot be converted to an integer: ValueError:
+    [Documentation]    FAIL STARTS: ValueError: 'notaninteger' cannot be converted to an integer:
     Repeat Keyword    Not an integer    No Operation
 
 Repeat Keyword With Time String
-    Repeat Keyword    00:00:00.003    Log    This is done for 00:00:00.003
+    Repeat Keyword    00:00:00.003      Log    This is done for 00:00:00.003
     Repeat Keyword    3 milliseconds    Log    This is done for 3 milliseconds
-    Repeat Keyword    3ms    Log    This is done for 3ms
+    Repeat Keyword    3ms               Log    This is done for 3ms
+
+Repeat Keyword With `timedelta`
+    Repeat Keyword    ${{datetime.timedelta(milliseconds=3)}}
+    ...                                 Log    This is done for `timedelta(milliseconds=3)`
 
 Repeat Keyword Arguments As Variables
-    ${kw}    ${arg} =    Set Variable    Should Be Equal    Hello, world!
-    Repeat Keyword    2 times    ${kw}    ${arg}    Hello, world!
-    ${escaped} =    Set Variable    \\ and \${notvar}
+    VAR    ${kw}    Should Be Equal
+    Repeat Keyword    2 times    ${kw}    @{{['Hello, world!']}}    ${{'Hello, world!'}}
+
+    VAR    ${escaped}    \\ and \${notvar}
     Repeat Keyword    42 times    ${kw}    ${escaped}    \\ and \${notvar}
-    @{items} =    Set Variable    10 times    No Operation
-    Repeat Keyword    @{items}
-    @{items} =    Set Variable    ${kw}    ${escaped}    \\ and \${notvar}
-    Repeat Keyword    1x    @{items}
+
+    VAR    @{times_and_kw}    10 times    No Operation
+    Repeat Keyword    @{times_and_kw}
+
+    VAR    @{escaped}    ${kw}    ${escaped}    \\ and \${notvar}
+    Repeat Keyword    1x    @{escaped}
 
 Repeated Keyword As Non-existing Variable
     [Documentation]    FAIL Variable '\${non existing}' not found.

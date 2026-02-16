@@ -425,12 +425,11 @@ __ `Named arguments with variables`_
 Named-only arguments
 ~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 3.1, keywords can accept argument that must
+Keywords can accept arguments that must
 always be named using the `named argument syntax`_. If, for example,
 a keyword would accept a single named-only argument `example`, it would
 always need to be used like `example=value` and using just `value` would
-not work. This syntax is inspired by the `keyword-only arguments`__
-syntax supported by Python 3.
+not work. This syntax is inspired by Python's `keyword-only arguments`__ syntax.
 
 For most parts named-only arguments work the same way as `named arguments`_.
 The main difference is that libraries implemented with Python 2 using

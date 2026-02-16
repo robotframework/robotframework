@@ -16,7 +16,7 @@
 import re
 from datetime import datetime
 
-from .loggerhelper import Message, write_to_console
+from .loggerhelper import Message
 
 
 class StdoutLogSplitter:
@@ -35,9 +35,6 @@ class StdoutLogSplitter:
 
     def _get_messages(self, output):
         for level, timestamp, msg in self._split_output(output):
-            if level == "CONSOLE":
-                write_to_console(msg.lstrip())
-                level = "INFO"
             if timestamp:
                 timestamp = datetime.fromtimestamp(float(timestamp[1:]) / 1000)
             yield Message(msg.strip(), level, timestamp=timestamp)

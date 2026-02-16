@@ -33,7 +33,6 @@ Total Time Too Long
     Check Test Case    ${TEST NAME} 1
     Check Test Case    ${TEST NAME} 2
     Check Test Case    ${TEST NAME} 3
-    Check Test Case    ${TEST NAME} 4
 
 Timout Defined For One Test
     Check Test Case    ${TEST NAME}
@@ -63,17 +62,17 @@ Test Timeouts When Also Keywords Are Timeouted
 
 Keyword Timeout From Variable
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc[0].timeout}    1 millisecond
+    Should Be Equal    ${tc[0].timeout}    10 milliseconds
 
 Keyword Timeout From Argument
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc[0].timeout}    1 second
-    Should Be Equal    ${tc[1].timeout}    2 milliseconds
+    Should Be Equal    ${tc[1].timeout}    11 milliseconds
 
 Embedded Arguments Timeout From Argument
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc[0].timeout}    1 second
-    Should Be Equal    ${tc[1].timeout}    3 milliseconds
+    Should Be Equal    ${tc[1].timeout}    12 milliseconds
 
 Local Variables Are Not Visible In Child Keyword Timeout
     Check Test Case    ${TEST NAME}
@@ -112,6 +111,30 @@ Timeouted Teardown Passes
 Timeouted Teardown Timeouts
     Check Test Case    ${TEST NAME}
 
+Keyword teardown after test timeout
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal      ${tc[0].teardown.status}    PASS
+    Check Log Message    ${tc[0].teardown[0, 0]}     I'm a teardown keyword
+
+Keyword teardown after keyword timeout
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal      ${tc[0].teardown.status}    PASS
+    Check Log Message    ${tc[0].teardown[0, 0]}     I'm a teardown keyword
+
+Keyword teardown fails due to total time
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal      ${tc[0].teardown.status}    PASS
+    Check Log Message    ${tc[0].teardown[0, 0]}     I'm a teardown keyword
+
+Keyword teardown fails for own timeout
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal      ${tc[0].teardown.status}    FAIL
+    Check Log Message    ${tc[0].teardown[0, 0]}     Keyword timeout 14 milliseconds active. 0.??? seconds left.    level=DEBUG    pattern=True
+    Check Log Message    ${tc[0].teardown[0, 1]}     I'm a teardown keyword
+
+Keyword in teardown fails for timeout
+    Check Test Case    ${TEST NAME}
+
 Timeouted UK Using Non Timeouted UK
     Check Test Case    ${TEST NAME}
 
@@ -144,11 +167,11 @@ Timeouted Keyword Called With Wrong Number of Arguments with Run Keyword
 
 Test Timeout Logging
     ${tc} =    Check Test Case    Passing
-    Timeout should have been active    ${tc[0]}    1 second     1
+    Timeout should have been active    ${tc[0]}    10 seconds     1
     ${tc} =    Check Test Case    Failing Before Timeout
     Timeout should have been active    ${tc[0]}    2 seconds    3
     ${tc} =    Check Test Case    Sleeping And Timeouting
-    Timeout should have been active    ${tc[0]}    1 second     2    exceeded=True
+    Timeout should have been active    ${tc[0]}    5 milliseconds     2    exceeded=True
 
 Keyword Timeout Logging
     ${tc} =    Check Test Case    Timeouted Keyword Passes
@@ -156,19 +179,19 @@ Keyword Timeout Logging
     ${tc} =    Check Test Case    Timeouted Keyword Fails Before Timeout
     Keyword timeout should have been active    ${tc[0, 0]}    2 hours 30 minutes    3
     ${tc} =    Check Test Case    Timeouted Keyword Timeouts
-    Keyword timeout should have been active    ${tc[0, 0]}    99 milliseconds       2    exceeded=True
+    Keyword timeout should have been active    ${tc[0, 0]}    11 milliseconds       2    exceeded=True
 
 Zero timeout is ignored
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc.timeout}       ${None}
     Should Be Equal    ${tc[0].timeout}    ${None}
-    Elapsed Time Should Be Valid    ${tc[0].elapsed_time}    minimum=0.099
+    Elapsed Time Should Be Valid    ${tc[0].elapsed_time}    minimum=0.01
 
 Negative timeout is ignored
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc.timeout}       ${None}
     Should Be Equal    ${tc[0].timeout}    ${None}
-    Elapsed Time Should Be Valid    ${tc[0].elapsed_time}    minimum=0.099
+    Elapsed Time Should Be Valid    ${tc[0].elapsed_time}    minimum=0.01
 
 Invalid test timeout
     Check Test Case    ${TEST NAME}
@@ -179,7 +202,7 @@ Invalid keyword timeout
 *** Keywords ***
 Timeout should have been active
     [Arguments]    ${kw}    ${timeout}    ${msg count}    ${exceeded}=False    ${type}=Test
-    Check Log Message    ${kw[0]}    ${type} timeout ${timeout} active. * left.    DEBUG    pattern=True
+    Check Log Message    ${kw[0]}    ${type} timeout ${timeout} active. *.??? seconds left.    DEBUG    pattern=True
     Length Should Be     ${kw.body}       ${msg count}
     IF    ${exceeded}    Timeout should have exceeded    ${kw}    ${timeout}    ${type}
 

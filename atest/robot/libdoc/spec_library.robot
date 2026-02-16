@@ -1,5 +1,4 @@
 *** Settings ***
-Library           OperatingSystem
 Suite Setup       Run Libdoc And Parse Output    ${TESTDATADIR}/ExampleSpec.xml
 Resource          libdoc_resource.robot
 

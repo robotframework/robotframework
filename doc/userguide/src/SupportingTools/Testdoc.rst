@@ -13,6 +13,11 @@ format and it includes name, documentation and other metadata of each
 test suite and test case, as well as the top-level keywords and their
 arguments.
 
+.. note:: The built-in Testdoc tool is deprecated and will be removed in Robot
+          Framework 8.0. Use the new and enhanced `external Testdoc`__ instead.
+
+__ https://github.com/MarvKler/robotframework-testdoc
+
 General usage
 -------------
 

@@ -1,7 +1,7 @@
 from collections.abc import Mapping
 from datetime import date, timedelta
 from numbers import Rational
-from typing import List, Optional, TypedDict, Union
+from typing import Any, List, Optional, TypedDict, Union
 
 from robot.utils.asserts import assert_equal
 
@@ -52,6 +52,14 @@ def union_with_abc(argument: Union[Rational, None], expected):
 
 
 def union_with_str_and_abc(argument: Union[str, Rational], expected):
+    assert_equal(argument, expected)
+
+
+def union_with_any(argument: Union[int, Any, float], expected):
+    assert_equal(argument, expected)
+
+
+def union_with_object(argument: Union[int, object, float], expected):
     assert_equal(argument, expected)
 
 

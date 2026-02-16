@@ -3,8 +3,8 @@ import Handlebars from "handlebars";
 import Storage from "./storage";
 import Translations from "./i18n/translations";
 import { createModal, showModal } from "./modal";
-import { RuntimeLibdoc } from "./types";
-import { regexpEscape, delay } from "./util";
+import { RuntimeLibdoc, ArgType } from "./types";
+import { htmlEscape, regexpEscape, delay } from "./util";
 
 interface MatchInclude {
   args?: boolean;
@@ -28,10 +28,10 @@ class View {
     this.libdoc = libdoc;
     this.storage = storage;
     this.translations = translations;
-    this.initTemplating(translations);
+    this.initTemplating(translations, libdoc);
   }
 
-  private initTemplating(translate: Translations) {
+  private initTemplating(translate: Translations, libdoc: RuntimeLibdoc) {
     Handlebars.registerHelper("t", function (key: string) {
       return translate.translate(key);
     });
@@ -52,8 +52,54 @@ class View {
         ? options.fn(this)
         : options.inverse(this);
     });
+    Handlebars.registerHelper(
+      "renderTypeInfo",
+      function (argType: ArgType, isReturnType: boolean) {
+        const renderTypeDocs = (argType: ArgType) => {
+          if (argType.union) {
+            let html = "";
+            argType.nested.forEach((nested, index) => {
+              if (index > 0) {
+                html += " ";
+              }
+              html += renderTypeDocs(nested);
+              if (index < argType.nested.length - 1) {
+                html += " |";
+              }
+            });
+            return html;
+          } else {
+            let html = "";
+            const name = htmlEscape(argType.name);
+            const renderTypeDocLink =
+              argType.typedoc &&
+              !(
+                isReturnType &&
+                libdoc.typedocs.find((td) => td.name === argType.typedoc)
+                  ?.type === "Standard"
+              );
+            if (renderTypeDocLink) {
+              html += `<a style="cursor: pointer;" class="type" data-typedoc=${argType.typedoc} title=${translate.translate("typeInfoDialog")}>${name}</a>`;
+            } else {
+              html += `<span class="type">${name}</span>`;
+            }
+            if (argType.nested.length) {
+              html += "[";
+              argType.nested.forEach((nested, idx) => {
+                html += renderTypeDocs(nested);
+                if (idx < argType.nested.length - 1) {
+                  html += ",&nbsp;";
+                }
+              });
+              html += "]";
+            }
+            return html;
+          }
+        };
+        return renderTypeDocs(argType);
+      },
+    );
     this.registerPartial("arg", "argument-template");
-    this.registerPartial("typeInfo", "type-info-template");
     this.registerPartial("keyword", "keyword-template");
     this.registerPartial("dataType", "data-type-template");
   }
@@ -80,15 +126,12 @@ class View {
 
   private renderTemplates() {
     this.renderLibdocTemplate("base", this.libdoc, "#root");
-    this.renderImporting();
+    if (this.libdoc.inits.length > 0) {
+      this.renderImporting();
+    }
     this.renderShortcuts();
     this.renderKeywords();
     this.renderLibdocTemplate("data-types");
-    // This is needed to remove extra whitespace handlebars adds when rendering
-    // the pre blocks.
-    document.querySelectorAll(".dtdoc pre, .kwdoc pre").forEach(e => {
-      e.textContent = e.textContent.split('\n').map(t => t.trim()).join('\n')
-    })
     this.renderLibdocTemplate("footer");
   }
 

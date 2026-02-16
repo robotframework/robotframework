@@ -73,19 +73,19 @@ Listen Imports
     ...    Library
     ...    OperatingSystem
     ...    args: []
-    ...    importer: None
+    ...    importer: //imports.robot
     ...    originalname: OperatingSystem
     ...    source: //OperatingSystem.py
     Expect
     ...    Resource
     ...    dynamically_imported_resource
-    ...    importer: None
+    ...    importer: //imports.robot
     ...    source: //dynamically_imported_resource.robot
     Expect
     ...    Variables
     ...    vars.py
     ...    args: [new, args]
-    ...    importer: None
+    ...    importer: //imports.robot
     ...    source: //vars.py
     Verify Expected
 

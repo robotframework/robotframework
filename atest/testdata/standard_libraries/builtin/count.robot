@@ -94,12 +94,34 @@ Should Contain X Times and collapse spaces
     ${DICT_5}      \ta      2    collapse_spaces=TRUE
     ${LIST_4}      \ta      3    collapse_spaces=True
 
+Should Contain X Times with recursive normalization
+    [Template]    Should Contain X Times
+    ${{(['a', 'B'], ['c'])}}                  ${{['A', 'b']}}       1    ignore_case=True
+    ${{([' a ', 'B '], ['A', ' b'])}}         ${{['a', ' B']}}      2    ignore_case=Trye    strip_spaces=True
+    ${{[['a${SPACE*7}a', 'B${SPACE*7}']]}}    ${{['a a', 'B ']}}    1    collapse_spaces=True
+
+Should Contain X Times with bytes auto conversion
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) ValueError: Argument 'ab\u0666' cannot be converted to bytes: Character '\u0666' cannot be mapped to a byte.
+    ...
+    ...    2) ValueError: Argument '666' (integer) cannot be converted to bytes: 666 is not in range 0-255.
+    [Template]    Should Contain X Times
+    ${{b'good'}}                 o              2
+    ${{bytearray(b'goOoOd')}}    o              4    ignore_case=True
+    ${{b'h\xfcv\xe4'}}           üvä            1
+    ${{bytes([0, 1, 2])}}        \x01           1
+    ${{bytes([0, 1, 1, 1])}}     ${1}           3
+    ${{bytearray([0, 1, 2])}}    ${{[1, 2]}}    1
+    ${{bytes([0, 1, 2])}}        ab\u0666       1
+    ${{bytearray([0, 1, 2])}}    ${666}         1
+
 Should Contain X Times with invalid item
     [Documentation]    FAIL STARTS: Converting '10' to list failed: TypeError:
     ${10}    a    1
 
 Should Contain X Times with invalid count
-    [Documentation]    FAIL STARTS: 'invalid' cannot be converted to an integer: ValueError:
+    [Documentation]    FAIL ValueError: Argument 'count' got value 'invalid' that cannot be converted to integer.
     hello    l    invalid
 
 *** Keywords ***

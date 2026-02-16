@@ -3,8 +3,8 @@ robot.conf package
 
 .. automodule:: robot.conf
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Submodules
 ----------
@@ -14,21 +14,21 @@ robot.conf.gatherfailed module
 
 .. automodule:: robot.conf.gatherfailed
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 robot.conf.languages module
 ---------------------------
 
 .. automodule:: robot.conf.languages
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 robot.conf.settings module
 --------------------------
 
 .. automodule:: robot.conf.settings
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

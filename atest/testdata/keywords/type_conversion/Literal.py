@@ -1,6 +1,8 @@
 from enum import Enum, IntEnum
 from typing import List, Literal
 
+from typing_extensions import Literal as ExtLiteral
+
 
 class Char(Enum):
     R = "R"
@@ -50,6 +52,10 @@ def multiple_matches(
 
 
 def in_params(argument: List[Literal["R", "F"]], expected=None):
+    _validate_type(argument, expected)
+
+
+def typing_extensions_literal(argument: ExtLiteral["RF", 42, None], expected=None):
     _validate_type(argument, expected)
 
 

@@ -96,7 +96,7 @@ class Timeout(Sortable):
             return f"{kind} timeout not active."
         left = self.time_left()
         if left > 0:
-            return f"{kind} timeout {self} active. {left} seconds left."
+            return f"{kind} timeout {self} active. {left:.3f} seconds left."
         return f"{kind} timeout {self} exceeded."
 
     def __str__(self):

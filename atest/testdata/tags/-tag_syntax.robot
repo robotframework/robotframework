@@ -11,6 +11,7 @@ ${VAR}          -variable
 Remove from test
     [Tags]    -tag2    tag4    -${tag}    --in-settings    -\-escaped-in-settings
     Remove from keyword
+    Remove from keyword using documentation
 
 Remove from test using pattern
     [Tags]    -tag[12]    -*esc*
@@ -27,4 +28,9 @@ Variable
 *** Keywords ***
 Remove from keyword
     [Tags]    -kw1
+    No Operation
+
+Remove from keyword using documentation
+    [Documentation]    This didn't work until RF 7.4.
+    ...    Tags: -kw1, kw3, ${VAR}, \-escaped
     No Operation

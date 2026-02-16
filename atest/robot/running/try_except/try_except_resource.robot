@@ -1,6 +1,5 @@
 *** Settings ***
 Resource          atest_resource.robot
-Library           Collections
 
 *** Keywords ***
 Verify try except and block statuses

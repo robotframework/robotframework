@@ -274,7 +274,7 @@ Evaluate Empty
     [Documentation]    FAIL Evaluating expression '' failed: ValueError: Expression cannot be empty.
     Evaluate    ${EMPTY}
 
-Evaluate Nonstring
+Evaluate Non-string
     [Documentation]    FAIL Evaluating expression 5 failed: TypeError: Expression must be string, got integer.
     Evaluate    ${5}
 
@@ -303,7 +303,7 @@ Automatic variables are not seen inside lambdas
     Evaluate    (lambda: $x)()
 
 Evaluation errors can be caught
-    FOR    ${invalid}    IN    ooops    1/0    $    $nonex    len(None)    ${EMPTY}    ${7}
+    FOR    ${invalid}    IN    ooops    1/0    $    $nonex    len(None)    ${EMPTY}
         ${err1} =                 Run Keyword And Expect Error    *    Evaluate    ${invalid}
         ${status}    ${err2} =    Run Keyword And Ignore Error         Evaluate    ${invalid}
         Should Be Equal    ${status}    FAIL

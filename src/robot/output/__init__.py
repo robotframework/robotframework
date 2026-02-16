@@ -21,6 +21,6 @@ test execution is refactored.
 
 from .logger import LOGGER as LOGGER
 from .loggerhelper import LEVELS as LEVELS, Message as Message
-from .loglevel import LogLevel as LogLevel
+from .loglevel import LogLevel as LogLevel, SettableLevel as SettableLevel
 from .output import Output as Output
 from .xmllogger import XmlLogger as XmlLogger

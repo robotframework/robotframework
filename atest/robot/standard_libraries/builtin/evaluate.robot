@@ -108,7 +108,7 @@ Invalid $ usage
 Evaluate Empty
     Check Test Case    ${TESTNAME}
 
-Evaluate Nonstring
+Evaluate Non-string
     Check Test Case    ${TESTNAME}
 
 Evaluate doesn't see module globals

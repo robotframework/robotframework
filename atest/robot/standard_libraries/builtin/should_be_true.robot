@@ -26,3 +26,6 @@ Should (Not) Be True automatically imports modules
 
 Should (Not) Be True is evaluated with robot's variables
     Check test case    ${TESTNAME}
+
+Should (Not) Be True uses non-strings directly
+    Check test case    ${TESTNAME}

@@ -74,6 +74,30 @@ class NormalizedDict(MutableMapping[str, V]):
         if initial:
             self.update(initial)
 
+    @classmethod
+    def fromkeys(
+        cls,
+        keys: "Iterable[str]",
+        value: "V | None" = None,
+        /,
+        *,
+        ignore: "Sequence[str]" = (),
+        caseless: bool = True,
+        spaceless: bool = True,
+    ) -> "NormalizedDict[V | None]":
+        """Convenience method to create a NormalizedDict from keys.
+
+        This matches ``dict.fromkeys`` but is not part of the Mapping API.
+
+        New in Robot Framework 7.4.1.
+        """
+        return cls(
+            dict.fromkeys(keys, value),
+            ignore=ignore,
+            caseless=caseless,
+            spaceless=spaceless,
+        )
+
     @property
     def normalized_keys(self) -> "tuple[str, ...]":
         return tuple(self._keys)

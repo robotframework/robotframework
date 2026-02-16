@@ -8,7 +8,7 @@ create new ones. This task is not too complicated because, as this
 chapter illustrates, Robot Framework's library API is simple
 and straightforward.
 
-.. contents::
+.. contents::Creat
    :depth: 2
    :local:
 
@@ -173,6 +173,22 @@ Example implementations for the libraries used in the above example:
                do_something_in_test_environment()
            else:
                do_something_in_other_environments()
+
+If a library is imported multiple times with different arguments within a single
+suite, it needs to be given a `custom name`__ or otherwise latter imports are ignored:
+
+.. sourcecode:: robotframework
+
+   *** Settings ***
+   Library    MyLibrary     10.0.0.1    8080    AS    RemoteLibrary
+   Library    MyLibrary     127.0.0.1    AS    LocalLibrary
+
+   *** Test Cases ***
+   Example
+       RemoteLibrary.Send Message    Hello!
+       LocalLibrary.Send Message    Hi!
+
+__ `Setting custom name to library`_
 
 Library scope
 ~~~~~~~~~~~~~
@@ -1292,13 +1308,27 @@ Other types cause conversion failures.
    |              |               |            |              | Starting from Robot Framework 4.1, spaces and underscores can  |                                      |
    |              |               |            |              | be used as visual separators for digit grouping purposes.      |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | str_         |               | string,    | Any          | All arguments are converted to Unicode strings.                |                                      |
+   | str_         |               | string,    | Anything     | All arguments are converted to Unicode strings.                |                                      |
    |              |               | unicode    |              |                                                                |                                      |
-   |              |               |            |              | New in Robot Framework 4.0.                                    |                                      |
+   |              |               |            |              | Most values are converted simply by using `str(value)`.        |                                      |
+   |              |               |            |              | An exception is that bytes are mapped directly to Unicode      |                                      |
+   |              |               |            |              | code points with same ordinals. This means that, for example,  |                                      |
+   |              |               |            |              | `b"hyv\xe4"` becomes `"hyvä"`. Another exception is that       |                                      |
+   |              |               |            |              | Secret_ objects are explicitly rejected.                       |                                      |
+   |              |               |            |              |                                                                |                                      |
+   |              |               |            |              | New in Robot Framework 4.0. Converting bytes specially and     |                                      |
+   |              |               |            |              | rejecting `Secret` objects are new in Robot Framework 7.4.     |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | bytes_       |               |            | str_,        | Strings are converted to bytes so that each Unicode code point | | `good`                             |
-   |              |               |            | bytearray_   | below 256 is directly mapped to a matching byte. Higher code   | | `hyvä` (converted to `hyv\xe4`)    |
-   |              |               |            |              | points are not allowed.                                        | | `\x00` (the null byte)             |
+   | bytes_       |               |            | str_,        | Strings are converted to bytes so that each Unicode code point | Strings:                             |
+   |              |               |            | bytearray_   | below 256 is directly mapped to a matching byte. Higher code   |                                      |
+   |              |               |            |              | points are not allowed.                                        | | `good`                             |
+   |              |               |            |              |                                                                | | `hyvä` (converted to `hyv\xe4`)    |
+   |              |               |            |              | Integers and sequences of integers are converted to matching   | | `\x00` (converted to the null byte)|
+   |              |               |            |              | bytes directly. They must be in range 0-255.                   |                                      |
+   |              |               |            |              |                                                                | Integers and sequences of integers:  |
+   |              |               |            |              | Support for integers and sequences of integers is new in       |                                      |
+   |              |               |            |              | Robot Framework 7.4.                                           | | `0` (converted to the null byte)   |
+   |              |               |            |              |                                                                | | `[82, 70, 33]` (converted to `RF!`)|
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | bytearray_   |               |            | str_,        | Same conversion as with bytes_, but the result is a bytearray_.|                                      |
    |              |               |            | bytes_       |                                                                |                                      |
@@ -1360,8 +1390,8 @@ Other types cause conversion failures.
    |              |               |            |              |                                                                | | `OFF` (PowerState.OFF)             |
    |              |               |            |              | New in Robot Framework 4.1.                                    | | `1` (PowerState.ON)                |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | Literal_     |               |            | Any          | Only specified values are accepted. Values can be strings,     | .. sourcecode:: python               |
-   |              |               |            |              | integers, bytes, Booleans, enums and `None`, and used arguments|                                      |
+   | Literal_     |               |            | Depends on   | Only specified values are accepted. Values can be strings,     | .. sourcecode:: python               |
+   |              |               |            | usage        | integers, bytes, Booleans, enums and `None`, and used arguments|                                      |
    |              |               |            |              | are converted using the value type specific conversion logic.  |    def kw(arg: Literal['ON', 'OFF']):|
    |              |               |            |              |                                                                |        ...                           |
    |              |               |            |              | Strings are case, space, underscore and hyphen insensitive,    |                                      |
@@ -1372,37 +1402,63 @@ Other types cause conversion failures.
    |              |               |            |              |                                                                |                                      |
    |              |               |            |              | New in Robot Framework 7.0.                                    |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | None_        |               |            | str_         | String `NONE` (case-insensitive) is converted to the Python    | | `None`                             |
-   |              |               |            |              | `None` object. Other values cause an error.                    |                                      |
+   | None_        |               |            | str_         | String `NONE` (case-insensitive) and the empty string are      | | `None`                             |
+   |              |               |            |              | converted to the Python `None` object. Other values cause      |                                      |
+   |              |               |            |              | an error.                                                      |                                      |
+   |              |               |            |              |                                                                |                                      |
+   |              |               |            |              | Converting the empty string is new in Robot Framework 7.4.     |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | Any_         |               |            | Any          | Any value is accepted. No conversion is done.                  |                                      |
+   | Any_         |               |            | Anything     | Any value is accepted. No conversion is done.                  |                                      |
    |              |               |            |              |                                                                |                                      |
    |              |               |            |              | New in Robot Framework 6.1.                                    |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | list_        | Sequence_     | sequence   | str_,        | Strings must be Python list literals. They are converted       | | `['one', 'two']`                   |
-   |              |               |            | Sequence_    | to actual lists using the `ast.literal_eval`_ function.        | | `[('one', 1), ('two', 2)]`         |
+   | object_      |               |            | Anything     | Any value is accepted. No conversion is done.                  |                                      |
+   |              |               |            |              |                                                                |                                      |
+   |              |               |            |              | New in Robot Framework 7.4.                                    |                                      |
+   +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | list_        |               |            | str_,        | Converts strings and sequences to `list`.                      | | `['one', 'two']`                   |
+   |              |               |            | Sequence_    |                                                                | | `[('one', 1), ('two', 2)]`         |
+   |              |               |            |              | Strings must be Python list or tuple literals. They are        |                                      |
+   |              |               |            |              | converted using the `ast.literal_eval`_ function and possible  |                                      |
+   |              |               |            |              | tuples converted further to lists.                             |                                      |
    |              |               |            |              | They can contain any values `ast.literal_eval` supports,       |                                      |
-   |              |               |            |              | including lists and other containers.                          |                                      |
+   |              |               |            |              | including lists and other collections.                         |                                      |
    |              |               |            |              |                                                                |                                      |
-   |              |               |            |              | If the used type hint is list_ (e.g. `arg: list`), sequences   |                                      |
-   |              |               |            |              | that are not lists are converted to lists. If the type hint is |                                      |
-   |              |               |            |              | generic Sequence_, sequences are used without conversion.      |                                      |
+   |              |               |            |              | If the argument is a list, it is used without conversion.      |                                      |
+   |              |               |            |              | Tuples and other sequences are converted to lists.             |                                      |
    |              |               |            |              |                                                                |                                      |
-   |              |               |            |              | Alias `sequence` is new in Robot Framework 7.0.                |                                      |
+   |              |               |            |              | Support for tuple literals is new in Robot Framework 7.4.      |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | tuple_       |               |            | str_,        | Same as `list`, but string arguments must be tuple literals.   | | `('one', 'two')`                   |
+   | tuple_       |               |            | str_,        | Same as `list`, but the result is tuple_.                      | | `('one', 'two')`                   |
    |              |               |            | Sequence_    |                                                                |                                      |
+   |              |               |            |              | Prior to Robot Framework 7.4, only tuple literals were         |                                      |
+   |              |               |            |              | supported.                                                     |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | set_         | `Set          |            | str_,        | Same as `list`, but string arguments must be set literals or   | | `{1, 2, 3, 42}`                    |
-   |              | <abc.Set_>`__ |            | Container_   | `set()` to create an empty set.                                | | `set()`                            |
+   | Sequence_    |               |            | str_,        | Same as `list`, but any sequence is accepted without           | | `[1, 2, 3]` (result is `list`)     |
+   |              |               |            | Sequence_    | conversion.                                                    | | `(1, 2, 3)` (result is `tuple`)    |
+   |              |               |            |              |                                                                |                                      |
+   |              |               |            |              | If the used type is MutableSequence_, immutable values are     |                                      |
+   |              |               |            |              | converted to lists.                                            |                                      |
+   +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | set_         | `Set          |            | str_,        | Same as `list`, but also collection objects and set literals   | | `{1, 2, 3, 42}`                    |
+   |              | <abc.Set_>`__ |            | Collection_  | are supported and the result is set_.                          | | `set()` (an empty set)             |
+   |              |               |            |              |                                                                |                                      |
+   |              |               |            |              | Prior to Robot Framework 7.4, only set literals were supported.|                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | frozenset_   |               |            | str_,        | Same as `set`, but the result is a frozenset_.                 | | `{1, 2, 3, 42}`                    |
-   |              |               |            | Container_   |                                                                | | `frozenset()`                      |
+   |              |               |            | Collection_  |                                                                | | `frozenset()` (an empty set)       |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | dict_        | Mapping_      | dictionary,| str_,        | Same as `list`, but string arguments must be dictionary        | | `{'a': 1, 'b': 2}`                 |
-   |              |               | mapping,   | Mapping_     | literals.                                                      | | `{'key': 1, 'nested': {'key': 2}}` |
-   |              |               | map        |              |                                                                |                                      |
-   |              |               |            |              | Alias `mapping` is new in Robot Framework 7.0.                 |                                      |
+   | dict_        |               | dictionary | str_,        | Converts strings and mappings to `dict`.                       | | `{'a': 1, 'b': 2}`                 |
+   |              |               |            | Mapping_     |                                                                | | `{'key': 1, 'nested': {'key': 2}}` |
+   |              |               |            |              | Strings must be Python dictionary literals. They are converted |                                      |
+   |              |               |            |              | to `dict` using the `ast.literal_eval`_ function.              |                                      |
+   |              |               |            |              | They can contain any values `ast.literal_eval` supports,       |                                      |
+   |              |               |            |              | including dictionaries and other collections.                  |                                      |
+   +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | Mapping_     |               | map        | str_,        | Same as `dict`, but the original mapping type is preserved.    |                                      |
+   |              |               |            | Mapping_     |                                                                |                                      |
+   |              |               |            |              | If type is MutableMapping_, immutable values are converted     |                                      |
+   |              |               |            |              | to `dict`.                                                     |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | TypedDict_   |               |            | str_,        | Same as `dict`, but dictionary items are also converted        | .. sourcecode:: python               |
    |              |               |            | Mapping_     | to the specified types and items not included in the type      |                                      |
@@ -1411,6 +1467,14 @@ Other types cause conversion failures.
    |              |               |            |              | New in Robot Framework 6.0. Normal `dict` conversion was       |        enabled: bool                 |
    |              |               |            |              | used earlier.                                                  |                                      |
    |              |               |            |              |                                                                | | `{'width': 1600, 'enabled': True}` |
+   +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | Secret_      |               |            | Secret_      | Using the `Secret type`_ as a type hint ensures that only      | .. sourcecode:: python               |
+   |              |               |            |              | `secret variables`_ are accepted as arguments.                 |                                      |
+   |              |               |            |              |                                                                |    from robot.api.types import Secret|
+   |              |               |            |              | New in Robot Framework 7.4.                                    |                                      |
+   |              |               |            |              |                                                                |                                      |
+   |              |               |            |              |                                                                |    def login(token: Secret):         |
+   |              |               |            |              |                                                                |        do_something(token.value)     |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
 
 .. note:: Starting from Robot Framework 5.0, types that have a converted are
@@ -1421,6 +1485,7 @@ Other types cause conversion failures.
           explicit type or as a default value.
 
 .. _Any: https://docs.python.org/library/typing.html#typing.Any
+.. _object: https://docs.python.org/3/library/functions.html#object
 .. _bool: https://docs.python.org/library/functions.html#bool
 .. _int: https://docs.python.org/library/functions.html#int
 .. _Integral: https://docs.python.org/library/numbers.html#numbers.Integral
@@ -1447,11 +1512,13 @@ Other types cause conversion failures.
 .. _tuple: https://docs.python.org/library/stdtypes.html#tuple
 .. _dict: https://docs.python.org/library/stdtypes.html#dict
 .. _Mapping: https://docs.python.org/library/collections.abc.html#collections.abc.Mapping
+.. _MutableMapping: https://docs.python.org/library/collections.abc.html#collections.abc.MutableMapping
 .. _set: https://docs.python.org/library/stdtypes.html#set
 .. _abc.Set: https://docs.python.org/library/collections.abc.html#collections.abc.Set
 .. _frozenset: https://docs.python.org/library/stdtypes.html#frozenset
 .. _TypedDict: https://docs.python.org/library/typing.html#typing.TypedDict
-.. _Container: https://docs.python.org/library/collections.abc.html#collections.abc.Container
+.. _Secret: https://robot-framework.readthedocs.io/en/master/autodoc/robot.utils.html#robot.utils.secret.Secret
+.. _Collection: https://docs.python.org/library/collections.abc.html#collections.abc.Collection
 .. _typing: https://docs.python.org/library/typing.html
 .. _ISO 8601: https://en.wikipedia.org/wiki/ISO_8601
 .. _ast.literal_eval: https://docs.python.org/library/ast.html#ast.literal_eval
@@ -1459,13 +1526,16 @@ Other types cause conversion failures.
 Specifying multiple possible types
 ''''''''''''''''''''''''''''''''''
 
-Starting from Robot Framework 4.0, it is possible to specify that an argument
-has multiple possible types. In this situation argument conversion is attempted
-based on each type and the whole conversion fails if none of these conversions
-succeed.
+It is possible to specify that an argument has multiple possible types. In this
+situation argument conversion is attempted based on each type, from left to right,
+and the value of the first succeeding conversion is used. If none of these conversions
+succeeds, the whole conversion fails.
+
+Union syntax
+````````````
 
 When using function annotations, the natural syntax to specify that an argument
-has multiple possible types is using Union_:
+has multiple possible types is using a Union_:
 
 .. sourcecode:: python
 
@@ -1475,8 +1545,8 @@ has multiple possible types is using Union_:
   def example(length: Union[int, float], padding: Union[int, str, None] = None):
       ...
 
-When using Python 3.10 or newer, it is possible to use the native `type1 | type2`__
-syntax instead:
+When using Python 3.10 or newer, it is possible to use the `native union syntax`__
+like `int | float` instead:
 
 .. sourcecode:: python
 
@@ -1484,13 +1554,19 @@ syntax instead:
       ...
 
 Robot Framework 7.0 enhanced the support for the union syntax so that also
-"stringly typed" unions like `'type1 | type2'` work. This syntax works also
+"stringly typed" unions like `"int | float"` work. This syntax works also
 with older Python versions:
 
 .. sourcecode:: python
 
-  def example(length: 'int | float', padding: 'int | str | None' = None):
+  def example(length: "int | float", padding: "int | str | None" = None):
       ...
+
+__ https://peps.python.org/pep-0604/
+.. _Union: https://docs.python.org/3/library/typing.html#typing.Union
+
+Using tuples
+````````````
 
 An alternative is specifying types as a tuple. It is not recommended with annotations,
 because that syntax is not supported by other tools, but it works well with
@@ -1509,11 +1585,15 @@ With the above examples the `length` argument would first be converted to an
 integer and if that fails then to a float. The `padding` would be first
 converted to an integer, then to a string, and finally to `None`.
 
+When argument matches one of the types
+``````````````````````````````````````
+
 If the given argument has one of the accepted types, then no conversion is done
-and the argument is used as-is. For example, if the `length` argument gets
-value `1.5` as a float, it would not be converted to an integer. Notice that
-using non-string values like floats as an argument requires using variables as
-these examples giving different values to the `length` argument demonstrate:
+and the argument is used as-is. For example, if the `length` argument typed
+like `length: int | float` is used with a floating point number `1.5`, it is not
+converted to an integer. Notice that using non-string values like floats as an
+argument requires using variables as these examples giving different values to
+the `length` argument demonstrate:
 
 .. sourcecode:: robotframework
 
@@ -1524,10 +1604,10 @@ these examples giving different values to the `length` argument demonstrate:
        Example    ${10}     # Argument is an integer. Accepted as-is.
        Example    ${1.5}    # Argument is a float. Accepted as-is.
 
-If one of the accepted types is string, then no conversion is done if the given
-argument is a string. As the following examples giving different values to the
-`padding` argument demonstrate, also in these cases passing other types is
-possible using variables:
+If one of the accepted types is string like in `padding: int | str | None`,
+then no conversion is done if the given argument is a string. As the following
+examples giving different values to the `padding` argument demonstrate, also in
+these cases passing other types is possible using variables:
 
 .. sourcecode:: robotframework
 
@@ -1540,27 +1620,71 @@ possible using variables:
        Example    1    ${1.5}     # Argument is a float. Converted to an integer.
 
 If the given argument does not have any of the accepted types, conversion is
-attempted in the order types are specified. If any conversion succeeds, the
-resulting value is used without attempting remaining conversions. If no individual
-conversion succeeds, the whole conversion fails.
+attempted in the order types are specified.
 
-If a specified type is not recognized by Robot Framework, then the original argument
-value is used as-is. For example, with this keyword conversion would first be attempted
-to an integer, but if that fails the keyword would get the original argument:
+.. note:: The order of types changes the conversion result in cases where the used
+          value does not match any of the types, but conversion to multiple types
+          would succeed.
+
+          For example, if typing is `float | int` and the used value is string `42`,
+          the result will be float `42.0` instead of integer `42`. The reason is
+          that a string does not match either of the types and `float` conversion
+          is attempted first. If the order is changed to `int | float`, the result
+          will be an integer.
+
+          String `3.14` would be converted to a float regardless the order, because
+          `int` conversion does not succeed. The order does not affect usages where
+          the value is already an integer or a float either, because there is no
+          need for conversion in such cases.
+
+Handling `Any` and `object`
+```````````````````````````
+
+If `Any` or `object` is used as a type hint on its own like `arg: Any` or `arg: object`,
+any value is accepted without conversion. How they work when used in an union differs,
+though.
+
+If `Any` is used in a union like `arg: int | Any`, any value is accepted without
+conversion. This allows using `Any` as an escape hatch that disables argument conversion
+altogether.
+
+On the other hand, if `object` is used in an union like `arg: int | object`,
+conversion is attempted to types before `object`. This allows attempting conversion
+to certain type or types, but getting the original value if conversions fail.
+
+.. note:: Although this subtle difference in behavior may be useful, it is also
+          somewhat confusing and the plan is to change it in Robot Framework 8.0
+          so that `Any` behaves like `object`. See the issue `#5571`__ for more
+          information and comment the issue if you do not think the planned change
+          is a good idea.
+
+__ https://github.com/robotframework/robotframework/issues/5571
+
+Handling unrecognized types
+```````````````````````````
+
+If types that are not recognized by Robot Framework are used in an union, they are
+handled like this:
+
+- If a used value matches any of the types, including unrecognized types, the value
+  is used as-is without conversion.
+- Otherwise conversion is attempted to recognized types from left to right.
+- If any conversion succeeds, the converted value is returned.
+- If no conversion succeeds, the original value is returned.
+
+For example, with the following keyword string `"7"` would be converted to an integer,
+but string `"something"` would be used as-is:
 
 .. sourcecode:: python
 
-  def example(argument: Union[int, Unrecognized]):
+  def example(argument: int | Unrecognized):
       ...
 
 Starting from Robot Framework 6.1, the above logic works also if an unrecognized
-type is listed before a recognized type like `Union[Unrecognized, int]`.
+type is listed before a recognized type like `Unrecognized | int`.
 Also in this case `int` conversion is attempted, and the argument id passed as-is
 if it fails. With earlier Robot Framework versions, `int` conversion would not be
 attempted at all.
-
-__ https://peps.python.org/pep-0604/
-.. _Union: https://docs.python.org/3/library/typing.html#typing.Union
 
 Parameterized types
 '''''''''''''''''''
@@ -1577,9 +1701,9 @@ with different generic types works according to these rules:
   exactly that amount of items and they are converted to matching types.
 - To create a homogeneous tuple, it is possible to use exactly one type and
   ellipsis like `tuple[int, ...]`. In this case tuple can have any number
-  of items and they are all converted to the specified type.
+  of items, including zero, and they are all converted to the specified type.
 - With dictionaries there must be exactly two types like `dict[str, int]`.
-  Dictionary keys are converted using the former type and values using the latter.
+  Dictionary keys are converted using the first type and values using the second.
 - With sets there can be exactly one type like `set[float]`. Conversion logic
   is the same as with lists.
 
@@ -1590,13 +1714,106 @@ syntax like `'list[int]'`.
 
 .. note:: Support for converting nested types with generics is new in
           Robot Framework 6.0. Same syntax works also with earlier versions,
-          but arguments are only converted to the base type and nested types
-          are not used for anything.
+          but arguments are only converted to the base type and nested type
+          information is ignored.
 
 .. note:: Support for "stringly typed" parameterized generics is new in
           Robot Framework 7.0.
 
 __ https://peps.python.org/pep-0585/
+
+Secret type
+'''''''''''
+
+Robot Framework has a custom `robot.api.types.Secret <Secret_>`_ type that
+encapsulates values so that they are not shown in log files. If the `Secret`
+type is used as an argument type, only `Secret` objects are accepted and trying
+to use, for example, literal strings fails. The encapsulated value is available
+in the `value` attribute so keywords can access it easily:
+
+.. sourcecode:: python
+
+   from example import SUT
+   from robot.api.types import Secret
+
+
+   def login_to_sut(user: str, token: Secret):
+       SUT.login(user, token.value)
+
+The `Secret variables`_ section explains how to create `Secret` objects
+in the data, on the command line, and elsewhere. In the data that involves
+using `variable type conversion`_ and, for example, `environment variables`_:
+
+.. sourcecode:: robotframework
+
+    *** Variables ***
+    ${USER}             robot
+    ${TOKEN: Secret}    %{ROBOT_TOKEN}
+
+    *** Test Cases ***
+    Example
+        Login to SUT    ${USER}    ${TOKEN}
+
+Keywords can also accept `Secret` objects in addition to strings by using
+the union syntax like `str | Secret`:
+
+.. sourcecode:: python
+
+   from example import SUT
+   from robot.api import logger
+   from robot.api.types import Secret
+
+
+   def input_password(password: str | Secret):
+        logger.debug(f"Typing password: {password}")
+        if isinstance(password, Secret):
+            password = password.value
+        SUT.input_password(password)
+
+In this kind of cases it is important to not log or otherwise disclose actual
+secret values. The string representation of `Secret` objects is always
+`<secret>` and thus logging `f"Typing password: {password}"` in the above
+example is safe, but logging it at the end of the example would not be.
+The `repr()` of `Secret` objects is `Secret(value=<secret>)` so the real
+value is not shown in that string representation either.
+
+Using the `Secret` type in complex type hints works similarly as with other types.
+The following example is similar to the example above, but uses a `TypedDict`_
+with a `Secret` item:
+
+.. sourcecode:: python
+
+    from typing import TypedDict
+
+    from robot.api.types import Secret
+
+
+    class Credential(TypedDict):
+        user: str
+        token: Secret
+
+
+    def login_to_sut(credentials: Credential):
+        SUT.login(credentials["user"], credentials["token"].value)
+
+.. sourcecode:: robotframework
+
+    *** Variables ***
+    ${TOKEN: Secret}    %{ROBOT_TOKEN}
+    &{CREDENTIALS}      user=robot    token=${TOKEN}
+
+    *** Test Cases ***
+    Example
+        Login to SUT    ${CREDENTIALS}
+
+.. warning:: Secret objects do not hide or encrypt their values. The real values
+             are thus available for all code that can access these objects directly
+             or indirectly via Robot Framework APIs.
+
+.. warning:: Actual secret values that keywords pass forward may be logged or
+             otherwise disclosed by external modules or tools using them.
+
+.. note:: The Secret_ type is new in Robot Framework 7.4.
 
 Custom argument converters
 ''''''''''''''''''''''''''
@@ -3158,7 +3375,7 @@ As explained in the above table, default values can be specified with argument
 names either as a string like `'name=default'` or as a tuple like
 `('name', 'default')`. The main problem with the former syntax is that all
 default values are considered strings whereas the latter syntax allows using
-all objects like `('inteter', 1)` or `('boolean', True)`. When using other
+all objects like `('integer', 1)` or `('boolean', True)`. When using other
 objects than strings, Robot Framework can do `automatic argument conversion`__
 based on them.
 

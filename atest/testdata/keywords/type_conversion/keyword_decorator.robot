@@ -354,15 +354,14 @@ List
     List                 []                        []
     List                 ['foo', 'bar']            ${LIST}
     List                 [1, 2, 3.14, -42]         [1, 2, 3.14, -42]
-    List                 ['\\x00', '\\x52']        ['\\x00', 'R']
     List                 [{'nested': True}]        [{'nested': True}]
-    List                 ${{[1, 2]}}               [1, 2]
-    List                 ${{(1, 2)}}               [1, 2]
+    List                 ('\\x00', '\\x52')        ['\\x00', 'R']
+    List                 ${LIST}                   ${LIST}
+    List                 ${{tuple($LIST)}}         ${LIST}
 
 Invalid list
     [Template]           Conversion Should Fail
     List                 [1, ooops]                error=Invalid expression.
-    List                 ()                        error=Value is tuple, not list.
     List                 {}                        error=Value is dictionary, not list.
     List                 ooops                     error=Invalid expression.
     List                 ${EMPTY}                  error=Invalid expression.
@@ -378,26 +377,26 @@ Sequence (abc)
 
 Invalid sequence (abc)
     [Template]           Conversion Should Fail
-    Sequence             [1, ooops]                type=list             error=Invalid expression.
-    Mutable sequence     ()                        type=list             error=Value is tuple, not list.
-    Sequence             {}                        type=list             error=Value is dictionary, not list.
-    Mutable sequence     ooops                     type=list             error=Invalid expression.
-    Sequence             ${EMPTY}                  type=list             error=Invalid expression.
-    Mutable sequence     !"#¤%&/(inv expr)\=?      type=list             error=Invalid expression.
-    Sequence             1 / 0                     type=list             error=Invalid expression.
+    Sequence             [1, ooops]                type=Sequence         error=Invalid expression.
+    Mutable sequence     666                       type=Sequence         error=Value is integer, not Sequence.
+    Sequence             {}                        type=Sequence         error=Value is dictionary, not Sequence.
+    Mutable sequence     ooops                     type=Sequence         error=Invalid expression.
+    Sequence             ${EMPTY}                  type=Sequence         error=Invalid expression.
+    Mutable sequence     !"#¤%&/(inv expr)\=?      type=Sequence         error=Invalid expression.
+    Sequence             1 / 0                     type=Sequence         error=Invalid expression.
 
 Tuple
     Tuple                ()                        ()
-    Tuple                ('foo', "bar")            tuple(${LIST})
+    Tuple                ('foo', 'bar')            ('foo', 'bar')
     Tuple                (1, 2, 3.14, -42)         (1, 2, 3.14, -42)
-    Tuple                (['nested', True],)       (['nested', True],)
-    Tuple                ${{(1, 2)}}               (1, 2)
-    Tuple                ${{[1, 2]}}               (1, 2)
+    Tuple                ({'nested': True},)       ({'nested': True},)
+    Tuple                ['\\x00', '\\x52']        ('\\x00', 'R')
+    Tuple                ${{tuple($LIST)}}         ('foo', 'bar')
+    Tuple                ${LIST}                   ('foo', 'bar')
 
 Invalid tuple
     [Template]           Conversion Should Fail
     Tuple                (1, ooops)                error=Invalid expression.
-    Tuple                []                        error=Value is list, not tuple.
     Tuple                {}                        error=Value is dictionary, not tuple.
     Tuple                ooops                     error=Invalid expression.
     Tuple                ${NONE}                   arg_type=None
@@ -422,14 +421,16 @@ Mapping (abc)
 
 Invalid mapping (abc)
     [Template]           Conversion Should Fail
-    Mapping              foobar                    type=dictionary       error=Invalid expression.
-    Mapping              []                        type=dictionary       error=Value is list, not dict.
-    Mutable mapping      barfoo                    type=dictionary       error=Invalid expression.
+    Mapping              foobar                    type=Mapping          error=Invalid expression.
+    Mapping              []                        type=Mapping          error=Value is list, not Mapping.
+    Mutable mapping      barfoo                    type=Mapping          error=Invalid expression.
 
 Set
     Set                  set()                     set()
     Set                  {'foo', 'bar'}            {'foo', 'bar'}
     Set                  {1, 2, 3.14, -42}         {1, 2, 3.14, -42}
+    Set                  [1, 2, 3.14, -42]         {1, 2, 3.14, -42}
+    Set                  (1, 2, 3.14, -42)         {1, 2, 3.14, -42}
     Set                  ${{{1}}}                  {1}
     Set                  ${{frozenset({1})}}       {1}
     Set                  ${{[1]}}                  {1}
@@ -440,8 +441,6 @@ Invalid set
     [Template]           Conversion Should Fail
     Set                  {1, ooops}                error=Invalid expression.
     Set                  {}                        error=Value is dictionary, not set.
-    Set                  ()                        error=Value is tuple, not set.
-    Set                  []                        error=Value is list, not set.
     Set                  ooops                     error=Invalid expression.
     Set                  {{'not', 'hashable'}}     error=Evaluating expression failed: *
     Set                  frozenset()               error=Invalid expression.

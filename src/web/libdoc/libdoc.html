@@ -101,7 +101,7 @@
                 >{{scope}}</td></tr>{{/if}}
           </table>
           <div id="introduction-container">
-            <h2 id="introduction">{{t "intro"}}</h2>
+            <h2 id="Introduction">{{t "intro"}}</h2>
             <div class="doc">{{{doc}}}</div>
           </div>
           <div id="importing-container"></div>
@@ -276,7 +276,7 @@
               <div class="return-type">
                 <h4>{{t "returnType"}}</h4>
                 <span class="arg-type">
-                {{>typeInfo returnType}}
+                {{{renderTypeInfo returnType true}}}
                 </span>
               </div>
               {{/if}}
@@ -287,7 +287,7 @@
               <span class="kw-tags">
               {{#each tags}}
                 <span class="tag-link"
-                  title="Show keywords with this tag">{{this}}</span>{{#unless @last}},<br>{{/unless}}
+                  title="Show keywords with this tag">{{this}}</span>{{#unless @last}},&nbsp;{{/unless}}
               {{/each}}
               </span>
             </div>
@@ -319,7 +319,7 @@
 
       {{#if type}}
         <span class="arg-type">
-            {{> typeInfo type}}
+            {{{renderTypeInfo type false}}}
         </span>
       {{/if}}
     </script>
@@ -329,28 +329,6 @@
         <option {{#ifEquals ../selectedTag this}}selected{{/ifEquals}}>{{this}}
         </option>
       {{/each}}
-    </script>
-    <script type="text/x-handlebars-template" id="type-info-template">
-      {{~#if union}}
-        {{#each nested}}
-          {{> typeInfo this}}
-          {{#unless @last}}|{{/unless}}
-        {{/each}}
-      {{else~}}
-        {{#if typedoc~}}
-          <a style="cursor: pointer;" class="type" data-typedoc={{typedoc}} title="{{t 'typeInfoDialog'}}">{{name}}</a>
-        {{~else}}
-          <span class="type">{{name}}</span>
-        {{/if}}
-        {{#if nested.length}}
-        [
-        {{~#each nested}}
-            {{~> typeInfo this}}
-            {{~#unless @last}},&nbsp;{{/unless}}
-          {{~/each~}}
-          ]
-        {{/if~}}
-      {{~/if~}}
     </script>
     <script type="text/x-handlebars-template" id="data-types-template">
       {{#if typedocs.length}}

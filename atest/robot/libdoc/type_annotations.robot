@@ -12,8 +12,7 @@ Enums
     ...                                  big: Big
 
 With defaults
-    Keyword Arguments Should Be     2    integer: int = 42    list_: list | None = None
-    ...                                  enum: Small | None = None
+    Keyword Arguments Should Be     2    i: int = 42    t: tuple = ()    e: Small = one
 
 Keyword-only arguments
     Keyword Arguments Should Be     3    *    kwo: int    with_default: str = value
@@ -33,7 +32,7 @@ Drop `typing.` prefix
 
 Union from typing
     Keyword Arguments Should Be     8    a: int | str | list | tuple
-    Keyword Arguments Should Be     9    a: int | str | list | tuple | None = None
+    Keyword Arguments Should Be     9    a: int | str | list | None = None
 
 Nested
     Keyword Arguments Should Be    10    a: List[int]    b: List[int | float]    c: Tuple[Tuple[UnknownType], Dict[str, Tuple[float]]]
@@ -42,7 +41,10 @@ Nested
 Literal
     Keyword Arguments Should Be    11    a: Literal['on', 'off', 'int']    b: Literal[1, 2, 3]   c: Literal[one, True, None]
 
+Secret type
+    Keyword Arguments Should Be    12    token: Secret
+
 Union syntax
     [Tags]    require-py3.10
-    Keyword Arguments Should Be    12    a: int | str | list | tuple
-    Keyword Arguments Should Be    13    a: int | str | list | tuple | None = None
+    Keyword Arguments Should Be    13    a: int | str | list | tuple
+    Keyword Arguments Should Be    14    a: int | str | list | None = None

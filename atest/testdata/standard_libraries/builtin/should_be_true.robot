@@ -35,15 +35,24 @@ Should Not Be True with invalid expression
     Should Not Be True    this is invalid
 
 Should (Not) Be True automatically imports modules
-    Should Be True    os.pathsep == '${:}'
-    Should Be True    math.pi > 3.14
-    Should Be True    robot.__version__[0] in ('6', '7', '8', '9')
+    Should Be True        os.pathsep == '${:}'
+    Should Be True        math.pi > 3.14
+    Should Be True        robot.__version__[0] in ('7', '8', '9')
     Should Not Be True    os.sep == 'os.sep'
     Should Not Be True    sys.platform == 'hurd'    # let's see when this starts failing
 
 Should (Not) Be True is evaluated with robot's variables
-    Should Be True    $list2
-    Should Be True    $list0 == []
-    Should Be True   len($list2) == 2
+    Should Be True       $list2
+    Should Be True       $list0 == []
+    Should Be True       len($list2) == 2
     Should Not Be True   $list0
     Should Not Be True   $list0 == $dict0
+
+Should (Not) Be True uses non-strings directly
+    [Documentation]
+    ...    Converting `[Decimal('0')]` to string and evaluating that doesn't work.
+    ...    If these usages work, values must be used directly.
+    ...    FAIL '[Decimal('0')]' should not be true.
+    VAR    @{list: Decimal}    0
+    Should Be True        ${list}
+    Should Not Be True    ${list}

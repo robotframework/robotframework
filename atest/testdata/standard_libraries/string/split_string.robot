@@ -30,7 +30,7 @@ Split String With Max Split 1
     ${result} =    Split String    ${NSN}    _    1
     Result Should Contain Items In Given Order    ${result}    nokia    siemens_networks
 
-Split String With Empty Separator
+Split String with empty string as separator is deprecated
     ${result} =    Split String    ${WHITE SPACES}    ${EMPTY}    -1
     Result Should Contain Items In Given Order    ${result}    hello    world    again
 
@@ -43,8 +43,16 @@ Split String Separator not Found
     Result Should Contain Items In Given Order    ${result}    ${NSN}
 
 Split String With Invalid Max Split
-    [Documentation]    FAIL ValueError: Cannot convert 'max_split' argument 'invalid' to an integer.
+    [Documentation]    FAIL ValueError: Argument 'max_split' got value 'invalid' that cannot be converted to integer.
     ${result} =    Split String    ${NSN}    NSN    invalid
+
+Split String with bytes
+    ${result} =    Split String    ${{b"a b\nc"}}
+    Should Be Equal    ${result}    ["a", "b", "c"]    type=list[bytes]
+    ${result} =    Split String    ${{b"a,b,c"}}    ${{b","}}
+    Should Be Equal    ${result}    ["a", "b", "c"]    type=list[bytes]
+    ${result} =    Split String    ${{b"a,b,c"}}    ,    max_split=1
+    Should Be Equal    ${result}    ["a", "b,c"]    type=list[bytes]
 
 Split String From Right
     ${result} =    Split String From Right    ${NSN}    _
@@ -70,7 +78,7 @@ Split String From Right With Max Split 1
     ${result} =    Split String From Right    ${NSN}    _    1
     Result Should Contain Items In Given Order    ${result}    nokia_siemens    networks
 
-Split String From Right With Empty Separator
+Split String From Right with empty string as separator is deprecated
     ${result} =    Split String From Right    ${WHITE SPACES}    ${EMPTY}    -1
     Result Should Contain Items In Given Order    ${result}    hello    world    again
 
@@ -83,8 +91,16 @@ Split String From Right Separator not Found
     Result Should Contain Items In Given Order    ${result}    ${NSN}
 
 Split String From Right With Invalid Max Split
-    [Documentation]    FAIL ValueError: Cannot convert 'max_split' argument 'invalid' to an integer.
+    [Documentation]    FAIL ValueError: Argument 'max_split' got value 'invalid' that cannot be converted to integer.
     ${result} =    Split String From Right    ${NSN}    NSN    invalid
+
+Split String From Right with bytes
+    ${result} =    Split String From Right    ${{b"a b\nc"}}
+    Should Be Equal    ${result}    ["a", "b", "c"]    type=list[bytes]
+    ${result} =    Split String From Right    ${{b"a,b,c"}}    ${{b","}}
+    Should Be Equal    ${result}    ["a", "b", "c"]    type=list[bytes]
+    ${result} =    Split String From Right    ${{b"a,b,c"}}    ,    max_split=1
+    Should Be Equal    ${result}    ["a,b", "c"]    type=list[bytes]
 
 Split String To Characters
     @{chars} =    Split String To Characters    ab 12
@@ -93,6 +109,10 @@ Split String To Characters
 Split Empty String To Characters
     @{chars} =    Split String To Characters    ${EMPTY}
     Result Should Contain Items In Given Order    ${chars}
+
+Split String To Characters with bytes
+    @{chars} =    Split String To Characters    ${{b"hi!"}}
+    Should Be Equal    ${chars}    ["h", "i", "!"]    type=list[bytes]
 
 *** Keywords ***
 Result Should Contain Items In Given Order

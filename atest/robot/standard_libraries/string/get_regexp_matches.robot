@@ -26,3 +26,6 @@ Get Regexp Matches Insert Group Regex With Group Indexes
 
 Get Regexp Matches Insert Group Regex With Group Name And Index
     Check Test Case    ${TESTNAME}
+
+Get Regex Matches with bytes
+    Check Test Case    ${TESTNAME}

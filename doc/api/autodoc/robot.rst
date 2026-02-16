@@ -3,8 +3,8 @@ robot package
 
 .. automodule:: robot
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Subpackages
 -----------
@@ -34,53 +34,53 @@ robot.errors module
 
 .. automodule:: robot.errors
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 robot.libdoc module
 -------------------
 
 .. automodule:: robot.libdoc
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 robot.pythonpathsetter module
 -----------------------------
 
 .. automodule:: robot.pythonpathsetter
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 robot.rebot module
 ------------------
 
 .. automodule:: robot.rebot
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 robot.run module
 ----------------
 
 .. automodule:: robot.run
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 robot.testdoc module
 --------------------
 
 .. automodule:: robot.testdoc
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 robot.version module
 --------------------
 
 .. automodule:: robot.version
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

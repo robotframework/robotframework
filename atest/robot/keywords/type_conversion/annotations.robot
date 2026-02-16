@@ -126,10 +126,13 @@ Invalid Enum
 Invalid IntEnum
     Check Test Case    ${TESTNAME}
 
+None
+    Check Test Case    ${TESTNAME}
+
 NoneType
     Check Test Case    ${TESTNAME}
 
-Invalid NoneType
+Invalid None
     Check Test Case    ${TESTNAME}
 
 List
@@ -139,6 +142,9 @@ Invalid list
     Check Test Case    ${TESTNAME}
 
 Sequence (abc)
+    Check Test Case    ${TESTNAME}
+
+MutableSequence (abc)
     Check Test Case    ${TESTNAME}
 
 Invalid sequence (abc)
@@ -157,6 +163,9 @@ Invalid dictionary
     Check Test Case    ${TESTNAME}
 
 Mapping (abc)
+    Check Test Case    ${TESTNAME}
+
+MutableMapping (abc)
     Check Test Case    ${TESTNAME}
 
 Invalid mapping (abc)
@@ -220,6 +229,9 @@ None as default with known type
     Check Test Case    ${TESTNAME}
 
 None as default with unknown type
+    Check Test Case    ${TESTNAME}
+
+Empty string when None is used as default but not as explicit type
     Check Test Case    ${TESTNAME}
 
 Forward references

@@ -13,11 +13,6 @@ Disable timeout with nONe
     Check Log Message    ${tc[0, 1]}    Waiting for process to complete.
     Check Log Message    ${tc[0, 2]}    Process completed.
 
-Disable timeout with empty string
-    ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc[0, 1]}    Waiting for process to complete.
-    Check Log Message    ${tc[0, 2]}    Process completed.
-
 Disable timeout with zero
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc[0, 1]}    Waiting for process to complete.

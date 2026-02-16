@@ -36,7 +36,9 @@ Ignore Error With Arguments That Needs To Be Escaped
 
 Ignore Error When Timeout Occurs
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc[0].status}    FAIL    Run Keyword And Ignore Error captured timeout even though it should not    no values
+    Should Be Equal    ${tc[0].status}    FAIL
+    ...    Run Keyword And Ignore Error captured timeout even though it should not
+    ...    values=False
 
 Ignore Error When Timeout Occurs In UK
     Check Test Case    ${TEST NAME}
@@ -114,7 +116,9 @@ Expect Error With Arguments That Needs To Be Escaped
 
 Expect Error When Timeout Occurs
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc[0].status}    FAIL    Run Keyword And Expect Error captured timeout even though it should not    no values
+    Should Be Equal    ${tc[0].status}    FAIL
+    ...    Run Keyword And Expect Error captured timeout even though it should not
+    ...    values=False
 
 Expect Error When Timeout Occurs In UK
     Check Test Case    ${TEST NAME}

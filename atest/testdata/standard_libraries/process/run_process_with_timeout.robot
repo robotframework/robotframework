@@ -15,11 +15,6 @@ Disable timeout with nONe
     ${result} =    Run Process    @{QUICK COMMAND}    timeout=nONe
     Should not be terminated    ${result}
 
-Disable timeout with empty string
-    [Documentation]   Verifying that backwards compatibility is honored
-    ${result} =    Run Process    @{QUICK COMMAND}    timeout=
-    Should not be terminated    ${result}
-
 Disable timeout with zero
     ${result} =    Run Process    @{QUICK COMMAND}    timeout=0
     Should not be terminated    ${result}

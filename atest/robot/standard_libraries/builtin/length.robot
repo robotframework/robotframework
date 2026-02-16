@@ -40,11 +40,29 @@ Should Not Be Empty
 Should Not Be Empty with custom message
     Check Test Case    ${TESTNAME}
 
-Getting length with `length` method
-    Check Test Case    ${TESTNAME}
+Getting length with `length` method is deprecated
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check custom length deprecation    ${tc[0, 0]}    item.length()    40
+    Check custom length deprecation    ${tc[1]}       item.length()    40
+    Check custom length deprecation    ${tc[2]}       item.length()    40
+    Check custom length deprecation    ${tc[3]}       item.length()    40
 
-Getting length with `size` method
-    Check Test Case    ${TESTNAME}
+Getting length with `size` method is deprecated
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check custom length deprecation    ${tc[0, 0]}    item.size()    41
+    Check custom length deprecation    ${tc[1]}       item.size()    41
+    Check custom length deprecation    ${tc[2]}       item.size()    41
+    Check custom length deprecation    ${tc[3]}       item.size()    41
 
-Getting length with `length` attribute
-    Check Test Case    ${TESTNAME}
+Getting length with `length` attribute is deprecated
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check custom length deprecation    ${tc[0, 0]}    item.length    42
+    Check custom length deprecation    ${tc[1]}       item.length    42
+    Check custom length deprecation    ${tc[2]}       item.length    42
+    Check custom length deprecation    ${tc[3]}       item.length    42
+
+*** Keywords ***
+Check custom length deprecation
+    [Arguments]    ${kw}    ${deprecated}    ${length}
+    Check Log Message    ${kw[0]}    Using '${deprecated}' for getting object length is deprecated. Only 'len(obj)' will be supported in the future.    WARN
+    Check Log Message    ${kw[1]}    Length is ${length}.

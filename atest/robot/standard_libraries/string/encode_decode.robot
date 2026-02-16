@@ -15,6 +15,9 @@ Encode Non-ASCII String To Bytes Using Incompatible Encoding
 Encode Non-ASCII String To Bytes Using Incompatible Encoding And Error Handler
     Check Test Case    ${TESTNAME}
 
+Encode bytes
+    Check Test Case    ${TESTNAME}
+
 Decode ASCII Bytes To String
     Check Test Case    ${TESTNAME}
 
@@ -27,5 +30,5 @@ Decode Non-ASCII Bytes To String Using Incompatible Encoding
 Decode Non-ASCII Bytes To String Using Incompatible Encoding And Error Handler
     Check Test Case    ${TESTNAME}
 
-Decoding String Fails
+Decode string
     Check Test Case    ${TESTNAME}

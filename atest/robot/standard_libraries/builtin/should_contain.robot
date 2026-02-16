@@ -27,10 +27,10 @@ Should Contain and do not collapse spaces
 Should Contain and collapse spaces
     Check Test Case    ${TESTNAME}
 
-Should Contain with bytes
+Should Contain with recursive normalization
     Check Test Case    ${TESTNAME}
 
-Should Contain with bytearray
+Should Contain with bytes auto conversion
     Check Test Case    ${TESTNAME}
 
 Should Not Contain
@@ -55,4 +55,7 @@ Should Not Contain and do not collapse spaces
     Check Test Case    ${TESTNAME}
 
 Should Not Contain and collapse spaces
+    Check Test Case    ${TESTNAME}
+
+Should Not Contain with bytes auto conversion
     Check Test Case    ${TESTNAME}

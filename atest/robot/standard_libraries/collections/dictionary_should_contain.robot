@@ -87,6 +87,10 @@ Should contain sub dictionary with wrong value and custom error message
 Should contain sub dictionary with wrong value and custom error message containing values
     Check Test Case    ${TESTNAME}
 
+Should contain sub dictionary with deprecated NO VALUES
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc[0, 0]}   Using 'NO VALUES' for disabling the 'values' argument is deprecated. Use 'values=False' instead.    WARN
+
 Should contain sub dictionary with `ignore_case`
     Check Test Case    ${TESTNAME}
 

@@ -128,6 +128,24 @@ With Name When Library Arguments Are Not Strings
 'WITH NAME' cannot come from variable with 'Import Library' keyword even when list variable opened
     Check Test Case    ${TEST NAME}
 
+Import with alias matching different library name is ignored with warning
+    Error In File    1    test_libraries/with_name_1.robot    10
+    ...    Suite 'Root.With Name 1' has already imported another library with name 'OperatingSystem'. This import is ignored.
+    ...    level=WARN
+
+Import with alias matching different library alias is ignored with warning
+    Error In File    2    test_libraries/with_name_1.robot    11
+    ...    Suite 'Root.With Name 1' has already imported another library with name 'Params'. This import is ignored.
+    ...    level=WARN
+
+Second import with different parameters and same alias is ignored with warning
+    Error In File    0    test_libraries/with_name_1.robot    8
+    ...    Suite 'Root.With Name 1' has already imported library 'ParameterLibrary' with different arguments. This import is ignored.
+    ...    level=WARN
+
+Second import with same parameters and same alias is ignored without warning
+    Syslog Should Contain    | INFO \ |    Suite 'Root.With Name 1' has already imported library 'Params' with same arguments. This import is ignored.
+
 *** Keywords ***
 Run 'With Name' Tests
     ${sources} =    Catenate
@@ -135,5 +153,4 @@ Run 'With Name' Tests
     ...    test_libraries/with_name_2.robot
     ...    test_libraries/with_name_3.robot
     ...    test_libraries/with_name_4.robot
-    Run Tests    ${EMPTY}    ${sources}
-    Should Be Equal    ${SUITE.name}    With Name 1 & With Name 2 & With Name 3 & With Name 4
+    Run Tests    --name Root    ${sources}

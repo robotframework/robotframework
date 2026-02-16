@@ -1,7 +1,10 @@
 *** Settings ***
-Suite Setup       Remove Environment Variable    ${NAME}
+Suite Setup       Run Keywords
+...    Set Log Level    TRACE
+...    AND
+...    Remove Environment Variable    ${NAME}
 Test Teardown     Remove Environment Variable    ${NAME}
-Library           OperatingSystem
+Resource          os_resource.robot
 Library           files/HelperLib.py
 
 *** Variables ***
@@ -26,6 +29,10 @@ Set Environment Variable
     Set Environment Variable    ${NAME}    Moi
     Should Be Equal    %{${NAME}}    Moi
 
+Set Environment Variable with Secret Content
+    Set Environment Variable    ${NAME}    ${SECRET}
+    Should Be Equal    %{${NAME}}    This is secret!
+
 Append To Environment Variable
     Append To Environment Variable    ${NAME}    first
     Should Be Equal    %{${NAME}}    first
@@ -41,6 +48,12 @@ Append To Environment Variable With Custom Separator
 Append To Environment Variable With Invalid Config
     [Documentation]    FAIL Keyword 'OperatingSystem.Append To Environment Variable' got unexpected named argument 'not_ok'.
     Append To Environment Variable    ${NAME}    value    separator=value    not_ok=True
+
+Append To Environment Variable With Secret Value
+    Append to Environment Variable    ${NAME}    ${SECRET}
+    Should Be Equal    %{${NAME}}    This is secret!
+    Append to Environment Variable    ${NAME}    This is not!    ${SECRET}    separator=${SPACE}
+    Should Be Equal    %{${NAME}}    This is secret! This is not! This is secret!
 
 Remove Environment Variable
     Set Environment Variable    ${NAME}    Hello

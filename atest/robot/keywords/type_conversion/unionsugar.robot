@@ -16,6 +16,12 @@ Union with None and str
 Union with ABC
     Check Test Case    ${TESTNAME}
 
+Union with Any
+    Check Test Case    ${TESTNAME}
+
+Union with object
+    Check Test Case    ${TESTNAME}
+
 Union with subscripted generics
     Check Test Case    ${TESTNAME}
 

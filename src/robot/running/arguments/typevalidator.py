@@ -46,7 +46,9 @@ class TypeValidator:
                 f"Type information must be given as a dictionary or a list, "
                 f"got {type_name(types)}."
             )
-        return {k: TypeInfo.from_type_hint(types[k]) for k in types}
+        return {
+            k: TypeInfo.from_type_hint(types[k], sequence_is_union=True) for k in types
+        }
 
     def _validate_type_dict(self, types: Mapping):
         names = set(self.spec.argument_names)

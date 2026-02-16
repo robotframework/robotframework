@@ -23,7 +23,6 @@ Log with different levels
     Check Log Message    ${tc[5, 1]}     Error level    ERROR
     Check Log Message    ${ERRORS[0]}    Warn level     WARN
     Check Log Message    ${ERRORS[1]}    Error level    ERROR
-    Length Should Be     ${ERRORS}       4    # Two deprecation warnings from `repr`.
 
 Invalid log level failure is catchable
     Check Test Case    ${TEST NAME}
@@ -53,6 +52,15 @@ Log also to console
     Check Log Message    ${tc[1, 0]}    ${HTML}    DEBUG    html=True
     Stdout Should Contain    Hello, console!\n
     Stdout Should Contain    ${HTML}\n
+
+Disable logging to console
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc[0, 0]}     WARN but no console     WARN
+    Check Log Message    ${tc[1, 0]}     ERROR but no console    ERROR
+    Check Log Message    ${ERRORS[2]}    WARN but no console     WARN
+    Check Log Message    ${ERRORS[3]}    ERROR but no console    ERROR
+    Stdout Should Not Contain    no console
+    Stderr Should Not Contain    no console
 
 CONSOLE pseudo level
     ${tc} =    Check Test Case    ${TEST NAME}

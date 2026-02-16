@@ -174,7 +174,7 @@ class _BaseSettings:
             collect = show = level
         try:
             collect, show = LogLevel(collect), LogLevel(show)
-        except DataError as err:
+        except ValueError as err:
             self._raise_invalid("LogLevel", str(err))
         if collect.priority > show.priority:
             self._raise_invalid(

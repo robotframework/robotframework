@@ -36,6 +36,10 @@ Different values and custom error message
 Different values and custom error message with values
     Check Test Case    ${TESTNAME}
 
+NO VALUES is deprecated
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc[0, 0]}   Using 'No values' for disabling the 'values' argument is deprecated. Use 'values=False' instead.    WARN
+
 `ignore_keys`
     Check Test Case    ${TESTNAME}
 

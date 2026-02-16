@@ -81,7 +81,7 @@
 | Using FOR Loop With Pipes  |
 |         |  [Documentation]  |  FAIL    |  for loop executed  |
 |         |   FOR  |  ${value}  |  IN   |  a    |   a   |   for loop executed   |  for loop not executed  |
-|         |        |  Should Be Equal  |  ${value}  |  a   |  ${value}  |  no values  |
+|         |        |  Should Be Equal  |  ${value}  |  a   |  ${value}  |  values=False  |
 |         | END    |
 
 |Leading pipe without space after

@@ -20,7 +20,9 @@ Default input type is text
 
 Invalid input type fails
     [Template]    Creating bytes should fail
-    whatever    invalid    Invalid input type 'invalid'.
+    whatever    invalid
+    ...    ValueError: Argument 'input_type' got value 'invalid' that cannot be converted to 'text', 'int', 'hex' or 'bin'.
+    ...    prefix=
 
 ASCII string
     H           text    72
@@ -91,8 +93,8 @@ Too big or small integers
 
 Invalid integers
     [Template]    Creating bytes should fail
-    hello 1      int    'hello' cannot be converted to an integer: ValueError: *
-    0 0xa 0ba    int    '0ba' cannot be converted to an integer: ValueError: *
+    hello 1      int    ValueError: 'hello' cannot be converted to an integer: *
+    0 0xa 0ba    int    ValueError: '0ba' cannot be converted to an integer: *
 
 Hex without whitespace
     0a                 hex    10
@@ -122,7 +124,7 @@ Too big or small hex
 
 Invalid hex
     [Template]    Creating bytes should fail
-    ff hello!    hex     'he' cannot be converted to an integer: ValueError: *
+    ff hello!    hex     ValueError: 'he' cannot be converted to an integer: *
 
 Binary without spaces
     00000000                     bin   0
@@ -144,8 +146,8 @@ Binary as list
 
 Invalid binary
     [Template]    Creating bytes should fail
-    hello!!!            bin    'hello!!!' cannot be converted to an integer: ValueError: *
-    0000000100000002    bin    '00000002' cannot be converted to an integer: ValueError: *
+    hello!!!            bin    ValueError: 'hello!!!' cannot be converted to an integer: *
+    0000000100000002    bin    ValueError: '00000002' cannot be converted to an integer: *
 
 Too big or small binary
     [Template]    Creating bytes should fail
@@ -165,6 +167,6 @@ Bytes should be equal to
     Should Be Byte String    ${bytes}
 
 Creating bytes should fail
-    [Arguments]    ${input}    ${type}    ${error}
-    Run Keyword And Expect Error    Creating bytes failed: ${error}
+    [Arguments]    ${input}    ${type}    ${error}    ${prefix}=Creating bytes failed:${SPACE}
+    Run Keyword And Expect Error    ${prefix}${error}
     ...    Convert To Bytes    ${input}    ${type}

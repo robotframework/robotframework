@@ -36,9 +36,14 @@ class Tokenizer:
                 current.extend(tokens)
         yield current
 
-    def _tokenize_line(self, line: str, lineno: int, include_separators: bool):
+    def _tokenize_line(
+        self,
+        line: str,
+        lineno: int,
+        include_separators: bool,
+    ) -> "list[Token]":
         # Performance optimized code.
-        tokens: "list[Token]" = []
+        tokens = []
         append = tokens.append
         offset = 0
         if line[:1] == "|" and line[:2].strip() == "|":
@@ -72,7 +77,11 @@ class Tokenizer:
             yield separator, False
         yield rest, True
 
-    def _cleanup_tokens(self, tokens: "list[Token]", data_only: bool):
+    def _cleanup_tokens(
+        self,
+        tokens: "list[Token]",
+        data_only: bool,
+    ) -> "tuple[list[Token], bool]":
         has_data, comments, continues = self._handle_comments_and_continuation(tokens)
         self._remove_trailing_empty(tokens)
         if continues:
@@ -90,27 +99,29 @@ class Tokenizer:
         self,
         tokens: "list[Token]",
     ) -> "tuple[bool, bool, bool]":
+        first = True
         has_data = False
-        commented = False
+        comments = False
         continues = False
-        for index, token in enumerate(tokens):
+        for token in tokens:
             if token.type is None:
-                # lstrip needed to strip possible leading space from first token.
-                # Other leading/trailing spaces have been consumed as separators.
-                value = token.value if index else token.value.lstrip()
-                if commented:
+                # The first token may have a leading space. With others spaces
+                # have been consumed as separators.
+                value = token.value.lstrip() if first else token.value
+                if comments:
                     token.type = Token.COMMENT
                 elif value:
                     if value[0] == "#":
                         token.type = Token.COMMENT
-                        commented = True
+                        comments = True
                     elif not has_data:
                         if value == "..." and not continues:
                             token.type = Token.CONTINUATION
                             continues = True
                         else:
                             has_data = True
-        return has_data, commented, continues
+            first = False
+        return has_data, comments, continues
 
     def _remove_trailing_empty(self, tokens: "list[Token]"):
         for token in reversed(tokens):

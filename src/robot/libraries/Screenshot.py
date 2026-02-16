@@ -16,6 +16,7 @@
 import os
 import subprocess
 import sys
+from pathlib import Path
 
 try:
     import wx
@@ -86,7 +87,11 @@ class Screenshot:
     ROBOT_LIBRARY_SCOPE = "TEST SUITE"
     ROBOT_LIBRARY_VERSION = get_version()
 
-    def __init__(self, screenshot_directory=None, screenshot_module=None):
+    def __init__(
+        self,
+        screenshot_directory: "Path | None" = None,
+        screenshot_module: "str | None" = None,
+    ):
         """Configure where screenshots are saved.
 
         If ``screenshot_directory`` is not given, screenshots are saved into
@@ -107,24 +112,22 @@ class Screenshot:
         self._given_screenshot_dir = self._norm_path(screenshot_directory)
         self._screenshot_taker = ScreenshotTaker(screenshot_module)
 
-    def _norm_path(self, path):
-        if not path:
-            return path
-        return os.path.normpath(path)
+    def _norm_path(self, path: "Path | str | None") -> "str | None":
+        return os.path.normpath(path) if path else None
 
     @property
-    def _screenshot_dir(self):
+    def _screenshot_dir(self) -> str:
         return self._given_screenshot_dir or self._log_dir
 
     @property
-    def _log_dir(self):
+    def _log_dir(self) -> str:
         variables = BuiltIn().get_variables()
         outdir = variables["${OUTPUTDIR}"]
         log = variables["${LOGFILE}"]
         log = os.path.dirname(log) if log != "NONE" else "."
-        return self._norm_path(os.path.join(outdir, log))
+        return os.path.normpath(os.path.join(outdir, log))
 
-    def set_screenshot_directory(self, path):
+    def set_screenshot_directory(self, path: Path) -> str:
         """Sets the directory where screenshots are saved.
 
         It is possible to use ``/`` as a path separator in all operating
@@ -139,7 +142,7 @@ class Screenshot:
         self._given_screenshot_dir = path
         return old
 
-    def take_screenshot(self, name="screenshot", width="800px"):
+    def take_screenshot(self, name: str = "screenshot", width: str = "800px") -> str:
         """Takes a screenshot in JPEG format and embeds it into the log file.
 
         Name of the file where the screenshot is stored is derived from the
@@ -168,7 +171,7 @@ class Screenshot:
         self._embed_screenshot(path, width)
         return path
 
-    def take_screenshot_without_embedding(self, name="screenshot"):
+    def take_screenshot_without_embedding(self, name: str = "screenshot") -> str:
         """Takes a screenshot and links it from the log file.
 
         This keyword is otherwise identical to `Take Screenshot` but the saved
@@ -180,8 +183,7 @@ class Screenshot:
         return path
 
     def _save_screenshot(self, name):
-        name = str(name) if isinstance(name, os.PathLike) else name.replace("/", os.sep)
-        path = self._get_screenshot_path(name)
+        path = self._get_screenshot_path(name.replace("/", os.sep))
         return self._screenshot_to_file(path)
 
     def _screenshot_to_file(self, path):

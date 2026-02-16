@@ -20,7 +20,7 @@ Move One File With Move Files
 
 Move Files fails when no destination
     [Documentation]    FAIL Must contain destination and at least one source.
-    Move Files    ${source}movecopy-*.txt
+    Move Files    ${SOURCE}/movecopy-*.txt
 
 Move Files without arguments fails
     [Documentation]    FAIL Must contain destination and at least one source.

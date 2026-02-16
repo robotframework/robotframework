@@ -9,9 +9,6 @@ Should Be String Positive
 Should Be String Negative
     Check Test Case    ${TESTNAME}
 
-Bytes are not strings
-    Check Test Case    ${TESTNAME}
-
 Should Not Be String Positive
     Check Test Case    ${TESTNAME}
 
@@ -52,10 +49,4 @@ Should Be Title Case With Excludes
     Check Test Case    ${TESTNAME}
 
 Should Be Title Case With Regex Excludes
-    Check Test Case    ${TESTNAME}
-
-Should Be Title Case Does Not Work With ASCII Bytes
-    Check Test Case    ${TESTNAME}
-
-Should Be Title Case Does Not Work With Non-ASCII Bytes
     Check Test Case    ${TESTNAME}

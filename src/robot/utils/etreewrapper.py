@@ -17,19 +17,22 @@ import re
 from io import BytesIO
 from os import fsdecode
 from pathlib import Path
+from typing import IO, Union
+
+Source = Union[IO, Path, str, bytes, bytearray]
 
 
 class ETSource:
 
-    def __init__(self, source):
+    def __init__(self, source: Source):
         self._source = source
-        self._opened = None
+        self._opened: "BytesIO | None" = None
 
-    def __enter__(self):
+    def __enter__(self) -> "IO | Path | str | bytes":
         self._opened = self._open_if_necessary(self._source)
         return self._opened or self._source
 
-    def _open_if_necessary(self, source):
+    def _open_if_necessary(self, source: Source) -> "BytesIO | None":
         if self._is_path(source) or self._is_already_open(source):
             return None
         if isinstance(source, (bytes, bytearray)):
@@ -37,7 +40,7 @@ class ETSource:
         encoding = self._find_encoding(source)
         return BytesIO(source.encode(encoding))
 
-    def _is_path(self, source):
+    def _is_path(self, source: Source) -> bool:
         if isinstance(source, Path):
             return True
         if isinstance(source, str):
@@ -46,10 +49,10 @@ class ETSource:
             return not source.lstrip().startswith(b"<")
         return False
 
-    def _is_already_open(self, source):
+    def _is_already_open(self, source: Source) -> bool:
         return not isinstance(source, (str, bytes, bytearray))
 
-    def _find_encoding(self, source):
+    def _find_encoding(self, source: str) -> str:
         match = re.match(r"\s*<\?xml .*encoding=(['\"])(.*?)\1.*\?>", source)
         return match.group(2) if match else "UTF-8"
 
@@ -57,7 +60,7 @@ class ETSource:
         if self._opened:
             self._opened.close()
 
-    def __str__(self):
+    def __str__(self) -> str:
         source = self._source
         if self._is_path(source):
             return self._path_to_string(source)
@@ -65,7 +68,7 @@ class ETSource:
             return self._path_to_string(source.name)
         return "<in-memory file>"
 
-    def _path_to_string(self, path):
+    def _path_to_string(self, path: "Path | str | bytes") -> str:
         if isinstance(path, Path):
             return str(path)
         if isinstance(path, bytes):

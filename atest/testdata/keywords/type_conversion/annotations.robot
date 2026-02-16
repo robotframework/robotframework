@@ -38,38 +38,38 @@ Integer
     Integer              ${-4.0}                   -4
 
 Integer as hex
-    Integer              0x0                        0
-    Integer              0 X 0 0 0 0 0              0
-    Integer              0_X_0_0_0_0_0              0
-    Integer              0x1000                     4096
-    Integer              -0x1000                    -4096
-    Integer              +0x1000                    4096
-    Integer              0x00FF                     255
-    Integer              - 0 X 00 ff                -255
-    Integer              -__0__X__00_ff__           -255
-    Integer              0 x BAD C0FFEE             50159747054
+    Integer              0x0                       0
+    Integer              0 X 0 0 0 0 0             0
+    Integer              0_X_0_0_0_0_0             0
+    Integer              0x1000                    4096
+    Integer              -0x1000                   -4096
+    Integer              +0x1000                   4096
+    Integer              0x00FF                    255
+    Integer              - 0 X 00 ff               -255
+    Integer              -__0__X__00_ff__          -255
+    Integer              0 x BAD C0FFEE            50159747054
 
 Integer as octal
-    Integer              0o0                        0
-    Integer              0 O 0 0 0 0 0              0
-    Integer              0_O_0_0_0_0_0              0
-    Integer              0o1000                     512
-    Integer              -0o1000                    -512
-    Integer              +0o1000                    512
-    Integer              0o0077                     63
-    Integer              - 0 o 00 77                -63
-    Integer              -__0__o__00_77__           -63
+    Integer              0o0                       0
+    Integer              0 O 0 0 0 0 0             0
+    Integer              0_O_0_0_0_0_0             0
+    Integer              0o1000                    512
+    Integer              -0o1000                   -512
+    Integer              +0o1000                   512
+    Integer              0o0077                    63
+    Integer              - 0 o 00 77               -63
+    Integer              -__0__o__00_77__          -63
 
 Integer as binary
-    Integer              0b0                        0
-    Integer              0 B 0 0 0 0 0              0
-    Integer              0_B_0_0_0_0_0              0
-    Integer              0b1000                     8
-    Integer              -0b1000                    -8
-    Integer              +0b1000                    8
-    Integer              0b0011                     3
-    Integer              - 0 b 00 11                -3
-    Integer              -__0__b__00_11__           -3
+    Integer              0b0                       0
+    Integer              0 B 0 0 0 0 0             0
+    Integer              0_B_0_0_0_0_0             0
+    Integer              0b1000                    8
+    Integer              -0b1000                   -8
+    Integer              +0b1000                   8
+    Integer              0b0011                    3
+    Integer              - 0 b 00 11               -3
+    Integer              -__0__b__00_11__          -3
 
 Invalid integer
     [Template]           Conversion Should Fail
@@ -169,6 +169,8 @@ String
     String               []                        '[]'
     String               1.2                       '1.2'
     String               2                         '2'
+    String               ${{b'hyv\xe4'}}           'hyvä'
+    String               ${{bytearray([0, 1])}}    '\\x00\\x01'
     String               ${42}                     '42'
     String               ${None}                   'None'
     String               ${LIST}                   "['foo', 'bar']"
@@ -184,6 +186,8 @@ Bytes
     Bytes                Hyvä esimerkki!           b'Hyv\\xE4 esimerkki!'
     Bytes                None                      b'None'
     Bytes                NONE                      b'NONE'
+    Bytes                ${82}                     b'R'
+    Bytes                ${{[82, '70', 33]}}       b'RF!'
     Bytes                ${{b'foo'}}               b'foo'
     Bytes                ${{bytearray(b'foo')}}    b'foo'
 
@@ -192,6 +196,9 @@ Invalid bytes
     Bytes                \u0100                    error=Character '\u0100' cannot be mapped to a byte.
     Bytes                \u00ff\u0100\u0101        error=Character '\u0100' cannot be mapped to a byte.
     Bytes                Hyvä esimerkki! \u2603    error=Character '\u2603' cannot be mapped to a byte.
+    Bytes                ${666}                    arg_type=integer    error=666 is not in range 0-255.
+    Bytes                ${{[1, '2', -3, 4]}}      arg_type=list       error=-3 is not in range 0-255.
+    Bytes                ${{[0, 'invalid']}}       arg_type=list       error='invalid' is not an integer.
     Bytes                ${1.3}                    arg_type=float
 
 Bytearray
@@ -200,6 +207,8 @@ Bytearray
     Bytearray            Hyvä esimerkki!           bytearray(b'Hyv\\xE4 esimerkki!')
     Bytearray            None                      bytearray(b'None')
     Bytearray            NONE                      bytearray(b'NONE')
+    Bytearray            ${82}                     bytearray(b'R')
+    Bytearray            ${{[82, '70', 33]}}       bytearray(b'RF!')
     Bytearray            ${{b'foo'}}               bytearray(b'foo')
     Bytearray            ${{bytearray(b'foo')}}    bytearray(b'foo')
 
@@ -208,6 +217,9 @@ Invalid bytearray
     Bytearray            \u0100                    error=Character '\u0100' cannot be mapped to a byte.
     Bytearray            \u00ff\u0100\u0101        error=Character '\u0100' cannot be mapped to a byte.
     Bytearray            Hyvä esimerkki! \u2603    error=Character '\u2603' cannot be mapped to a byte.
+    Bytearray            ${666}                    arg_type=integer    error=666 is not in range 0-255.
+    Bytearray            ${{[1, '2', -3, 4]}}      arg_type=list       error=-3 is not in range 0-255.
+    Bytearray            ${{[0, 'invalid']}}       arg_type=list       error='invalid' is not an integer.
     Bytearray            ${2123.1021}              arg_type=float
 
 Bytestring replacement
@@ -239,10 +251,10 @@ Datetime with now and today
 
 Invalid datetime
     [Template]           Conversion Should Fail
-    DateTime             foobar                                          error=Invalid timestamp 'foobar'.
-    DateTime             1975:06                                         error=Invalid timestamp '1975:06'.
-    DateTime             2018                                            error=Invalid timestamp '2018'.
-    DateTime             201808081443421234567                           error=Invalid timestamp '201808081443421234567'.
+    DateTime             foobar                    error=Invalid timestamp 'foobar'.
+    DateTime             1975:06                   error=Invalid timestamp '1975:06'.
+    DateTime             2018                      error=Invalid timestamp '2018'.
+    DateTime             201808081443421234567     error=Invalid timestamp '201808081443421234567'.
 
 Date
     Date                 2014-06-11                date(2014, 6, 11)
@@ -256,13 +268,13 @@ Date with now and today
 
 Invalid date
     [Template]           Conversion Should Fail
-    Date                 foobar                                          error=Invalid timestamp 'foobar'.
-    Date                 1975:06                                         error=Invalid timestamp '1975:06'.
-    Date                 2018                                            error=Invalid timestamp '2018'.
-    Date                 2014-06-11T10:07:42                             error=Value is datetime, not date.
-    Date                 20180808000000000001                            error=Value is datetime, not date.
-    Date                 ${123}                                          arg_type=integer
-    Date                 ${12.3}                                         arg_type=float
+    Date                 foobar                    error=Invalid timestamp 'foobar'.
+    Date                 1975:06                   error=Invalid timestamp '1975:06'.
+    Date                 2018                      error=Invalid timestamp '2018'.
+    Date                 2014-06-11T10:07:42       error=Value is datetime, not date.
+    Date                 20180808000000000001      error=Value is datetime, not date.
+    Date                 ${123}                    arg_type=integer
+    Date                 ${12.3}                   arg_type=float
 
 Timedelta
     Timedelta            10                        timedelta(seconds=10)
@@ -287,16 +299,16 @@ Invalid timedelta
     Timedelta            ${LIST}                   arg_type=list
 
 Path
-    Path                 path                     Path('path')
-    Path                 two/components           Path(r'two${/}components')
-    Path                 two${/}components        Path(r'two${/}components')
-    Path                 ${PATH}                  Path('x/y')
-    Path                 ${PUREPATH}              Path('x/y')
-    PurePath             path                     Path('path')
-    PurePath             two/components           Path(r'two${/}components')
-    PurePath             two${/}components        Path(r'two${/}components')
-    PurePath             ${PATH}                  Path('x/y')
-    PurePath             ${PUREPATH}              PurePath('x/y')
+    Path                 path                      Path('path')
+    Path                 two/components            Path(r'two${/}components')
+    Path                 two${/}components         Path(r'two${/}components')
+    Path                 ${PATH}                   Path('x/y')
+    Path                 ${PUREPATH}               Path('x/y')
+    PurePath             path                      Path('path')
+    PurePath             two/components            Path(r'two${/}components')
+    PurePath             two${/}components         Path(r'two${/}components')
+    PurePath             ${PATH}                   Path('x/y')
+    PurePath             ${PUREPATH}               PurePath('x/y')
     PathLike             path                      Path('path')
     PathLike             two/components            Path(r'two${/}components')
     PathLike             two${/}components         Path(r'two${/}components')
@@ -305,7 +317,7 @@ Path
 
 Invalid Path
     [Template]           Conversion Should Fail
-    Path                 ${1}                     type=Path    arg_type=integer
+    Path                 ${1}                      type=Path    arg_type=integer
 
 Enum
     Enum                 FOO                       MyEnum.FOO
@@ -361,21 +373,28 @@ Invalid IntEnum
     IntFlag              3                         type=MyIntFlag        error=MyIntFlag does not have member '3'. Available: 'R (4)', 'W (2)' and 'X (1)'
     IntFlag              ${-1}                     type=MyIntFlag        error=MyIntFlag does not have value '-1'. Available: '1', '2' and '4'    arg_type=integer
 
+None
+    None                 None                      None
+    None                 NONE                      None
+    None                 ${EMPTY}                  None
+
 NoneType
     NoneType             None                      None
     NoneType             NONE                      None
+    NoneType             ${EMPTY}                  None
 
-Invalid NoneType
+Invalid None
     [Template]           Conversion Should Fail
-    NoneType             Hello, world!             type=None
+    None                 Hello, world!             type=None
+    None                 ${42}                     type=None    arg_type=integer
     NoneType             True                      type=None
-    NoneType             []                        type=None
+    NoneType             ${{[]}}                   type=None    arg_type=list
 
 List
     List                 []                        []
     List                 ['foo', 'bar']            ${LIST}
     List                 [1, 2, 3.14, -42]         [1, 2, 3.14, -42]
-    List                 ['\\x00', '\\x52']        ['\\x00', 'R']
+    List                 ('\\x00', '\\x52')        ['\\x00', 'R']
     List                 [{'nested': True}]        [{'nested': True}]
     List                 ${{[1, 2]}}               [1, 2]
     List                 ${{(1, 2)}}               [1, 2]
@@ -385,38 +404,43 @@ List
 Invalid list
     [Template]           Conversion Should Fail
     List                 [1, ooops]                error=Invalid expression.
-    List                 ()                        error=Value is tuple, not list.
     List                 {}                        error=Value is dictionary, not list.
     List                 ooops                     error=Invalid expression.
     List                 ${EMPTY}                  error=Invalid expression.
     List                 !"#¤%&/(inv expr)\=?      error=Invalid expression.
     List                 1 / 0                     error=Invalid expression.
+    List                 ${DICT}                   arg_type=DotDict
     List                 ${NONE}                   arg_type=None
 
 Sequence (abc)
     Sequence             []                        []
-    Sequence             ['foo', 'bar']            ${LIST}
-    Sequence             ${DEQUE}                  collections.deque([1, 2, 3])
-    Sequence             ${SEQUENCE}               ${SEQUENCE}
-    Mutable sequence     [1, 2, 3.14, -42]         [1, 2, 3.14, -42]
-    Mutable sequence     ['\\x00', '\\x52']        ['\\x00', 'R']
-    Mutable sequence     ${DEQUE}                  collections.deque([1, 2, 3])
+    Sequence             ('\\x00', 1, 2, 'RF')     ('\\x00', 1, 2, 'RF')
+    Sequence             ${LIST}                   ${LIST}               same=True
+    Sequence             ${DEQUE}                  ${DEQUE}              same=True
+    Sequence             ${SEQUENCE}               ${SEQUENCE}           same=True
+
+MutableSequence (abc)
+    Mutable sequence     []                        []
+    Mutable sequence     ('\\x00', 1, 2, 'RF')     ['\\x00', 1, 2, 'RF']
+    Mutable sequence     ${LIST}                   ${LIST}               same=True
+    Mutable sequence     ${DEQUE}                  ${DEQUE}              same=True
     Mutable sequence     ${SEQUENCE}               ['x']
 
 Invalid sequence (abc)
     [Template]           Conversion Should Fail
-    Sequence             [1, ooops]                type=list             error=Invalid expression.
-    Mutable sequence     ()                        type=list             error=Value is tuple, not list.
-    Sequence             {}                        type=list             error=Value is dictionary, not list.
-    Mutable sequence     ooops                     type=list             error=Invalid expression.
-    Sequence             ${EMPTY}                  type=list             error=Invalid expression.
-    Mutable sequence     !"#¤%&/(inv expr)\=?      type=list             error=Invalid expression.
-    Sequence             1 / 0                     type=list             error=Invalid expression.
+    Sequence             [1, ooops]                type=Sequence         error=Invalid expression.
+    Mutable sequence     {666}                     type=Sequence         error=Value is set, not Sequence.
+    Sequence             {}                        type=Sequence         error=Value is dictionary, not Sequence.
+    Mutable sequence     ooops                     type=Sequence         error=Invalid expression.
+    Sequence             ${EMPTY}                  type=Sequence         error=Invalid expression.
+    Mutable sequence     !"#¤%&/(inv expr)\=?      type=Sequence         error=Invalid expression.
+    Sequence             1 / 0                     type=Sequence         error=Invalid expression.
+    Mutable sequence     ${DICT}                   type=Sequence         arg_type=DotDict
 
 Tuple
     Tuple                ()                        ()
     Tuple                ('foo', "bar")            tuple(${LIST})
-    Tuple                (1, 2, 3.14, -42)         (1, 2, 3.14, -42)
+    Tuple                [1, 2, 3.14, -42]         (1, 2, 3.14, -42)
     Tuple                (['nested', True],)       (['nested', True],)
     Tuple                ${{(1, 2)}}               (1, 2)
     Tuple                ${{[1, 2]}}               (1, 2)
@@ -425,59 +449,66 @@ Tuple
 Invalid tuple
     [Template]           Conversion Should Fail
     Tuple                (1, ooops)                error=Invalid expression.
-    Tuple                []                        error=Value is list, not tuple.
     Tuple                {}                        error=Value is dictionary, not tuple.
     Tuple                ooops                     error=Invalid expression.
+    Tuple                ${DICT}                   arg_type=DotDict
     Tuple                ${NONE}                   arg_type=None
 
 Dictionary
     Dictionary           {}                        {}
-    Dictionary           {'foo': 1, "bar": 2}      dict(${DICT})
+    Dictionary           {'foo': 1, 'bar': 2}      dict(${DICT})
     Dictionary           {1: 2, 3.14: -42}         {1: 2, 3.14: -42}
     Dictionary           ${MAPPING}                {'a': 1}
 
 Invalid dictionary
     [Template]           Conversion Should Fail
-    Dictionary           {1: ooops}                                      error=Invalid expression.
-    Dictionary           []                                              error=Value is list, not dict.
-    Dictionary           ()                                              error=Value is tuple, not dict.
-    Dictionary           ooops                                           error=Invalid expression.
-    Dictionary           {{'not': 'hashable'}: 'xxx'}                    error=Evaluating expression failed: *
-    Dictionary           ${NONE}                                         arg_type=None
+    Dictionary           {1: ooops}                error=Invalid expression.
+    Dictionary           []                        error=Value is list, not dict.
+    Dictionary           ()                        error=Value is tuple, not dict.
+    Dictionary           ooops                     error=Invalid expression.
+    Dictionary           {{'not hashable'}: 1}     error=Evaluating expression failed: *
+    Dictionary           ${NONE}                   arg_type=None
 
 Mapping (abc)
-    Mapping              {'foo': 1, 2: 'bar'}      {'foo': 1, 2: 'bar'}
-    Mapping              ${MAPPING}                ${MAPPING}
-    Mutable mapping      {'foo': 1, 2: 'bar'}      {'foo': 1, 2: 'bar'}
-    Mutable mapping      ${MAPPING}                ${MAPPING}
+    Mapping              {}                        {}
+    Mapping              {'a': 1, 2: 'b'}          {'a': 1, 2: 'b'}
+    Mapping              ${DICT}                   ${DICT}               same=True
+    Mapping              ${MAPPING}                ${MAPPING}            same=True
+
+MutableMapping (abc)
+    Mutable mapping      {}                        {}
+    Mutable mapping      {'a': 1, 2: 'b'}          {'a': 1, 2: 'b'}
+    Mutable mapping      ${DICT}                   ${DICT}               same=True
+    Mutable mapping      ${MAPPING}                {'a': 1}
 
 Invalid mapping (abc)
     [Template]           Conversion Should Fail
-    Mapping              foobar                    type=dictionary       error=Invalid expression.
-    Mapping              []                        type=dictionary       error=Value is list, not dict.
-    Mutable mapping      barfoo                    type=dictionary       error=Invalid expression.
+    Mapping              foobar                    type=Mapping          error=Invalid expression.
+    Mutable mapping      []                        type=Mapping          error=Value is list, not Mapping.
 
 Set
     Set                  set()                     set()
     Set                  {'foo', 'bar'}            {'foo', 'bar'}
     Set                  {1, 2, 3.14, -42}         {1, 2, 3.14, -42}
+    Set                  [1, 2, 3.14, -42]         {1, 2, 3.14, -42}
+    Set                  (1, 2, 3.14, -42)         {1, 2, 3.14, -42}
     Set                  ${{{1}}}                  {1}
     Set                  ${{frozenset({1})}}       {1}
-    Set                  ${{[1]}}                  {1}
-    Set                  ${{(1,)}}                 {1}
+    Set                  ${{[1, 2, 1]}}            {1, 2}
+    Set                  ${{(1, 2, 1)}}            {1, 2}
     Set                  ${{{1: 2}}}               {1}
     Set                  ${DEQUE}                  {1, 2, 3}
     Set                  ${MAPPING}                {'a'}
+    Set                  ${DICT}                   {'foo', 'bar'}
 
 Invalid set
     [Template]           Conversion Should Fail
     Set                  {1, ooops}                error=Invalid expression.
     Set                  {}                        error=Value is dictionary, not set.
-    Set                  ()                        error=Value is tuple, not set.
-    Set                  []                        error=Value is list, not set.
     Set                  ooops                     error=Invalid expression.
     Set                  {{'not', 'hashable'}}     error=Evaluating expression failed: *
     Set                  frozenset()               error=Invalid expression.
+    Set                  ${{(c for c in 'xy')}}    arg_type=generator
     Set                  ${NONE}                   arg_type=None
 
 Set (abc)
@@ -486,11 +517,13 @@ Set (abc)
     Set abc              {1, 2, 3.14, -42}         {1, 2, 3.14, -42}
     Set abc              ${DEQUE}                  {1, 2, 3}
     Set abc              ${MAPPING}                {'a'}
+    Set abc              ${DICT}                   {'foo', 'bar'}
     Mutable set          set()                     set()
     Mutable set          {'foo', 'bar'}            {'foo', 'bar'}
     Mutable set          {1, 2, 3.14, -42}         {1, 2, 3.14, -42}
     Mutable set          ${DEQUE}                  {1, 2, 3}
     Mutable set          ${MAPPING}                {'a'}
+    Mutable set          ${DICT}                   {'foo', 'bar'}
 
 Invalid set (abc)
     [Template]           Conversion Should Fail
@@ -498,8 +531,8 @@ Invalid set (abc)
     Set abc              {}                        type=set              error=Value is dictionary, not set.
     Set abc              ooops                     type=set              error=Invalid expression.
     Mutable set          {1, ooops}                type=set              error=Invalid expression.
-    Mutable set          {}                        type=set              error=Value is dictionary, not set.
-    Mutable set          ooops                     type=set              error=Invalid expression.
+    Mutable set          ${{(c for c in 'xy')}}    type=set              arg_type=generator
+    Mutable set          ${NONE}                   type=set              arg_type=None
 
 Frozenset
     Frozenset            frozenset()               frozenset()
@@ -563,7 +596,7 @@ Invalid positional as named
     [Template]           Conversion Should Fail
     Integer              argument=bad
     Float                argument=xxx
-    Dictionary           argument=[0]                                    error=Value is list, not dict.
+    Dictionary           argument=[0]              error=Value is list, not dict.
 
 Varargs
     Varargs              1    2    3               expected=(1, 2, 3)
@@ -572,7 +605,7 @@ Varargs
 Invalid varargs
     [Template]           Conversion Should Fail
     Varargs              foobar                    type=integer
-    Varargs              ${NONE}                   type=integer    arg_type=None
+    Varargs              ${NONE}                   type=integer          arg_type=None
 
 Kwargs
     Kwargs               a=1    b=2    c=3         expected={'a': 1, 'b': 2, 'c': 3}
@@ -581,7 +614,7 @@ Kwargs
 Invalid Kwargs
     [Template]           Conversion Should Fail
     Kwargs               kwarg=ooops               type=integer
-    Kwargs               kwarg=${1.2}              type=integer    arg_type=float    error=Conversion would lose precision.
+    Kwargs               kwarg=${1.2}              type=integer          arg_type=float    error=Conversion would lose precision.
 
 Kwonly
     Kwonly               argument=1.0              expected=1.0
@@ -590,72 +623,85 @@ Kwonly
 Invalid kwonly
     [Template]           Conversion Should Fail
     Kwonly               argument=foobar           type=float
-    Kwonly               argument=${NONE}          type=float    arg_type=None
+    Kwonly               argument=${NONE}          type=float            arg_type=None
 
 Return value annotation causes no error
-    Return value annotation                    42    42
+    Return value annotation                        42                    42
 
 None as default with known type
     None as default
-    None as default                            [1, 2]    [1, 2]
-    None as default                            None      None
+    None as default                                [1, 2]                [1, 2]
+    None as default                                None                  None
 
 None as default with unknown type
     None as default with unknown type
-    None as default with unknown type          hi!      'hi!'
-    None as default with unknown type          ${42}    42
-    None as default with unknown type          None     None
+    None as default with unknown type              hi!                   'hi!'
+    None as default with unknown type              ${42}                 42
+    None as default with unknown type              None                  None
+
+Empty string when None is used as default but not as explicit type
+    [Documentation]
+    ...    Behavior depends on how `typing.get_type_hints` handles `arg: list = None`.
+    ...    Python < 3.11 considers it same as `arg: list | None = None`, newer don't.
+    IF    sys.version_info < (3, 11)
+        None as default                            ${EMPTY}              None
+        None as default with unknown type          ${EMPTY}              None
+    ELSE
+        Conversion Should Fail
+        ...    None as default                     ${EMPTY}              type=list    error=Invalid expression.
+        None as default with unknown type          ${EMPTY}              ''
+    END
 
 Forward references
-    Forward referenced concrete type           42         42
-    Forward referenced ABC                     [1, 2]     [1, 2]
-    Forward referenced ABC                     ${LIST}    ${LIST}
+    Forward referenced concrete type               42                    42
+    Forward referenced ABC                         [1, 2]                [1, 2]
+    Forward referenced ABC                         ${LIST}               ${LIST}
 
 Unknown forward references
-    Unknown forward reference                  42         '42'
-    Nested unknown forward reference           ${LIST}    ${LIST}
+    Unknown forward reference                      42                    '42'
+    Nested unknown forward reference               ${LIST}               ${LIST}
 
 @keyword decorator overrides annotations
-    Types via keyword deco override            42    timedelta(seconds=42)
-    None as types via @keyword disables        42    '42'
-    Empty types via @keyword doesn't override  42    42
-    @keyword without types doesn't override    42    42
+    Types via keyword deco override                42                    timedelta(seconds=42)
+    None as types via @keyword disables            42                    '42'
+    Empty types via @keyword doesn't override      42                    42
+    @keyword without types doesn't override        42                    42
 
 Type information mismatch caused by decorator
-    Mismatch caused by decorator               foo   'foo'
+    Mismatch caused by decorator                   foo                   'foo'
 
 Decorator with wraps
-    Keyword With Wraps                         42    42
+    Keyword With Wraps                             42                    42
 
 Decorator with wraps mismatched type
-    Conversion Should Fail
-    ...    Keyword With Wraps    argument=foobar    type=integer
+    [Template]    Conversion Should Fail
+    Keyword With Wraps                             argument=foobar       type=integer
 
 Value contains variable
     [Setup]       Set Environment Variable         PI_NUMBER    3.14
     [Teardown]    Remove Environment Variable      PI_NUMBER
     Float                %{PI_NUMBER}              ${3.14}
-    ${value} =           Set variable              42
+    VAR                  ${value}                  42
     Integer              ${value}                  ${42}
-    @{value} =           Create List               1    2    3
+    VAR                  @{value}                  1    2    3
     Varargs              @{value}                  expected=(1, 2, 3)
-    &{value} =           Create Dictionary         a=1    b=2    c=3
+    VAR                  &{value}                  a=1    b=2    c=3
     Kwargs               &{value}                  expected={'a': 1, 'b': 2, 'c': 3}
 
 Default value is not used if explicit type conversion succeeds
-    Type and default 1    [1, 2]    [1, 2]
-    Type and default 2    42        42
+    Type and default 1                             [1, 2]                [1, 2]
+    Type and default 2                             42                    42
 
 Default value is used if explicit type conversion fails
-    Type and default 1    none       None
-    Type and default 2    FALSE      False
-    Type and default 2    ok also    'ok also'
-    Type and default 3    10         ${{datetime.timedelta(seconds=10)}}
+    Type and default 1                             none                  None
+    Type and default 2                             FALSE                 False
+    Type and default 2                             ok also               'ok also'
+    Type and default 3                             10                    ${{datetime.timedelta(seconds=10)}}
 
 Explicit conversion failure is used if both conversions fail
     [Template]    Conversion Should Fail
-    Type and default 4    BANG!    type=list         error=Invalid expression.
-    Type and default 3    BANG!    type=timedelta    error=Invalid time string 'BANG!'.
+    Type and default 4                             BANG!                 type=list         error=Invalid expression.
+    Type and default 3                             BANG!                 type=timedelta    error=Invalid time string 'BANG!'.
 
 Deferred evaluation of annotations
     [Tags]    require-py3.14
