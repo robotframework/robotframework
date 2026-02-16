@@ -683,7 +683,9 @@ class TestCase(model.TestCase[Keyword]):
     @property
     def has_custom_metadata(self) -> bool:
         """Check does a test have custom metadata without creating a metadata object."""
-        return hasattr(self, '_setter__custom_metadata') and bool(getattr(self, '_setter__custom_metadata', None))
+        return hasattr(self, "_setter__custom_metadata") and bool(
+            getattr(self, "_setter__custom_metadata", None)
+        )
 
     @setter
     def custom_metadata(self, custom_metadata: "Mapping[str, str]|None") -> Metadata:

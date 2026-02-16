@@ -36,7 +36,11 @@ class LexingContext:
 class FileContext(LexingContext):
     settings: FileSettings
 
-    def __init__(self, lang: LanguagesLike = None, allowed_custom_metadata: "list[str]|None" = None):
+    def __init__(
+        self,
+        lang: LanguagesLike = None,
+        allowed_custom_metadata: "list[str]|None" = None,
+    ):
         languages = lang if isinstance(lang, Languages) else Languages(lang)
         settings_class: "type[FileSettings]" = type(self).__annotations__["settings"]
         settings = settings_class(languages, allowed_custom_metadata)

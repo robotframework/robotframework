@@ -264,14 +264,14 @@ class UserKeyword(KeywordImplementation):
         New in Robot Framework 6.1.
         """
         return bool(self._teardown)
-    
+
     @property
     def has_custom_metadata(self) -> bool:
         """Check does a test have custom metadata without creating a metadata object.
-        
+
         New in Robot Framework 7.0.
         """
-        return bool(getattr(self, '_setter__custom_metadata', None))
+        return bool(getattr(self, "_setter__custom_metadata", None))
 
     def create_runner(
         self,
@@ -297,7 +297,7 @@ class UserKeyword(KeywordImplementation):
         # Avoid possible errors setting name with invalid embedded args.
         kw._name = self._name
         kw.embedded = self.embedded
-        if hasattr(self, 'custom_metadata') and self.custom_metadata:
+        if hasattr(self, "custom_metadata") and self.custom_metadata:
             kw.custom_metadata = self.custom_metadata
         if self.has_setup:
             kw.setup = self.setup.to_dict()

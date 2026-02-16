@@ -58,7 +58,9 @@ def get_model(
     Use :func:`get_resource_model` or :func:`get_init_model` when parsing
     resource or suite initialization files, respectively.
     """
-    return _get_model(get_tokens, source, data_only, curdir, lang, allowed_custom_metadata)
+    return _get_model(
+        get_tokens, source, data_only, curdir, lang, allowed_custom_metadata
+    )
 
 
 def get_resource_model(
@@ -73,7 +75,9 @@ def get_resource_model(
     Same as :func:`get_model` otherwise, but the source is considered to be
     a resource file. This affects, for example, what settings are valid.
     """
-    return _get_model(get_resource_tokens, source, data_only, curdir, lang, allowed_custom_metadata)
+    return _get_model(
+        get_resource_tokens, source, data_only, curdir, lang, allowed_custom_metadata
+    )
 
 
 def get_init_model(
@@ -89,7 +93,9 @@ def get_init_model(
     a suite initialization file. This affects, for example, what settings are
     valid.
     """
-    return _get_model(get_init_tokens, source, data_only, curdir, lang, allowed_custom_metadata)
+    return _get_model(
+        get_init_tokens, source, data_only, curdir, lang, allowed_custom_metadata
+    )
 
 
 def _get_model(
@@ -100,7 +106,9 @@ def _get_model(
     lang: LanguagesLike,
     allowed_custom_metadata: "list[str]|None",
 ):
-    tokens = token_getter(source, data_only, lang=lang, allowed_custom_metadata=allowed_custom_metadata)
+    tokens = token_getter(
+        source, data_only, lang=lang, allowed_custom_metadata=allowed_custom_metadata
+    )
     statements = _tokens_to_statements(tokens, curdir)
     model = _statements_to_model(statements, source)
     ConfigParser.parse(model)

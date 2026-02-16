@@ -434,10 +434,10 @@ class MetaHandler(ElementHandler):
     def end(self, elem, result):
         name = elem.get("name", "")
         value = elem.text or ""
-        
+
         # Import here to avoid circular imports
-        from .model import TestCase as ResultTestCase, Keyword as ResultKeyword
-        
+        from .model import Keyword as ResultKeyword, TestCase as ResultTestCase
+
         # Check if this is a TestCase or Keyword object
         if isinstance(result, (ResultTestCase, ResultKeyword)):
             # This is a TestCase or Keyword result object
@@ -447,6 +447,7 @@ class MetaHandler(ElementHandler):
             except AttributeError:
                 # Initialize custom_metadata using the setter
                 from robot.model.metadata import Metadata
+
                 result.custom_metadata = Metadata()
                 metadata = result.custom_metadata
             metadata[name] = value

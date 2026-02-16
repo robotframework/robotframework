@@ -108,7 +108,9 @@ class TestSuiteBuilder:
             changed by giving this argument ``False`` value.
         """
         self.custom_metadata = custom_metadata
-        self.standard_parsers = self._get_standard_parsers(lang, process_curdir, custom_metadata)
+        self.standard_parsers = self._get_standard_parsers(
+            lang, process_curdir, custom_metadata
+        )
         self.custom_parsers = self._get_custom_parsers(custom_parsers)
         self.defaults = defaults
         self.included_extensions = tuple(included_extensions or ())

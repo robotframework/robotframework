@@ -998,12 +998,14 @@ class Keyword(model.Keyword, StatusMixin):
         if self.has_teardown:
             data["teardown"] = self.teardown.to_dict()
         # Include custom metadata if present
-        if hasattr(self, 'custom_metadata') and self.custom_metadata:
+        if hasattr(self, "custom_metadata") and self.custom_metadata:
             data["custom_metadata"] = dict(self.custom_metadata)
         return data
 
     @setter
-    def custom_metadata(self, metadata: "Metadata|Sequence[tuple[str, str]]") -> Metadata:
+    def custom_metadata(
+        self, metadata: "Metadata|Sequence[tuple[str, str]]"
+    ) -> Metadata:
         """Custom metadata as a :class:`~robot.model.metadata.Metadata` object."""
         return Metadata(metadata)
 
@@ -1026,7 +1028,14 @@ class TestCase(model.TestCase[Keyword], StatusMixin):
 
     body_class = Body
     fixture_class = Keyword
-    __slots__ = ("status", "message", "_start_time", "_end_time", "_elapsed_time", "_custom_metadata")
+    __slots__ = (
+        "status",
+        "message",
+        "_start_time",
+        "_end_time",
+        "_elapsed_time",
+        "_custom_metadata",
+    )
 
     def __init__(
         self,
