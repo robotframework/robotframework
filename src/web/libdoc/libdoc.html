@@ -198,8 +198,12 @@
           <button class="clear-search">&#10005;</button>
         </div>
         {{#if tags.length}}
-          <select id="tags-shortcuts-container">
-          </select>
+          <div class="tags-filters">
+            <select id="show-tags-shortcuts-container" multiple title="{{t 'showTags'}}">
+            </select>
+            <select id="hide-tags-shortcuts-container" multiple title="{{t 'hideTags'}}">
+            </select>
+          </div>
         {{/if}}
         <div class="keywords-overview-header-row">
           <h4>{{t "keywords"}}
@@ -324,9 +328,9 @@
       {{/if}}
     </script>
     <script type="text/x-handlebars-template" id="tags-shortcuts-template">
-      <option value="" {{#ifEquals selectedTag ""}}selected{{/ifEquals}}>- Show all tags -</option>
+      <option value="[No tags]" {{#ifContains selectedTags "[No tags]"}}selected{{/ifContains}}>{{t "noTags"}}</option>
       {{#each tags}}
-        <option {{#ifEquals ../selectedTag this}}selected{{/ifEquals}}>{{this}}
+        <option value="{{this}}" {{#ifContains ../selectedTags this}}selected{{/ifContains}}>{{this}}
         </option>
       {{/each}}
     </script>

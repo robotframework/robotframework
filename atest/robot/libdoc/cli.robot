@@ -66,6 +66,16 @@ Language
     --language fI String ${OUTHTML}     HTML    String    lang=fi
     --language NoNe String ${OUTHTML}   HTML    String    language=
 
+Show and hide tags
+    [Template]    NONE
+    ${stdout} =    Run Libdoc    --showtag tag1 --showtag tag2 --hidetag tag3 String ${OUTHTML}
+    File Should Contain    ${OUTHTML}    "showTags":
+    File Should Contain    ${OUTHTML}    "tag1"
+    File Should Contain    ${OUTHTML}    "tag2"
+    File Should Contain    ${OUTHTML}    "hideTags":
+    File Should Contain    ${OUTHTML}    "tag3"
+    [Teardown]    Remove Output Files
+
 Relative path with Python libraries
     [Template]    NONE
     ${dir in libdoc exec dir}=    Normalize Path     ${ROBOTPATH}/../TempDirInExecDir

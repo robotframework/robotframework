@@ -51,6 +51,8 @@ class LibraryDoc:
         self.inits = ()
         self.keywords = ()
         self.type_docs = ()
+        self.show_tags = []
+        self.hide_tags = []
 
     @property
     def doc(self):
@@ -158,6 +160,10 @@ class LibraryDoc:
             data["theme"] = theme.lower()
         if lang:
             data["lang"] = lang.lower()
+        if self.show_tags:
+            data["showTags"] = self.show_tags
+        if self.hide_tags:
+            data["hideTags"] = self.hide_tags
         return data
 
     def to_json(self, indent=None, include_private=True, theme=None, lang=None):

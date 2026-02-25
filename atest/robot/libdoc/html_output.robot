@@ -125,6 +125,13 @@ Private keyword should be excluded
 All tags does not include tags from private keywords
     ${MODEL}[tags]    ['\${3}', '?!?!??', 'a', 'b', 'bar', 'common', 'dar', 'foo', 'Has', 'kw4', 'tags']
 
+Show and hide tags in model
+    [Setup]    Run Libdoc And Parse Model From HTML    --showtag t1 --showtag t2 --hidetag t3 ${TESTDATADIR}/module.py
+    [Template]    Should Be Equal
+    ${MODEL}[showTags][0]    t1
+    ${MODEL}[showTags][1]    t2
+    ${MODEL}[hideTags][0]    t3
+
 *** Keywords ***
 Verify Argument Models
     [Arguments]    ${arg_models}    @{expected_reprs}

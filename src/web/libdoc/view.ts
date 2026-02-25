@@ -168,22 +168,46 @@ class View {
 
   private initTagSearch() {
     const params = new URLSearchParams(window.location.search);
-    let selectedTag = "";
-    if (params.has("tag")) {
-      selectedTag = params.get("tag")!;
-      this.tagSearch(selectedTag, window.location.hash);
+    let selectedShowTags = this.libdoc.showTags || [];
+    let selectedHideTags = this.libdoc.hideTags || [];
+    
+    if (params.has("showtag")) {
+      selectedShowTags = params.getAll("showtag");
     }
+    if (params.has("hidetag")) {
+      selectedHideTags = params.getAll("hidetag");
+    }
+
     if (this.libdoc.tags.length) {
-      this.libdoc.selectedTag = selectedTag;
-      this.renderLibdocTemplate("tags-shortcuts");
-      document.getElementById("tags-shortcuts-container")!.onchange = (e) => {
-        const value = (e.target as HTMLSelectElement).selectedOptions[0].value;
-        if (value != "") {
-          this.tagSearch(value);
-        } else {
-          this.clearTagSearch();
-        }
+      this.libdoc.selectedShowTags = selectedShowTags;
+      this.libdoc.selectedHideTags = selectedHideTags;
+      
+      this.renderTemplate("tags-shortcuts", { 
+          tags: this.libdoc.tags, 
+          selectedTags: selectedShowTags 
+      }, "#show-tags-shortcuts-container");
+      
+      this.renderTemplate("tags-shortcuts", { 
+          tags: this.libdoc.tags, 
+          selectedTags: selectedHideTags 
+      }, "#hide-tags-shortcuts-container");
+      
+      const updateTags = () => {
+        const showSelect = document.getElementById("show-tags-shortcuts-container") as HTMLSelectElement;
+        const hideSelect = document.getElementById("hide-tags-shortcuts-container") as HTMLSelectElement;
+        
+        const showVals = Array.from(showSelect.selectedOptions).map(opt => opt.value);
+        const hideVals = Array.from(hideSelect.selectedOptions).map(opt => opt.value);
+        
+        this.tagsSearch(showVals, hideVals, window.location.hash);
       };
+
+      document.getElementById("show-tags-shortcuts-container")!.onchange = updateTags;
+      document.getElementById("hide-tags-shortcuts-container")!.onchange = updateTags;
+      
+      if (selectedShowTags.length > 0 || selectedHideTags.length > 0) {
+          this.tagsSearch(selectedShowTags, selectedHideTags, window.location.hash);
+      }
     }
   }
 
@@ -249,7 +273,18 @@ class View {
     this.renderLibdocTemplate("keywords", libdoc);
     document.querySelectorAll(".kw-tags span").forEach((elem) => {
       elem.addEventListener("click", (e) => {
-        this.tagSearch((e.target! as HTMLSpanElement).innerText);
+        const tag = (e.target! as HTMLSpanElement).innerText;
+        const showSelect = document.getElementById("show-tags-shortcuts-container") as HTMLSelectElement;
+        if (showSelect) {
+            Array.from(showSelect.options).forEach(opt => {
+                opt.selected = opt.value === tag;
+            });
+        }
+        const hideSelect = document.getElementById("hide-tags-shortcuts-container") as HTMLSelectElement;
+        if (hideSelect) {
+            hideSelect.selectedIndex = -1;
+        }
+        this.tagsSearch([tag], [], window.location.hash);
       });
     });
     this.registerTypeDocHandlers("#keywords-container");
@@ -281,44 +316,49 @@ class View {
     }
   }
 
-  private tagSearch(tag: string, hash?: string) {
-    (
-      document.getElementsByClassName("search-input")[0] as HTMLInputElement
-    ).value = "";
-    const include = { tags: true, tagsExact: true };
-    const url = window.location.pathname + "?tag=" + tag + (hash || "");
-    this.markMatches(tag, include);
-    this.highlightMatches(tag, include);
+  private tagsSearch(showTags: string[], hideTags: string[], hash?: string) {
+    this.libdoc.selectedShowTags = showTags;
+    this.libdoc.selectedHideTags = hideTags;
+    
+    const searchString = (document.getElementsByClassName("search-input")[0] as HTMLInputElement).value;
+    
+    const params = new URLSearchParams(window.location.search);
+    params.delete("showtag");
+    params.delete("hidetag");
+    showTags.forEach(t => params.append("showtag", t));
+    hideTags.forEach(t => params.append("hidetag", t));
+    
+    let search = params.toString();
+    if (search) search = "?" + search;
+    const url = window.location.pathname + search + (hash || "");
+    
+    this.applyFilters(searchString, showTags, hideTags);
+    
+    if (searchString) {
+        this.highlightMatches(searchString, { name: true, args: true, doc: true, tags: true });
+    }
+    
     history.replaceState && history.replaceState(null, "", url);
     document.getElementById("keyword-shortcuts-container")!.scrollTop = 0;
   }
 
-  private clearTagSearch() {
-    (
-      document.getElementsByClassName("search-input")[0] as HTMLInputElement
-    ).value = "";
-    history.replaceState &&
-      history.replaceState(null, "", window.location.pathname);
-    this.resetKeywords();
-  }
-
   private searching() {
     this.searchTime = Date.now();
-    const value = (
+    const searchString = (
       document.getElementsByClassName("search-input")![0] as HTMLInputElement
     ).value;
-    const include = { name: true, args: true, doc: true, tags: true };
+    
+    const showTags = this.libdoc.selectedShowTags || [];
+    const hideTags = this.libdoc.selectedHideTags || [];
 
-    if (value) {
-      requestAnimationFrame(() => {
-        this.markMatches(value, include, this.searchTime, () => {
-          this.highlightMatches(value, include, this.searchTime);
-          document.getElementById("keyword-shortcuts-container")!.scrollTop = 0;
+    requestAnimationFrame(() => {
+        this.applyFilters(searchString, showTags, hideTags, this.searchTime, () => {
+            if (searchString) {
+                this.highlightMatches(searchString, { name: true, args: true, doc: true, tags: true }, this.searchTime);
+            }
+            document.getElementById("keyword-shortcuts-container")!.scrollTop = 0;
         });
-      });
-    } else {
-      this.resetKeywords();
-    }
+    });
   }
 
   private highlightMatches(
@@ -362,39 +402,58 @@ class View {
     }
   }
 
-  private markMatches(
-    pattern: string,
-    include: MatchInclude,
+  private applyFilters(
+    searchString: string,
+    showTags: string[],
+    hideTags: string[],
     givenSearchTime?: number,
     callback?: FrameRequestCallback,
   ) {
     if (givenSearchTime && givenSearchTime !== this.searchTime) {
       return;
     }
-    let patternRegexp = regexpEscape(pattern);
-    if (include.tagsExact) {
-      patternRegexp = "^" + patternRegexp + "$";
+    
+    const hasSearch = searchString.length > 0;
+    let searchRegexp: RegExp | null = null;
+    if (hasSearch) {
+        searchRegexp = new RegExp(regexpEscape(searchString), "i");
     }
-    const regexp = new RegExp(patternRegexp, "i");
-    const test = regexp.test.bind(regexp);
+    const test = searchRegexp ? searchRegexp.test.bind(searchRegexp) : () => false;
+
     let result = {} as RuntimeLibdoc;
     let keywordMatchCount = 0;
     result.keywords = this.libdoc.keywords.map((orig) => {
       const kw = { ...orig };
-      kw.hidden =
-        !(include.name && test(kw.name)) &&
-        !(include.args && test(kw.args)) &&
-        !(include.doc && test(kw.doc)) &&
-        !(include.tags && kw.tags.some(test));
+      kw.hidden = false;
+
+      if (showTags.length > 0) {
+          const matchesShow = showTags.some(t => {
+              if (t === "[No tags]") return kw.tags.length === 0;
+              return kw.tags.includes(t);
+          });
+          if (!matchesShow) kw.hidden = true;
+      }
+
+      if (hideTags.length > 0) {
+          const matchesHide = hideTags.some(t => {
+              if (t === "[No tags]") return kw.tags.length === 0;
+              return kw.tags.includes(t);
+          });
+          if (matchesHide) kw.hidden = true;
+      }
+
+      if (hasSearch && !kw.hidden) {
+          const matchesSearch = test(kw.name) || test(kw.args) || test(kw.doc) || kw.tags.some(test);
+          if (!matchesSearch) kw.hidden = true;
+      }
+
       if (!kw.hidden) keywordMatchCount++;
       return kw;
     });
+    
     this.renderLibdocTemplate("keyword-shortcuts", result);
     this.renderKeywords(result);
-    if (this.libdoc.tags.length) {
-      this.libdoc.selectedTag = include.tagsExact ? pattern : "";
-      this.renderLibdocTemplate("tags-shortcuts");
-    }
+    
     document.getElementById("keyword-statistics-header")!.innerText =
       keywordMatchCount + " / " + result.keywords.length;
     if (keywordMatchCount === 0)
@@ -438,12 +497,17 @@ class View {
   }
 
   private resetKeywords() {
-    this.renderLibdocTemplate("keyword-shortcuts");
-    this.renderKeywords();
-    if (this.libdoc.tags.length) {
-      this.libdoc.selectedTag = "";
-      this.renderLibdocTemplate("tags-shortcuts");
-    }
+    this.libdoc.selectedShowTags = [];
+    this.libdoc.selectedHideTags = [];
+    
+    const showSelect = document.getElementById("show-tags-shortcuts-container") as HTMLSelectElement;
+    if (showSelect) showSelect.selectedIndex = -1;
+    
+    const hideSelect = document.getElementById("hide-tags-shortcuts-container") as HTMLSelectElement;
+    if (hideSelect) hideSelect.selectedIndex = -1;
+
+    this.applyFilters("", [], []);
+    
     history.replaceState && history.replaceState(null, "", location.pathname);
   }
 
@@ -451,10 +515,6 @@ class View {
     (
       document.getElementsByClassName("search-input")[0] as HTMLInputElement
     ).value = "";
-    const tagsSelect = document.getElementById("tags-shortcuts-container");
-    if (tagsSelect) {
-      (tagsSelect as HTMLSelectElement).selectedIndex = 0;
-    }
     this.resetKeywords();
   }
 

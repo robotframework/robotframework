@@ -100,6 +100,10 @@ Options
                           `lang` must be one of the built-in language codes:
 {format_languages()}
                           New in RF 7.2.
+    --showtag tag *       Show only keywords with these tags in HTML documentation.
+                          New in RF 7.x.
+    --hidetag tag *       Hide keywords with these tags in HTML documentation.
+                          New in RF 7.x.
  -n --name name           Sets the name of the documented library or resource.
  -v --version version     Sets the version of the documented library or
                           resource.
@@ -192,6 +196,8 @@ class LibDoc(Application):
         specdocformat=None,
         theme=None,
         language=None,
+        showtag=None,
+        hidetag=None,
         pythonpath=None,
         quiet=False,
     ):
@@ -212,6 +218,8 @@ class LibDoc(Application):
             or (format in ("JSON", "LIBSPEC") and specdocformat != "RAW")
         ):
             libdoc.convert_docs_to_html()
+        libdoc.show_tags = showtag or []
+        libdoc.hide_tags = hidetag or []
         libdoc.save(
             output,
             format,

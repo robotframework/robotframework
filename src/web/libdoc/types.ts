@@ -15,6 +15,8 @@ type Libdoc = {
   typedocs: Array<TypeDoc>;
   theme: string | null;
   lang: string | null;
+  showTags?: Array<string>;
+  hideTags?: Array<string>;
 };
 
 type Keyword = {
@@ -71,7 +73,8 @@ type TypeItem = {
 };
 
 interface RuntimeLibdoc extends Libdoc {
-  selectedTag?: string;
+  selectedShowTags?: Array<string>;
+  selectedHideTags?: Array<string>;
   inits: Array<RuntimeKeyword>;
   keywords: Array<RuntimeKeyword>;
 }
