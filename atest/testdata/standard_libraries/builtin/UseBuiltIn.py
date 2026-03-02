@@ -1,4 +1,5 @@
 import time
+from contextlib import suppress
 
 from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn
@@ -35,6 +36,18 @@ def named_argument_syntax():
 def use_run_keyword_with_non_string_values():
     BuiltIn().run_keyword("Log", 42)
     BuiltIn().run_keyword("Log", b"\xff")
+
+
+def use_get_variables_dictionary_with_non_string_keys():
+    variables = BuiltIn().get_variables()
+    with suppress(KeyError):
+        variables[123]
+    assert variables.get(123, 456)
+    assert 123 not in variables
+    with suppress(KeyError):
+        del variables[123]
+    assert variables.pop(123, 456)
+    variables[None] = 123
 
 
 def user_keyword_via_run_keyword():

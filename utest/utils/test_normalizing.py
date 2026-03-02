@@ -2,7 +2,9 @@ import unittest
 from collections import UserDict
 
 from robot.utils import normalize, NormalizedDict
-from robot.utils.asserts import assert_equal, assert_false, assert_raises, assert_true
+from robot.utils.asserts import (
+    assert_equal, assert_false, assert_raises, assert_raises_with_msg, assert_true
+)
 
 
 class TestNormalize(unittest.TestCase):
@@ -329,6 +331,35 @@ class TestNormalizedDict(unittest.TestCase):
         nd.clear()
         assert_equal(nd._data, {})
         assert_equal(nd._keys, {})
+
+    def test_access_with_non_string_key(self):
+        assert_raises(KeyError, NormalizedDict().__getitem__, None)
+        assert_raises(KeyError, NormalizedDict().__getitem__, 123)
+        assert_equal(NormalizedDict().get(123), None)
+        assert_equal(NormalizedDict().get(123, 456), 456)
+        assert_equal(None in NormalizedDict(), False)
+
+    def test_set_with_non_string_key(self):
+        assert_raises_with_msg(
+            TypeError,
+            "NormalizedDict only accepts strings as keys, got None.",
+            NormalizedDict().__setitem__,
+            None,
+            "value",
+        )
+        assert_raises_with_msg(
+            TypeError,
+            "NormalizedDict only accepts strings as keys, got integer.",
+            NormalizedDict().setdefault,
+            123,
+            [],
+        )
+
+    def test_del_with_non_string_key(self):
+        assert_raises(KeyError, NormalizedDict().__delitem__, None)
+        assert_raises(KeyError, NormalizedDict().__delitem__, 123)
+        assert_raises(KeyError, NormalizedDict().pop, 123)
+        assert_equal(NormalizedDict().pop(123, 456), 456)
 
 
 if __name__ == "__main__":

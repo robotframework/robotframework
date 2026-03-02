@@ -20,8 +20,12 @@ Named argument syntax
 Listener Using BuiltIn
     Should Be Equal    ${SET BY LISTENER}    quux
 
-Use 'Run Keyword' with non-Unicode values
+Use 'Run Keyword' with non-string values
     Use Run Keyword with non string values
+
+Use dictionary returned by 'Get Variables' with non-string keys
+    [Documentation]    FAIL    TypeError: NormalizedDict only accepts strings as keys, got None.
+    Use Get Variables dictionary with non string keys
 
 Use BuiltIn keywords with timeouts
     [Timeout]    1 day
