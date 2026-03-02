@@ -339,6 +339,8 @@ class ByPathImporter(_Importer):
 
     def _import_by_path(self, path):
         module_dir, module_name = self._split_path_to_module(path)
+        if '.' in module_name:
+            raise DataError("Module name cannot contain dots when importing by path.")
         sys.path.insert(0, module_dir)
         try:
             return self._import(module_name)
