@@ -8,8 +8,8 @@ Keywords Using BuiltIn
     Log Messages And Set Log Level
     ${name} =    Get Test Name
     Should Be Equal    ${name}    ${TESTNAME}
-    Set Secret Variable
-    Should Be Equal    ${SECRET}    *****
+    Set New Variable
+    Should Be Equal    ${NEW}    Set by library!
     Variable Should Not Exist    ${SET BY LISTENER}
 
 Named argument syntax
@@ -26,8 +26,8 @@ Use 'Run Keyword' with non-Unicode values
 Use BuiltIn keywords with timeouts
     [Timeout]    1 day
     Log Messages And Set Log Level
-    Set Secret Variable
-    Should Be Equal    ${secret}    *****
+    Set New Variable
+    Should Be Equal    ${NEW}    Set by library!
     Use Run Keyword with non string values
 
 User keyword used via 'Run Keyword'

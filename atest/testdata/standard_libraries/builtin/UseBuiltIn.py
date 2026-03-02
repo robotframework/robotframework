@@ -19,8 +19,8 @@ def get_test_name():
     return BuiltIn().get_variables()["${TEST NAME}"]
 
 
-def set_secret_variable():
-    BuiltIn().set_test_variable("${SECRET}", "*****")
+def set_new_variable():
+    BuiltIn().set_test_variable("${NEW}", "Set by library!")
 
 
 def named_argument_syntax():
