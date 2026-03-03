@@ -18,15 +18,27 @@ Text format
 HTML format
     *bold* or <b>bold</b> http://example.com    -F html    shortdoc=*bold* or *bold* http://example.com
 
+Markdown format
+    [Template]    NONE
+    [Tags]    require-markdown
+    Test Format in HTML    <p><em>bold</em> or <b>bold</b> http://example.com</p>
+    ...    --docformat markdown
+    ...    doc2=<p>Link to <code>Keyword</code> or not?</p>
+    Should Contain    ${MODEL}[keywords][2][doc]
+    ...    This link to <a href="#Keyword">Keyword</a>
+    Should Contain    ${MODEL}[keywords][2][doc]
+    ...    <span class="gh">*** Test Cases ***</span>
+
 reST format
     [Template]    NONE
     [Tags]    require-docutils    require-pygments
     Test Format in HTML    <em>bold</em> or &lt;b&gt;bold&lt;/b&gt; <a
-    ...    --docformat rest    doc2=Link to <cite>Keyword</cite>.
-    Should Contain    ${MODEL}[keywords][2][doc]
+    ...    --docformat rest
+    ...    doc2=Link to <cite>Keyword</cite> or not?
+    Should Contain    ${MODEL}[keywords][3][doc]
     ...    This link to <a href="#Keyword" class="name">Keyword</a>
-    Should Contain    ${MODEL}[keywords][2][doc]
-    ...    <span class=\"gh\">*** Test Cases ***\x3c/span>
+    Should Contain    ${MODEL}[keywords][3][doc]
+    ...    <span class="gh">*** Test Cases ***</span>
 
 Format from Python library
     *bold* or <b>bold</b> http://example.com    lib=DocFormatHtml.py    shortdoc=*bold* or *bold* http://example.com
@@ -97,7 +109,7 @@ Compare HTML from LIBSPEC
 *** Keywords ***
 Test Format In HTML
     [Arguments]    ${doc}    ${cli}=    ${lib}=DocFormat.py
-    ...    ${doc2}=Link to <a href="#Keyword" class="name">Keyword</a>.
+    ...    ${doc2}=Link to <a href="#Keyword" class="name">Keyword</a> or not?
     ...    ${shortdoc}=*bold* or <b>bold</b> http://example.com
     ${lib} =    Join Path    ${TESTDATADIR}    ${lib}
     Run Libdoc And Parse Model From HTML    ${cli} ${lib}

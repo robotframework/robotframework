@@ -82,6 +82,7 @@ class DocToHtml:
         try:
             return {
                 "ROBOT": html_format,
+                "MARKDOWN": self._format_markdown,
                 "TEXT": self._format_text,
                 "HTML": lambda doc: doc,
                 "REST": self._format_rest,
@@ -96,13 +97,40 @@ class DocToHtml:
         try:
             from docutils.core import publish_parts
         except ImportError:
-            raise DataError("reST format requires 'docutils' module to be installed.")
+            raise DataError(
+                "reStructuredText format requires 'docutils' module to be installed."
+            )
         parts = publish_parts(
             doc,
             writer_name="html",
             settings_overrides={"syntax_highlight": "short"},
         )
         return parts["html_body"]
+
+    def _format_markdown(self, doc):
+        try:
+            from markdown import Markdown
+        except ImportError:
+            raise DataError(
+                "Markdown format requires 'markdown' module to be installed."
+            )
+        md = Markdown(
+            extensions=[
+                "admonition",
+                "codehilite",
+                "fenced_code",
+                "sane_lists",
+                "tables",
+                "toc",
+            ],
+            extension_configs={
+                "codehilite": {"css_class": "code"},
+                "toc": {"marker": ""},
+            },
+            output_format="html",
+        )
+        md.references = NormalizedDict({k: (v, None) for k, v in self._targets.items()})
+        return md.convert(doc)
 
     def __call__(self, doc):
         doc = self._formatter(doc)
