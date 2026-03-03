@@ -40,6 +40,7 @@ if __name__ == "__main__" and "robot" not in sys.modules:
 
 from robot.conf import RobotSettings
 from robot.htmldata import HtmlFileWriter, JsonWriter, ModelWriter, TESTDOC
+from robot.output import LOGGER
 from robot.running import TestSuiteBuilder
 from robot.utils import (
     abspath, Application, file_writer, get_link_path, html_escape, html_format,
@@ -124,6 +125,11 @@ class TestDoc(Application):
         outfile = abspath(datasources.pop())
         suite = TestSuiteFactory(datasources, **options)
         self._write_test_doc(suite, outfile, title)
+        LOGGER.warn(
+            "The built-in Testdoc tool has been deprecated in favor of the new and "
+            "enhanced external Testdoc tool. Learn more about the new tool at "
+            "https://marvkler.github.io/robotframework-testdoc/."
+        )
         self.console(outfile)
 
     def _write_test_doc(self, suite, outfile, title):
