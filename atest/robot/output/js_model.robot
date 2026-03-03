@@ -12,6 +12,11 @@ Strings like </script> logged as HTML are escaped in JS model
     Strings logged as HTML are escaped    log
     Strings logged as HTML are escaped    report
 
+HTML prefix in test documentation is rendered as HTML
+    Check test case    Test With HTML Doc
+    Model contains HTML from doc
+    ...    window.output?"strings"?*<b>Bold Documentation</b>*
+
 *** Keywords ***
 Run tests with options containing </script>
     ${options} =    Catenate
@@ -45,3 +50,8 @@ Get JS model
     ${strings} =    Get Lines Matching Pattern    ${file}    window.output?"strings"?*
     ${settings} =    Get Lines Matching Pattern    ${file}    window.settings =*
     RETURN    ${strings}    ${settings}
+
+Model contains HTML from doc
+    [Arguments]    ${pattern}
+    ${file} =    Get File    ${OUTDIR}/log.html
+    Should Contain    ${file}    ${pattern}

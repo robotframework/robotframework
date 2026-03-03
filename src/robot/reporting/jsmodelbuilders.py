@@ -83,6 +83,11 @@ class Builder:
         self._html = self._context.html
         self._timestamp = self._context.timestamp
 
+    def _try_handle_html(self, value: str):
+        if value.startswith("*HTML*"):
+            return self._string(value[6:].lstrip(), escape=False)
+        return None
+
     def _get_status(self, item, note_only=False):
         model = (
             STATUSES[item.status],
@@ -99,10 +104,7 @@ class Builder:
                     index = self._string(match.group(1))
                     return (*model, index)
             return model
-        if msg.startswith("*HTML*"):
-            index = self._string(msg[6:].lstrip(), escape=False)
-        else:
-            index = self._string(msg)
+        index = self._try_handle_html(msg) or self._string(msg)
         return (*model, index)
 
     def _build_body(self, body, split=False):
@@ -135,7 +137,7 @@ class SuiteBuilder(Builder):
                 self._string(suite.name, attr=True),
                 self._string(suite.source),
                 self._context.relative_source(suite.source),
-                self._html(suite.doc),
+                self._try_handle_html(suite.doc) or self._html(suite.doc),
                 tuple(self._yield_metadata(suite)),
                 self._get_status(suite),
                 tuple(self._build_suite(s) for s in suite.suites),
@@ -166,7 +168,7 @@ class TestBuilder(Builder):
             return (
                 self._string(test.name, attr=True),
                 self._string(test.timeout),
-                self._html(test.doc),
+                self._try_handle_html(test.doc) or self._html(test.doc),
                 tuple(self._string(t) for t in test.tags),
                 self._get_status(test),
                 self._build_body(body, split=True),

@@ -130,6 +130,14 @@ class TestBuildTestSuite(unittest.TestCase):
             suite, "quote:&quot; and *url* https://url.com", '<b>"Doc"</b>'
         )
 
+    def test_suite_html_doc(self):
+        suite = TestSuite(name="Suite", doc="*HTML* <b>Bold</b>")
+        self._verify_suite(suite, name="Suite", doc="<b>Bold</b>")
+
+    def test_test_html_doc(self):
+        test = TestCase(name="Test", doc="*HTML* <span>Custom</span>")
+        self._verify_test(test, name="Test", doc="<span>Custom</span>")
+
     def test_default_keyword(self):
         self._verify_body_item(Keyword())
 

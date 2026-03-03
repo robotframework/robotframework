@@ -4106,6 +4106,9 @@ class _Misc(_BuiltInBase):
         this can be changed using the optional ``append`` argument similarly
         as with `Set Test Message` keyword.
 
+        It is possible to use HTML format in the message by starting the message
+        with ``*HTML*`` similarly as with `Set Test Message` keyword.
+
         An optional ``separator`` argument can be used to provide custom separator
         string when appending to the old text. A single space is used as separator
         by default.
@@ -4122,7 +4125,7 @@ class _Misc(_BuiltInBase):
                 "'Set Test Documentation' keyword cannot be used in "
                 "suite setup or teardown."
             )
-        test.doc = self._get_new_text(test.doc, doc, append, separator=separator)
+        test.doc = self._get_new_text(test.doc, doc, append, handle_html=True, separator=separator)
         self._variables.set_test("${TEST_DOCUMENTATION}", test.doc)
         logger.info(f"Set test documentation to:\n{test.doc}")
 
@@ -4139,6 +4142,9 @@ class _Misc(_BuiltInBase):
         this can be changed using the optional ``append`` argument similarly
         as with `Set Test Message` keyword.
 
+        It is possible to use HTML format in the message by starting the message
+        with ``*HTML*`` similarly as with `Set Test Message` keyword.
+
         This keyword sets the documentation of the current suite by default.
         If the optional ``top`` argument is given a true value, the documentation
         of the top level suite is altered instead.
@@ -4153,7 +4159,7 @@ class _Misc(_BuiltInBase):
         The ``separator`` argument is new in Robot Framework 7.2.
         """
         suite = self._get_context(top).suite
-        suite.doc = self._get_new_text(suite.doc, doc, append, separator=separator)
+        suite.doc = self._get_new_text(suite.doc, doc, append, handle_html=True, separator=separator)
         self._variables.set_suite("${SUITE_DOCUMENTATION}", suite.doc, top)
         logger.info(f"Set suite documentation to:\n{suite.doc}")
 
