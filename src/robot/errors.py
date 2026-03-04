@@ -87,7 +87,7 @@ class KeywordError(DataError):
         super().__init__(message, details)
 
 
-class TimeoutExceeded(RobotError):
+class TimeoutExceeded(BaseException):
     """Used when a test or keyword timeout occurs.
 
     This exception cannot be caught be TRY/EXCEPT or by keywords running
@@ -97,6 +97,11 @@ class TimeoutExceeded(RobotError):
     a timeout occurs. They should reraise it immediately when they are done.
     Attributes :attr:`test_timeout` and :attr:`keyword_timeout` are not part
     of the public API and should not be used by libraries.
+
+    Prior to Robot Framework 7.5, this exception was a subtype of
+    ``Exception``. It is now an isolated type, separate from ``RobotError``.
+    This is to prevent this interrupt-like exception to be accidentally
+    silenced when catching (too broad) ranges of regular exceptions.
 
     Prior to Robot Framework 7.3, this exception was named ``TimeoutError``.
     It was renamed to not conflict with Python's standard exception with

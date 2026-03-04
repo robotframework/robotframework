@@ -597,10 +597,6 @@ class ListenerMethod:
         try:
             if self.method is not None:
                 self.method(*args)
-        except TimeoutExceeded:
-            # Propagate possible timeouts:
-            # https://github.com/robotframework/robotframework/issues/2763
-            raise
         except Exception:
             message, details = get_error_details()
             LOGGER.error(
