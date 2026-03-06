@@ -142,3 +142,25 @@ class TestTimeout(Timeout):
 
 class KeywordTimeout(Timeout):
     kind = "KEYWORD"
+
+
+class TotalTimeout(Timeout):
+    kind = "TOTAL EXECUTION"
+    _reported = False
+
+    def get_runner(self):
+        if self.time_left() <= 0 and not self._reported:
+            from robot.output import LOGGER
+            msg = f"Execution stopped: Total execution timeout of {self.string} exceeded."
+            LOGGER.error(msg)
+            self._reported = True
+        return super().get_runner()
+
+    def timed_out(self):
+        timeout_occurred = super().timed_out()
+        if timeout_occurred and not self._reported:
+            from robot.output import LOGGER
+            msg = f"Execution stopped: Total execution timeout of {self.string} exceeded."
+            LOGGER.error(msg)
+            self._reported = True
+        return timeout_occurred
