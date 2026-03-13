@@ -14,26 +14,52 @@
 #  limitations under the License.
 
 import re
+from typing import Callable, Literal
 from urllib.parse import quote
 
 from robot.errors import DataError
 from robot.utils import html_escape, html_format, NormalizedDict
 from robot.utils.htmlformatters import HeaderFormatter
 
+try:
+    from docutils.core import publish_parts
+except ImportError:
+
+    def publish_parts(*args, **kwargs):
+        raise DataError(
+            "reStructuredText format requires 'docutils' module to be installed."
+        )
+
+
+try:
+    from markdown import Markdown
+except ImportError:
+
+    def Markdown(*args, **kwargs):
+        raise DataError("Markdown format requires 'markdown' module to be installed.")
+
+
+DocFormat = Literal["ROBOT", "TEXT", "HTML", "REST", "MARKDOWN"]
+
 
 class DocFormatter:
-    _header_regexp = re.compile(r"<h([234])>(.+?)</h\1>")
 
-    def __init__(self, keywords, type_info, introduction, doc_format="ROBOT"):
+    def __init__(
+        self,
+        keywords,
+        type_info,
+        introduction,
+        doc_format: DocFormat = "ROBOT",
+    ):
         targets = self._get_targets(
             keywords,
             type_info,
             introduction,
-            robot_format=doc_format == "ROBOT",
+            doc_format,
         )
         self._doc_to_html = DocToHtml(doc_format, targets)
 
-    def _get_targets(self, keywords, type_info, introduction, robot_format):
+    def _get_targets(self, keywords, type_info, introduction, doc_format):
         targets = {
             "introduction": "Introduction",
             "library introduction": "Introduction",
@@ -43,9 +69,8 @@ class DocFormatter:
         }
         for info in type_info:
             targets[info.name] = "type-" + info.name
-        if robot_format:
-            for header in self._yield_header_targets(introduction):
-                targets[header] = header
+        for header, target in self._yield_header_targets(introduction, doc_format):
+            targets[header] = target
         for kw in keywords:
             targets[kw.name] = kw.name
         return {
@@ -53,67 +78,79 @@ class DocFormatter:
             for key, value in targets.items()
         }
 
-    def _yield_header_targets(self, introduction):
-        headers = HeaderFormatter()
-        for line in introduction.splitlines():
-            match = headers.match(line.strip())
-            if match:
-                yield match.group(2)
+    def _yield_header_targets(self, introduction, doc_format):
+        if doc_format == "ROBOT":
+            headers = HeaderFormatter()
+            for line in introduction.splitlines():
+                match = headers.match(line.strip())
+                if match:
+                    yield match.group(2), match.group(2)
+        if doc_format == "MARKDOWN":
+            md = Markdown(
+                extensions=["toc"],
+                extension_configs={"toc": {"marker": ""}},
+            )
+            md.convert(introduction)
+            for header, target in self._get_markdown_toc_tokens(md.toc_tokens):
+                yield header, target
+
+    def _get_markdown_toc_tokens(self, toc_tokens):
+        for token in toc_tokens:
+            yield token["name"], token["id"]
+            yield from self._get_markdown_toc_tokens(token["children"])
 
     def _encode_uri_component(self, value):
         # Emulates encodeURIComponent javascript function
         return quote(value.encode("UTF-8"), safe="-_.!~*'()")
 
-    def html(self, doc, intro=False):
-        doc = self._doc_to_html(doc)
-        if intro:
-            doc = self._header_regexp.sub(r'<h\1 id="\2">\2</h\1>', doc)
-        return doc
+    def html(self, doc):
+        return self._doc_to_html(doc)
 
 
 class DocToHtml:
-    _name_regexp = re.compile("`(.+?)`")
 
-    def __init__(self, doc_format, targets=None):
+    def __init__(self, doc_format: DocFormat, targets=None):
         self._formatter = self._get_formatter(doc_format)
+        if doc_format == "MARKDOWN":
+            targets = {k: (targets[k], None) for k in targets}
         self._targets = NormalizedDict(targets)
 
-    def _get_formatter(self, doc_format):
+    def _get_formatter(self, doc_format: DocFormat) -> Callable[[str], str]:
         try:
             return {
-                "ROBOT": html_format,
-                "MARKDOWN": self._format_markdown,
+                "ROBOT": self._format_robot,
                 "TEXT": self._format_text,
-                "HTML": lambda doc: doc,
+                "HTML": self._format_html,
                 "REST": self._format_rest,
+                "MARKDOWN": self._format_markdown,
             }[doc_format]
         except KeyError:
             raise DataError(f"Invalid documentation format '{doc_format}'.")
 
-    def _format_text(self, doc):
-        return f'<p style="white-space: pre-wrap">{html_escape(doc)}</p>'
+    def __call__(self, doc: str) -> str:
+        return self._formatter(doc)
 
-    def _format_rest(self, doc):
-        try:
-            from docutils.core import publish_parts
-        except ImportError:
-            raise DataError(
-                "reStructuredText format requires 'docutils' module to be installed."
-            )
+    def _format_robot(self, doc: str) -> str:
+        doc = html_format(doc)
+        doc = re.sub(r"<h([234])>(.+?)</h\1>", r'<h\1 id="\2">\2</h\1>', doc)
+        return self._handle_backtick_links(doc)
+
+    def _format_text(self, doc: str) -> str:
+        doc = self._handle_backtick_links(html_escape(doc))
+        return f'<p style="white-space: pre-wrap">{doc}</p>'
+
+    def _format_html(self, doc: str) -> str:
+        return self._handle_backtick_links(doc)
+
+    def _format_rest(self, doc: str) -> str:
         parts = publish_parts(
             doc,
             writer_name="html",
             settings_overrides={"syntax_highlight": "short"},
         )
-        return parts["html_body"]
+        return self._handle_backtick_links(parts["html_body"])
 
-    def _format_markdown(self, doc):
-        try:
-            from markdown import Markdown
-        except ImportError:
-            raise DataError(
-                "Markdown format requires 'markdown' module to be installed."
-            )
+    def _format_markdown(self, doc: str) -> str:
         md = Markdown(
             extensions=[
                 "admonition",
@@ -124,19 +161,18 @@ class DocToHtml:
                 "toc",
             ],
             extension_configs={
-                "codehilite": {"css_class": "code"},
-                "toc": {"marker": ""},
+                "codehilite": {"css_class": "code", "linenums": False},
+                "toc": {"baselevel": 2, "marker": "%TOC%"},
             },
             output_format="html",
         )
-        md.references = NormalizedDict({k: (v, None) for k, v in self._targets.items()})
+        md.references = self._targets.copy()
         return md.convert(doc)
 
-    def __call__(self, doc):
-        doc = self._formatter(doc)
-        return self._name_regexp.sub(self._link_keywords, doc)
+    def _handle_backtick_links(self, doc):
+        return re.sub("`(.+?)`", self._handle_names, doc)
 
-    def _link_keywords(self, match):
+    def _handle_names(self, match):
         name = match.group(1)
         target = self._targets.get(name)
         if target:

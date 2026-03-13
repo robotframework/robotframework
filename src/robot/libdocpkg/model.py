@@ -21,7 +21,7 @@ from robot.model import Tags
 from robot.running import ArgInfo, ArgumentSpec, TypeInfo
 from robot.utils import getshortdoc, setter, Sortable
 
-from .htmlutils import DocFormatter, DocToHtml, HtmlToText
+from .htmlutils import DocFormat, DocFormatter, DocToHtml, HtmlToText
 from .output import get_generation_time, LibdocOutput
 from .writer import LibdocWriter
 
@@ -36,7 +36,7 @@ class LibraryDoc:
         version="",
         type="LIBRARY",
         scope="TEST",
-        doc_format="ROBOT",
+        doc_format: DocFormat = "ROBOT",
         source=None,
         lineno=-1,
     ):
@@ -117,7 +117,7 @@ class LibraryDoc:
             self.doc,
             self.doc_format,
         )
-        self._doc = formatter.html(self.doc, intro=True)
+        self._doc = formatter.html(self.doc)
         for item in self.inits + self.keywords:
             # If 'short_doc' is not set, it is generated automatically based on 'doc'
             # when accessed. Generate and set it to avoid HTML format affecting it.
