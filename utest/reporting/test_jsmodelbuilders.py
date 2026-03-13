@@ -109,6 +109,7 @@ class TestBuildTestSuite(unittest.TestCase):
             "<b>Doc</b>",
             ("t1", "t2"),
             "1 minute",
+            (),  # custom_metadata
             1,
             "Msg",
             0,
@@ -159,6 +160,7 @@ class TestBuildTestSuite(unittest.TestCase):
             "${v1}    ${v2}",
             "tag1, tag2",
             "1 second",
+            (),  # metadata
             0,
             0,
             42,
@@ -277,11 +279,11 @@ class TestBuildTestSuite(unittest.TestCase):
         context = JsBuildingContext()
         model = SuiteBuilder(context).build(suite)
         self._verify_status(model[5], start=0)
-        self._verify_status(model[-2][0][8], start=1)
+        self._verify_status(model[-2][0][9], start=1)
         self._verify_mapped(
             model[-2][0][-1], context.strings, ((10, 2, "Message"), (11, 1, ""))
         )
-        self._verify_status(model[-3][0][4], start=1000)
+        self._verify_status(model[-3][0][5], start=1000)
 
     def test_if(self):
         test = TestSuite().tests.create()
@@ -290,11 +292,11 @@ class TestBuildTestSuite(unittest.TestCase):
         test.body[0].body.create_branch(BodyItem.ELSE_IF, "$x < 0", status="PASS")
         test.body[0].body.create_branch(BodyItem.ELSE, status="NOT RUN")
         test.body[0].body[-1].body.create_keyword("z")
-        exp_if = (5, "$x &gt; 0", "", "", "", "", "", "", (3, None, 0), ())
-        exp_else_if = (6, "$x &lt; 0", "", "", "", "", "", "", (1, None, 0), ())
+        exp_if = (5, "$x &gt; 0", "", "", "", "", "", "", (), (3, None, 0), ())
+        exp_else_if = (6, "$x &lt; 0", "", "", "", "", "", "", (), (1, None, 0), ())
         exp_else = (
-            7, '', '', '', '', '', '', '', (3, None, 0),
-            ((0, 'z', '', '', '', '', '', '', (0, None, 0), ()),)
+            7, '', '', '', '', '', '', '', (), (3, None, 0),
+            ((0, 'z', '', '', '', '', '', '', (), (0, None, 0), ()),)
         )  # fmt: skip
         self._verify_test(test, body=(exp_if, exp_else_if, exp_else))
 
@@ -342,7 +344,7 @@ class TestBuildTestSuite(unittest.TestCase):
         test.body.create_message("Hi from test again", "WARN")
         exp_m1 = (None, 2, "Hi from test")
         exp_kw = (
-            0, '', '', '', '', '', '', '', (0, None, 0),
+            0, '', '', '', '', '', '', '', (), (0, None, 0),
             ((None, 2, 'Hi from keyword'),)
         )  # fmt: skip
         exp_m3 = (None, 3, "Hi from test again")
@@ -397,6 +399,7 @@ class TestBuildTestSuite(unittest.TestCase):
         doc="",
         tags=(),
         timeout="",
+        custom_metadata=(),
         status=0,
         message="",
         start=None,
@@ -408,7 +411,7 @@ class TestBuildTestSuite(unittest.TestCase):
             status = (*status, message)
         doc = f"<p>{doc}</p>" if doc else ""
         return self._build_and_verify(
-            TestBuilder, test, name, timeout, doc, tags, status, body
+            TestBuilder, test, name, timeout, doc, tags, custom_metadata, status, body
         )
 
     def _verify_body_item(
@@ -422,6 +425,7 @@ class TestBuildTestSuite(unittest.TestCase):
         assign="",
         tags="",
         timeout="",
+        metadata=(),
         status=0,
         start=None,
         elapsed=0,
@@ -442,6 +446,7 @@ class TestBuildTestSuite(unittest.TestCase):
             args,
             assign,
             tags,
+            metadata,
             status,
             body,
         )

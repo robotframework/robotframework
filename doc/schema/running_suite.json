@@ -732,6 +732,13 @@
               }
             ]
           }
+        },
+        "custom_metadata": {
+          "title": "Custom Metadata",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       },
       "required": [
@@ -886,6 +893,13 @@
                 "$ref": "#/definitions/Error"
               }
             ]
+          }
+        },
+        "custom_metadata": {
+          "title": "Custom Metadata",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
           }
         }
       },

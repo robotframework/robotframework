@@ -70,6 +70,7 @@ class TestSuiteBuilder:
         lang: LanguagesLike = None,
         allow_empty_suite: bool = False,
         process_curdir: bool = True,
+        custom_metadata: "list[str]|None" = None,
     ):
         """
         :param included_suites:
@@ -106,7 +107,10 @@ class TestSuiteBuilder:
             resolved already at parsing time by default, but that can be
             changed by giving this argument ``False`` value.
         """
-        self.standard_parsers = self._get_standard_parsers(lang, process_curdir)
+        self.custom_metadata = custom_metadata
+        self.standard_parsers = self._get_standard_parsers(
+            lang, process_curdir, custom_metadata
+        )
         self.custom_parsers = self._get_custom_parsers(custom_parsers)
         self.defaults = defaults
         self.included_extensions = tuple(included_extensions or ())
@@ -125,8 +129,9 @@ class TestSuiteBuilder:
         self,
         lang: LanguagesLike,
         process_curdir: bool,
+        custom_metadata: "list[str]|None" = None,
     ) -> "dict[str, Parser]":
-        robot_parser = RobotParser(lang, process_curdir)
+        robot_parser = RobotParser(lang, process_curdir, custom_metadata)
         rest_parser = RestParser(lang, process_curdir)
         json_parser = JsonParser()
         return {
