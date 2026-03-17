@@ -107,7 +107,6 @@
 .. include:: Appendices/Translations.rst
 .. include:: Appendices/DocumentationFormatting.rst
 .. include:: Appendices/TimeFormat.rst
-.. include:: Appendices/BooleanArguments.rst
 .. include:: Appendices/EvaluatingExpressions.rst
 .. include:: Appendices/Registrations.rst
 
