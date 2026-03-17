@@ -17,11 +17,12 @@ import json
 import re
 from itertools import chain
 
+from robot.api.deco import DocFormat
 from robot.model import Tags
 from robot.running import ArgInfo, ArgumentSpec, TypeInfo
 from robot.utils import getshortdoc, setter, Sortable
 
-from .htmlutils import DocFormat, DocFormatter, DocToHtml, HtmlToText
+from .htmlutils import DocFormatter, DocToHtml, HtmlToText
 from .output import get_generation_time, LibdocOutput
 from .writer import LibdocWriter
 

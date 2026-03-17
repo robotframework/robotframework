@@ -14,9 +14,10 @@
 #  limitations under the License.
 
 import re
-from typing import Callable, Literal
+from typing import Callable
 from urllib.parse import quote
 
+from robot.api.deco import DocFormat
 from robot.errors import DataError
 from robot.utils import html_escape, html_format, NormalizedDict
 from robot.utils.htmlformatters import HeaderFormatter
@@ -37,9 +38,6 @@ except ImportError:
 
     def Markdown(*args, **kwargs):
         raise DataError("Markdown format requires 'markdown' module to be installed.")
-
-
-DocFormat = Literal["ROBOT", "TEXT", "HTML", "REST", "MARKDOWN"]
 
 
 class DocFormatter:

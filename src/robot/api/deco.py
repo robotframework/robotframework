@@ -24,7 +24,7 @@ KeywordDecorator = Callable[[K], K]
 LibraryDecorator = Callable[[L], L]
 Scope = Literal["GLOBAL", "SUITE", "TEST", "TASK"]
 Converter = Union[Callable[[Any], Any], Callable[[Any, Any], Any]]
-DocFormat = Literal["ROBOT", "HTML", "TEXT", "REST"]
+DocFormat = Literal["ROBOT", "MARKDOWN", "HTML", "TEXT", "REST"]
 
 
 def not_keyword(func: F) -> F:
