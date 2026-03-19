@@ -1,11 +1,13 @@
+import sys
 import unittest
 
+from robot.errors import DataError
 from robot.model import BodyItem
-from robot.output import LOGGER
-from robot.output.listeners import Listeners
+from robot.output import LOGGER, LogLevel
+from robot.output.listeners import ListenerFacade, Listeners
 from robot.running.outputcapture import OutputCapturer
 from robot.utils import DotDict
-from robot.utils.asserts import assert_equal
+from robot.utils.asserts import assert_equal, assert_raises_with_msg
 
 LOGGER.unregister_console_logger()
 
@@ -55,7 +57,14 @@ class KwMock(Mock, BodyItem):
             self.type = BodyItem.KEYWORD
 
 
-class ListenOutputs:
+class Listener:
+
+    def __init__(self, priority=None):
+        if priority is not None:
+            self.ROBOT_LISTENER_PRIORITY = priority
+
+
+class ListenOutputs(Listener):
 
     def output_file(self, path):
         self._out_file("Output", path)
@@ -168,6 +177,39 @@ class TestListeners(unittest.TestCase):
         stdout, stderr = self.capturer._release()
         assert_equal(stderr, "")
         assert_equal(stdout.rstrip(), expected)
+
+
+class TestListenerPriority(unittest.TestCase):
+
+    def test_no_priority(self):
+        self._assert_priority(None, 0)
+
+    def test_priority(self):
+        self._assert_priority(42, 42)
+        self._assert_priority(4.2, 4.2)
+        self._assert_priority("42", 42)
+        self._assert_priority("4.2", 4.2)
+
+    def test_huge_priority(self):
+        self._assert_priority(sys.maxsize, sys.maxsize)
+        self._assert_priority(sys.maxsize-1, sys.maxsize-1)
+
+    def test_invalid_priority(self):
+        assert_raises_with_msg(
+            DataError,
+            "Invalid listener priority 'invalid'.",
+            self._create_listener,
+            "invalid",
+        )
+
+    def _assert_priority(self, priority, expected):
+        listener = self._create_listener(priority)
+        assert_equal(listener.priority, expected)
+        if expected is not None:
+            assert_equal(type(listener.priority), type(expected))
+
+    def _create_listener(self, priority):
+        return ListenerFacade(Listener(priority), "xxx", LogLevel("INFO"))
 
 
 if __name__ == "__main__":

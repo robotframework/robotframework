@@ -26,7 +26,7 @@ from robot.utils import (
 
 from .logger import LOGGER
 from .loggerapi import LoggerApi
-from .loglevel import LogLevel
+from .loglevel import LogLevel, SettableLevel
 
 
 class Listeners:
@@ -35,7 +35,7 @@ class Listeners:
     def __init__(
         self,
         listeners: Iterable["str|Any"] = (),
-        log_level: "LogLevel|str" = "INFO",
+        log_level: "LogLevel|SettableLevel" = "INFO",
     ):
         if isinstance(log_level, str):
             log_level = LogLevel(log_level)
@@ -137,8 +137,13 @@ class ListenerFacade(LoggerApi, ABC):
 
     def _get_priority(self, listener):
         priority = getattr(listener, "ROBOT_LISTENER_PRIORITY", 0)
+        if isinstance(priority, (int, float)):
+            return priority
         try:
-            return float(priority)
+            try:
+                return int(priority)
+            except ValueError:
+                return float(priority)
         except (ValueError, TypeError):
             raise DataError(f"Invalid listener priority '{priority}'.")
 
