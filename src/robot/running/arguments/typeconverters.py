@@ -322,9 +322,17 @@ class IntegerConverter(TypeConverter):
     type = int
     abc = Integral
     type_name = "integer"
-    value_types = (str, float)
+    value_types = (str, float, bool)
+
+    def no_conversion_needed(self, value):
+        # bool is subclass of int but should convert to 0/1
+        if isinstance(value, bool):
+            return False
+        return super().no_conversion_needed(value)
 
     def _non_string_convert(self, value):
+        if isinstance(value, bool):
+            return int(value)
         if value.is_integer():
             return int(value)
         raise ValueError("Conversion would lose precision.")
