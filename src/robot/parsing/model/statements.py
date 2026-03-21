@@ -401,6 +401,7 @@ class ResourceImport(Statement):
     def from_params(
         cls,
         name: str,
+        alias: "str|None" = None,
         separator: str = FOUR_SPACES,
         eol: str = EOL,
     ) -> "ResourceImport":
@@ -408,13 +409,25 @@ class ResourceImport(Statement):
             Token(Token.RESOURCE, "Resource"),
             Token(Token.SEPARATOR, separator),
             Token(Token.NAME, name),
-            Token(Token.EOL, eol),
         ]
+        if alias is not None:
+            tokens += [
+                Token(Token.SEPARATOR, separator),
+                Token(Token.AS),
+                Token(Token.SEPARATOR, separator),
+                Token(Token.NAME, alias),
+            ]
+        tokens += [Token(Token.EOL, eol)]
         return cls(tokens)
 
     @property
     def name(self) -> str:
         return self.get_value(Token.NAME, "")
+
+    @property
+    def alias(self) -> "str|None":
+        separator = self.get_token(Token.AS)
+        return self.get_tokens(Token.NAME)[-1].value if separator else None
 
 
 @Statement.register
