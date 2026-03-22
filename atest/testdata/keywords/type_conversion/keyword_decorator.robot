@@ -24,6 +24,8 @@ Integer
     Integer              10E99                     10**100
     Integer              ${41}                     41
     Integer              ${-4.0}                   -4
+    Integer              ${TRUE}                   1
+    Integer              ${FALSE}                  0
 
 Integer as hex
     Integer              0x0                        0

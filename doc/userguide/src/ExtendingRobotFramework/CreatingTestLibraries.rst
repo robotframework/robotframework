@@ -1279,8 +1279,8 @@ Other types cause conversion failures.
    |              |               |            |              | Translations_ appendix for supported translations.             |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | int_         | Integral_     | integer,   | str_,        | Conversion is done using the int_ built-in function. Floats    | | `42`                               |
-   |              |               | long       | float_       | are accepted only if they can be represented as integers       | | `-1`                               |
-   |              |               |            |              | exactly. For example, `1.0` is accepted and `1.1` is not.      | | `10 000 000`                       |
+   |              |               | long       | float_,      | are accepted only if they can be represented as integers       | | `-1`                               |
+   |              |               |            | bool_        | exactly. For example, `1.0` is accepted and `1.1` is not.      | | `10 000 000`                       |
    |              |               |            |              | If converting a string to an integer fails and the type        | | `1e100`                            |
    |              |               |            |              | is got implicitly based on a default value, conversion to      | | `0xFF`                             |
    |              |               |            |              | float is attempted as well.                                    | | `0o777`                            |
@@ -1288,13 +1288,16 @@ Other types cause conversion failures.
    |              |               |            |              | Starting from Robot Framework 4.1, it is possible to use       | | `0xBAD_C0FFEE`                     |
    |              |               |            |              | hexadecimal, octal and binary numbers by prefixing values with | | `${1}`                             |
    |              |               |            |              | `0x`, `0o` and `0b`, respectively.                             | | `${1.0}`                           |
-   |              |               |            |              |                                                                |                                      |
+   |              |               |            |              |                                                                | | `${True}` (converted to `1`)       |
    |              |               |            |              | Starting from Robot Framework 4.1, spaces and underscores can  |                                      |
    |              |               |            |              | be used as visual separators for digit grouping purposes.      |                                      |
    |              |               |            |              |                                                                |                                      |
    |              |               |            |              | Starting from Robot Framework 7.0, strings representing floats |                                      |
    |              |               |            |              | are accepted as long as their decimal part is zero. This       |                                      |
    |              |               |            |              | includes using the scientific notation like `1e100`.           |                                      |
+   |              |               |            |              |                                                                |                                      |
+   |              |               |            |              | Starting from Robot Framework 7.5, Boolean values `True` and   |                                      |
+   |              |               |            |              | `False` are converted to integers `1` and `0`.                 |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | float_       | Real_         | double     | str_,        | Conversion is done using the float_ built-in.                  | | `3.14`                             |
    |              |               |            | Real_        |                                                                | | `2.9979e8`                         |

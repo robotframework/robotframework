@@ -36,6 +36,8 @@ Integer
     Integer              100_e_-_2                 1
     Integer              ${41}                     41
     Integer              ${-4.0}                   -4
+    Integer              ${TRUE}                   1
+    Integer              ${FALSE}                  0
 
 Integer as hex
     Integer              0x0                       0
@@ -106,6 +108,8 @@ Float
     Float                ${4}                      4.0
     Float                ${-4.1}                   -4.1
     Float                ${FRACTION 1/2}           0.5
+    Float                ${TRUE}                   1.0
+    Float                ${FALSE}                  0.0
 
 Invalid float
     [Template]           Conversion Should Fail
