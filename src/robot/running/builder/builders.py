@@ -63,7 +63,9 @@ class TestSuiteBuilder:
     def __init__(
         self,
         included_suites: str = "DEPRECATED",
-        included_extensions: Sequence[str] = (".robot", ".rbt", ".robot.rst", ".robot.md"),
+        included_extensions: Sequence[str] = (
+            ".robot", ".rbt", ".robot.rst", ".robot.md",
+        ),
         included_files: Sequence[str] = (),
         custom_parsers: Sequence[str] = (),
         defaults: "TestDefaults|None" = None,
