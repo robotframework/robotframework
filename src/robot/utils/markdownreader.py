@@ -16,17 +16,21 @@
 
 def _generate_data_blocks(mdfile):
     in_block = False
+    pending_separator = False  # Used to separate multiple blocks with an empty line.
+
     for line in mdfile.readlines():
         line = line.rstrip("\n")
-
         if not in_block:
             if line.strip() in ("```robotframework", "```robot"):
                 in_block = True
         else:
             if line.strip() == "```":
                 in_block = False
-                yield ""  # Add an empty line between blocks to separate them.
+                pending_separator = True
             else:
+                if pending_separator:
+                    yield ""
+                    pending_separator = False
                 yield line
 
 
