@@ -196,3 +196,11 @@ class CustomParser(Parser):
                 f"Calling '{self.name}.{method_name}()' failed: {get_error_message()}"
             )
         return suite
+
+
+class MarkdownParser(RobotParser):
+    extensions = (".robot.md", ".md", ".markdown")
+
+    def _get_source(self, source: Path) -> str:
+        with FileReader(source) as reader:
+            return read_markdown_data(reader)
