@@ -14,6 +14,21 @@
 #  limitations under the License.
 
 
+def _generate_data_blocks(mdfile):
+    in_block = False
+    for line in mdfile.readlines():
+        line = line.rstrip("\n")
+
+        if not in_block:
+            if line.strip() in ("```robotframework", "```robot"):
+                in_block = True
+        else:
+            if line.strip() == "```":
+                in_block = False
+                yield ""  # Add an empty line between blocks to separate them.
+            else:
+                yield line
+
+
 def read_markdown_data(mdfile):
-    # TODO: Implement actual parsing logic to extract data from Markdown files.
-    raise NotImplementedError("Markdown parsing is not implemented yet.")
+    return "\n".join(_generate_data_blocks(mdfile))
