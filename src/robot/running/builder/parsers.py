@@ -203,4 +203,24 @@ class MarkdownParser(RobotParser):
 
     def _get_source(self, source: Path) -> str:
         with FileReader(source) as reader:
-            return read_markdown_data(reader)
+            return self._read_markdown_data(reader)
+
+    def _read_markdown_data(self, mdfile: FileReader) -> str:
+        in_block = False
+        pending_separator = False  # Flag to add an empty line between multiple blocks.
+        lines = []
+        for line in mdfile.readlines():
+            line = line.rstrip("\n")
+            if not in_block:
+                if line.strip() in ("```robotframework", "```robot"):
+                    in_block = True
+            else:
+                if line.strip() == "```":
+                    in_block = False
+                    pending_separator = True
+                else:
+                    if pending_separator:
+                        lines.append("")
+                        pending_separator = False
+                    lines.append(line)
+        return "\n".join(lines)
