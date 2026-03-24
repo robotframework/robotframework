@@ -1,7 +1,7 @@
 import unittest
 
+from robot.running.builder.parsers import MarkdownParser
 from robot.utils.asserts import assert_equal
-from robot.utils.markdownreader import read_markdown_data
 
 
 class FakeFileReader:
@@ -13,7 +13,8 @@ class FakeFileReader:
 
 
 def read(text):
-    return read_markdown_data(FakeFileReader(text))
+    parser = MarkdownParser()
+    return parser._read_markdown_data(FakeFileReader(text))
 
 
 class TestReadMarkdownData(unittest.TestCase):
