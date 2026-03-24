@@ -77,6 +77,7 @@
    :local:
 
 .. include:: ExtendingRobotFramework/CreatingTestLibraries.rst
+.. include:: ExtendingRobotFramework/DynamicLibraryAPI.rst
 .. include:: ExtendingRobotFramework/RemoteLibrary.rst
 .. include:: ExtendingRobotFramework/ListenerInterface.rst
 .. include:: ExtendingRobotFramework/ParserInterface.rst
