@@ -33,10 +33,10 @@ scripts or tools as separate processes.
 __ http://docs.python.org/c-api/index.html
 __ http://docs.python.org/library/ctypes.html
 
-Different test library APIs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Different library APIs
+~~~~~~~~~~~~~~~~~~~~~~
 
-Robot Framework has three different test library APIs.
+Robot Framework has two different library APIs.
 
 Static API
 
@@ -50,24 +50,15 @@ Static API
 Dynamic API
 
   Dynamic libraries are classes that implement a method to get the names
-  of the keywords they implement, and another method to execute a named
-  keyword with given arguments. The names of the keywords to implement, as
-  well as how they are executed, can be determined dynamically at
-  runtime, but reporting the status, logging and returning values is done
-  similarly as in the static API.
+  of the keywords they implement, a method to execute a specified keyword
+  with given arguments, and various optional methods for providing more
+  information about the implemented keywords and the library itself.
+  The names of the keywords to implement, as well as how they are executed,
+  can be determined dynamically at runtime, but reporting the status, logging
+  and returning values is done similarly as in the static API.
 
-Hybrid API
-
-  This is a hybrid between the static and the dynamic API. Libraries are
-  classes with a method telling what keywords they implement, but
-  those keywords must be available directly. Everything else except
-  discovering what keywords are implemented is similar as in the
-  static API.
-
-All these APIs are described in this chapter. Everything is based on
-how the static API works, so its functions are discussed first. How
-the `dynamic library API`_ and the `hybrid library API`_ differ from it
-is then discussed in sections of their own.
+This chapter concentrates on the static API and there is a separate chapter
+about the `dynamic library API`_.
 
 __ `Keyword arguments`_
 __ `Reporting keyword status`_
@@ -438,173 +429,152 @@ Creating keywords
 What methods are considered keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When the static library API is used, Robot Framework uses introspection
-to find out what keywords the library class or module implements.
-By default it excludes methods and functions starting with an underscore.
-All the methods and functions that are not ignored are considered keywords.
-For example, the library below implements a single keyword :name:`My Keyword`.
+Robot Framework, by default, uses introspection to find out what attributes
+a library contains, and considers all functions and methods that do not start
+with an underscore to be keywords. For example, this library implements a single
+keyword :name:`My Keyword`:
 
 .. sourcecode:: python
 
+    def my_keyword(arg):
+        return _helper(arg)
+
+    def _helper(arg):
+        return arg.upper()
+
+.. note:: In Python anything starting with an underscore is considered private
+          and Robot Framework follows that convention.
+
+Automatically considering all public methods and functions to be keywords typically
+works well, especially in simple cases, but there are situations where it is not
+desired. For example, when implementing a library as class, it can be a surprise that
+also methods in possible base classes are considered keywords. When implementing
+a library as a module, functions imported into the module namespace becoming keywords
+is probably even a bigger surprise. For example, this library implements a keyword
+:name:`Example Keyword`, as expected, but also a keyword :name:`Current Thread`:
+
+.. sourcecode:: python
+
+   from threading import current_thread
+
+
+   def example_keyword():
+       name = current_thread().name
+       print(f"Running in thread '{name}'.")
+
+The next section explain different ways how to control the keyword
+discovery and avoid problems like the one above.
+
+Controlling keyword discovery
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This section explains how to control which methods and functions become keywords.
+
+Avoiding imported public functions with module based libraries
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+As the previous section explained, with module based libraries also imported
+functions become keywords. The are two simple ways how imports themselves can be
+adjusted to avoid this problem:
+
+1. Import only modules, not functions:
+
+    .. sourcecode:: python
+
+       import threading
+
+
+       def example_keyword():
+           name = threading.current_thread().name
+           print(f"Running in thread '{name}'.")
+
+2. Use import aliases to prefix imported functions with an underscore:
+
+    .. sourcecode:: python
+
+       from threading import current_thread as _current_thread
+
+
+       def example_keyword():
+           name = _current_thread().name
+           print(f"Running in thread '{name}'.")
+
+Although both of these solutions are simple, they are not very explicit and
+there is a risk that someone refactors the code so that functions are exposed
+as keywords. Adding a comment or using the approaches discussed below for
+limiting what keywords are exposed can be a good idea, at least if a library
+grows bigger.
+
+Using `@library` decorator
+''''''''''''''''''''''''''
+
+With class based libraries the easiest way to disable public methods becoming
+keywords is using the `@library decorator`_. This decorator, by default, disables
+the automatic keyword discovery and requires keywords to be explicitly marked
+with the `@keyword decorator`_. For example, this library creates single keyword
+:name:`My Keyword`:
+
+.. sourcecode:: python
+
+    from robot.api.deco import keyword, library
+
+
+    @library
     class MyLibrary:
 
+        @keyword
         def my_keyword(self, arg):
-            return self._helper_method(arg)
+            return self.helper(arg)
 
-        def _helper_method(self, arg):
+        def helper(self, arg):
             return arg.upper()
 
+Using `ROBOT_AUTO_KEYWORDS` attribute
+'''''''''''''''''''''''''''''''''''''
 
-Limiting public methods becoming keywords
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Automatically considering all public methods and functions keywords typically
-works well, but there are cases where it is not desired. There are also
-situations where keywords are created when not expected. For example, when
-implementing a library as class, it can be a surprise that also methods
-in possible base classes are considered keywords. When implementing a library
-as a module, functions imported into the module namespace becoming keywords
-is probably even a bigger surprise.
-
-This section explains how to prevent methods and functions becoming keywords.
-
-Class based libraries
-'''''''''''''''''''''
-
-When a library is implemented as a class, it is possible to tell
-Robot Framework not to automatically expose methods as keywords by setting
-the `ROBOT_AUTO_KEYWORDS` attribute to the class with a false value:
+An alternative to using the `@library` decorator for disabling the automatic
+keyword discovery is setting the special `ROBOT_AUTO_KEYWORDS` attribute to
+`False`. This is especially useful with module based libraries that cannot
+themselves be decorated:
 
 .. sourcecode:: python
 
-   class Example:
-       ROBOT_AUTO_KEYWORDS = False
-
-When the `ROBOT_AUTO_KEYWORDS` attribute is set like this, only methods that
-have explicitly been decorated with the `@keyword decorator`_ or otherwise
-have the `robot_name` attribute become keywords. The `@keyword` decorator
-can also be used for setting a `custom name`__, tags__ and `argument types`__
-to the keyword.
-
-Although the `ROBOT_AUTO_KEYWORDS` attribute can be set to the class
-explicitly, it is more convenient to use the `@library decorator`_
-that sets it to `False` by default:
-
-.. sourcecode:: python
-
-   from robot.api.deco import keyword, library
+    from robot.api.deco import keyword
 
 
-   @library
-   class Example:
-
-       @keyword
-       def this_is_keyword(self):
-           pass
-
-       @keyword('This is keyword with custom name')
-       def xxx(self):
-           pass
-
-       def this_is_not_keyword(self):
-           pass
-
-.. note:: Both limiting what methods become keywords using the
-          `ROBOT_AUTO_KEYWORDS` attribute and the `@library` decorator are
-          new in Robot Framework 3.2.
-
-Another way to explicitly specify what keywords a library implements is using
-the dynamic__ or the hybrid__ library API.
-
-__ `Setting custom name`_
-__ `Keyword tags`_
-__ `Specifying argument types using @keyword decorator`_
-__ `Dynamic library API`_
-__ `Hybrid library API`_
-
-Module based libraries
-''''''''''''''''''''''
-
-When implementing a library as a module, all functions in the module namespace
-become keywords. This is true also with imported functions, and that can cause
-nasty surprises. For example, if the module below would be used as a library,
-it would contain a keyword :name:`Example Keyword`, as expected, but also
-a keyword :name:`Current Thread`.
-
-.. sourcecode:: python
-
-   from threading import current_thread
+    ROBOT_AUTO_KEYWORDS = False
 
 
-   def example_keyword():
-       thread_name = current_thread().name
-       print(f"Running in thread '{thread_name}'.")
+    @keyword
+    def my_keyword(arg):
+        return helper(arg)
 
-A simple way to avoid imported functions becoming keywords is to only
-import modules (e.g. `import threading`) and to use functions via the module
-(e.g `threading.current_thread()`). Alternatively functions could be
-given an alias starting with an underscore at the import time (e.g.
-`from threading import current_thread as _current_thread`).
+    def helper(arg):
+        return arg.upper()
 
-A more explicit way to limit what functions become keywords is using
-the module level `__all__` attribute that `Python itself uses for similar
-purposes`__. If it is used, only the listed functions can be keywords.
-For example, the library below implements only one keyword
-:name:`Example Keyword`:
-
-.. sourcecode:: python
-
-   from threading import current_thread
-
-
-   __all__ = ['example_keyword']
-
-
-   def example_keyword():
-       thread_name = current_thread().name
-       print(f"Running in thread '{thread_name}'.")
-
-   def this_is_not_keyword():
-       pass
-
-If the library is big, maintaining the `__all__` attribute when keywords are
-added, removed or renamed can be a somewhat big task. Another way to explicitly
-mark what functions are keywords is using the `ROBOT_AUTO_KEYWORDS` attribute
-similarly as it can be used with `class based libraries`_. When this attribute
-is set to a false value, only functions explicitly decorated with the
-`@keyword decorator`_ become keywords. For example, also this library
-implements only one keyword :name:`Example Keyword`:
-
-.. sourcecode:: python
-
-   from threading import current_thread
-
-   from robot.api.deco import keyword
-
-
-   ROBOT_AUTO_KEYWORDS = False
-
-
-   @keyword
-   def example_keyword():
-       thread_name = current_thread().name
-       print(f"Running in thread '{thread_name}'.")
-
-   def this_is_not_keyword():
-       pass
-
-.. note:: Limiting what functions become keywords using `ROBOT_AUTO_KEYWORDS`
-          is a new feature in Robot Framework 3.2.
-
-__ https://docs.python.org/tutorial/modules.html#importing-from-a-package
+.. note:: The `@library` decorator internally sets the `ROBOT_AUTO_KEYWORDS`
+          attribute as well.
 
 Using `@not_keyword` decorator
 ''''''''''''''''''''''''''''''
 
 Functions in modules and methods in classes can be explicitly marked as
-"not keywords" by using the `@not_keyword` decorator. When a library is
-implemented as a module, this decorator can also be used to avoid imported
-functions becoming keywords.
+"not keywords" by using the `@not_keyword` decorator:
+
+.. sourcecode:: python
+
+    from robot.api.deco import not_keyword
+
+
+    def my_keyword(arg):
+        return helper(arg)
+
+    @not_keyword
+    def helper(arg):
+        return arg.upper()
+
+When a library is implemented as a module, this decorator can be explicitly called
+to avoid exposing imported functions as keywords:
 
 .. sourcecode:: python
 
@@ -613,23 +583,103 @@ functions becoming keywords.
    from robot.api.deco import not_keyword
 
 
-   not_keyword(current_thread)    # Don't expose `current_thread` as a keyword.
+   not_keyword(current_thread)  # Don't expose `current_thread` as a keyword.
 
 
    def example_keyword():
        thread_name = current_thread().name
        print(f"Running in thread '{thread_name}'.")
 
-   @not_keyword
-   def this_is_not_keyword():
-       pass
 
-Using the `@not_keyword` decorator is pretty much the opposite way to avoid
-functions or methods becoming keywords compared to disabling the automatic
-keyword discovery with the `@library` decorator or by setting the
-`ROBOT_AUTO_KEYWORDS` to a false value. Which one to use depends on the context.
+Using `__all__` attribute
+'''''''''''''''''''''''''
 
-.. note:: The `@not_keyword` decorator is new in Robot Framework 3.2.
+Python modules can define the special `__all__` attribute to specify what
+`public names`__ they contain. If a module based library has such an attribute,
+Robot Framework respects it and considers only listed functions as keywords:
+
+.. sourcecode:: python
+
+    __all__ = ["my_keyword"]
+
+
+    def my_keyword(arg):
+        return helper(arg)
+
+    def helper(arg):
+        return arg.upper()
+
+__ https://docs.python.org/3/reference/simple_stmts.html#import
+
+.. _hybrid-library-api:
+
+Using `get_keyword_names` method
+''''''''''''''''''''''''''''''''
+
+Class based libraries can explicitly tell to Robot Framework which methods are
+keywords by using the special `get_keyword_names` method  that must return a list
+of exposed method names:
+
+.. sourcecode:: python
+
+    class MyLibrary:
+
+        def get_keyword_names(self):
+            return ["my_keyword"]
+
+        def my_keyword(self, arg):
+            return self.helper(arg)
+
+        def helper(self, arg):
+            return arg.upper()
+
+Everything else than getting the list of method names works exactly the same way
+as with other static libraries. It is, however, possible to create the actual
+keywords dynamically by utilizing Python's `__getattr__`__ method that is called
+by Python if a returned method name does not exist:
+
+.. sourcecode:: python
+
+    class MyLibrary:
+
+        def get_keyword_names(self):
+            return ["normal_keyword", "dynamic_keyword"]
+
+        def normal_keyword(self, arg):
+            print("This is a normal keyword.")
+
+        def __getattr__(self, name):
+            if name != "dynamic_keyword":
+                raise AttributeError(name)
+
+            def dynamically_created_keyword():
+                print("This is a dynamically created keyword.")
+
+            return dynamically_created_keyword
+
+In the above example the actual keyword is defined inside the `__getattr__` method.
+In more realistic cases it could, for example, be imported or got dynamically from
+some object.
+
+.. note:: Libraries having the `get_keyword_names` method, but otherwise working
+          the same way as normal static libraries, are sometimes called
+          *hybrid libraries* and this API can be called the *hybrid library API*.
+          The reason is that libraries using the `dynamic library API`_ also
+          specify their keywords using the `get_keyword_names` method, but
+          they also execute keywords differently.
+
+.. note:: Due to legacy reasons the `get_keyword_names` method can also be
+          spelled like `getKeywordNames`. The former variant is recommended,
+          though.
+
+__ https://docs.python.org/3/reference/datamodel.html#object.__getattr__
+
+Using dynamic library API
+'''''''''''''''''''''''''
+
+The `dynamic library API`_ requires explicitly listing the implemented keywords
+by using the `get_keyword_names` method. That entirely avoids the problem that
+methods or functions could accidentally be exposed as keywords.
 
 Keyword names
 ~~~~~~~~~~~~~
@@ -2196,10 +2246,9 @@ explained thoroughly elsewhere and only listened here as a reference:
 - Setting `type information`__ to enable automatic argument type conversion.
   Supports also disabling the argument conversion altogether.
 
-- `Marking methods to expose as keywords`_ when using the
-  `dynamic library API`_ or the `hybrid library API`_.
+- `Marking methods to expose as keywords`_ when using the `dynamic library API`_.
 
-__ `Limiting public methods becoming keywords`_
+__ `Controlling keyword discovery`_
 __ `Setting custom name`_
 __ `Embedding arguments into keyword names`_
 __ `Specifying argument types using @keyword decorator`_
@@ -3032,7 +3081,7 @@ technical for some users. Another alternative is using Robot
 Framework's own documentation tool Libdoc_. This tool can
 create a library documentation from libraries
 using the static library API, such as the ones above, but it also handles
-libraries using the `dynamic library API`_ and `hybrid library API`_.
+libraries using the `dynamic library API`_.
 
 The first logical line of a keyword documentation, until the first empty line,
 is used for a special purpose and should contain a short overall description
@@ -3166,10 +3215,7 @@ that are used for these purposes.
 One of the benefits of the dynamic API is that you have more flexibility
 in organizing your library. With the static API, you must have all
 keywords in one class or module, whereas with the dynamic API, you can,
-for example, implement each keyword as a separate class. This use case is
-not so important with Python, though, because its dynamic capabilities and
-multi-inheritance already give plenty of flexibility, and there is also
-possibility to use the `hybrid library API`_.
+for example, implement each keyword as a separate class.
 
 Another major use case for the dynamic API is implementing a library
 so that it works as proxy for an actual library possibly running on
@@ -3689,98 +3735,6 @@ A good example of using the dynamic API is Robot Framework's own
 .. note:: Starting from Robot Framework 7.0, dynamic libraries can have asynchronous
           implementations of their special methods.
 
-Hybrid library API
-------------------
-
-The hybrid library API is, as its name implies, a hybrid between the
-static API and the dynamic API. Just as with the dynamic API, it is
-possible to implement a library using the hybrid API only as a class.
-
-Getting keyword names
-~~~~~~~~~~~~~~~~~~~~~
-
-Keyword names are got in the exactly same way as with the dynamic
-API. In practice, the library needs to have the
-`get_keyword_names` or `getKeywordNames` method returning
-a list of keyword names that the library implements.
-
-Running keywords
-~~~~~~~~~~~~~~~~
-
-In the hybrid API, there is no `run_keyword` method for executing
-keywords. Instead, Robot Framework uses reflection to find methods
-implementing keywords, similarly as with the static API. A library
-using the hybrid API can either have those methods implemented
-directly or, more importantly, it can handle them dynamically.
-
-In Python, it is easy to handle missing methods dynamically with the
-`__getattr__` method. This special method is probably familiar
-to most Python programmers and they can immediately understand the
-following example. Others may find it easier to consult `Python Reference
-Manual`__ first.
-
-__ http://docs.python.org/reference/datamodel.html#attribute-access
-
-.. sourcecode:: python
-
-   from somewhere import external_keyword
-
-
-   class HybridExample:
-
-       def get_keyword_names(self):
-           return ['my_keyword', 'external_keyword']
-
-       def my_keyword(self, arg):
-           print(f"My Keyword called with '{args}'.")
-
-       def __getattr__(self, name):
-           if name == 'external_keyword':
-               return external_keyword
-           raise AttributeError(f"Non-existing attribute '{name}'.")
-
-Note that `__getattr__` does not execute the actual keyword like
-`run_keyword` does with the dynamic API. Instead, it only
-returns a callable object that is then executed by Robot Framework.
-
-Another point to be noted is that Robot Framework uses the same names that
-are returned from `get_keyword_names` for finding the methods
-implementing them. Thus the names of the methods that are implemented in
-the class itself must be returned in the same format as they are
-defined. For example, the library above would not work correctly, if
-`get_keyword_names` returned `My Keyword` instead of
-`my_keyword`.
-
-Getting keyword arguments and documentation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-When this API is used, Robot Framework uses reflection to find the
-methods implementing keywords, similarly as with the static API. After
-getting a reference to the method, it searches for arguments and
-documentation from it, in the same way as when using the static
-API. Thus there is no need for special methods for getting arguments
-and documentation like there is with the dynamic API.
-
-Summary
-~~~~~~~
-
-When implementing a test library, the hybrid API has the same
-dynamic capabilities as the actual dynamic API. A great benefit with it is
-that there is no need to have special methods for getting keyword
-arguments and documentation. It is also often practical that the only real
-dynamic keywords need to be handled in `__getattr__` and others
-can be implemented directly in the main library class.
-
-Because of the clear benefits and equal capabilities, the hybrid API
-is in most cases a better alternative than the dynamic API.
-One notable exception is implementing a library as a proxy for
-an actual library implementation elsewhere, because then the actual
-keyword must be executed elsewhere and the proxy can only pass forward
-the keyword name and arguments.
-
-A good example of using the hybrid API is Robot Framework's own
-Telnet_ library.
-
 Handling Robot Framework's timeouts
 -----------------------------------
 
@@ -4052,13 +4006,3 @@ expected to be available in a new library :name:`SeLibExtensions`.
    Example
        Open Browser    http://example      # SeleniumLibrary
        Title Should Start With    Example  # SeLibExtensions
-
-Libraries using dynamic or hybrid API
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Test libraries that use the dynamic__ or `hybrid library API`_ often
-have their own systems how to extend them. With these libraries you
-need to ask guidance from the library developers or consult the
-library documentation or source code.
-
-__ `dynamic library API`_
