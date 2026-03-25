@@ -32,6 +32,10 @@ Replace String with bytes
     ${result} =    Replace String    ${{b"foobar"}}    ${{b"o"}}    i    count=1
     Should be equal    ${result}    fiobar    type=bytes
 
+Replace String with invalid bytes
+    [Documentation]    FAIL    ValueError: String 'BĀD' cannot be converted to bytes: Characters must have code point below 256, but 'Ā' has code point 256.
+    Replace String    ${{b"xxx"}}    OK    BĀD
+
 Replace String Using Regexp
     ${result} =    Replace String Using Regexp    Robot Framework    F.*k    Class
     Should be equal    ${result}    Robot Class
@@ -61,3 +65,7 @@ Replace String Using Regexp with bytes
     Should be equal    ${result}    a bar    type=bytes
     ${result} =    Replace String Using Regexp    ${{b"foobar"}}    ${{b"[of]"}}    -    count=2
     Should be equal    ${result}    --obar    type=bytes
+
+Replace String Using Regexp with invalid bytes
+    [Documentation]    FAIL    ValueError: String 'BĀD' cannot be converted to bytes: Characters must have code point below 256, but 'Ā' has code point 256.
+    Replace String Using Regexp    ${{b"xxx"}}    BĀD    OK

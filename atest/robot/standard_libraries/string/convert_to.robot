@@ -20,3 +20,6 @@ Convert To Title Case with excludes
 
 Convert To Title Case with regexp excludes
     Check Test Case    ${TESTNAME}
+
+Convert To Title Case with bytes and invalid excludes
+    Check Test Case    ${TESTNAME}
