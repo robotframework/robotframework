@@ -117,6 +117,52 @@ class TestReadMarkdownData(unittest.TestCase):
         md = "```robotframework\n*** Test Cases ***\nMy Test    Log    Hello, Robot!"
         assert_equal(read(md), "*** Test Cases ***\nMy Test    Log    Hello, Robot!")
 
+    def test_indented_block_content_is_dedented(self):
+        # - A list item:
+        #   ```robotframework
+        #   *** Test Cases ***
+        #   My Test    Log    Hello
+        #   ```
+        md = (
+            "- A list item:\n"
+            "  ```robotframework\n"
+            "  *** Test Cases ***\n"
+            "  My Test    Log    Hello\n"
+            "  ```\n"
+        )
+        assert_equal(read(md), "*** Test Cases ***\nMy Test    Log    Hello")
+
+    def test_two_indented_blocks_content_is_dedented(self):
+        # - First item:
+        #   ```robotframework
+        #   *** Settings ***
+        #   Library    Collections
+        #   ```
+        #
+        # - Second item:
+        #   ```robotframework
+        #   *** Test Cases ***
+        #   My Test    Log    Hello
+        #   ```
+        md = (
+            "- First item:\n"
+            "  ```robotframework\n"
+            "  *** Settings ***\n"
+            "  Library    Collections\n"
+            "  ```\n"
+            "\n"
+            "- Second item:\n"
+            "  ```robotframework\n"
+            "  *** Test Cases ***\n"
+            "  My Test    Log    Hello\n"
+            "  ```\n"
+        )
+        assert_equal(
+            read(md),
+            "*** Settings ***\nLibrary    Collections\n"
+            "\n*** Test Cases ***\nMy Test    Log    Hello",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

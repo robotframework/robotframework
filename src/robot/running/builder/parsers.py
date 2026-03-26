@@ -208,12 +208,15 @@ class MarkdownParser(RobotParser):
     def _read_markdown_data(self, mdfile: FileReader) -> str:
         in_block = False
         pending_separator = False  # Flag to add an empty line between multiple blocks.
+        indent = 0
         lines = []
+
         for line in mdfile.readlines():
             line = line.rstrip("\n")
             if not in_block:
                 if line.strip() in ("```robotframework", "```robot"):
                     in_block = True
+                    indent = line[: len(line) - len(line.lstrip(" \t"))]
             else:
                 if line.strip() == "```":
                     in_block = False
@@ -222,5 +225,6 @@ class MarkdownParser(RobotParser):
                     if pending_separator:
                         lines.append("")
                         pending_separator = False
-                    lines.append(line)
+                    content = line[len(indent):] if line.startswith(indent) else line
+                    lines.append(content)
         return "\n".join(lines)
