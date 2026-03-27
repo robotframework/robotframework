@@ -1,3 +1,4 @@
+import io
 import unittest
 import warnings
 from contextlib import contextmanager
@@ -126,14 +127,28 @@ class TestDeprecations(unittest.TestCase):
             assert_equal(utils.unic(b"Paha"), "Paha")
 
     def test_stringio(self):
-        import io
-
         with self.validate_deprecation("StringIO"):
             assert_true(utils.StringIO is io.StringIO)
 
     def test_ET(self):
         with self.validate_deprecation("ET"):
             assert_true(utils.ET is ET)
+
+    def test_read_rest_data(self):
+        file = io.StringIO(
+            """Hello!
+
+.. sourcecode:: robotframework
+
+    # No real data here...
+
+The end.
+"""
+        )
+        file.name = "test.rst"
+        with self.validate_deprecation("read_rest_data"):
+            data = utils.read_rest_data(file)
+            assert_equal(data, "# No real data here...")
 
     def test_non_existing_attribute(self):
         assert_raises(AttributeError, getattr, utils, "xxx")

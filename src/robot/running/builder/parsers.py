@@ -20,7 +20,7 @@ from pathlib import Path
 from robot.conf import LanguagesLike
 from robot.errors import DataError
 from robot.parsing import File, get_init_model, get_model, get_resource_model
-from robot.utils import FileReader, get_error_message, read_rest_data, type_name
+from robot.utils import FileReader, get_error_message, type_name
 
 from ..model import TestSuite
 from ..resourcemodel import ResourceFile
@@ -113,6 +113,8 @@ class RestParser(RobotParser):
     extensions = (".robot.rst", ".rst", ".rest")
 
     def _get_source(self, source: Path) -> str:
+        from .restreader import read_rest_data
+
         with FileReader(source) as reader:
             return read_rest_data(reader)
 
