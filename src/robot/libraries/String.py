@@ -287,7 +287,7 @@ class String:
         try:
             return value.encode("latin-1")
         except UnicodeEncodeError as err:
-            invalid = value[err.start:err.end]
+            invalid = value[err.start : err.end]
             raise ValueError(
                 f"String '{value}' cannot be converted to bytes: Characters must have "
                 f"code point below 256, but '{invalid}' has code point {ord(invalid)}."

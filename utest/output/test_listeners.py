@@ -192,7 +192,7 @@ class TestListenerPriority(unittest.TestCase):
 
     def test_huge_priority(self):
         self._assert_priority(sys.maxsize, sys.maxsize)
-        self._assert_priority(sys.maxsize-1, sys.maxsize-1)
+        self._assert_priority(sys.maxsize - 1, sys.maxsize - 1)
 
     def test_invalid_priority(self):
         assert_raises_with_msg(
