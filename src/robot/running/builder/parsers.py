@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import re
+import textwrap
 from abc import ABC
 from inspect import signature
 from pathlib import Path
@@ -26,6 +28,8 @@ from ..model import TestSuite
 from ..resourcemodel import ResourceFile
 from .settings import FileSettings, InitFileSettings, TestDefaults
 from .transformers import ResourceBuilder, SuiteBuilder
+
+_FENCE_OPEN_RE = re.compile(r"^\s*(```+|~~~+)\s*(\S*)")
 
 
 class Parser(ABC):
@@ -206,25 +210,31 @@ class MarkdownParser(RobotParser):
             return self._read_markdown_data(reader)
 
     def _read_markdown_data(self, mdfile: FileReader) -> str:
-        in_block = False
-        pending_separator = False  # Flag to add an empty line between multiple blocks.
-        indent = 0
-        lines = []
+        blocks = []
+        block = None
+        fence_close_re = None
 
         for line in mdfile.readlines():
-            line = line.rstrip("\n")
-            if not in_block:
-                if line.strip() in ("```robotframework", "```robot"):
-                    in_block = True
-                    indent = line[: len(line) - len(line.lstrip(" \t"))]
+            if block is None:
+                match = _FENCE_OPEN_RE.match(line)
+                if match:
+                    fence, lang = match.groups()
+                    if lang.lower() in ("robotframework", "robot"):
+                        fence_char = fence[0]
+                        fence_len = len(fence)
+                        fence_close_re = re.compile(
+                            rf"^\s*{re.escape(fence_char)}{{{fence_len},}}\s*$"
+                        )
+                        block = []
+            elif fence_close_re.match(line):
+                blocks.append(textwrap.dedent("".join(block)))
+                block = None
             else:
-                if line.strip() == "```":
-                    in_block = False
-                    pending_separator = True
-                else:
-                    if pending_separator:
-                        lines.append("")
-                        pending_separator = False
-                    content = line[len(indent):] if line.startswith(indent) else line
-                    lines.append(content)
-        return "\n".join(lines)
+                block.append(line)
+
+        # Handle unclosed fences by treating the rest of the file as part of the block,
+        # as CommonMark specs require.
+        if block:
+            blocks.append(textwrap.dedent("".join(block)))
+
+        return "".join(blocks)
