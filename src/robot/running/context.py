@@ -67,6 +67,7 @@ class ExecutionContexts:
     def __init__(self):
         self._contexts = []
         self._asynchronous = Asynchronous()
+        self.total_timeout = None
 
     @property
     def current(self):
@@ -92,6 +93,7 @@ class ExecutionContexts:
         self._contexts.pop()
         if not self._contexts:
             self._asynchronous.close_loop()
+            self.total_timeout = None
 
 
 # This is ugly but currently needed e.g. by BuiltIn
@@ -100,10 +102,14 @@ EXECUTION_CONTEXTS = ExecutionContexts()
 
 class _ExecutionContext:
 
+    @property
+    def total_timeout(self):
+        return EXECUTION_CONTEXTS.total_timeout
+
     def __init__(self, suite, namespace, output, dry_run=False, asynchronous=None):
         self.suite = suite
         self.test = None
-        self.timeouts = []
+        self.timeouts = [EXECUTION_CONTEXTS.total_timeout] if EXECUTION_CONTEXTS.total_timeout else []
         self.active_timeouts = []
         self.namespace = namespace
         self.output = output
@@ -133,11 +139,12 @@ class _ExecutionContext:
         self.variables.set_test("${TEST_STATUS}", test.status)
         self.variables.set_test("${TEST_MESSAGE}", test.message)
         self.in_test_teardown = True
-        self.timeouts = []  # Clear current timeouts.
+        self.timeouts, timeouts = [], self.timeouts  # Disable current timeouts.
         try:
             yield
         finally:
             self.in_test_teardown = False
+            self.timeouts = timeouts
 
     @contextmanager
     def keyword_teardown(self, error):
@@ -283,7 +290,7 @@ class _ExecutionContext:
 
     def end_test(self, test):
         self.test = None
-        self.timeouts = []
+        self.timeouts = [EXECUTION_CONTEXTS.total_timeout] if EXECUTION_CONTEXTS.total_timeout else []
         self.namespace.end_test()
         self.variables.set_suite("${PREV_TEST_NAME}", test.name)
         self.variables.set_suite("${PREV_TEST_STATUS}", test.status)
