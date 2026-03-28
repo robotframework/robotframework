@@ -237,4 +237,4 @@ class MarkdownParser(RobotParser):
         if block:
             blocks.append(textwrap.dedent("".join(block)))
 
-        return "".join(blocks)
+        return "\n".join(blocks)

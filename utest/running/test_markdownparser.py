@@ -71,7 +71,9 @@ class TestReadMarkdownData(unittest.TestCase):
         result = _read(md)
         assert_equal(
             result,
-            "*** Settings ***\nSelenium Library\n*** Test Cases ***\nT    Log    x\n",
+            "*** Settings ***\nSelenium Library\n"
+            "\n"
+            "*** Test Cases ***\nT    Log    x\n",
         )
 
     def test_text_outside_blocks_ignored(self):
@@ -159,7 +161,9 @@ class TestReadMarkdownData(unittest.TestCase):
         )
         assert_equal(
             _read(md),
-            "*** Settings ***\nLibrary    Collections\n*** Test Cases ***\nMy Test    Log    Hello\n",
+            "*** Settings ***\nLibrary    Collections\n"
+            "\n"
+            "*** Test Cases ***\nMy Test    Log    Hello\n",
         )
 
     def test_tilde_fence_blocks(self):
