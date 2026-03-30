@@ -27,7 +27,13 @@ from typing import Any, Literal, TYPE_CHECKING, Union
 from robot.conf import Languages
 from robot.libraries.DateTime import convert_date, convert_time
 from robot.utils import (
-    eq, get_error_message, plural_or_not as s, safe_str, Secret, seq2str, type_name
+    eq,
+    get_error_message,
+    plural_or_not as s,
+    safe_str,
+    Secret,
+    seq2str,
+    type_name,
 )
 
 if TYPE_CHECKING:
@@ -304,7 +310,7 @@ class BooleanConverter(TypeConverter):
     value_types = (str, int, float, NoneType)
 
     def _non_string_convert(self, value):
-        return value
+        return bool(value)
 
     def _string_convert(self, value):
         normalized = value.title()
@@ -322,9 +328,16 @@ class IntegerConverter(TypeConverter):
     type = int
     abc = Integral
     type_name = "integer"
-    value_types = (str, float)
+    value_types = (str, float, bool)
+
+    def no_conversion_needed(self, value: Any) -> bool:
+        if isinstance(value, bool):
+            return False
+        return super().no_conversion_needed(value)
 
     def _non_string_convert(self, value):
+        if isinstance(value, bool):
+            return int(value)
         if value.is_integer():
             return int(value)
         raise ValueError("Conversion would lose precision.")
@@ -361,9 +374,16 @@ class FloatConverter(TypeConverter):
     type = float
     abc = Real
     type_name = "float"
-    value_types = (str, Real)
+    value_types = (str, Real, bool)
+
+    def no_conversion_needed(self, value: Any) -> bool:
+        if isinstance(value, bool):
+            return False
+        return super().no_conversion_needed(value)
 
     def _convert(self, value):
+        if isinstance(value, bool):
+            return float(value)
         try:
             return float(self._remove_number_separators(value))
         except ValueError:
@@ -893,7 +913,6 @@ class SecretConverter(TypeConverter):
 
 
 class CustomConverter(TypeConverter):
-
     def __init__(
         self,
         type_info: "TypeInfo",
@@ -927,7 +946,6 @@ class CustomConverter(TypeConverter):
 
 
 class UnknownConverter(TypeConverter):
-
     def convert(self, value, name=None, kind="Argument"):
         return value
 
