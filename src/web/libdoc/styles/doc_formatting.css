@@ -32,6 +32,7 @@
   font-size: 0.9em;
   overflow-y: auto;
   display: block;
+  margin-bottom: 1em;
 }
 .doc table th,
 .doc table td {
