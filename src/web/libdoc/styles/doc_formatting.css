@@ -65,8 +65,7 @@
   padding: 1px;
   border-radius: 3px;
 }
-.doc ul li {
-  list-style-position: inside;
+.doc ul > li {
   list-style-type: square;
 }
 .doc img {
