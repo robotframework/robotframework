@@ -702,10 +702,6 @@ a.type {
 .footer {
   font-size: 0.9em;
 }
-
-.doc div > *:last-child {
-  margin-bottom: 0;
-}
 .highlight {
   background: var(--highlighted-background-color);
   color: var(--highlighted-color);

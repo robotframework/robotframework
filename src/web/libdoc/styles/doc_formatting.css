@@ -6,19 +6,16 @@
   margin-top: 4rem;
   margin-bottom: 1rem;
 }
-
 .doc > h3,
 .section > h3 {
   margin-top: 3rem;
   margin-bottom: 1rem;
 }
-
 .doc > h4,
 .section > h4 {
   margin-top: 2rem;
   margin-bottom: 1rem;
 }
-
 .doc > p,
 .section > p {
   margin-top: 1rem;
@@ -56,6 +53,10 @@
   border-radius: 3px;
 }
 
+.doc div:not(.admonition) > *:last-child {
+  margin-bottom: 0;
+}
+
 .doc code,
 .docutils.literal {
   font-size: 1.1em;
@@ -75,4 +76,28 @@
   background: #ccc;
   height: 1px;
   border: 0;
+}
+.doc .admonition {
+  border: 0.075em solid blue;
+  border-radius: 0.25em;
+  margin: 1.5em 0;
+}
+.doc .admonition p {
+  padding: 1em;
+  margin: 0;
+}
+.admonition .admonition-title {
+  background-color: aliceblue;
+}
+.doc .admonition.tip {
+  border-color: green;
+}
+.admonition.tip .admonition-title {
+  background-color: lightgreen;
+}
+.doc .admonition.warning {
+  border-color: red;
+}
+.admonition.warning .admonition-title {
+  background-color: pink;
 }
