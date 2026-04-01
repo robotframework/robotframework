@@ -597,8 +597,8 @@ class IfRunner:
                         ):
                             self._run = False
                     except ExecutionStatus as err:
-                        error = err
                         self._run = False
+                        error = err
                 if error:
                     raise error
 
@@ -630,8 +630,8 @@ class IfRunner:
             try:
                 run_branch = self._should_run_branch(data, context, recursive_dry_run)
             except DataError as err:
-                error = err
                 run_branch = False
+                error = err
         with StatusReporter(data, result, context, run_branch):
             runner = BodyRunner(context, run_branch, self._templated)
             if not recursive_dry_run:
@@ -648,7 +648,7 @@ class IfRunner:
         if data.condition is None:
             return True
         try:
-            return evaluate_expression(
+            condition = evaluate_expression(
                 data.condition,
                 context.variables.current,
                 resolve_variables=True,
@@ -656,6 +656,8 @@ class IfRunner:
         except Exception:
             msg = get_error_message()
             raise DataError(f"Invalid {data.type} condition: {msg}")
+        else:
+            return bool(condition)
 
 
 class TryRunner:

@@ -39,6 +39,10 @@ If failing in keyword
 If failing in else keyword
     Check Test Case    ${TESTNAME}
 
+Mutable condition
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc[1, 0, 1, 0]}    Should be executed!
+
 Expression evaluation time is included in elapsed time
     ${tc} =    Check Test Case    ${TESTNAME}
     Elapsed Time Should Be Valid    ${tc[0].elapsed_time}       minimum=0.2
