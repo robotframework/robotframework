@@ -119,7 +119,7 @@ class SuiteStructureBuilder:
 
     def __init__(
         self,
-        extensions: Sequence[str] = (".robot", ".rbt", ".robot.rst"),
+        extensions: Sequence[str] = (".robot", ".rbt", ".robot.rst", ".robot.md"),
         included_files: Sequence[str] = (),
     ):
         self.extensions = ValidExtensions(extensions, included_files)

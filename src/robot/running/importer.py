@@ -31,6 +31,8 @@ RESOURCE_EXTENSIONS = {
     ".rest",
     ".json",
     ".rsrc",
+    ".md",
+    ".markdown",
 }
 
 
