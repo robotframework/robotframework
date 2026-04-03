@@ -87,6 +87,7 @@
   margin: 0;
 }
 .admonition .admonition-title {
+  font-weight: bold;
   background-color: #448aff1a;
 }
 .doc .admonition.tip {
