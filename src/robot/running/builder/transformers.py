@@ -92,7 +92,7 @@ class SettingsBuilder(ModelVisitor):
         )
 
     def visit_ResourceImport(self, node):
-        self.suite.resource.imports.resource(node.name, node.lineno)
+        self.suite.resource.imports.resource(node.name, node.alias, node.lineno)
 
     def visit_VariablesImport(self, node):
         self.suite.resource.imports.variables(node.name, node.args, node.lineno)
@@ -173,7 +173,7 @@ class ResourceBuilder(ModelVisitor):
         self.resource.imports.library(node.name, node.args, node.alias, node.lineno)
 
     def visit_ResourceImport(self, node):
-        self.resource.imports.resource(node.name, node.lineno)
+        self.resource.imports.resource(node.name, node.alias, node.lineno)
 
     def visit_VariablesImport(self, node):
         self.resource.imports.variables(node.name, node.args, node.lineno)
