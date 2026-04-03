@@ -83,9 +83,15 @@ def admonitions():
 
         We need to make sure to add custom styles to make them render nicely.
 
+    !!! tip
+        There are four supported admonition types: note, tip, warning, and danger
+
     !!! warning "Interoperability risk!"
         Admonitions are not standard Markdown. Don't use them if you want good
         interoperability with other Markdown tools.
+
+    !!! danger
+        Just kidding, this library is safe.
     """
 
 
