@@ -78,7 +78,7 @@
   border: 0;
 }
 .doc .admonition {
-  border: 0.075em solid blue;
+  border: 0.075em solid #448aff;
   border-radius: 0.25em;
   margin: 1.5em 0;
 }
@@ -87,17 +87,23 @@
   margin: 0;
 }
 .admonition .admonition-title {
-  background-color: aliceblue;
+  background-color: #448aff1a;
 }
 .doc .admonition.tip {
-  border-color: green;
+  border-color: #00bfa5;
 }
 .admonition.tip .admonition-title {
-  background-color: lightgreen;
+  background-color: #00bfa51a;
 }
 .doc .admonition.warning {
-  border-color: red;
+  border-color: #ff9100;
 }
 .admonition.warning .admonition-title {
-  background-color: pink;
+  background-color: #ff91001a;
+}
+.doc .admonition.danger {
+  border-color: #ff1744;
+}
+.admonition.danger .admonition-title {
+  background-color: #ff17441a;
 }
