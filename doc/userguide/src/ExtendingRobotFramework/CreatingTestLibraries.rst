@@ -3233,6 +3233,11 @@ original exception afterwards:
             do_cleanup()
             raise
 
+.. note:: Prior to Robot Framework 7.5, this exception was a subtype of
+          `Exception`. It is now an isolated type, separate from `RobotError`.
+          This is to prevent this interrupt-like exception to be accidentally
+          silenced when catching (too broad) ranges of regular exceptions.
+
 .. note:: The `TimeoutExceeded` exception was named `TimeoutError` prior to
           Robot Framework 7.3. It was renamed to avoid a conflict with Python's
           standard exception with the same name. The old name still exists as
