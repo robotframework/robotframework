@@ -1781,3 +1781,55 @@ class AssignmentValidator:
                     TypeInfo.from_variable(variable)
                 except DataError as err:
                     statement.errors += (f"Invalid variable '{variable}': {err}",)
+
+
+@Statement.register
+class CustomMetadata(DocumentationOrMetadata):
+    type = Token.CUSTOM_METADATA
+
+    @classmethod
+    def from_params(
+        cls,
+        key: str,
+        value: str,
+        indent: str = FOUR_SPACES,
+        separator: str = FOUR_SPACES,
+        eol: str = EOL,
+    ) -> "CustomMetadata":
+        tokens = [
+            Token(Token.SEPARATOR, indent),
+            Token(Token.CUSTOM_METADATA, f"[{key}]"),
+            Token(Token.SEPARATOR, separator),
+        ]
+        metadata_lines = value.splitlines()
+        if metadata_lines:
+            tokens += [
+                Token(Token.ARGUMENT, metadata_lines[0]),
+                Token(Token.EOL, eol),
+            ]
+        for line in metadata_lines[1:]:
+            tokens += [
+                Token(Token.CONTINUATION),
+                Token(Token.SEPARATOR, separator),
+                Token(Token.ARGUMENT, line),
+                Token(Token.EOL, eol),
+            ]
+        return cls(tokens)
+
+    @property
+    def key(self) -> str:
+        """Return the metadata key without brackets."""
+        custom_token = self.get_value(Token.CUSTOM_METADATA, "")
+        if custom_token.startswith("[") and custom_token.endswith("]"):
+            return custom_token[1:-1]
+        return custom_token
+
+    @property
+    def values(self) -> "tuple[str, ...]":
+        """Return values for backward compatibility."""
+        return (self.value,) if self.value else ()
+
+    @property
+    def name(self) -> str:
+        """Return the metadata key for compatibility with Metadata class."""
+        return self.key
