@@ -173,8 +173,11 @@ class TestTypeInfoParser(unittest.TestCase):
             ("x[y,,]", 4, "Type missing before ','."),
             ("x | ,", 4, "Type name missing."),
             ("x|||", 2, "Type name missing."),
-            ("list[| str]", 5, "Type name missing."),
-            ("list[int, | str]", 10, "Type name missing."),
+            ("list[| str]", 5, "Invalid type string 'list[| str]': expected type name."),
+            ("list[int, | str]", 10, "Invalid type string 'list[int, | str]': expected type name."),
+            ("list[|]", 5, "Invalid type string 'list[|]': expected type name."),
+            ("list[int||str]", 9, "Type name missing."),
+            ("list[int|]", 9, "Type name missing."),
             ('"x"y', 3, "Extra content after '\"x\"'."),
         ]:
             position = f"index {position}" if isinstance(position, int) else position

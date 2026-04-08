@@ -154,7 +154,7 @@ class TypeInfoParser:
                 param = TypeInfo()
                 param.nested = self.params()
             else:
-                self.error("Type name missing.")
+                self.error(f"Invalid type string '{self.source}': expected type name.")
             if literal:
                 param = self._literal_param(param)
             params.append(param)
