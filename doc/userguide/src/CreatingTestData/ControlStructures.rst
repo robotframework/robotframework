@@ -629,7 +629,7 @@ Limiting `WHILE` loop iterations
 
 With `WHILE` loops, there is always a possibility to achieve an infinite loop,
 either by intention or by mistake. This happens when the loop condition never
-becomes false. While infinite loops have some utility in application programming,
+becomes false. Although infinite loops have some utility in application programming,
 in automation an infinite loop is rarely a desired outcome. If such a loop occurs
 with Robot Framework, the execution must be forcefully stopped and no log or report
 can be created. For this reason, `WHILE` loops in Robot Framework have a default
