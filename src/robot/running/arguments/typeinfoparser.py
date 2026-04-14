@@ -16,7 +16,7 @@
 from ast import literal_eval
 from dataclasses import dataclass
 from enum import auto, Enum
-from typing import Literal
+from typing import Literal, NoReturn
 
 from .typeinfo import LITERAL_TYPES, TypeInfo
 
@@ -49,7 +49,7 @@ class TypeInfoTokenizer:
 
     def __init__(self, source: str):
         self.source = source
-        self.tokens: "list[Token]" = []
+        self.tokens: list[Token] = []
         self.start = 0
         self.current = 0
 
@@ -106,7 +106,7 @@ class TypeInfoParser:
 
     def __init__(self, source: str):
         self.source = source
-        self.tokens: "list[Token]" = []
+        self.tokens: list[Token] = []
         self.current = 0
 
     @property
@@ -155,7 +155,6 @@ class TypeInfoParser:
                 param.nested = self.params()
             else:
                 self.error("Type name missing.")
-
             if literal:
                 param = self._literal_param(param)
             params.append(param)
@@ -214,11 +213,10 @@ class TypeInfoParser:
         except IndexError:
             return None
 
-    def error(self, message: str, token: "Token|None" = None):
+    def error(self, message: str, token: "Token|None" = None) -> NoReturn:
         if not token:
             token = self.peek()
         position = f"index {token.position}" if token else "end"
         raise ValueError(
             f"Parsing type {self.source!r} failed: Error at {position}: {message}"
         )
-        
