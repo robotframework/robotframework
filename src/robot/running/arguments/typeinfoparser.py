@@ -153,6 +153,9 @@ class TypeInfoParser:
                 self.advance()
                 param = TypeInfo()
                 param.nested = self.params()
+            else:
+                self.error("Type name missing.")
+
             if literal:
                 param = self._literal_param(param)
             params.append(param)
@@ -218,3 +221,4 @@ class TypeInfoParser:
         raise ValueError(
             f"Parsing type {self.source!r} failed: Error at {position}: {message}"
         )
+        
