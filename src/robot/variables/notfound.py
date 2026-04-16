@@ -14,12 +14,13 @@
 #  limitations under the License.
 
 from functools import partial
+from typing import NoReturn
 
 from robot.errors import VariableError
 from robot.utils import is_dict_like, is_list_like, normalize, RecommendationFinder
 
 
-def variable_not_found(name, candidates, message=None, deco_braces=True):
+def variable_not_found(name, candidates, message=None, deco_braces=True) -> NoReturn:
     """Raise DataError for missing variable name.
 
     Return recommendations for similar variable names if any are found.
