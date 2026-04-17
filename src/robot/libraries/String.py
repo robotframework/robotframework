@@ -154,7 +154,13 @@ class String:
             split, join = rb"(\s+)", b""
         else:
             split, join = r"(\s+)", ""
-        exclude = [re.compile(e) for e in exclude]
+        try:
+            exclude = [re.compile(e) for e in exclude]
+        except re.error as err:
+            raise ValueError(
+                f"Compiling exclude pattern {err.pattern!r} to a regular expression "
+                f"failed: {err}"
+            )
 
         def title(word):
             if any(e.fullmatch(word) for e in exclude) or not word.islower():

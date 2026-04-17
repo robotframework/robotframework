@@ -85,6 +85,10 @@ Convert To Title Case with regexp excludes
     full match only!      full Match Only!      exclude=....
     ${{b"this is OK"}}    ${{b"This is OK"}}    exclude=..
 
+Convert To Title Case with invalid regexp excludes
+    [Documentation]    FAIL    STARTS: ValueError: Compiling exclude pattern 'bad[' to a regular expression failed:
+    Convert To Title Case    whatever    bad[
+
 Convert To Title Case with bytes and invalid excludes
     [Documentation]    FAIL    ValueError: String 'BĀD' cannot be converted to bytes: Characters must have code point below 256, but 'Ā' has code point 256.
     Convert To Title Case    ${{b"xxx"}}    BĀD
