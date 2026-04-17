@@ -27,9 +27,11 @@ def variable_not_found(
     message: "str | None" = None,
     deco_braces: bool = True,
 ) -> NoReturn:
-    """Raise DataError for missing variable name.
+    """Raise `VariableError` for missing variable name.
 
-    Return recommendations for similar variable names if any are found.
+    Error message includes recommendations for similar variable names if any are
+    found. Finding recommendations has a performance effect, so this function
+    should only been called when such information is actually useful.
     """
     recommender = RecommendationFinder(normalizer=partial(normalize, ignore="$@&%{}_"))
     recommendations = _decorate_recommendations(
