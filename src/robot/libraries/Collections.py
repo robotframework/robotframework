@@ -312,6 +312,8 @@ class _List:
                 "keyword is deprecated. Use '0' instead."
             )
             start = 0
+        if isinstance(start, int) and start < 0:
+            start = max(len(list_) + start, 0)
         list_ = self.get_slice_from_list(list_, start, end)
         try:
             return start + list_.index(value)
@@ -1328,3 +1330,4 @@ def report_error(default: str, message: "str | None", values: bool = False) -> N
     elif values:
         message += "\n" + default
     raise AssertionError(message)
+    
