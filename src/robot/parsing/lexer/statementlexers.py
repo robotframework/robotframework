@@ -135,20 +135,25 @@ class ImplicitCommentLexer(CommentLexer):
 
     def input(self, statement: StatementTokens):
         super().input(statement)
-        if statement[0].value.lower().startswith("language:"):
-            value = " ".join(token.value for token in statement)
-            lang = value.split(":", 1)[1].strip()
-            try:
-                self.ctx.add_language(lang)
-            except DataError:
-                for token in statement:
-                    token.set_error(
-                        f"Invalid language configuration: Language '{lang}' "
-                        f"not found nor importable as a language module."
-                    )
-            else:
-                for token in statement:
-                    token.type = Token.CONFIG
+        if ':' in statement[0].value:
+            config, value = " ".join(token.value for token in statement).split(":", 1)
+            config = config.lower()
+            value = value.strip()
+            if config == "language":
+                self._handle_language(statement, value)
+
+    def _handle_language(self, statement: StatementTokens, language: str):
+        try:
+            self.ctx.add_language(language)
+        except DataError:
+            for token in statement:
+                token.set_error(
+                    f"Invalid language configuration: Language '{language}' "
+                    f"not found nor importable as a language module."
+                )
+        else:
+            for token in statement:
+                token.type = Token.CONFIG
 
     def lex(self):
         for token in self.statement:

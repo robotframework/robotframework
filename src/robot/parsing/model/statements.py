@@ -1688,10 +1688,14 @@ class Config(Statement):
         return cls(tokens)
 
     @property
-    def language(self) -> "Language|None":
-        value = " ".join(self.get_values(Token.CONFIG))
-        lang = value.split(":", 1)[1].strip()
+    def language(self) -> "Language | None":
+        lang = self._get_value("language")
         return Language.from_name(lang) if lang else None
+
+    def _get_value(self, name: str) -> "str | None":
+        value = " ".join(self.get_values(Token.CONFIG))
+        config, value = value.split(":", 1)
+        return value.strip() if config.lower() == name else None
 
 
 @Statement.register
