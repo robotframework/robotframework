@@ -41,14 +41,12 @@ class TestBuildTestSuite(unittest.TestCase):
 
     def test_suite_with_values(self):
         suite = TestSuite(
-            "Name",
-            "Doc",
-            {"m1": "v1", "M2": "V2"},
-            None,
-            False,
-            "Message",
-            "2011-12-04 19:00:00.000",
-            "2011-12-04 19:00:42.001",
+            name="Name",
+            doc="Doc",
+            metadata={"m1": "v1", "M2": "V2"},
+            message="Message",
+            start_time="2011-12-04 19:00:00.000",
+            end_time="2011-12-04 19:00:42.001",
         )
         s = self._verify_body_item(suite.setup.config(name="S"), type=1, name="S")
         t = self._verify_body_item(suite.teardown.config(name="T"), type=2, name="T")
