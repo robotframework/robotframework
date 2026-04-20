@@ -15,7 +15,7 @@
 
 from datetime import datetime
 
-from robot.errors import ExecutionStatus, PassExecution
+from robot.errors import ExecutionFailed, ExecutionStatus, PassExecution
 from robot.model import SuiteVisitor, TagPatterns
 from robot.result import (
     Keyword as KeywordResult, Result, TestCase as TestResult, TestSuite as SuiteResult
@@ -30,7 +30,7 @@ from .context import EXECUTION_CONTEXTS
 from .model import Keyword as KeywordData, TestCase as TestData, TestSuite as SuiteData
 from .namespace import Namespace
 from .status import SuiteStatus, TestStatus
-from .timeouts import TestTimeout
+from .timeouts import TestTimeout, TotalTimeout
 
 
 class SuiteRunner(SuiteVisitor):
@@ -44,6 +44,14 @@ class SuiteRunner(SuiteVisitor):
         self.suite_status = None
         self.executed = [NormalizedDict(ignore="_")]
         self.skipped_tags = TagPatterns(settings.skip)
+        self.total_timeout = self._get_total_timeout()
+
+    def _get_total_timeout(self):
+        """Create total timeout if --timeout option was used."""
+        timeout = self.settings["Timeout"]
+        if timeout:
+            return TotalTimeout(timeout, self.variables)
+        return None
 
     @property
     def context(self):
@@ -84,6 +92,9 @@ class SuiteRunner(SuiteVisitor):
         ns = Namespace(self.variables, result, data.resource, self.settings.languages)
         ns.start_suite()
         ns.variables.set_from_variable_section(data.resource.variables)
+        if self.total_timeout and not self.suite_status.parent:
+            EXECUTION_CONTEXTS.total_timeout = self.total_timeout
+            self.total_timeout.start()
         EXECUTION_CONTEXTS.start_suite(result, ns, self.output, self.settings.dry_run)
         self.context.set_suite_variables(result)
         if not self.suite_status.failed:
@@ -128,6 +139,8 @@ class SuiteRunner(SuiteVisitor):
         )
         with self.context.suite_teardown():
             failure = self._run_teardown(suite, self.suite_status, self.suite_result)
+            if not failure and self.context.total_timeout and self.context.total_timeout.timed_out():
+                failure = ExecutionFailed(self.context.total_timeout.get_message(), test_timeout=True)
             if failure:
                 if failure.skip:
                     self.suite_result.suite_teardown_skipped(str(failure))
@@ -215,6 +228,9 @@ class SuiteRunner(SuiteVisitor):
             self._run_teardown(data, status, result)
         if status.passed and result.timeout and result.timeout.timed_out():
             status.test_failed(result.timeout.get_message())
+            result.message = status.message
+        if status.passed and self.context.total_timeout and self.context.total_timeout.timed_out():
+            status.test_failed(self.context.total_timeout.get_message())
             result.message = status.message
         if status.skip_on_failure_after_tag_changes:
             result.message = status.message or result.message
