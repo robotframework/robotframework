@@ -123,6 +123,44 @@ class RestParser(RobotParser):
             return read_rest_data(reader)
 
 
+class MarkdownParser(RobotParser):
+    extensions = (".robot.md", ".md", ".markdown")
+
+    def _get_source(self, source: Path) -> str:
+        with FileReader(source) as reader:
+            return self._read_markdown_data(reader)
+
+    def _read_markdown_data(self, mdfile: FileReader) -> str:
+        blocks = []
+        block = None
+        fence_close_re = None
+
+        for line in mdfile.readlines():
+            if block is None:
+                match = _FENCE_OPEN_RE.match(line)
+                if match:
+                    fence, lang = match.groups()
+                    if lang.lower() in ("robotframework", "robot"):
+                        fence_char = fence[0]
+                        fence_len = len(fence)
+                        fence_close_re = re.compile(
+                            rf"^\s*{re.escape(fence_char)}{{{fence_len},}}\s*$"
+                        )
+                        block = []
+            elif fence_close_re.match(line):
+                blocks.append(textwrap.dedent("".join(block)))
+                block = None
+            else:
+                block.append(line)
+
+        # Handle unclosed fences by treating the rest of the file as part of the block,
+        # as CommonMark specs require.
+        if block:
+            blocks.append(textwrap.dedent("".join(block)))
+
+        return "\n".join(blocks)
+
+
 class JsonParser(Parser):
 
     def parse_suite_file(self, source: Path, defaults: TestDefaults) -> TestSuite:
@@ -200,41 +238,3 @@ class CustomParser(Parser):
                 f"Calling '{self.name}.{method_name}()' failed: {get_error_message()}"
             )
         return suite
-
-
-class MarkdownParser(RobotParser):
-    extensions = (".robot.md", ".md", ".markdown")
-
-    def _get_source(self, source: Path) -> str:
-        with FileReader(source) as reader:
-            return self._read_markdown_data(reader)
-
-    def _read_markdown_data(self, mdfile: FileReader) -> str:
-        blocks = []
-        block = None
-        fence_close_re = None
-
-        for line in mdfile.readlines():
-            if block is None:
-                match = _FENCE_OPEN_RE.match(line)
-                if match:
-                    fence, lang = match.groups()
-                    if lang.lower() in ("robotframework", "robot"):
-                        fence_char = fence[0]
-                        fence_len = len(fence)
-                        fence_close_re = re.compile(
-                            rf"^\s*{re.escape(fence_char)}{{{fence_len},}}\s*$"
-                        )
-                        block = []
-            elif fence_close_re.match(line):
-                blocks.append(textwrap.dedent("".join(block)))
-                block = None
-            else:
-                block.append(line)
-
-        # Handle unclosed fences by treating the rest of the file as part of the block,
-        # as CommonMark specs require.
-        if block:
-            blocks.append(textwrap.dedent("".join(block)))
-
-        return "\n".join(blocks)
