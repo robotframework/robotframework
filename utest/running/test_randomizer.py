@@ -87,8 +87,8 @@ class TestRandomizing(unittest.TestCase):
         WHEN it's randomized with a given seed
         THEN it's always sorted in the same order
         """
-        (random_order_suites1, random_order_tests1) = self._gen_random_suite(1234)
-        (random_order_suites2, random_order_tests2) = self._gen_random_suite(1234)
+        random_order_suites1, random_order_tests1 = self._gen_random_suite(1234)
+        random_order_suites2, random_order_tests2 = self._gen_random_suite(1234)
         assert_equal(random_order_suites1, random_order_suites2)
         assert_equal(random_order_tests1, random_order_tests2)
 

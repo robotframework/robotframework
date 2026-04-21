@@ -135,7 +135,7 @@ class ImplicitCommentLexer(CommentLexer):
 
     def input(self, statement: StatementTokens):
         super().input(statement)
-        if ':' in statement[0].value:
+        if ":" in statement[0].value:
             config, value = " ".join(token.value for token in statement).split(":", 1)
             config = config.lower()
             value = value.strip()

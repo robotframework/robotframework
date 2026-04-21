@@ -64,7 +64,10 @@ class TestSuiteBuilder:
         self,
         included_suites: str = "DEPRECATED",
         included_extensions: Sequence[str] = (
-            ".robot", ".rbt", ".robot.rst", ".robot.md",
+            ".robot",
+            ".rbt",
+            ".robot.rst",
+            ".robot.md",
         ),
         included_files: Sequence[str] = (),
         custom_parsers: Sequence[str] = (),
