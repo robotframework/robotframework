@@ -24,7 +24,7 @@ class TestJsonLogger(unittest.TestCase):
 "generator":"Robot * (* on *)",
 "generated":"20??-??-??T??:??:??.??????",
 "rpa":false
-            """.strip(),
+""",
             glob=True,
         )
 
@@ -36,7 +36,7 @@ class TestJsonLogger(unittest.TestCase):
 ,
 "suite":{
 "id":"s1"
-            """.strip()
+"""
         )
 
     def test_end_suite(self):
@@ -48,7 +48,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"SKIP",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
 
     def test_suite_with_config(self):
@@ -68,7 +68,7 @@ class TestJsonLogger(unittest.TestCase):
             """,
 "suite":{
 "id":"s1"
-            """.strip()
+"""
         )
         self.logger.end_suite(suite)
         self.verify(
@@ -84,7 +84,7 @@ class TestJsonLogger(unittest.TestCase):
 "start_time":"2024-12-03T12:27:00.123456",
 "elapsed_time":3.140000
 }
-            """.strip()
+"""
         )
 
     def test_child_suite(self):
@@ -97,7 +97,7 @@ class TestJsonLogger(unittest.TestCase):
 ,
 "suites":[{
 "id":"s1"
-            """.strip()
+"""
         )
         self.logger.end_suite(suite)
         self.verify(
@@ -109,7 +109,7 @@ class TestJsonLogger(unittest.TestCase):
 "start_time":"2024-12-03T12:27:00.123456",
 "elapsed_time":1.000000
 }
-            """.strip()
+"""
         )
 
     def test_suite_setup(self):
@@ -120,7 +120,7 @@ class TestJsonLogger(unittest.TestCase):
             """
 ,
 "setup":{
-            """.strip()
+"""
         )
         self.logger.end_keyword(setup)
         self.verify(
@@ -130,7 +130,8 @@ class TestJsonLogger(unittest.TestCase):
 "start_time":"2024-12-03T12:27:00.123456",
 "elapsed_time":0.000000
 }
-            """.rstrip()
+""",
+            strip=str.rstrip,
         )
 
     def test_suite_teardown(self):
@@ -139,8 +140,10 @@ class TestJsonLogger(unittest.TestCase):
         suite.teardown.config(name="T", status="PASS")
         self.logger.start_keyword(suite.teardown)
         self.verify(
-            """,
-"teardown":{"""
+            """
+,
+"teardown":{
+"""
         )
         self.logger.end_keyword(suite.teardown)
         self.verify(
@@ -149,7 +152,8 @@ class TestJsonLogger(unittest.TestCase):
 "status":"PASS",
 "elapsed_time":0.000000
 }
-            """.rstrip()
+""",
+            strip=str.rstrip,
         )
 
     def test_suite_teardown_after_suites(self):
@@ -161,7 +165,7 @@ class TestJsonLogger(unittest.TestCase):
             """
 ],
 "teardown":{
-            """.strip()
+"""
         )
         self.logger.end_keyword(suite.teardown)
         self.verify(
@@ -170,7 +174,8 @@ class TestJsonLogger(unittest.TestCase):
 "status":"PASS",
 "elapsed_time":0.000000
 }
-            """.rstrip()
+""",
+            strip=str.rstrip,
         )
 
     def test_suite_teardown_after_tests(self):
@@ -182,7 +187,7 @@ class TestJsonLogger(unittest.TestCase):
             """
 ],
 "teardown":{
-            """.strip()
+"""
         )
         self.logger.end_keyword(suite.teardown)
         self.verify(
@@ -192,7 +197,8 @@ class TestJsonLogger(unittest.TestCase):
 "status":"PASS",
 "elapsed_time":0.000000
 }
-            """.rstrip()
+""",
+            strip=str.rstrip,
         )
 
     def test_suite_structure(self):
@@ -204,7 +210,7 @@ class TestJsonLogger(unittest.TestCase):
 ,
 "suites":[{
 "id":"s1-s1"
-            """.strip()
+"""
         )
         self.logger.start_suite(root.suites[0].suites.create(name="GC", doc="gc"))
         self.verify(
@@ -212,7 +218,7 @@ class TestJsonLogger(unittest.TestCase):
 ,
 "suites":[{
 "id":"s1-s1-s1"
-            """.strip()
+"""
         )
         self.logger.start_test(root.suites[0].suites[0].tests.create(name="1", doc="1"))
         self.logger.end_test(root.suites[0].suites[0].tests[0])
@@ -226,7 +232,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"FAIL",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
         self.logger.start_test(
             root.suites[0].suites[0].tests.create(name="2", doc="2", status="PASS")
@@ -241,7 +247,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"PASS",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
         self.logger.end_suite(root.suites[0].suites[0])
         self.verify(
@@ -252,7 +258,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"FAIL",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
         self.logger.start_suite(root.suites[0].suites.create(name="GC2"))
         self.logger.end_suite(root.suites[0].suites[1])
@@ -264,7 +270,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"SKIP",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
         self.logger.end_suite(root.suites[0])
         self.verify(
@@ -275,7 +281,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"FAIL",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
 
     def test_suite_with_suites_and_tests(self):
@@ -303,7 +309,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"SKIP",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
         self.logger.start_test(test1)
         self.logger.end_test(test1)
@@ -323,7 +329,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"FAIL",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
 
     def test_start_test(self):
@@ -334,7 +340,7 @@ class TestJsonLogger(unittest.TestCase):
 ,
 "tests":[{
 "id":"t1"
-            """.strip()
+"""
         )
 
     def test_end_test(self):
@@ -346,7 +352,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"FAIL",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
 
     def test_test_with_config(self):
@@ -368,7 +374,7 @@ class TestJsonLogger(unittest.TestCase):
 ,
 "tests":[{
 "id":"t1"
-            """.strip()
+"""
         )
         self.logger.end_test(test)
         self.verify(
@@ -384,7 +390,7 @@ class TestJsonLogger(unittest.TestCase):
 "start_time":"2024-12-03T12:27:00.123456",
 "elapsed_time":1.000000
 }
-            """.strip()
+"""
         )
 
     def test_start_subsequent_test(self):
@@ -394,7 +400,7 @@ class TestJsonLogger(unittest.TestCase):
             """
 ,{
 "id":"t1"
-            """.strip()
+"""
         )
 
     def test_test_setup(self):
@@ -405,7 +411,7 @@ class TestJsonLogger(unittest.TestCase):
             """
 ,
 "setup":{
-            """.strip()
+"""
         )
         self.logger.end_keyword(setup)
         self.verify(
@@ -415,7 +421,8 @@ class TestJsonLogger(unittest.TestCase):
 "start_time":"2024-12-03T12:27:00.123456",
 "elapsed_time":0.000000
 }
-            """.rstrip()
+""",
+            strip=str.rstrip,
         )
 
     def test_test_teardown(self):
@@ -427,7 +434,7 @@ class TestJsonLogger(unittest.TestCase):
             """
 ,
 "teardown":{
-            """.strip()
+"""
         )
         self.logger.end_keyword(test.teardown)
         self.verify(
@@ -436,7 +443,8 @@ class TestJsonLogger(unittest.TestCase):
 "status":"PASS",
 "elapsed_time":0.000000
 }
-            """.rstrip()
+""",
+            strip=str.rstrip,
         )
 
     def test_test_structure(self):
@@ -453,7 +461,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"PASS",
 "elapsed_time":1.234567
 }
-            """.strip()
+"""
         )
         self.logger.start_keyword(kw)
         self.logger.end_keyword(kw)
@@ -464,7 +472,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"PASS",
 "elapsed_time":1.234567
 }
-            """.strip()
+"""
         )
         self.logger.start_keyword(td)
         self.logger.end_keyword(td)
@@ -476,7 +484,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"PASS",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
         self.logger.end_test(TestCase())
         self.verify(
@@ -485,7 +493,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"FAIL",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
 
     def test_keyword(self):
@@ -496,7 +504,7 @@ class TestJsonLogger(unittest.TestCase):
             """
 ,
 "body":[{
-            """.strip()
+"""
         )
         self.logger.end_keyword(kw)
         self.verify(
@@ -505,7 +513,8 @@ class TestJsonLogger(unittest.TestCase):
 "status":"FAIL",
 "elapsed_time":0.000000
 }
-            """.rstrip()
+""",
+            strip=str.rstrip,
         )
 
     def test_keyword_with_config(self):
@@ -529,7 +538,7 @@ class TestJsonLogger(unittest.TestCase):
             """
 ,
 "body":[{
-            """.strip()
+"""
         )
         self.logger.end_keyword(kw)
         self.verify(
@@ -547,7 +556,8 @@ class TestJsonLogger(unittest.TestCase):
 "start_time":"2024-12-03T12:27:00.123456",
 "elapsed_time":0.654321
 }
-            """.rstrip()
+""",
+            strip=str.rstrip,
         )
 
     def test_start_for(self):
@@ -558,7 +568,7 @@ class TestJsonLogger(unittest.TestCase):
 ,
 "body":[{
 "type":"FOR"
-            """.strip()
+"""
         )
 
     def test_end_for(self):
@@ -573,7 +583,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"FAIL",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
 
     def test_for_in_enumerate(self):
@@ -585,7 +595,7 @@ class TestJsonLogger(unittest.TestCase):
 ,
 "body":[{
 "type":"FOR"
-            """.strip()
+"""
         )
         self.logger.end_for(item)
         self.verify(
@@ -598,7 +608,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"FAIL",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
 
     def test_for_in_zip(self):
@@ -610,7 +620,7 @@ class TestJsonLogger(unittest.TestCase):
 ,
 "body":[{
 "type":"FOR"
-            """.strip()
+"""
         )
         self.logger.end_for(item)
         self.verify(
@@ -624,7 +634,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"FAIL",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
 
     def test_for_iteration(self):
@@ -636,7 +646,7 @@ class TestJsonLogger(unittest.TestCase):
 ,
 "body":[{
 "type":"ITERATION"
-            """.strip()
+"""
         )
         self.logger.end_for_iteration(item)
         self.verify(
@@ -646,7 +656,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"FAIL",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
         self.logger.start_for_iteration(item)
         self.logger.end_for_iteration(item)
@@ -658,7 +668,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"FAIL",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
 
     def test_start_while(self):
@@ -669,7 +679,7 @@ class TestJsonLogger(unittest.TestCase):
 ,
 "body":[{
 "type":"WHILE"
-            """.strip()
+"""
         )
 
     def test_end_while(self):
@@ -681,7 +691,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"FAIL",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
 
     def test_start_while_with_config(self):
@@ -702,7 +712,7 @@ class TestJsonLogger(unittest.TestCase):
 "message":"M",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
 
     def test_while_iteration(self):
@@ -714,7 +724,7 @@ class TestJsonLogger(unittest.TestCase):
 ,
 "body":[{
 "type":"ITERATION"
-            """.strip()
+"""
         )
         self.logger.end_while_iteration(item)
         self.verify(
@@ -724,7 +734,7 @@ class TestJsonLogger(unittest.TestCase):
 "start_time":"2024-12-03T12:27:00.123456",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
 
     def test_start_if(self):
@@ -735,7 +745,7 @@ class TestJsonLogger(unittest.TestCase):
 ,
 "body":[{
 "type":"IF/ELSE ROOT"
-            """.strip()
+"""
         )
 
     def test_end_if(self):
@@ -747,7 +757,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"FAIL",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
 
     def test_if_branch(self):
@@ -758,7 +768,7 @@ class TestJsonLogger(unittest.TestCase):
 ,
 "body":[{
 "type":"IF"
-            """.strip()
+"""
         )
         self.logger.end_if_branch(IfBranch())
         self.verify(
@@ -767,7 +777,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"FAIL",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
         self.logger.end_if(If(status="PASS"))
         self.verify(
@@ -776,7 +786,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"PASS",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
 
     def test_if_branch_with_config(self):
@@ -788,7 +798,7 @@ class TestJsonLogger(unittest.TestCase):
 ,
 "body":[{
 "type":"ELSE IF"
-            """.strip()
+"""
         )
         self.logger.end_if_branch(item)
         self.verify(
@@ -798,7 +808,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"FAIL",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
 
     def test_start_try(self):
@@ -809,7 +819,7 @@ class TestJsonLogger(unittest.TestCase):
 ,
 "body":[{
 "type":"TRY/EXCEPT ROOT"
-            """.strip()
+"""
         )
 
     def test_end_try(self):
@@ -821,7 +831,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"PASS",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
 
     def test_try_branch(self):
@@ -832,7 +842,7 @@ class TestJsonLogger(unittest.TestCase):
 ,
 "body":[{
 "type":"TRY"
-            """.strip()
+"""
         )
         self.logger.end_try_branch(TryBranch())
         self.verify(
@@ -841,7 +851,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"FAIL",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
         self.logger.end_try(Try(status="PASS"))
         self.verify(
@@ -850,7 +860,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"PASS",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
 
     def test_try_branch_with_config(self):
@@ -867,7 +877,7 @@ class TestJsonLogger(unittest.TestCase):
 ,
 "body":[{
 "type":"EXCEPT"
-            """.strip()
+"""
         )
         self.logger.end_try_branch(item)
         self.verify(
@@ -879,7 +889,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"FAIL",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
 
     def test_group(self):
@@ -892,7 +902,7 @@ class TestJsonLogger(unittest.TestCase):
 ,
 "body":[{
 "type":"GROUP"
-            """.strip()
+"""
         )
         self.logger.start_group(anonymous)
         self.verify(
@@ -900,7 +910,7 @@ class TestJsonLogger(unittest.TestCase):
 ,
 "body":[{
 "type":"GROUP"
-            """.strip()
+"""
         )
         self.logger.end_group(anonymous)
         self.verify(
@@ -909,7 +919,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"FAIL",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
         self.logger.end_group(named)
         self.verify(
@@ -920,7 +930,7 @@ class TestJsonLogger(unittest.TestCase):
 "start_time":"2024-12-03T12:27:00.123456",
 "elapsed_time":1.000000
 }
-            """.strip()
+"""
         )
 
     def test_var(self):
@@ -932,7 +942,7 @@ class TestJsonLogger(unittest.TestCase):
 ,
 "body":[{
 "type":"VAR"
-            """.strip()
+"""
         )
         self.logger.end_var(var)
         self.verify(
@@ -943,7 +953,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"FAIL",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
 
     def test_var_with_config(self):
@@ -963,7 +973,7 @@ class TestJsonLogger(unittest.TestCase):
 ,
 "body":[{
 "type":"VAR"
-            """.strip()
+"""
         )
         self.logger.end_var(var)
         self.verify(
@@ -977,7 +987,7 @@ class TestJsonLogger(unittest.TestCase):
 "start_time":"2024-12-03T12:27:00.123456",
 "elapsed_time":1.200000
 }
-            """.strip()
+"""
         )
 
     def test_return(self):
@@ -989,7 +999,7 @@ class TestJsonLogger(unittest.TestCase):
 ,
 "body":[{
 "type":"RETURN"
-            """.strip()
+"""
         )
         self.logger.end_return(item)
         self.verify(
@@ -999,7 +1009,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"FAIL",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
 
     def test_continue_and_break(self):
@@ -1020,7 +1030,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"PASS",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
 
     def test_error(self):
@@ -1043,7 +1053,7 @@ class TestJsonLogger(unittest.TestCase):
 "status":"FAIL",
 "elapsed_time":0.000000
 }
-            """.strip()
+"""
         )
 
     def test_message(self):
@@ -1056,7 +1066,7 @@ class TestJsonLogger(unittest.TestCase):
 "type":"MESSAGE",
 "level":"INFO"
 }
-            """.strip()
+"""
         )
         self.logger.message(
             Message(
@@ -1075,7 +1085,7 @@ class TestJsonLogger(unittest.TestCase):
 "html":true,
 "timestamp":"2024-12-03T12:27:00.123456"
 }
-            """.strip()
+"""
         )
 
     def test_statistics(self):
@@ -1147,7 +1157,7 @@ class TestJsonLogger(unittest.TestCase):
 "skip":0
 }]
 }
-            """.strip()
+"""
         )
 
     def test_no_errors(self):
@@ -1157,7 +1167,7 @@ class TestJsonLogger(unittest.TestCase):
             """
 ,
 "errors":[]
-            """.strip()
+"""
         )
 
     def test_errors(self):
@@ -1180,14 +1190,15 @@ class TestJsonLogger(unittest.TestCase):
 "html":true,
 "timestamp":"2024-12-03T12:27:00.123456"
 }]
-            """.strip()
+"""
         )
 
-    def verify(self, expected, glob=False):
+    def verify(self, expected, glob=False, strip=str.strip):
         file = cast(StringIO, self.logger.writer.file)
         actual = file.getvalue()
         file.seek(0)
         file.truncate()
+        expected = strip(expected)
         if glob:
             match = fnmatchcase(actual, expected)
         else:
