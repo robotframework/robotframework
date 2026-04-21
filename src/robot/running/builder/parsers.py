@@ -14,10 +14,10 @@
 #  limitations under the License.
 
 import re
-import textwrap
 from abc import ABC
 from inspect import signature
 from pathlib import Path
+from textwrap import dedent
 
 from robot.conf import LanguagesLike
 from robot.errors import DataError
@@ -28,8 +28,6 @@ from ..model import TestSuite
 from ..resourcemodel import ResourceFile
 from .settings import FileSettings, InitFileSettings, TestDefaults
 from .transformers import ResourceBuilder, SuiteBuilder
-
-_FENCE_OPEN_RE = re.compile(r"^\s*(```+|~~~+)\s*(\S*)")
 
 
 class Parser(ABC):
@@ -131,34 +129,26 @@ class MarkdownParser(RobotParser):
             return self._read_markdown_data(reader)
 
     def _read_markdown_data(self, mdfile: FileReader) -> str:
+        fence_open = re.compile(r"\s*(`{3,}|~{3,})\s*(\S+)")
+        fence_close = None
         blocks = []
         block = None
-        fence_close_re = None
-
         for line in mdfile.readlines():
             if block is None:
-                match = _FENCE_OPEN_RE.match(line)
+                match = fence_open.match(line)
                 if match:
                     fence, lang = match.groups()
                     if lang.lower() in ("robotframework", "robot"):
-                        fence_char = fence[0]
-                        fence_len = len(fence)
-                        fence_close_re = re.compile(
-                            rf"^\s*{re.escape(fence_char)}{{{fence_len},}}\s*$"
-                        )
+                        fence_close = re.compile(rf"\s*{fence[0]}{{{len(fence)},}}\s*")
                         block = []
-            elif fence_close_re.match(line):
-                blocks.append(textwrap.dedent("".join(block)))
+            elif fence_close.fullmatch(line):
+                blocks.append(block)
                 block = None
             else:
                 block.append(line)
-
-        # Handle unclosed fences by treating the rest of the file as part of the block,
-        # as CommonMark specs require.
         if block:
-            blocks.append(textwrap.dedent("".join(block)))
-
-        return "\n".join(blocks)
+            blocks.append(block)
+        return "\n".join(dedent("".join(blk)) for blk in blocks)
 
 
 class JsonParser(Parser):
