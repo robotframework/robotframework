@@ -286,6 +286,9 @@ class StringConverter(TypeConverter):
     def _handles_value(self, value):
         return True
 
+    def _string_convert(self, value):
+        return value
+
     def _non_string_convert(self, value):
         if isinstance(value, Secret):
             raise ValueError

@@ -54,6 +54,9 @@ Invalid boolean
 String
     Check Test Case    ${TESTNAME}
 
+String sub type
+    Check Test Case    ${TESTNAME}
+
 Invalid string
     Check Test Case    ${TESTNAME}
 

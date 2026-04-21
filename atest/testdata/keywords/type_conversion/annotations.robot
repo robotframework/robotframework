@@ -175,6 +175,9 @@ String
     String               ${None}                   'None'
     String               ${LIST}                   "['foo', 'bar']"
 
+String sub type
+    String sub type      Hello!                    'Hello!'
+
 Invalid string
     [Template]           Conversion Should Fail
     String               ${{type('Bang', (), {'__str__': lambda self: 1/0})()}}
