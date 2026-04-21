@@ -121,10 +121,10 @@ class TypeConverter:
 
     def convert(
         self,
-        value: Any,
+        value: object,
         name: "str|None" = None,
         kind: str = "Argument",
-    ) -> Any:
+    ) -> object:
         if self.no_conversion_needed(value):
             return value
         if not self._handles_value(value):
@@ -136,7 +136,7 @@ class TypeConverter:
         except ValueError as error:
             return self._handle_error(value, name, kind, error)
 
-    def no_conversion_needed(self, value: Any) -> bool:
+    def no_conversion_needed(self, value: object) -> bool:
         try:
             return isinstance(value, self.type_info.type)
         except TypeError:
@@ -842,7 +842,7 @@ class LiteralConverter(TypeConverter):
     def handles(cls, type_info: "TypeInfo") -> bool:
         return type_info.type is Literal
 
-    def no_conversion_needed(self, value: Any) -> bool:
+    def no_conversion_needed(self, value: object) -> bool:
         for info in self.type_info.nested:
             expected = info.type
             if value == expected and type(value) is type(expected):
