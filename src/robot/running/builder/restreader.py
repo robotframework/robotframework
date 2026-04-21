@@ -13,8 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import functools
 from contextlib import contextmanager
+from functools import wraps
+from inspect import unwrap
 
 from robot.errors import DataError
 
@@ -44,9 +45,6 @@ class RobotDataStorage:
     def get_data(self):
         return "\n".join(self._robot_data)
 
-    def has_data(self):
-        return bool(self._robot_data)
-
 
 class RobotCodeBlock(CodeBlock):
 
@@ -57,19 +55,18 @@ class RobotCodeBlock(CodeBlock):
         return []
 
 
-@functools.wraps(directives.directive)
+@wraps(directives.directive)
 def directive(*args, **kwargs):
-    directive_class, messages = directive.__wrapped__(*args, **kwargs)
+    directive_class, messages = unwrap(directive)(*args, **kwargs)
     if directive_class not in (RobotCodeBlock, Include):
-        # Skipping unknown or non-relevant directive entirely
         directive_class = lambda *args, **kwargs: []
     return directive_class, messages
 
 
-@functools.wraps(roles.role)
+@wraps(roles.role)
 def role(*args, **kwargs):
-    role_function = role.__wrapped__(*args, **kwargs)
-    if role_function is None:  # role is unknown, ignore
+    role_function = unwrap(role)(*args, **kwargs)
+    if role_function is None:
         role_function = (lambda *args, **kwargs: [], [])
     return role_function
 
@@ -97,5 +94,4 @@ def read_rest_data(rstfile):
             source_path=rstfile.name,
             settings_overrides={"input_encoding": "UTF-8", "report_level": 4},
         )
-    store = RobotDataStorage(doc)
-    return store.get_data()
+    return RobotDataStorage(doc).get_data()
