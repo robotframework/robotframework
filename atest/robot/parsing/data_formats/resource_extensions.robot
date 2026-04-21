@@ -39,9 +39,15 @@ Resource with '*.rsrc' extension
 Resource with '*.json' extension
     Check Test Case    ${TESTNAME}
 
+Resource with '*.md' extension
+    Check Test Case    ${TESTNAME}
+
+Resource with '*.markdown' extension
+    Check Test Case    ${TESTNAME}
+
 Resource with invalid extension
     Check Test Case    ${TESTNAME}
-    Error in file    0    parsing/data_formats/resource_extensions/tests.robot    10
+    Error in file    0    parsing/data_formats/resource_extensions/tests.robot    12
     ...    Invalid resource file extension '.invalid'.
-    ...    Supported extensions are '.json', '.resource', '.rest', '.robot', '.rsrc', '.rst', '.tsv' and '.txt'.
+    ...    Supported extensions are '.json', '.markdown', '.md', '.resource', '.rest', '.robot', '.rsrc', '.rst', '.tsv' and '.txt'.
     Length should be    ${ERRORS}    1

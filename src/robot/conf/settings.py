@@ -493,7 +493,7 @@ class _BaseSettings:
 
 class RobotSettings(_BaseSettings):
     _extra_cli_opts = {
-        "Extension"          : ("extension", (".robot", ".rbt", ".robot.rst")),
+        "Extension"          : ("extension", (".robot", ".rbt", ".robot.rst", ".robot.md")),
         "Output"             : ("output", "output.xml"),
         "LogLevel"           : ("loglevel", "INFO"),
         "MaxErrorLines"      : ("maxerrorlines", 40),

@@ -30,7 +30,8 @@ from robot.utils import Importer, seq2str, split_args_from_name_or_path, type_na
 from ..model import TestSuite
 from ..resourcemodel import ResourceFile
 from .parsers import (
-    CustomParser, JsonParser, NoInitFileDirectoryParser, Parser, RestParser, RobotParser
+    CustomParser, JsonParser, MarkdownParser, NoInitFileDirectoryParser, Parser,
+    RestParser, RobotParser
 )
 from .settings import TestDefaults
 
@@ -62,7 +63,9 @@ class TestSuiteBuilder:
     def __init__(
         self,
         included_suites: str = "DEPRECATED",
-        included_extensions: Sequence[str] = (".robot", ".rbt", ".robot.rst"),
+        included_extensions: Sequence[str] = (
+            ".robot", ".rbt", ".robot.rst", ".robot.md",
+        ),
         included_files: Sequence[str] = (),
         custom_parsers: Sequence[str] = (),
         defaults: "TestDefaults|None" = None,
@@ -129,6 +132,7 @@ class TestSuiteBuilder:
         robot_parser = RobotParser(lang, process_curdir)
         rest_parser = RestParser(lang, process_curdir)
         json_parser = JsonParser()
+        markdown_parser = MarkdownParser(lang, process_curdir)
         return {
             "robot": robot_parser,
             "rst": rest_parser,
@@ -136,6 +140,9 @@ class TestSuiteBuilder:
             "robot.rst": rest_parser,
             "rbt": json_parser,
             "json": json_parser,
+            "md": markdown_parser,
+            "markdown": markdown_parser,
+            "robot.md": markdown_parser,
         }
 
     def _get_custom_parsers(self, parsers: Sequence[str]) -> "dict[str, CustomParser]":
@@ -316,6 +323,8 @@ class ResourceFileBuilder:
             parser = RestParser(self.lang, self.process_curdir)
         elif suffix in (".json", ".rsrc"):
             parser = JsonParser()
+        elif suffix in (".md", ".markdown"):
+            parser = MarkdownParser(self.lang, self.process_curdir)
         else:
             parser = RobotParser(self.lang, self.process_curdir)
         return parser.parse_resource_file(source)
