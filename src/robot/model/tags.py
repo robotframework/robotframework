@@ -31,8 +31,9 @@ class Tags(Sequence[str]):
     def robot(self, name: str) -> bool:
         """Check do tags contain a reserved tag in format `robot:<name>`.
 
-        `tags.robot('<name>')` is same as `'robot:<name>' in tags`,
-        but the former is considerably faster.
+        `tags.robot('<name>')` is same as `'robot:<name>' in tags`, but using
+        this method is considerably faster. This method requires the ``name``
+        to be in lowercase, though, while checking with `in` is case-insensitive.
         """
         return name in self._reserved
 
@@ -45,21 +46,23 @@ class Tags(Sequence[str]):
 
     def _normalize(self, tags):
         nd = NormalizedDict.fromkeys([str(t) for t in tags], ignore="_")
-        if "" in nd:
+        # Inspecting already normalized names is performance optimization.
+        normalized = nd.normalized_keys
+        if "" in normalized:
             del nd[""]
-        if "NONE" in nd:
-            del nd["NONE"]
-        reserved = [tag[6:] for tag in nd.normalized_keys if tag[:6] == "robot:"]
+        if "none" in normalized:
+            del nd["none"]
+        reserved = [n[6:] for n in normalized if n[:6] == "robot:"]
         return tuple(nd), tuple(reserved)
 
     def add(self, tags: Iterable[str], remove_negated: bool = False):
-        tags = tuple(Tags(tags))
+        tags = Tags(tags)
         if remove_negated:
             remove = [t[1:] for t in tags if t[0] == "-"]
             if remove:
                 self.remove(remove)
                 tags = [t for t in tags if t[0] != "-"]
-        self.__init__(tuple(self) + tuple(tags))
+        self.__init__([*self, *tags])
 
     def remove(self, tags: Iterable[str]):
         match = TagPatterns(tags).match
@@ -105,7 +108,7 @@ class Tags(Sequence[str]):
         return self._tags[index]
 
     def __add__(self, other: Iterable[str]) -> "Tags":
-        return Tags(tuple(self) + tuple(Tags(other)))
+        return Tags([*self, *Tags(other)])
 
 
 class TagPatterns(Sequence["TagPattern"]):
