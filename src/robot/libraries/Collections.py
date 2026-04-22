@@ -304,6 +304,9 @@ class _List:
         =>
         | ${x} = 3
         | ${L5} is not changed
+
+        Note: Prior to Robot Framework 7.5, using a negative ``start`` index
+        could return -1 even when the value was found in the list.
         """
         if start == "":
             # Deprecated in RF 7.4. TODO: Remove in RF 9.
@@ -312,10 +315,11 @@ class _List:
                 "keyword is deprecated. Use '0' instead."
             )
             start = 0
-        if isinstance(start, int) and start < 0:
-            start = max(len(list_) + start, 0)
+        length = len(list_)
         list_ = self.get_slice_from_list(list_, start, end)
         try:
+            if start < 0:
+                start = length + start
             return start + list_.index(value)
         except ValueError:
             return -1
