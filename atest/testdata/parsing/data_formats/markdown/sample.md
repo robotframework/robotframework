@@ -23,7 +23,7 @@ def ignore_me():
     raise SystemExit()
 ```
 
-```robotframework
+```robot
 *** Variables ***
 ${table_var}          foo
 @{table_listvar}      bar    ${table_var}
@@ -31,7 +31,7 @@ ${quoted}             """this has """"many "" quotes """""
 ${single_quoted}      s'ingle'qu'ot'es''
 ```
 
-```robotframework
+``````    robotframework
 *** Test Cases ***
 Passing    Log    Passing test case.
 
@@ -97,9 +97,9 @@ Quotes    Should Be Equal    ${quoted}    """this has """"many "" quotes """""
 
 Escaping
           Should Be Equal    -c:\\temp-\t-\x00-\${x}-    ${ESCAPING}
-```
+``````````````````````````````````````````````````````````````````
 
-```robotframework
+~~~robot works with tildes too and this extra stuff is ignored
 *** Keywords ***
 My Keyword With Arg    [Arguments]    ${arg1}
                        Keyword with no arguments
@@ -112,4 +112,4 @@ Timeouted Keyword    [Timeout]    2ms
                      Sleep    2
 
 Keyword With No Arguments    Log    Hello world!
-```
+~~~
