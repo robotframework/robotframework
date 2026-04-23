@@ -76,7 +76,7 @@ class TestFiltering(unittest.TestCase):
         assert_equal([t.name for t in self.suite.suites[0].tests], ["n1"])
 
     def test_exclude(self):
-        self.suite.visit(SuiteConfigurer(exclude_tags=["t1", "?1ANDt2"]))
+        self.suite.visit(SuiteConfigurer(exclude_tags=["t1", "?1 AND t2"]))
         assert_equal([t.name for t in self.suite.tests], ["n0"])
         assert_equal(list(self.suite.suites), [])
 
