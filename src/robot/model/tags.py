@@ -148,7 +148,6 @@ class TagPattern(ABC):
 
     @classmethod
     def from_string(cls, pattern: str) -> "TagPattern":
-        pattern = pattern.replace(" ", "")
         if "NOT" in pattern:
             must_match, *must_not_match = pattern.split("NOT")
             return NotTagPattern(must_match, must_not_match)
@@ -175,16 +174,18 @@ class SingleTagPattern(TagPattern):
 
     def __init__(self, pattern: str):
         # Normalization is handled here, not in Matcher, for performance reasons.
-        # This way we can normalize tags only once.
+        # With this configuration all normalizations in Matcher are no-ops.
         self._matcher = Matcher(
             normalize(pattern, ignore="_"),
             caseless=False,
             spaceless=False,
         )
+        # Preserve original patter mostly for string representation purposes.
+        self._pattern = pattern.strip()
 
     @property
     def is_constant(self):
-        pattern = self._matcher.pattern
+        pattern = self._pattern
         return not ("*" in pattern or "?" in pattern or "[" in pattern)
 
     def match(self, tags: Iterable[str]) -> bool:
@@ -195,7 +196,7 @@ class SingleTagPattern(TagPattern):
         yield self
 
     def __str__(self) -> str:
-        return self._matcher.pattern
+        return self._pattern
 
     def __bool__(self) -> bool:
         return bool(self._matcher)

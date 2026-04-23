@@ -353,8 +353,8 @@ class TestTagPatterns(unittest.TestCase):
         for pattern in [
             "a",
             "NOT a",
-            "a NOT b",
-            "a AND b",
+            "A NOT B",
+            "a AND b_c",
             "a OR b",
             "a*",
             "a OR b NOT c OR d AND e OR ??",
@@ -364,13 +364,10 @@ class TestTagPatterns(unittest.TestCase):
                 f"[{pattern}]",
             )
             assert_equal(
-                str(TagPatterns(pattern.replace(" ", ""))),
-                f"[{pattern}]",
+                str(TagPatterns([pattern, "x", pattern, "Y", "X"])),
+                f"[{pattern}, x, Y]",
             )
-            assert_equal(
-                str(TagPatterns([pattern, "x", pattern, "y"])),
-                f"[{pattern}, x, y]",
-            )
+        assert_equal(str(TagPatterns("aNOTbORcANDd")), "[a NOT b OR c AND d]")
 
     def test_non_ascii(self):
         pattern = "ä OR å NOT æ AND ☃ OR ??"

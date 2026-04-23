@@ -173,8 +173,9 @@ class TagStat(Stat):
 class CombinedTagStat(TagStat):
 
     def __init__(self, pattern, name=None, doc="", links=None):
-        super().__init__(name or pattern, doc, links, combined=pattern)
-        self.pattern = TagPattern.from_string(pattern)
+        pattern = TagPattern.from_string(pattern)
+        super().__init__(name or str(pattern), doc, links, combined=str(pattern))
+        self.pattern = pattern
 
     def match(self, tags):
         return self.pattern.match(tags)

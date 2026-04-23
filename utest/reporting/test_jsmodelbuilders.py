@@ -668,7 +668,7 @@ class TestBuildStatistics(unittest.TestCase):
         comb, t1, t2, t3 = self._build_statistics()[1]
         self._verify_stat(t2, 2, 0, 0, "t2", "00:00:22", doc="doc", links="t:url")
         self._verify_stat(
-            comb, 2, 0, 0, "name", "00:00:22", info="combined", combined="t1&amp;t2"
+            comb, 2, 0, 0, "name", "00:00:22", info="combined", combined="t1 AND t2"
         )
         self._verify_stat(t1, 2, 2, 0, "t1", "00:00:33")
         self._verify_stat(t3, 0, 1, 1, "t3", "00:00:01")
@@ -690,7 +690,7 @@ class TestBuildStatistics(unittest.TestCase):
         return Statistics(
             self._get_suite(),
             suite_stat_level=2,
-            tag_stat_combine=[("t1&t2", "name")],
+            tag_stat_combine=[("t1ANDt2", "name")],
             tag_doc=[("t2", "doc")],
             tag_stat_link=[("?2", "url", "%1")],
         )

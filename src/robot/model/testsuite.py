@@ -27,6 +27,8 @@ from .itemlist import ItemList
 from .keyword import Keyword
 from .metadata import Metadata
 from .modelobject import DataDict, ModelObject
+from .namepatterns import NamePatterns
+from .tags import TagPatterns
 from .tagsetter import TagSetter
 from .testcase import TestCase, TestCases
 from .visitor import SuiteVisitor
@@ -410,10 +412,10 @@ class TestSuite(ModelObject, Generic[KW, TC]):
 
     def filter(
         self,
-        included_suites: "Sequence[str]|None" = None,
-        included_tests: "Sequence[str]|None" = None,
-        included_tags: "Sequence[str]|None" = None,
-        excluded_tags: "Sequence[str]|None" = None,
+        included_suites: "NamePatterns|Sequence[str]|None" = None,
+        included_tests: "NamePatterns|Sequence[str]|None" = None,
+        included_tags: "TagPatterns|Sequence[str]|None" = None,
+        excluded_tags: "TagPatterns|Sequence[str]|None" = None,
     ):
         """Select test cases and remove others from this suite.
 

@@ -27,9 +27,9 @@ class NamePatterns(Iterable[str]):
         match = self.matcher.match
         return bool(match(name) or full_name and match(full_name))
 
-    def __bool__(self) -> bool:
-        return bool(self.matcher)
-
     def __iter__(self) -> Iterator[str]:
         for matcher in self.matcher:
             yield matcher.pattern
+
+    def __len__(self) -> int:
+        return len(self.matcher)

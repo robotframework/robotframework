@@ -89,12 +89,11 @@ class TagStatInfo:
         return [self._get_combined_stat(*comb) for comb in combined or []]
 
     def _get_combined_stat(self, pattern, name=None):
-        name = name or pattern
         return CombinedTagStat(
             pattern,
             name,
-            self.get_doc(name),
-            self.get_links(name),
+            self.get_doc(name or pattern),
+            self.get_links(name or pattern),
         )
 
     def get_doc(self, tag):
