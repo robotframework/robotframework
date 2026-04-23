@@ -23,6 +23,7 @@ on the extension:
 - :file:`.robot` files and files that are not recognized are parsed using
   the normal `Robot Framework parser`__.
 - :file:`.rst` and :file:`.rest` files are parsed using the `reStructuredText parser`__.
+- :file:`.md` and :file:`.markdown` files are parsed using the `Markdown parser`__.
 - :file:`.rbt` and :file:`.json` files are parsed using the `JSON parser`__.
 - Files supported by `custom parsers`__ are parsed by a matching parser.
 
@@ -31,10 +32,12 @@ Examples::
     robot example.robot    # Standard Robot Framework parser.
     robot example.tsv      # Must be compatible with the standard parser.
     robot example.rst      # reStructuredText parser.
+    robot example.md       # Markdown parser.
     robot x.robot y.rst    # Parse both files using an appropriate parser.
 
 __ `Supported file formats`_
 __ `reStructuredText format`_
+__ `Markdown format`_
 __ `JSON format`_
 __ `Using custom parsers`_
 
@@ -48,6 +51,7 @@ the following rules:
   (:file:`_`) are ignored.
 - :file:`.robot` files are parsed using the normal `Robot Framework parser`__.
 - :file:`.robot.rst` files are parsed using the `reStructuredText parser`__.
+- :file:`.robot.md` files are parsed using the `Markdown parser`__.
 - :file:`.rbt` files are parsed using the `JSON parser`__.
 - Files supported by `custom parsers`__ are parsed by a matching parser.
 - Other files are ignored unless parsing them has been enabled by using
@@ -57,6 +61,7 @@ the following rules:
 __ `Suite directories`_
 __ `Supported file formats`_
 __ `reStructuredText format`_
+__ `Markdown format`_
 __ `JSON format`_
 __ `Using custom parsers`_
 
@@ -98,6 +103,7 @@ even if they by `default would not be`__. What parser to use depends on
 the used extension:
 
 - :file:`.rst` and :file:`.rest` files are parsed using the `reStructuredText parser`__.
+- :file:`.md` and :file:`.markdown` files are parsed using the `Markdown parser`__.
 - :file:`.json` files are parsed using the `JSON parser`__.
 - Other files are parsed using the normal `Robot Framework parser`__.
 
@@ -109,6 +115,7 @@ to quote or escape the pattern like `'*.robot'` or `\*.robot`.
 
 __ `Included and excluded files`_
 __ `reStructuredText format`_
+__ `Markdown format`_
 __ `JSON format`_
 __ `Supported file formats`_
 
