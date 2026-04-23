@@ -334,13 +334,13 @@ that is easy to read, write and preview using standard editors and tools.
           external Python module to be installed.
 
 When Robot Framework parses Markdown files, it searches for code blocks
-starting with fences of at least three backticks ``(`)`` or tildes ``(~)``
-and the ``robotframework`` (or simply ``robot``) language tag. All content
-outside such blocks is ignored. The parser follows the CommonMark_ specification
-for fenced code blocks, which means that the opening and closing fences must
-match and the closing fence must be at least as long as the opening one. If a
-code block is not closed properly, the rest of the file will be considered
-as part of the code block itself.
+starting with fences of at least three backticks :codesc:`\`\`\`` or tildes
+:codesc:`~~~` and the ``robotframework`` (or simply ``robot``) language tag.
+All content outside such blocks is ignored. The parser follows the CommonMark_
+specification for fenced code blocks, which means that the opening and closing
+fences must match and the closing fence must be at least as long as the
+opening one. If a code block is not closed properly, the rest of the file
+will be considered as part of the code block itself.
 
 .. sourcecode:: markdown
 
