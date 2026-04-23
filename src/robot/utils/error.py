@@ -17,7 +17,7 @@ import os
 import sys
 import traceback
 
-from robot.errors import RobotError
+from robot.errors import RobotError, TimeoutExceeded
 
 EXCLUDE_ROBOT_TRACES = not os.getenv("ROBOT_INTERNAL_TRACES")
 
@@ -80,6 +80,8 @@ class ErrorDetails:
         return self._traceback
 
     def _format_traceback(self, error):
+        if isinstance(error, TimeoutExceeded):
+            return ""
         if isinstance(error, RobotError):
             return error.details
         if self._exclude_robot_traces:
@@ -127,6 +129,6 @@ class ErrorDetails:
     def _suppress_name(self, name, error):
         return (
             name in self._generic_names
-            or isinstance(error, RobotError)
+            or isinstance(error, (RobotError, TimeoutExceeded))
             or getattr(error, "ROBOT_SUPPRESS_NAME", False)
         )
