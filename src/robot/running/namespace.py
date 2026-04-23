@@ -96,10 +96,13 @@ class Namespace:
     def _import_resource(self, import_, overwrite=False):
         path = self._resolve_name(import_)
         self._validate_not_importing_init_file(path)
-        if overwrite or path not in self._kw_store.resources:
+        key = (path, import_.alias) if import_.alias else path
+        if overwrite or key not in self._kw_store.resources:
             resource = IMPORTER.import_resource(path, self.languages)
+            if import_.alias:
+                resource = resource.copy(name=import_.alias)
             self.variables.set_from_variable_section(resource.variables, overwrite)
-            self._kw_store.resources[path] = resource
+            self._kw_store.resources[key] = resource
             self._handle_imports(resource.imports)
             LOGGER.resource_import(resource, import_)
         else:
