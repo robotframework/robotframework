@@ -10,12 +10,12 @@ Resource          rebot_resource.robot
 
 *** Variables ***
 ${TEST FILE}      tags/include_and_exclude.robot
-${TEST FILE2}     tags/no_force_no_default_tags.robot
+${TEST FILE 2}    tags/no_force_no_default_tags.robot
 ${INPUT FILE}     %{TEMPDIR}/robot-tags-input.xml
 ${INPUT FILE 2}   %{TEMPDIR}/robot-tags-input-2.xml
 ${INPUT FILES}    ${INPUT FILE}
 @{INCL_ALL}       Incl-1    Incl-12    Incl-123
-@{EXCL_ALL}       excl-1    Excl-12    Excl-123
+@{EXCL_ALL}       Excl-1    Excl-12    Excl-123
 @{ALL}            @{INCL_ALL}    @{EXCL_ALL}
 
 *** Test Cases ***
@@ -37,11 +37,11 @@ More Includes
 Includes With AND
     [Documentation]    Testing including like "--include tag1&tag2" both with "&" and "AND"
     --include incl1ANDincl2    Incl-12    Incl-123
-    -i incl1&incl2&incl3    Incl-123
+    -i incl1&incl2&incl3       Incl-123
 
 Includes With OR
-    --include incl3ORnonex    Incl-123
-    --include incl3ORincl2    Incl-12    Incl-123
+    --include incl3ORnonex         Incl-123
+    --include incl3ORincl2         Incl-12    Incl-123
     --include nonexORxxxORincl2    Incl-12    Incl-123
 
 Include With Patterns
@@ -54,27 +54,27 @@ One Exclude
     --exclude excl1    @{INCL_ALL}
 
 Matching And Non Matching Excludes
-    -e EXCL3 -e nonexisting    @{INCL_ALL}    excl-1    Excl-12
+    -e EXCL3 -e nonexisting    @{INCL_ALL}    Excl-1    Excl-12
 
 More Excludes
-    --exclude excl3 -e excl2    @{INCL_ALL}    excl-1
+    --exclude excl3 -e excl2    @{INCL_ALL}    Excl-1
 
 Exclude With AND
-    --exclude excl1&excl2    @{INCL_ALL}    excl-1
-    -e excl1&excl2ANDexcl3    @{INCL_ALL}    excl-1    Excl-12
+    --exclude excl1&excl2     @{INCL_ALL}    Excl-1
+    -e excl1&excl2ANDexcl3    @{INCL_ALL}    Excl-1    Excl-12
 
 Exclude With OR
-    --exclude nonexORexcl2    @{INCL_ALL}    excl-1
-    --exclude excl3ORexcl2    @{INCL_ALL}    excl-1
+    --exclude nonexORexcl2    @{INCL_ALL}    Excl-1
+    --exclude excl3ORexcl2    @{INCL_ALL}    Excl-1
 
 Exclude With Patterns
-    --exclude exc??    @{INCL_ALL}
+    --exclude exc??        @{INCL_ALL}
     -e *3 -e e*2 -e e*1    Incl-1    Incl-12
     --excl excl?ORnonex    @{INCL_ALL}
 
 Include And Exclude
     [Documentation]    Include and exclude together with and without patterns and ANDing
-    -i force --exclude excl2    @{INCL_ALL}    excl-1
+    -i force --exclude excl2                           @{INCL_ALL}    Excl-1
     --include *cl2 -i nonex -e e???2 -i forceANDi*1    @{INCL_ALL}
 
 Include with NOT
@@ -99,9 +99,9 @@ Select tests with any tag
 
 Non Matching Include
     [Template]    Run And Check Error
-    --include nonex    tag 'nonex'
-    --include nonex -i nonex2    tags 'nonex' or 'nonex2'
-    --include incl1ANDnonex    tag 'incl1ANDnonex'
+    --include nonex               tag 'nonex'
+    --include nonex -i nonex2     tags 'nonex' or 'nonex2'
+    --include incl1ANDnonex       tag 'incl1ANDnonex'
     --include nonex_OR_nonex_2    tag 'nonex_OR_nonex_2'
 
 Non Matching Exclude
@@ -115,7 +115,7 @@ Non Matching Include And Exclude
 Non Matching When Reboting Multiple Outputs
     [Setup]    Set Test Variable    ${INPUT FILES}    ${INPUT FILE} ${INPUT FILE 2}
     [Template]    Run And Check Error
-    --include nonex    tag 'nonex'    Include And Exclude & No Force No Default Tags
+    --include nonex                 tag 'nonex'    Include And Exclude & No Force No Default Tags
     --include nonex --name MyName   tag 'nonex'    MyName
 
 Including With Robot And Including And Excluding With Rebot
@@ -151,7 +151,7 @@ Elapsed Time
 *** Keywords ***
 Create Input Files
     Create Output With Robot    ${INPUT FILE 2}    ${EMPTY}    ${TEST FILE 2}
-    Create Output With Robot    ${INPUT FILE}    ${EMPTY}    ${TEST FILE}
+    Create Output With Robot    ${INPUT FILE}      ${EMPTY}    ${TEST FILE}
 
 Run And Check Include And Exclude
     [Arguments]    ${params}    @{tests}    ${times_are_none}=${{bool($params)}}
