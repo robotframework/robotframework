@@ -244,3 +244,5 @@
 .. _XML-RPC: http://www.xmlrpc.com/
 .. _RIDE: https://github.com/robotframework/RIDE
 .. _Slack: http://slack.robotframework.org
+.. _Markdown: https://en.wikipedia.org/wiki/Markdown
+.. _CommonMark: https://spec.commonmark.org
