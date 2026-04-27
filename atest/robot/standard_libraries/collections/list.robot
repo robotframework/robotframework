@@ -75,6 +75,9 @@ Get Index From List with empty string as start index is deprecated
 Get Index From List with invalid index
     Check Test Case    ${TEST NAME}
 
+Get Index From List with negative indices
+    Check Test Case    ${TEST NAME}
+
 Copy List
     Check Test Case    ${TEST NAME}
 

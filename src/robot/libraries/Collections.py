@@ -304,6 +304,9 @@ class _List:
         =>
         | ${x} = 3
         | ${L5} is not changed
+
+        Note: Negative ``start`` indices were not handled correctly prior to
+        Robot Framework 7.5.
         """
         if start == "":
             # Deprecated in RF 7.4. TODO: Remove in RF 9.
@@ -312,8 +315,11 @@ class _List:
                 "keyword is deprecated. Use '0' instead."
             )
             start = 0
+        length = len(list_)
         list_ = self.get_slice_from_list(list_, start, end)
         try:
+            if start < 0:
+                start = length + start
             return start + list_.index(value)
         except ValueError:
             return -1
