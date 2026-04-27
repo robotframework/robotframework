@@ -222,6 +222,9 @@ class TagPattern(ABC):
     def __iter__(self) -> Iterator["TagPattern"]:
         raise NotImplementedError
 
+    def __getitem__(self, index: int) -> "TagPattern":
+        return list(self)[index]
+
     @abstractmethod
     def __str__(self) -> str:
         raise NotImplementedError

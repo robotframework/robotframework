@@ -415,6 +415,19 @@ class TestTagPatterns(unittest.TestCase):
         for false in ["x*"], ["x", "y?"], ["[abc]"], ["xORy"], ["xANDy"], ["x", "NOTy"]:
             assert_false(TagPatterns(false).is_constant)
 
+    def test_iter_len_getitem(self):
+        patterns = TagPatterns(["a", "b", "c OR d"])
+        assert_equal(len(patterns), 3)
+        assert_equal(list(patterns), [patterns[0], patterns[1], patterns[2]])
+
+    def test_TagPattern_iter_getitem(self):
+        a, b, c, d = TagPatterns(["a", "b AND *", "c OR *", "NOT d"])
+        assert_equal(list(a), [a])
+        assert_equal(a[0], a)
+        assert_equal(list(b), [b[0], b[1]])
+        assert_equal(list(c), [c[0], c[1]])
+        assert_equal(list(d), [d[0], d[1]])
+
 
 class AndOrPatternGenerator:
     tags = ["0", "1"]
