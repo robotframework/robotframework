@@ -1334,4 +1334,3 @@ def report_error(default: str, message: "str | None", values: bool = False) -> N
     elif values:
         message += "\n" + default
     raise AssertionError(message)
-    
