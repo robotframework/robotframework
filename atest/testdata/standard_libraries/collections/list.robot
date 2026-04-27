@@ -120,7 +120,7 @@ Get Index From List
     Get Index From List    ${LONG}    43    4    7    expected=5     type=int
     Get Index From List    ${LONG}    43   end=8      expected=5     type=int
     Get Index From List    ${LONG}    nonex           expected=-1    type=int
-   
+
 Get Index From List with empty string as start index is deprecated
     [Template]    Verify Result
     Get Index From List    ${LONG}    43    ${EMPTY}    8    expected=5     type=int
