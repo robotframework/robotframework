@@ -239,8 +239,9 @@ class TestTagPatterns(unittest.TestCase):
         assert_true(patterns.match(["a", "y", "z", "b", "X"]))
 
     def test_ampersand_is_deprecated(self):
-        with warnings.catch_warnings(record=True, category=UserWarning) as w:
+        with warnings.catch_warnings(record=True) as w:
             patterns = TagPatterns(["x&y&z"])
+        assert_equal(w[0].category, UserWarning)
         assert_equal(
             str(w[0].message),
             "The behavior of tag pattern 'x&y&z' will change in Robot Framework 8.0: "
@@ -385,8 +386,9 @@ class TestTagPatterns(unittest.TestCase):
             ("XNOTY", True),
             ("NOTXORYANDZ", False),
         ]:
-            with warnings.catch_warnings(record=True, category=UserWarning) as w:
+            with warnings.catch_warnings(record=True) as w:
                 assert_equal(TagPatterns(pattern).match("X"), expected)
+            assert_equal(w[0].category, UserWarning)
             assert_true(
                 str(w[0].message).startswith(
                     f"The behavior of tag pattern '{pattern}' will change"
