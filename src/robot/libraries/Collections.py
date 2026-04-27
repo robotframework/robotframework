@@ -305,8 +305,8 @@ class _List:
         | ${x} = 3
         | ${L5} is not changed
 
-        Note: Prior to Robot Framework 7.5, using a negative ``start`` index
-        could return -1 even when the value was found in the list.
+        Note: Negative ``start`` indices were not handled correctly prior to
+        Robot Framework 7.5.
         """
         if start == "":
             # Deprecated in RF 7.4. TODO: Remove in RF 9.
