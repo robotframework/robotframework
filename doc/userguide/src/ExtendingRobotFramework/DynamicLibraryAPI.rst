@@ -306,7 +306,7 @@ Getting documentation
 ---------------------
 
 Getting keyword documentation
-̃~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If dynamic libraries want to provide keyword documentation, they can implement
 the `get_keyword_documentation` method (alias `getKeywordDocumentation`). It
@@ -535,7 +535,7 @@ __ `Getting keyword arguments`_
 __ `Getting keyword argument types`_
 __ `Getting keyword tags`_
 __ `Getting keyword documentation`_
-__ `Getting keyword source information`_
+__ `Getting source information`_
 
 A good example of using the dynamic API is Robot Framework's own
 `Remote library`_.
