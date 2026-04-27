@@ -238,6 +238,20 @@ class TestTagPatterns(unittest.TestCase):
         assert_true(patterns.match(["x", "Y", "z"]))
         assert_true(patterns.match(["a", "y", "z", "b", "X"]))
 
+    def test_ampersand_is_deprecated(self):
+        with warnings.catch_warnings(record=True, category=UserWarning) as w:
+            patterns = TagPatterns(["x&y&z"])
+        assert_equal(
+            str(w[0].message),
+            "The behavior of tag pattern 'x&y&z' will change in Robot Framework 8.0: "
+            "Boolean operator '&' is deprecated, use 'AND' instead.",
+        )
+        assert_false(patterns.match([]))
+        assert_false(patterns.match(["x"]))
+        assert_true(patterns.match(["x", "y", "z"]))
+        assert_false(patterns.match(["y", "z"]))
+        assert_equal(str(patterns[0]), "x AND y AND z")
+
     def test_or(self):
         patterns = TagPatterns(["xORy", "???ORz"])
         assert_false(patterns.match([]))

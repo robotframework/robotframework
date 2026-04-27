@@ -169,7 +169,12 @@ class TagPattern(ABC):
         if "OR" in pattern:
             return OrTagPattern(cls._split(pattern, "OR", usage))
         if "&" in pattern:
-            pattern = pattern.replace("&", " AND ")  # TODO: Deprecate &!
+            cls._deprecated(
+                pattern,
+                "Boolean operator '&' is deprecated, use 'AND' instead.",
+                usage,
+            )
+            pattern = pattern.replace("&", " AND ")
         if "AND" in pattern:
             return AndTagPattern(cls._split(pattern, "AND", usage))
         return SingleTagPattern(pattern)

@@ -35,9 +35,8 @@ More Includes
     -i incl2 --include incl3 -i _ --include incl2    Incl-12    Incl-123
 
 Includes With AND
-    [Documentation]    Testing including like "--include tag1&tag2" both with "&" and "AND"
-    --include incl1ANDincl2    Incl-12    Incl-123
-    -i incl1&incl2&incl3       Incl-123
+    --include incl1ANDincl2     Incl-12    Incl-123
+    -i incl1ANDincl2ANDincl3    Incl-123
 
 Includes With OR
     --include incl3ORnonex         Incl-123
@@ -60,8 +59,8 @@ More Excludes
     --exclude excl3 -e excl2    @{INCL_ALL}    Excl-1
 
 Exclude With AND
-    --exclude excl1&excl2     @{INCL_ALL}    Excl-1
-    -e excl1&excl2ANDexcl3    @{INCL_ALL}    Excl-1    Excl-12
+    --exclude excl1ANDexcl2     @{INCL_ALL}    Excl-1
+    -e excl1ANDexcl2ANDexcl3    @{INCL_ALL}    Excl-1    Excl-12
 
 Exclude With OR
     --exclude nonexORexcl2    @{INCL_ALL}    Excl-1
@@ -154,6 +153,11 @@ Deprecated operator usage
     --exclude    e*ORBAD      OR
     --include    i*NOTBAD     NOT
 
+Deprecated & operator
+    [Template]    Validate deprecated operator warning
+    --include    INCL1&*    &
+    --exclude    e*&*       &
+
 *** Keywords ***
 Create Input Files
     Create Output With Robot    ${INPUT FILE 2}    ${EMPTY}    ${TEST FILE 2}
@@ -178,11 +182,18 @@ Run And Check Include And Exclude
 Validate deprecated operator warning
     [Arguments]    ${option}    ${pattern}    ${operator}
     Run And Check Include And Exclude    ${option} ${pattern}    @{INCL_ALL}    warnings=True
+    IF    $operator == '&'
+        VAR    ${explanation}
+        ...    Boolean operator '&' is deprecated, use 'AND' instead.
+    ELSE
+        VAR    ${explanation}
+        ...    '${operator}' is currently considered to be a Boolean operator, but in the future
+        ...    operators must be surrounded with spaces or tag names must be lower case.
+    END
     VAR    ${expected}
     ...    Problems when ${{"including" if $option == "--include" else "excluding"}} tests by tags:
-    ...    The behavior of tag pattern '${pattern}' will change in Robot Framework 8.0:
-    ...    '${operator}' is currently considered to be a Boolean operator, but in the future
-    ...    operators must be surrounded with spaces or tag names must be lower case.
+    ...    The behavior of tag pattern '${pattern}' will change in Robot Framework 8.0: ${explanation}
+
     Stderr Should Be Equal To   [ WARN ] ${expected}\n
 
 Run And Check Error
