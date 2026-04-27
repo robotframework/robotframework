@@ -42,10 +42,10 @@ Includes With OR
     --include nonexORxxxORincl2    Incl-12    Incl-123
 
 Include With Patterns
-    --include incl?    @{INCL_ALL}
-    -i *cl3 -i i*2    Incl-12    Incl-123    Excl-123
-    -i i?*3ANDFORCE --include inc*    @{INCL_ALL}
-    -i incl?*ORnonex    @{INCL_ALL}
+    --include incl?              @{INCL_ALL}
+    -i i*3 -i no*match           Incl-123
+    -i i*3ANDforce -i *2NOTe*    Incl-12    Incl-123
+    -i "incl?* OR nonex"         @{INCL_ALL}
 
 One Exclude
     --exclude excl1    @{INCL_ALL}
@@ -119,12 +119,28 @@ Suite containing tasks is ok if only tests are selected
     --include test    Test    sources=rpa/tasks rpa/tests.robot
     --exclude task    Test    sources=rpa/tasks rpa/tests.robot
 
+Deprecated operator usage
+    [Template]    Validate deprecated operator warning
+    --include    INCL1AND*    AND
+    --exclude    e*ORBAD      OR
+    --include    i*NOTBAD     NOT
+
 *** Keywords ***
 Run And Check Include And Exclude
-    [Arguments]    ${params}    @{tests}    ${sources}=${DATA SOURCES}
+    [Arguments]    ${params}    @{expected}    ${sources}=${DATA SOURCES}    ${warnings}=False
     Run Tests    ${params}    ${sources}
-    Stderr Should Be Empty
-    Should Contain Tests    ${SUITE}    @{tests}
+    IF    not ${warnings}    Stderr Should Be Empty
+    Should Contain Tests    ${SUITE}    @{expected}
+
+Validate deprecated operator warning
+    [Arguments]    ${option}    ${pattern}    ${operator}
+    Run And Check Include And Exclude    ${option} ${pattern}    @{INCL_ALL}    warnings=True
+    VAR    ${expected}
+    ...    Problems when ${{"including" if $option == "--include" else "excluding"}} tests by tags:
+    ...    The behavior of tag pattern '${pattern}' will change in Robot Framework 8.0:
+    ...    '${operator}' is currently considered to be a Boolean operator, but in the future
+    ...    operators must be surrounded with spaces or tag names must be lower case.
+    Check Log Message    ${ERRORS}[0]    ${expected}    WARN
 
 Run And Check Error
     [Arguments]    ${params}    ${filter_msg}    ${suite name}=Include And Exclude

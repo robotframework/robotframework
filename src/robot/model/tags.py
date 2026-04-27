@@ -12,7 +12,6 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
 from abc import ABC, abstractmethod
 from typing import Iterable, Iterator, overload, Sequence
 
@@ -60,16 +59,19 @@ class Tags(Sequence[str]):
         if remove_negated:
             remove = [t[1:] for t in tags if t[0] == "-"]
             if remove:
-                self.remove(remove)
+                self._remove(remove, "removing tags using '-tag' syntax")
                 tags = [t for t in tags if t[0] != "-"]
         self.__init__([*self, *tags])
 
     def remove(self, tags: Iterable[str]):
-        match = TagPatterns(tags).match
+        self._remove(tags, "removing tags")
+
+    def _remove(self, tags: Iterable[str], usage):
+        match = TagPatterns(tags, usage).match
         self.__init__([t for t in self if not match(t)])
 
     def match(self, tags: Iterable[str]) -> bool:
-        return TagPatterns(tags).match(self)
+        return TagPatterns(tags, "matching tags").match(self)
 
     def __contains__(self, tags: Iterable[str]) -> bool:
         return self.match(tags)
@@ -112,9 +114,14 @@ class Tags(Sequence[str]):
 
 
 class TagPatterns(Sequence["TagPattern"]):
+    """Represents a list of tag patterns like ``tag``, ``t*`` or ``x OR y``.
 
-    def __init__(self, patterns: Iterable[str] = ()):
-        self._patterns = tuple(TagPattern.from_string(p) for p in Tags(patterns))
+    The ``usage`` parameter should only be used internally by Robot Framework
+    itself. See ``TagPattern.from_string`` for more details if needed.
+    """
+
+    def __init__(self, patterns: Iterable[str] = (), usage: "str | None" = None):
+        self._patterns = tuple(TagPattern.from_string(p, usage) for p in Tags(patterns))
 
     @property
     def is_constant(self):
@@ -147,15 +154,65 @@ class TagPattern(ABC):
     is_constant = False
 
     @classmethod
-    def from_string(cls, pattern: str) -> "TagPattern":
+    def from_string(cls, pattern: str, usage: "str | None" = None) -> "TagPattern":
+        """Create ``TagPattern`` object from string like ``tag``, ``t*`` or ``x OR y``.
+
+        ``usage`` is used in a deprecation warning if a pattern uses Boolean operators
+        in deprecated format like ``XORY``. It should only be used internally by
+        Robot Framework itself for giving context where the pattern was used. When
+        a usage is given, warning is logged using Robot's own global ``LOGGER`` and
+        otherwise the warning is logged using Python's ``logging`` module.
+        """
         if "NOT" in pattern:
-            must_match, *must_not_match = pattern.split("NOT")
+            must_match, *must_not_match = cls._split(pattern, "NOT", usage)
             return NotTagPattern(must_match, must_not_match)
         if "OR" in pattern:
-            return OrTagPattern(pattern.split("OR"))
-        if "AND" in pattern or "&" in pattern:
-            return AndTagPattern(pattern.replace("&", "AND").split("AND"))
+            return OrTagPattern(cls._split(pattern, "OR", usage))
+        if "&" in pattern:
+            pattern = pattern.replace("&", " AND ")  # TODO: Deprecate &!
+        if "AND" in pattern:
+            return AndTagPattern(cls._split(pattern, "AND", usage))
         return SingleTagPattern(pattern)
+
+    @classmethod
+    def _split(cls, pattern, operator, usage=None):
+        tokens = f" {pattern} ".split(operator)
+        for token in tokens:
+            if not cls._validate(token, operator):
+                cls._deprecated(
+                    pattern,
+                    f"'{operator}' is currently considered to be a Boolean operator, "
+                    f"but in the future operators must be surrounded with spaces or "
+                    f"tag names must be lower case.",
+                    usage,
+                )
+                break
+        return tokens
+
+    @classmethod
+    def _validate(cls, token, operator):
+        if not token or token[0].isspace() and token[-1].isspace():
+            return True
+        remaining_operators = {"NOT": ("OR", "AND"), "OR": ("AND",), "AND": ()}
+        for exclude in remaining_operators[operator]:
+            if exclude in token:
+                token = token.replace(exclude, "")
+        return token.lower() == token
+
+    @classmethod
+    def _deprecated(cls, pattern, message, usage=None):
+        message = (
+            f"The behavior of tag pattern '{pattern}' will change in "
+            f"Robot Framework 8.0: {message}"
+        )
+        if usage:
+            from robot.output import LOGGER
+
+            LOGGER.warn(f"Problems when {usage}: {message}")
+        else:
+            import warnings
+
+            warnings.warn(message)
 
     @abstractmethod
     def match(self, tags: Iterable[str]) -> bool:

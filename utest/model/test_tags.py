@@ -1,4 +1,5 @@
 import unittest
+import warnings
 
 from robot.model.tags import TagPattern, TagPatterns, Tags
 from robot.utils import seq2str
@@ -348,6 +349,35 @@ class TestTagPatterns(unittest.TestCase):
         assert_true(patterns.match("d"))
         assert_false(patterns.match("e"))
         assert_false(patterns.match("f"))
+
+    def test_valid_operator_usage(self):
+        for pattern, expected in [
+            ("X AND Y", False),
+            ("X OR Y", True),
+            ("X NOT Y", True),
+            ("NOT X OR Y AND Z", False),
+            ("xANDy", False),
+            ("*OR?", True),
+            ("xNOT2", True),
+            ("NOT?OR-AND]", False),
+        ]:
+            assert_equal(TagPatterns(pattern).match("X"), expected)
+            assert_equal(TagPatterns(pattern.replace(" ", " ")).match("X"), expected)
+
+    def test_deprecated_operator_usage(self):
+        for pattern, expected in [
+            ("XANDY", False),
+            ("XORY", True),
+            ("XNOTY", True),
+            ("NOTXORYANDZ", False),
+        ]:
+            with warnings.catch_warnings(record=True, category=UserWarning) as w:
+                assert_equal(TagPatterns(pattern).match("X"), expected)
+            assert_true(
+                str(w[0].message).startswith(
+                    f"The behavior of tag pattern '{pattern}' will change"
+                )
+            )
 
     def test_str(self):
         for pattern in [

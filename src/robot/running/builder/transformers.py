@@ -393,11 +393,7 @@ class KeywordBuilder(BodyBuilder):
             self.model.args = node.values
 
     def visit_Tags(self, node):
-        for tag in node.values:
-            if tag.startswith("-"):
-                self.model.tags.remove(tag[1:])
-            else:
-                self.model.tags.add(tag)
+        self.model.tags.add(node.values, remove_negated=True)
 
     def visit_ReturnSetting(self, node):
         ErrorReporter(self.model.source).visit(node)

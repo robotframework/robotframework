@@ -68,16 +68,16 @@ class Filter(EmptySuiteRemover):
 
     @setter
     def include_tags(self, tags) -> "TagPatterns|None":
-        return self._patterns_or_none(tags, TagPatterns)
+        return self._patterns_or_none(tags, TagPatterns, "including tests by tags")
 
     @setter
     def exclude_tags(self, tags) -> "TagPatterns|None":
-        return self._patterns_or_none(tags, TagPatterns)
+        return self._patterns_or_none(tags, TagPatterns, "excluding tests by tags")
 
-    def _patterns_or_none(self, items, pattern_class):
+    def _patterns_or_none(self, items, pattern_class, *extra):
         if items is None or isinstance(items, pattern_class):
             return items
-        return pattern_class(items)
+        return pattern_class(items, *extra)
 
     def start_suite(self, suite: "TestSuite"):
         if not self:

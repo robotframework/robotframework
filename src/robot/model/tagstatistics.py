@@ -45,8 +45,8 @@ class TagStatisticsBuilder:
         docs=None,
         links=None,
     ):
-        self._included = TagPatterns(included)
-        self._excluded = TagPatterns(excluded)
+        self._included = TagPatterns(included, "selecting tag statistics to include")
+        self._excluded = TagPatterns(excluded, "selecting tag statistics to exclude")
         self._reserved = TagPatterns("robot:*")
         self._info = TagStatInfo(docs, links)
         self.stats = TagStatistics(self._info.get_combined_stats(combined))
@@ -106,7 +106,7 @@ class TagStatInfo:
 class TagStatDoc:
 
     def __init__(self, pattern, doc):
-        self._matcher = TagPatterns(pattern)
+        self._matcher = TagPatterns(pattern, "findings tags to give them documentation")
         self.text = doc
 
     def match(self, tag):

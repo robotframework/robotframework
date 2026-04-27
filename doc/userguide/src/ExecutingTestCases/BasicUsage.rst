@@ -198,9 +198,18 @@ Tag patterns
 ~~~~~~~~~~~~
 
 Most tag related options accept arguments as *tag patterns*. They support same
-wildcards as `simple patterns`_ (e.g. `examp??`, `ex*le`), but they also support `AND`,
-`OR` and `NOT` operators explained below. These operators can be
-used for combining two or more individual tags or patterns together.
+wildcards as `simple patterns`_ (e.g. `examp??`, `ex*le`), but they also support
+Boolean operators `AND`, `OR` and `NOT` (case-sensitive) that can be used for
+combining two or more individual tags or patterns together.
+
+To avoid ambiguity with tags containing `AND`, `OR` or `NOT`, tags used in patterns
+should be given in lower case like `port OR handover`. Because matching tags is
+case-insensitive, this works even if tags themselves would be upper case like `PORT`.
+
+.. note:: Starting from Robot Framework 8.0, operators need to be separated from
+          tags with spaces like `X OR Y` or tags must be used in lower case like
+          `xORy`. Using patterns like `XORY` still works with Robot Framework 7.5,
+          but such usages are deprecated.
 
 `AND` or `&`
    The whole pattern matches if all individual patterns match. `AND` and
@@ -235,15 +244,6 @@ from highest to lowest, is `AND`, `OR` and `NOT`::
     --include xANDyORz      # Matches tests containing either tags 'x' and 'y', or tag 'z'.
     --include xORyNOTz      # Matches tests containing either tag 'x' or 'y', but not tag 'z'.
     --include xNOTyANDz     # Matches tests containing tag 'x', but not tags 'y' and 'z'.
-
-Although tag matching itself is case-insensitive, all operators are
-case-sensitive and must be written with upper case letters. If tags themselves
-happen to contain upper case `AND`, `OR` or `NOT`, they need to specified
-using lower case letters to avoid accidental operator usage::
-
-    --include port          # Matches tests containing tag 'port', case-insensitively
-    --include PORT          # Matches tests containing tag 'P' or 'T', case-insensitively
-    --exclude handoverORportNOTnotification
 
 ``ROBOT_OPTIONS`` and ``REBOT_OPTIONS`` environment variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

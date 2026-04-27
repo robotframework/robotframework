@@ -43,7 +43,9 @@ class SuiteRunner(SuiteVisitor):
         self.suite_result = None
         self.suite_status = None
         self.executed = [NormalizedDict(ignore="_")]
-        self.skipped_tags = TagPatterns(settings.skip)
+        self.skipped_tags = TagPatterns(
+            settings.skip, "finding tests to be skipped based on tags"
+        )
 
     @property
     def context(self):
