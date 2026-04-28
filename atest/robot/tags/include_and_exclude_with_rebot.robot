@@ -194,4 +194,3 @@ Run And Check Error
     ...    [ ERROR ] Suite '${suite name}' contains no tests matching ${filter msg}.
     ...    ${USAGE TIP}\n
     File Should Not Exist    ${OUTFILE}
-    

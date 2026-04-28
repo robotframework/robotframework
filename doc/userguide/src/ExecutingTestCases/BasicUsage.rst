@@ -244,6 +244,8 @@ from highest to lowest, is `AND`, `OR` and `NOT`::
           `xORy`. Using patterns like `XORY` still works with Robot Framework 7.5,
           but such usages are deprecated.
 
+.. note:: Robot Framework 7.5 supported `&` operator as an alias for `AND`,
+          but this is no longer supported in Robot Framework 8.0.
 
 ``ROBOT_OPTIONS`` and ``REBOT_OPTIONS`` environment variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
