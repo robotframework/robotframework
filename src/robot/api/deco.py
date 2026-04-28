@@ -145,7 +145,7 @@ def library(
     converters: "dict[type, Converter]|None" = None,
     doc_format: "DocFormat|None" = None,
     listener: "Any|None" = None,
-    auto_keywords: bool = False,
+    auto_keywords: "bool|None" = False,
 ) -> "L|LibraryDecorator":
     """Class decorator to control keyword discovery and other library settings.
 
@@ -153,7 +153,8 @@ def library(
     ``ROBOT_AUTO_KEYWORDS = False`` to the decorated library by default. In that
     mode only methods decorated explicitly with the :func:`keyword` decorator
     become keywords. If that is not desired, automatic keyword discovery can be
-    enabled by using ``auto_keywords=True``.
+    enabled by using ``auto_keywords=True``. If the library intentionally contains
+    no keywords, use ``auto_keywords=None`` to suppress the 'no keywords' warning.
 
     Arguments ``scope``, ``version``, ``converters``, ``doc_format`` and ``listener``
     set library's scope, version, converters, documentation format and listener by
@@ -182,6 +183,7 @@ def library(
 
     The ``@library`` decorator is new in Robot Framework 3.2.
     The ``converters`` argument is new in Robot Framework 5.0.
+    The ``auto_keywords=None`` option is new in Robot Framework 7.3.
     """
     if isinstance(scope, type):
         return library()(scope)
