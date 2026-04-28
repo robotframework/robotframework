@@ -515,6 +515,7 @@ from robot.parsing.model.statements import (
     Comment as Comment,
     Config as Config,
     Continue as Continue,
+    CustomMetadata as CustomMetadata,
     DefaultTags as DefaultTags,
     Documentation as Documentation,
     ElseHeader as ElseHeader,

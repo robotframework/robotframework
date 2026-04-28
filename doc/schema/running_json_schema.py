@@ -122,6 +122,7 @@ class TestCase(BaseModel):
     setup: Keyword | None
     teardown: Keyword | None
     body: list[Keyword | For | While | Group | If | Try | Var | Error]
+    custom_metadata: dict[str, str] | None
 
 
 class TestSuite(BaseModel):
@@ -175,6 +176,7 @@ class UserKeyword(BaseModel):
     setup: Keyword | None
     teardown: Keyword | None
     body: list[Keyword | For | While | Group | If | Try | Return | Var | Error]
+    custom_metadata: dict[str, str] | None
 
 
 class Resource(BaseModel):

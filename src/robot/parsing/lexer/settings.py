@@ -60,7 +60,7 @@ class Settings(ABC):
         self.languages = languages
 
     def lex(self, statement: StatementTokens):
-        orig = self._format_name(statement[0].value)
+        orig = self._format_name(statement[0].value or "")
         name = normalize_whitespace(orig).title()
         name = self.languages.settings.get(name, name)
         if name in self.aliases:
@@ -89,6 +89,10 @@ class Settings(ABC):
             )
 
     def _get_non_existing_setting_message(self, name: str, normalized: str) -> str:
+        # Check for custom metadata pattern first
+        if self._is_custom_metadata_pattern(name):
+            return "Custom metadata is not allowed in this context."
+
         if self._is_valid_somewhere(normalized, Settings.__subclasses__()):
             return self._not_valid_here(name)
         return RecommendationFinder(normalize).find_and_format(
@@ -96,6 +100,16 @@ class Settings(ABC):
             candidates=tuple(self.settings) + tuple(self.aliases),
             message=f"Non-existing setting '{name}'.",
         )
+
+    def _is_custom_metadata_pattern(self, name: str) -> bool:
+        """Check if the name follows custom metadata pattern [CustomName]."""
+        stripped = name.strip()
+        if not (
+            stripped.startswith("[") and stripped.endswith("]") and len(stripped) > 2
+        ):
+            return False
+        inner_content = stripped[1:-1].strip()
+        return bool(inner_content)
 
     def _is_valid_somewhere(self, name: str, classes: "list[type[Settings]]") -> bool:
         for cls in classes:
@@ -152,7 +166,28 @@ class Settings(ABC):
 
 
 class FileSettings(Settings, ABC):
-    pass
+
+    def __init__(
+        self, languages: Languages, allowed_custom_metadata: "list[str]|None" = None
+    ):
+        super().__init__(languages)
+        self.allowed_custom_metadata = allowed_custom_metadata
+
+    def is_custom_metadata_allowed(self, metadata_name: str) -> bool:
+        """Check if the given custom metadata name is allowed."""
+        if self.allowed_custom_metadata is None:
+            return True  # All custom metadata allowed when no explicit specification
+        if not self.allowed_custom_metadata:
+            return False  # No custom metadata allowed when empty list is specified
+        return metadata_name in self.allowed_custom_metadata
+
+    def should_include_custom_metadata(self, metadata_name: str) -> bool:
+        """Check if custom metadata should be included in the results."""
+        if self.allowed_custom_metadata is None:
+            return True  # Include all custom metadata when no explicit specification
+        if not self.allowed_custom_metadata:
+            return False  # Include no custom metadata when empty list is specified
+        return metadata_name in self.allowed_custom_metadata
 
 
 class SuiteFileSettings(FileSettings):
@@ -241,6 +276,80 @@ class TestCaseSettings(Settings):
         super().__init__(parent.languages)
         self.parent = parent
 
+    def lex(self, statement: StatementTokens):
+        orig = statement[0].value or ""
+
+        # Check for custom metadata first
+        if self._is_custom_metadata_setting(orig):
+            # Always allow custom metadata during parsing - filtering happens later in transformers
+            # Lex custom metadata as CUSTOM_METADATA token
+            statement[0].type = Token.CUSTOM_METADATA
+            self.settings[orig] = statement[1:]
+            self._lex_arguments(statement[1:])
+            return
+
+        # Use standard processing for regular settings
+        super().lex(statement)
+
+    def _is_custom_metadata_setting(self, name: str) -> bool:
+        """Check if setting follows custom metadata pattern [CustomName]."""
+        stripped = name.strip()
+        if not (
+            stripped.startswith("[") and stripped.endswith("]") and len(stripped) > 2
+        ):
+            return False
+
+        inner_content = stripped[1:-1].strip()
+        if not inner_content:
+            return False
+
+        # Use Robot Framework's own logic to check if this could be a valid setting
+        # Normalize the same way Robot Framework does
+        from robot.utils import normalize_whitespace
+
+        normalized = normalize_whitespace(inner_content).title()
+
+        # Check if this normalized name would be a valid setting in current context
+        if normalized in self.names:
+            return False
+
+        # Check if this normalized name would be a valid setting in parent context
+        if hasattr(self.parent, "names") and normalized in self.parent.names:
+            return False
+
+        # Check aliases in current context
+        if normalized in self.aliases:
+            return False
+
+        # Check aliases in parent context
+        if hasattr(self.parent, "aliases") and normalized in self.parent.aliases:
+            return False
+
+        # Check language-specific settings - this is crucial for translations
+        canonical = self.languages.settings.get(normalized, normalized)
+        if canonical in self.names or canonical in self.aliases:
+            return False
+        if hasattr(self.parent, "names") and (
+            canonical in self.parent.names or canonical in self.parent.aliases
+        ):
+            return False
+
+        # Also check the reverse - if the inner content is a translated setting name
+        # Get all setting translations for this language
+        for english_name, translated_name in self.languages.settings.items():
+            if translated_name.lower() == inner_content.lower():
+                # This is a translated setting name, not custom metadata
+                return False
+
+        # Validate custom metadata name pattern - allow letters, numbers, spaces, hyphens, underscores, dots, slashes
+        import re
+
+        if not re.match(r"^[a-zA-Z0-9\s\-_./]+$", inner_content):
+            return False
+
+        # Always accept valid custom metadata during parsing - filtering happens later
+        return True
+
     def _format_name(self, name: str) -> str:
         return name[1:-1].strip()
 
@@ -255,7 +364,11 @@ class TestCaseSettings(Settings):
     def _has_disabling_value(self, setting: "StatementTokens|None") -> bool:
         if setting is None:
             return False
-        return setting == [] or setting[0].value.upper() == "NONE"
+        if setting == []:
+            return True
+        if setting[0].value is None:
+            return False
+        return setting[0].value.upper() == "NONE"
 
     def _has_value(self, setting: "StatementTokens|None") -> bool:
         return bool(setting and setting[0].value)
@@ -278,6 +391,107 @@ class KeywordSettings(Settings):
     def __init__(self, parent: FileSettings):
         super().__init__(parent.languages)
         self.parent = parent
+
+    def lex(self, statement: StatementTokens):
+        orig = statement[0].value or ""
+
+        # Check for custom metadata first
+        if self._is_custom_metadata_setting(orig):
+            # Always allow custom metadata during parsing - filtering happens later in transformers
+            # Lex custom metadata as CUSTOM_METADATA token
+            statement[0].type = Token.CUSTOM_METADATA
+            self.settings[orig] = statement[1:]
+            self._lex_arguments(statement[1:])
+            return
+
+        # Use standard processing for regular settings
+        super().lex(statement)
+
+    def _is_custom_metadata_setting(self, name: str) -> bool:
+        """Check if setting follows custom metadata pattern [CustomName]."""
+        stripped = name.strip()
+        if not (
+            stripped.startswith("[") and stripped.endswith("]") and len(stripped) > 2
+        ):
+            return False
+
+        inner_content = stripped[1:-1].strip()
+        if not inner_content:
+            return False
+
+        # First check if this could be a valid setting using Robot Framework's own normalization logic
+        from robot.utils import normalize_whitespace
+
+        normalized = normalize_whitespace(inner_content).title()
+
+        # Check if this normalized name would be a valid setting in current context
+        if normalized in self.names:
+            return False
+
+        # Check if this normalized name would be a valid setting in parent context
+        if hasattr(self.parent, "names") and normalized in self.parent.names:
+            return False
+
+        # Check aliases in current context
+        if normalized in self.aliases:
+            return False
+
+        # Check aliases in parent context
+        if hasattr(self.parent, "aliases") and normalized in self.parent.aliases:
+            return False
+
+        # Check language-specific settings - this is crucial for translations
+        canonical = self.languages.settings.get(normalized, normalized)
+        if canonical in self.names or canonical in self.aliases:
+            return False
+        if hasattr(self.parent, "names") and (
+            canonical in self.parent.names or canonical in self.parent.aliases
+        ):
+            return False
+
+        # Also check the reverse - if the inner content is a translated setting name
+        # Get all setting translations for this language
+        for english_name, translated_name in self.languages.settings.items():
+            if translated_name.lower() == inner_content.lower():
+                # This is a translated setting name, not custom metadata
+                return False
+
+        # Reject known Robot Framework settings from any context
+        known_settings = {
+            "Documentation",
+            "Tags",
+            "Setup",
+            "Teardown",
+            "Template",
+            "Timeout",
+            "Arguments",
+            "Return",
+            "Metadata",
+            "Suite Setup",
+            "Suite Teardown",
+            "Test Setup",
+            "Test Teardown",
+            "Default Tags",
+            "Test Tags",
+            "Keyword Tags",
+            "Test Template",
+            "Test Timeout",
+            "Library",
+            "Resource",
+            "Variables",
+        }
+
+        if inner_content in known_settings:
+            return False
+
+        # Validate custom metadata name pattern - allow letters, numbers, spaces, hyphens, underscores, dots, slashes
+        import re
+
+        if not re.match(r"^[a-zA-Z0-9\s\-_./]+$", inner_content):
+            return False
+
+        # Always accept valid custom metadata during parsing - filtering happens later
+        return True
 
     def _format_name(self, name: str) -> str:
         return name[1:-1].strip()
