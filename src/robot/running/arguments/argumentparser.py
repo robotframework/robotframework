@@ -17,6 +17,11 @@ from abc import ABC, abstractmethod
 from inspect import isclass, Parameter, signature
 from typing import Any, Callable, get_type_hints
 
+try:
+    from annotationlib import Format
+except ImportError:
+    Format = None
+
 from robot.errors import DataError
 from robot.utils import NOT_SET, split_from_equals
 from robot.variables import search_variable
@@ -50,7 +55,8 @@ class PythonArgumentParser(ArgumentParser):
 
     def parse(self, method, name=None):
         try:
-            sig = signature(method)
+            config = {"annotation_format": Format.FORWARDREF} if Format else {}
+            sig = signature(method, **config)
         except ValueError:  # Can occur with C functions (incl. many builtins).
             return ArgumentSpec(name, self.type, var_positional="args")
         except TypeError as err:  # Occurs if handler isn't actually callable.
@@ -116,9 +122,18 @@ class PythonArgumentParser(ArgumentParser):
         try:
             return get_type_hints(method)
         except Exception:  # Can raise pretty much anything
-            # Not all functions have `__annotations__`.
-            # https://github.com/robotframework/robotframework/issues/4059
-            return getattr(method, "__annotations__", {})
+            # Prefer raw annotations to preserve behavior with existing forward
+            # references like Union["nonex", ...] used in current tests.
+            try:
+                # Not all functions have `__annotations__`.
+                # https://github.com/robotframework/robotframework/issues/4059
+                return getattr(method, "__annotations__", {})
+            except Exception:
+                # With deferred annotations on Python 3.14, evaluating
+                # `__annotations__` itself can fail (e.g. TYPE_CHECKING-only imports).
+                if Format:
+                    return get_type_hints(method, format=Format.STRING)
+                return {}
 
 
 class ArgumentSpecParser(ArgumentParser):
