@@ -122,15 +122,13 @@ class PythonArgumentParser(ArgumentParser):
         try:
             return get_type_hints(method)
         except Exception:  # Can raise pretty much anything
-            # Prefer raw annotations to preserve behavior with existing forward
-            # references like Union["nonex", ...] used in current tests.
             try:
                 # Not all functions have `__annotations__`.
                 # https://github.com/robotframework/robotframework/issues/4059
                 return getattr(method, "__annotations__", {})
             except Exception:
-                # With deferred annotations on Python 3.14, evaluating
-                # `__annotations__` itself can fail (e.g. TYPE_CHECKING-only imports).
+                # Handle deferred annotations on Python 3.14.
+                # https://github.com/robotframework/robotframework/issues/5658
                 if Format:
                     return get_type_hints(method, format=Format.STRING)
                 return {}
