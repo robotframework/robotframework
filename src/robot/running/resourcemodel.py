@@ -36,7 +36,7 @@ class ResourceFile(ModelObject):
     """Represents a resource file."""
 
     repr_args = ("source",)
-    __slots__ = ("_source", "owner", "doc", "keyword_finder")
+    __slots__ = ("_source", "owner", "doc", "keyword_finder", "_name")
 
     def __init__(
         self,
@@ -73,9 +73,15 @@ class ResourceFile(ModelObject):
         ``None`` if resource file is part of a suite or if it does not have
         :attr:`source`, name of the source file without the extension otherwise.
         """
+        if hasattr(self, "_name") and self._name:
+            return self._name
         if self.owner or not self.source:
             return None
         return self.source.stem
+
+    @name.setter
+    def name(self, name: "str|None"):
+        self._name = name
 
     @setter
     def imports(self, imports: Sequence["Import"]) -> "Imports":
@@ -451,9 +457,9 @@ class Imports(model.ItemList):
         """Create library import."""
         return self.create(Import.LIBRARY, name, args, alias, lineno=lineno)
 
-    def resource(self, name: str, lineno: "int|None" = None) -> Import:
+    def resource(self, name: str, alias: "str|None" = None, lineno: "int|None" = None) -> Import:
         """Create resource import."""
-        return self.create(Import.RESOURCE, name, lineno=lineno)
+        return self.create(Import.RESOURCE, name, alias=alias, lineno=lineno)
 
     def variables(
         self,

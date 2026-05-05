@@ -31,7 +31,6 @@ class Settings(ABC):
         "Variables",
     )
     single_value = (
-        "Resource",
         "Test Timeout",
         "Test Template",
         "Timeout",
@@ -48,11 +47,11 @@ class Settings(ABC):
         "Setup",
         "Teardown",
         "Template",
-        "Resource",
         "Variables",
     )
     name_arguments_and_with_name = (
         "Library",
+        "Resource",
     )  # fmt: skip
 
     def __init__(self, languages: Languages):
