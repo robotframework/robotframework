@@ -244,10 +244,13 @@ class Language:
     term. Deprecated terms continue to work until they are removed from the
     ``deprecations`` dictionary.
 
-    Deprecation warnings are emitted starting from the next non-minor version after
-    deprecation. If deprecation is needed with custom language files not tied to
-    Robot Framework versions, version can be set to ``None``. In that case
-    deprecation warnings are emitted immediately.
+    Deprecation warnings are emitted starting from the next non-bugfix release after
+    deprecation. For example, if a term is deprecated in version 7.5, there are
+    no deprecation warnings in 7.5.1 or in other 7.5.x releases, but warnings start
+    automatically in 7.6 (or in 8.0 if that is the next release). If deprecation is
+    needed with custom language files not tied to Robot Framework versions, version
+    in the ``deprecation`` dictionary can be set to ``None``. In that case deprecation
+    warnings are emitted immediately.
 
     Deprecation supports is new in Robot Framework 7.5. Possible deprecation
     configuration is silently ignored with earlier versions.
