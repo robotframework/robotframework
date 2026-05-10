@@ -33,18 +33,18 @@ class ListenerFacade(LoggerApi, ABC):
         self,
         listener,
         name,
+        error_logger: Callable[[str], object],
+        info_logger: Callable[[str], object],
         log_level,
         library=None,
-        error: Callable[[str], object] | None = None,
-        info: Callable[[str], object] | None = None,
     ):
         self.listener = listener
         self.name = name
         self._is_logged = log_level.is_logged
         self.library = library
         self.priority = self._get_priority(listener)
-        self._error = error
-        self._info = info
+        self._error_logger = error_logger
+        self._info_logger = info_logger
 
     def _get_priority(self, listener):
         priority = getattr(listener, "ROBOT_LISTENER_PRIORITY", 0)
@@ -62,18 +62,32 @@ class ListenerFacade(LoggerApi, ABC):
     def from_object(
         cls,
         listener: object,
+        error_logger: Callable[[str], object],
+        info_logger: Callable[[str], object],
         log_level: "LogLevel | SettableLevel" = "INFO",
         library: object = None,
-        error: Callable[[str], object] | None = None,
-        info: Callable[[str], object] | None = None,
         name: str | None = None,
     ) -> "ListenerFacade":
         if isinstance(log_level, str):
             log_level = LogLevel(log_level)
         name = name or getattr(listener, "__name__", None) or type_name(listener)
         if cls._get_version(listener) == 2:
-            return ListenerV2Facade(listener, name, log_level, library, error, info)
-        return ListenerV3Facade(listener, name, log_level, library, error, info)
+            return ListenerV2Facade(
+                listener,
+                name,
+                error_logger,
+                info_logger,
+                log_level,
+                library,
+            )
+        return ListenerV3Facade(
+            listener,
+            name,
+            error_logger,
+            info_logger,
+            log_level,
+            library,
+        )
 
     @classmethod
     def _get_version(cls, listener):
@@ -90,8 +104,8 @@ class ListenerFacade(LoggerApi, ABC):
         for method_name in self._get_method_names(name):
             method = getattr(self.listener, method_name, None)
             if method:
-                return ListenerMethod(method, self.name, self._error, self._info)
-        return fallback or ListenerMethod(None, self.name, self._error, self._info)
+                return ListenerMethod(method, self.name, self._error_logger, self._info_logger)
+        return fallback or ListenerMethod(None, self.name, self._error_logger, self._info_logger)
 
     def _get_method_names(self, name):
         names = [name, self._to_camelCase(name)] if "_" in name else [name]
@@ -110,12 +124,12 @@ class ListenerV3Facade(ListenerFacade):
         self,
         listener,
         name,
+        error_logger: Callable[[str], object],
+        info_logger: Callable[[str], object],
         log_level,
         library=None,
-        error=None,
-        info=None,
     ):
-        super().__init__(listener, name, log_level, library, error, info)
+        super().__init__(listener, name, error_logger, info_logger, log_level, library)
         get = self._get_method
         # Suite
         self.start_suite = get("start_suite")
@@ -219,12 +233,12 @@ class ListenerV2Facade(ListenerFacade):
         self,
         listener,
         name,
+        error_logger: Callable[[str], object],
+        info_logger: Callable[[str], object],
         log_level,
         library=None,
-        error=None,
-        info=None,
     ):
-        super().__init__(listener, name, log_level, library, error, info)
+        super().__init__(listener, name, error_logger, info_logger, log_level, library)
         get = self._get_method
         # Suite
         self._start_suite = get("start_suite")
@@ -552,13 +566,13 @@ class ListenerMethod:
         self,
         method,
         name,
-        error: Callable[[str], object] | None = None,
-        info: Callable[[str], object] | None = None,
+        error_logger: Callable[[str], object],
+        info_logger: Callable[[str], object],
     ):
         self.method = method
         self.listener_name = name
-        self._error = error
-        self._info = info
+        self._error_logger = error_logger
+        self._info_logger = info_logger
 
     def __call__(self, *args):
         try:
@@ -566,13 +580,11 @@ class ListenerMethod:
                 self.method(*args)
         except Exception:
             message, details = get_error_details()
-            if self._error:
-                self._error(
-                    f"Calling method '{self.method.__name__}' of listener "
-                    f"'{self.listener_name}' failed: {message}"
-                )
-            if self._info:
-                self._info(f"Details:\n{details}")
+            self._error_logger(
+                f"Calling method '{self.method.__name__}' of listener "
+                f"'{self.listener_name}' failed: {message}"
+            )
+            self._info_logger(f"Details:\n{details}")
 
     def __bool__(self):
         return self.method is not None

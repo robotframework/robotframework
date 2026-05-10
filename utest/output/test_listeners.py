@@ -224,8 +224,8 @@ class TestListenerPriority(unittest.TestCase):
     def _create_listener_from_object(self, priority):
         return ListenerFacade.from_object(
             Listener(priority),
-            error=lambda _: None,
-            info=lambda _: None,
+            lambda _: None,
+            lambda _: None,
         )
 
 

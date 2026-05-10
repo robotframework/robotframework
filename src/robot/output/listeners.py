@@ -103,10 +103,10 @@ def create_listener_facade(
         listener_obj, name = _import_listener(listener)
         return ListenerFacade.from_object(
             listener_obj,
+            LOGGER.error,
+            LOGGER.info,
             log_level,
             library,
-            error=LOGGER.error,
-            info=LOGGER.info,
             name=name,
         )
     except DataError as err:

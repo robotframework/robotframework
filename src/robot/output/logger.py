@@ -113,7 +113,12 @@ class Logger(AbstractLogger):
         log_level: "SettableLevel" = "INFO",
     ):
         logger = ConsoleOutput(type, width, colors, links, markers, stdout, stderr)
-        self._console = ListenerFacade.from_object(logger, log_level=log_level)
+        self._console = ListenerFacade.from_object(
+            logger,
+            self.error,
+            self.info,
+            log_level=log_level,
+        )
         self._relay_cached_messages(logger)
 
     def _relay_cached_messages(self, logger):
