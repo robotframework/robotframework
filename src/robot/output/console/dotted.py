@@ -14,19 +14,19 @@
 #  limitations under the License.
 
 import sys
-from typing import TYPE_CHECKING
+from pathlib import Path
+from typing import Literal, TYPE_CHECKING
 
 from robot.model import SuiteVisitor
 from robot.utils import plural_or_not as s, secs_to_timestr
 
-from ..loggerapi import LoggerApi
 from .highlighting import HighlightingStream
 
 if TYPE_CHECKING:
     from robot.result import TestCase, TestSuite
 
 
-class DottedOutput(LoggerApi):
+class DottedOutput:
 
     def __init__(self, width=78, colors="AUTO", links="AUTO", stdout=None, stderr=None):
         self.width = width
@@ -65,7 +65,26 @@ class DottedOutput(LoggerApi):
         if msg.level in ("WARN", "ERROR") and msg.console:
             self.stderr.error(msg.message, msg.level)
 
-    def result_file(self, kind, path):
+    def output_file(self, path: "Path"):
+        self.result_file("Output", path)
+
+    def report_file(self, path: "Path"):
+        self.result_file("Report", path)
+
+    def log_file(self, path: "Path"):
+        self.result_file("Log", path)
+
+    def xunit_file(self, path: "Path"):
+        self.result_file("XUnit", path)
+
+    def debug_file(self, path: "Path"):
+        self.result_file("Debug", path)
+
+    def result_file(
+        self,
+        kind: "Literal['Output', 'Report', 'Log', 'XUnit', 'Debug']",
+        path: "Path",
+    ):
         self.stdout.result_file(kind, path)
 
 

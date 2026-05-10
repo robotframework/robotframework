@@ -14,12 +14,13 @@
 #  limitations under the License.
 
 import sys
+from pathlib import Path
+from typing import Literal
 
-from ..loggerapi import LoggerApi
 from .highlighting import HighlightingStream
 
 
-class QuietOutput(LoggerApi):
+class QuietOutput:
 
     def __init__(self, colors="AUTO", stderr=None):
         self._stderr = HighlightingStream(stderr or sys.__stderr__, colors)
@@ -28,6 +29,57 @@ class QuietOutput(LoggerApi):
         if msg.level in ("WARN", "ERROR") and msg.console:
             self._stderr.error(msg.message, msg.level)
 
+    def output_file(self, path):
+        pass
 
-class NoOutput(LoggerApi):
-    pass
+    def report_file(self, path):
+        pass
+
+    def log_file(self, path):
+        pass
+
+    def xunit_file(self, path):
+        pass
+
+    def debug_file(self, path):
+        pass
+
+    def result_file(
+        self,
+        kind: "Literal['Output', 'Report', 'Log', 'XUnit', 'Debug']",
+        path: "Path",
+    ):
+        result_file = getattr(self, f"{kind.lower()}_file", None)
+        if result_file:
+            result_file(path)
+
+
+class NoOutput:
+
+    def message(self, msg):
+        pass
+
+    def log_message(self, msg):
+        pass
+
+    def output_file(self, path):
+        pass
+
+    def report_file(self, path):
+        pass
+
+    def log_file(self, path):
+        pass
+
+    def xunit_file(self, path):
+        pass
+
+    def debug_file(self, path):
+        pass
+
+    def result_file(
+        self,
+        kind: "Literal['Output', 'Report', 'Log', 'XUnit', 'Debug']",
+        path: "Path",
+    ):
+        pass
