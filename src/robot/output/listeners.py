@@ -100,8 +100,7 @@ def create_listener_facade(
     if isinstance(log_level, str):
         log_level = LogLevel(log_level)
     try:
-        listener_obj = _import_listener(listener)
-        name = listener if isinstance(listener, str) else None
+        listener_obj, name = _import_listener(listener)
         return ListenerFacade.from_object(
             listener_obj,
             log_level,
@@ -115,15 +114,16 @@ def create_listener_facade(
         raise DataError(f"Taking listener '{name}' into use failed: {err}")
 
 
-def _import_listener(listener: "str | object") -> object:
+def _import_listener(listener: "str | object") -> "tuple[object, str | None]":
     if isinstance(listener, str):
         name, args = split_args_from_name_or_path(listener)
+        name = os.path.normpath(name)
         importer = Importer("listener", logger=LOGGER)
         try:
             return importer.import_class_or_module(
-                os.path.normpath(name),
+                name,
                 instantiate_with_args=args,
-            )
+            ), name
         except DataError as err:
             raise err
-    return listener
+    return listener, None
