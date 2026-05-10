@@ -17,7 +17,7 @@ import os.path
 from collections.abc import Sequence
 
 from robot.errors import DataError
-from robot.utils import Importer, split_args_from_name_or_path
+from robot.utils import Importer, split_args_from_name_or_path, type_name
 
 from .listenerfacade import ListenerFacade
 from .logger import LOGGER
@@ -111,9 +111,7 @@ def create_listener_facade(
             name=name,
         )
     except DataError as err:
-        name = listener if isinstance(listener, str) else getattr(listener, "__name__", None)
-        if not name:
-            name = type(listener).__name__
+        name = listener if isinstance(listener, str) else type_name(listener)
         raise DataError(f"Taking listener '{name}' into use failed: {err}")
 
 
