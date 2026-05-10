@@ -17,6 +17,7 @@ from __future__ import annotations
 
 from abc import ABC
 from collections.abc import Callable
+from pathlib import Path
 
 from robot.errors import DataError
 from robot.model import BodyItem
@@ -431,19 +432,19 @@ class ListenerV2Facade(ListenerFacade):
             },
         )
 
-    def output_file(self, path):
+    def output_file(self, path: Path):
         self._output_file(str(path))
 
-    def report_file(self, path):
+    def report_file(self, path: Path):
         self._report_file(str(path))
 
-    def log_file(self, path):
+    def log_file(self, path: Path):
         self._log_file(str(path))
 
-    def xunit_file(self, path):
+    def xunit_file(self, path: Path):
         self._xunit_file(str(path))
 
-    def debug_file(self, path):
+    def debug_file(self, path: Path):
         self._debug_file(str(path))
 
     def _suite_attrs(self, data, result, end=False):
