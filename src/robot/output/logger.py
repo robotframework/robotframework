@@ -20,7 +20,9 @@ from robot.errors import DataError
 
 from .console import ConsoleOutput
 from .filelogger import FileLogger
+from .listenerfacade import ListenerFacade
 from .loggerhelper import AbstractLogger, write_to_console
+from .loglevel import SettableLevel
 from .stdoutlogsplitter import StdoutLogSplitter
 
 
@@ -108,11 +110,11 @@ class Logger(AbstractLogger):
         markers="AUTO",
         stdout=None,
         stderr=None,
+        log_level: "SettableLevel" = "INFO",
     ):
-        self._console = ConsoleOutput(
-            type, width, colors, links, markers, stdout, stderr
-        )
-        self._relay_cached_messages(self._console)
+        logger = ConsoleOutput(type, width, colors, links, markers, stdout, stderr)
+        self._console = ListenerFacade.from_object(logger, log_level=log_level)
+        self._relay_cached_messages(logger)
 
     def _relay_cached_messages(self, logger):
         if self._message_cache:

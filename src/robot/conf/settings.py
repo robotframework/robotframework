@@ -646,6 +646,7 @@ class RobotSettings(_BaseSettings):
             "markers": self.console_markers,
             "stdout": self["StdOut"],
             "stderr": self["StdErr"],
+            "log_level": self.log_level,
         }
 
     @property
@@ -771,6 +772,7 @@ class RebotSettings(_BaseSettings):
             "links": self.console_links,
             "stdout": self["StdOut"],
             "stderr": self["StdErr"],
+            "log_level": self.log_level,
         }
 
     @property

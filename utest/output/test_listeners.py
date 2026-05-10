@@ -5,7 +5,7 @@ from robot.errors import DataError
 from robot.model import BodyItem
 from robot.output import LOGGER
 from robot.output.listenerfacade import ListenerFacade
-from robot.output.listeners import Listeners, create_listener_facade
+from robot.output.listeners import create_listener_facade, Listeners
 from robot.running.outputcapture import OutputCapturer
 from robot.utils import DotDict
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
