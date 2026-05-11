@@ -4,6 +4,7 @@ import unittest
 from pathlib import Path
 
 from robot.api import Language, Languages
+from robot.conf import languages
 from robot.conf.languages import En, Fi, PtBr, Th
 from robot.errors import DataError
 from robot.utils.asserts import (
@@ -43,9 +44,9 @@ class TestLanguage(unittest.TestCase):
         class X(Language):
             pass
 
-        X.__doc__ = None
-        assert_equal(X().name, "")
-        assert_equal(X.name, "")
+        assert_equal(X.__doc__, None)
+        assert_equal(X().name, "X")
+        assert_equal(X.name, "X")
 
     def test_standard_languages_have_code_and_name(self):
         for cls in STANDARD_LANGUAGES:
@@ -247,6 +248,97 @@ class TestLanguages(unittest.TestCase):
         for lang in to_add:
             languages.add_language(lang)
         assert_equal(list(languages), to_add)
+
+
+class TestDeprecation(unittest.TestCase):
+
+    def setUp(self):
+        self.version = languages.VERSION
+
+    def tearDown(self):
+        languages.VERSION = self.version
+
+    def mock_robot_version(self, version):
+        languages.VERSION = version
+
+    def get_language_with_deprecation(self, version=None, value=None):
+        class Deprecation(Language):
+            test_cases_header = "Cas de test"
+            deprecations = {"Unités de test": value or ("Cas de test", version)}
+
+        return Deprecation()
+
+    def test_warning_due_to_version(self):
+        langs = Languages([self.get_language_with_deprecation("7.5")])
+        self.mock_robot_version("7.6.1")
+        assert_equal(
+            langs.get_deprecation("Unités De Test", "header"),
+            "Header 'Unités De Test' has been deprecated since Robot Framework 7.5. "
+            "Use 'Cas de test' instead.",
+        )
+        self.mock_robot_version("10.0.dev1")
+        assert_equal(
+            langs.get_deprecation("unités de test", "section"),
+            "Section 'unités de test' has been deprecated since Robot Framework 7.5. "
+            "Use 'Cas de test' instead.",
+        )
+
+    def test_warning_due_to_no_version(self):
+        langs = Languages([self.get_language_with_deprecation()])
+        assert_equal(
+            langs.get_deprecation("Unités de test", "section header"),
+            "Section header 'Unités de test' has been deprecated. "
+            "Use 'Cas de test' instead.",
+        )
+
+    def test_no_warning_due_to_version(self):
+        langs = Languages([self.get_language_with_deprecation("7.5")])
+        self.mock_robot_version("7.5")
+        assert_equal(langs.get_deprecation("Unités De Test", "whatever"), None)
+        self.mock_robot_version("7.5rc1")
+        assert_equal(langs.get_deprecation("Unités De Test", "whatever"), None)
+        self.mock_robot_version("7.5.999")
+        assert_equal(langs.get_deprecation("Unités De Test", "whatever"), None)
+        self.mock_robot_version("6.999")
+        assert_equal(langs.get_deprecation("Unités De Test", "whatever"), None)
+
+    def test_no_warning_due_to_not_deprecated(self):
+        langs = Languages([self.get_language_with_deprecation("7.0")])
+        assert_equal(langs.get_deprecation("Not deprecated", "whatever"), None)
+
+    def test_invalid_version(self):
+        for version in ["bad version", "1.bad", "7.5.0", 666, (7, 5)]:
+            assert_raises_with_msg(
+                ValueError,
+                "Invalid configuration for language 'Deprecation': "
+                "Invalid deprecated item 'Unités de test': "
+                "Value must be tuple containing new value and version in format 'X.Y', "
+                f"got ('Cas de test', {version!r}).",
+                Languages,
+                [self.get_language_with_deprecation(version)],
+            )
+
+    def test_invalid_term(self):
+        assert_raises_with_msg(
+            ValueError,
+            "Invalid configuration for language 'Deprecation': "
+            "Invalid deprecated item 'Unités de test': "
+            "New value 'Bad term' is not used in headers or settings.",
+            Languages,
+            [self.get_language_with_deprecation(value=("Bad term", "7.5"))],
+        )
+
+    def test_invalid_value(self):
+        for value in ["bad value", ("this", "is", "bad"), 666]:
+            assert_raises_with_msg(
+                ValueError,
+                "Invalid configuration for language 'Deprecation': "
+                "Invalid deprecated item 'Unités de test': "
+                "Value must be tuple containing new value and version in format 'X.Y', "
+                f"got {value!r}.",
+                Languages,
+                [self.get_language_with_deprecation(value=value)],
+            )
 
 
 if __name__ == "__main__":

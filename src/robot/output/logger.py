@@ -51,7 +51,8 @@ class Logger(AbstractLogger):
     """
 
     def __init__(self, register_console_logger=True):
-        self._console = None
+        self._auto_register_console_logger = register_console_logger
+        self.__console = None
         self._syslog = None
         self._output_file = None
         self._cli_listeners = None
@@ -64,8 +65,12 @@ class Logger(AbstractLogger):
         self._error_listener = None
         self._enabled = 0
         self._cache_only = False
-        if register_console_logger:
+
+    @property
+    def _console(self):
+        if self.__console is None and self._auto_register_console_logger:
             self.register_console_logger()
+        return self.__console
 
     @property
     def _std_loggers(self):
@@ -112,8 +117,8 @@ class Logger(AbstractLogger):
         from .listeners import ListenerFacade
 
         console = ConsoleOutput(type, width, colors, links, markers, stdout, stderr)
-        self._console = ListenerFacade.create(console)
-        self._relay_cached_messages(self._console)
+        self.__console = ListenerFacade.create(console)
+        self._relay_cached_messages(self.__console)
 
     def _relay_cached_messages(self, logger):
         if self._message_cache:
@@ -121,7 +126,8 @@ class Logger(AbstractLogger):
                 logger.message(msg)
 
     def unregister_console_logger(self):
-        self._console = None
+        self.__console = None
+        self._auto_register_console_logger = False
 
     def register_syslog(self, path=None, level="INFO"):
         if not path:
