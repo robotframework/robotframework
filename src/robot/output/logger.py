@@ -109,9 +109,10 @@ class Logger(AbstractLogger):
         stdout=None,
         stderr=None,
     ):
-        self._console = ConsoleOutput(
-            type, width, colors, links, markers, stdout, stderr
-        )
+        from .listeners import ListenerFacade
+
+        console = ConsoleOutput(type, width, colors, links, markers, stdout, stderr)
+        self._console = ListenerFacade.create(console)
         self._relay_cached_messages(self._console)
 
     def _relay_cached_messages(self, logger):

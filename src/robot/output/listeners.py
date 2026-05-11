@@ -24,7 +24,6 @@ from robot.utils import (
     get_error_details, Importer, safe_str, split_args_from_name_or_path, type_name
 )
 
-from .logger import LOGGER
 from .loggerapi import LoggerApi
 from .loglevel import LogLevel, SettableLevel
 
@@ -57,6 +56,7 @@ class Listeners:
             except DataError as err:
                 if library:
                     raise
+                from .logger import LOGGER
                 LOGGER.error(str(err))
             else:
                 imported.append(facade)
@@ -139,6 +139,7 @@ class ListenerFacade(LoggerApi, ABC):
     def _import_listener(cls, listener, log_level, library=None) -> "ListenerFacade":
         if isinstance(listener, str):
             name, args = split_args_from_name_or_path(listener)
+            from .logger import LOGGER
             importer = Importer("listener", logger=LOGGER)
             listener = importer.import_class_or_module(
                 os.path.normpath(name),
@@ -618,6 +619,7 @@ class ListenerMethod:
             if self.method is not None:
                 self.method(*args)
         except Exception:
+            from .logger import LOGGER
             message, details = get_error_details()
             LOGGER.error(
                 f"Calling method '{self.method.__name__}' of listener "
