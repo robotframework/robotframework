@@ -3,10 +3,10 @@
 Does not define output_file/report_file/log_file, so result file
 paths are suppressed (the V3 facade treats missing methods as no-ops).
 """
+
 import sys
 
-
-MARKER = 'MODULE'
+MARKER = "MODULE"
 
 
 def start_suite(data, result):

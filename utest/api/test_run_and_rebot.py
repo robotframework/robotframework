@@ -470,8 +470,13 @@ class TestCustomConsole(RunningTestCase):
     def test_run_with_console_object_gets_result_file_notifications(self):
         console = RecordingConsole()
         assert_equal(
-            run(self.data, output=OUTPUT_PATH, log=LOG_PATH, report=REPORT_PATH,
-                console=console),
+            run(
+                self.data,
+                output=OUTPUT_PATH,
+                log=LOG_PATH,
+                report=REPORT_PATH,
+                console=console,
+            ),
             1,
         )
         methods = {name for name, _ in console.calls}

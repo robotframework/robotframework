@@ -1,10 +1,11 @@
 """Module with a differently-named console class for dotted import testing."""
+
 import sys
 
 
 class MyConsole:
 
-    def __init__(self, marker='DOTTED'):
+    def __init__(self, marker="DOTTED"):
         self.marker = marker
 
     def start_suite(self, data, result):

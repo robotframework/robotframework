@@ -3,7 +3,7 @@ import sys
 
 class CustomConsole:
 
-    def __init__(self, marker='CUSTOM'):
+    def __init__(self, marker="CUSTOM"):
         self.marker = marker
 
     def start_suite(self, data, result):
@@ -13,7 +13,7 @@ class CustomConsole:
         sys.__stdout__.write(f"{self.marker}: Test '{result.name}' {result.status}\n")
 
     def message(self, msg):
-        if msg.level in ('WARN', 'ERROR'):
+        if msg.level in ("WARN", "ERROR"):
             sys.__stdout__.write(f"{self.marker} {msg.level}: {msg.message}\n")
 
     def output_file(self, path):

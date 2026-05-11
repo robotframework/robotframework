@@ -137,8 +137,9 @@ class ListenerFacade(LoggerApi, ABC):
             raise DataError(f"Taking {kind} '{name}' into use failed: {err}")
 
     @classmethod
-    def _import_listener(cls, listener, log_level, library=None,
-                         kind="listener") -> "ListenerFacade":
+    def _import_listener(
+        cls, listener, log_level, library=None, kind="listener"
+    ) -> "ListenerFacade":
         if isinstance(listener, str):
             name, args = split_args_from_name_or_path(listener)
             importer = Importer(kind, logger=LOGGER)
