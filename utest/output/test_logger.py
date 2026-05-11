@@ -1,9 +1,14 @@
 import unittest
+from os.path import abspath, dirname, join
 
+from robot.errors import DataError
 from robot.output.console.verbose import VerboseOutput
 from robot.output.logger import Logger
 from robot.output.loggerapi import LoggerApi
-from robot.utils.asserts import assert_equal, assert_true
+from robot.utils.asserts import assert_equal, assert_raises, assert_true
+
+CUSTOM_CONSOLE = join(dirname(abspath(__file__)), "..", "..", "atest",
+                      "testresources", "consoles", "CustomConsole.py")
 
 
 class MessageMock:
@@ -258,41 +263,16 @@ class TestLogger(unittest.TestCase):
         assert_true(self.logger._console.listener is console)
 
     def test_custom_console_logger_by_path(self):
-        import os
-
-        path = os.path.join(
-            os.path.dirname(__file__),
-            "..",
-            "..",
-            "atest",
-            "testresources",
-            "consoles",
-            "CustomConsole.py",
-        )
-        self.logger.register_console_logger(type=os.path.abspath(path))
+        self.logger.register_console_logger(type=CUSTOM_CONSOLE)
         assert_equal(self.logger._console.listener.__class__.__name__, "CustomConsole")
         assert_equal(self.logger._console.listener.marker, "CUSTOM")
 
     def test_custom_console_logger_by_path_with_args(self):
-        import os
-
-        path = os.path.join(
-            os.path.dirname(__file__),
-            "..",
-            "..",
-            "atest",
-            "testresources",
-            "consoles",
-            "CustomConsole.py",
-        )
-        self.logger.register_console_logger(type=os.path.abspath(path) + ":MYMARKER")
+        self.logger.register_console_logger(type=CUSTOM_CONSOLE + ":MYMARKER")
         assert_equal(self.logger._console.listener.__class__.__name__, "CustomConsole")
         assert_equal(self.logger._console.listener.marker, "MYMARKER")
 
     def test_custom_console_logger_bad_import(self):
-        from robot.errors import DataError
-        from robot.utils.asserts import assert_raises
-
         assert_raises(
             DataError, self.logger.register_console_logger, type="NonExistentModule"
         )
