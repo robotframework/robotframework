@@ -1,6 +1,9 @@
 *** Settings ***
 Resource          console_resource.robot
 
+*** Variables ***
+${CONSOLES}       ${CURDIR}${/}..${/}..${/}..${/}testresources${/}consoles
+
 *** Test Cases ***
 Verbose
     Run and verify tests    --console verbose
@@ -37,9 +40,60 @@ None
     Stdout Should Be    empty.txt
     Stderr Should Be    empty.txt
 
-Invalid
-    Run Tests Without Processing Output    --Console Invalid    misc/pass_and_fail.robot
-    Stderr Should Be Equal To    [ ERROR ] Invalid console output type 'Invalid'. Available 'VERBOSE', 'DOTTED', 'QUIET' and 'NONE'.${USAGE TIP}\n
+Custom console by path
+    Run Tests    --console ${CONSOLES}${/}CustomConsole.py    misc/pass_and_fail.robot
+    Stdout Should Contain    CUSTOM: Suite 'Pass And Fail' started
+    Stdout Should Contain    CUSTOM: Test 'Pass' PASS
+    Stdout Should Contain    CUSTOM: Test 'Fail' FAIL
+    Stdout Should Contain    CUSTOM: Output:
+    Stdout Should Contain    CUSTOM: Closing
+    Stderr Should Be Empty
+
+Custom console by path with argument
+    Run Tests    --console ${CONSOLES}${/}CustomConsole.py:MARKER    misc/pass_and_fail.robot
+    Stdout Should Contain    MARKER: Suite 'Pass And Fail' started
+    Stdout Should Contain    MARKER: Test 'Pass' PASS
+    Stdout Should Contain    MARKER: Closing
+    Stderr Should Be Empty
+
+Custom console by module name
+    Run Tests    --console CustomConsole --pythonpath ${CONSOLES}    misc/pass_and_fail.robot
+    Stdout Should Contain    CUSTOM: Suite 'Pass And Fail' started
+    Stdout Should Contain    CUSTOM: Test 'Pass' PASS
+    Stdout Should Contain    CUSTOM: Closing
+    Stderr Should Be Empty
+
+Custom console as module with functions
+    Run Tests    --console ${CONSOLES}${/}module_console.py    misc/pass_and_fail.robot
+    Stdout Should Contain    MODULE: Suite 'Pass And Fail' started
+    Stdout Should Contain    MODULE: Test 'Pass' PASS
+    Stdout Should Contain    MODULE: Closing
+    Stdout Should Not Contain    Output:
+    Stdout Should Not Contain    Report:
+    Stdout Should Not Contain    Log:
+    Stderr Should Be Empty
+
+Custom console by dotted name
+    Run Tests    --console console_classes.MyConsole --pythonpath ${CONSOLES}    misc/pass_and_fail.robot
+    Stdout Should Contain    DOTTED: Suite 'Pass And Fail' started
+    Stdout Should Contain    DOTTED: Test 'Pass' PASS
+    Stdout Should Contain    DOTTED: Closing
+    Stderr Should Be Empty
+
+Custom console with named argument
+    Run Tests    --console ${CONSOLES}${/}CustomConsole.py:marker=NAMED    misc/pass_and_fail.robot
+    Stdout Should Contain    NAMED: Suite 'Pass And Fail' started
+    Stdout Should Contain    NAMED: Test 'Pass' PASS
+    Stdout Should Contain    NAMED: Closing
+    Stderr Should Be Empty
+
+Custom console with wrong arguments
+    Run Tests Without Processing Output    --console ${CONSOLES}${/}CustomConsole.py:too:many:args    misc/pass_and_fail.robot
+    Stderr Should Start With    [ ERROR ] Taking console '
+
+Non-existing custom console
+    Run Tests Without Processing Output    --console NonExistent    misc/pass_and_fail.robot
+    Stderr Should Start With    [ ERROR ] Taking console 'NonExistent' into use failed: Importing console 'NonExistent' failed: ModuleNotFoundError: No module named 'NonExistent'
 
 --dotted
     Run and verify tests    --dotted

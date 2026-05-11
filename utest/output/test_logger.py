@@ -247,6 +247,56 @@ class TestLogger(unittest.TestCase):
         )
         assert_equal(list(logger), list(logger.end_loggers))
 
+    def test_custom_console_logger_by_object(self):
+        class MyConsole:
+            def start_suite(self, data, result):
+                pass
+
+        console = MyConsole()
+        self.logger.register_console_logger(type=console)
+        assert_true(self.logger._console is not None)
+        assert_true(self.logger._console.listener is console)
+
+    def test_custom_console_logger_by_path(self):
+        import os
+
+        path = os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "..",
+            "atest",
+            "testresources",
+            "consoles",
+            "CustomConsole.py",
+        )
+        self.logger.register_console_logger(type=os.path.abspath(path))
+        assert_equal(self.logger._console.listener.__class__.__name__, "CustomConsole")
+        assert_equal(self.logger._console.listener.marker, "CUSTOM")
+
+    def test_custom_console_logger_by_path_with_args(self):
+        import os
+
+        path = os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "..",
+            "atest",
+            "testresources",
+            "consoles",
+            "CustomConsole.py",
+        )
+        self.logger.register_console_logger(type=os.path.abspath(path) + ":MYMARKER")
+        assert_equal(self.logger._console.listener.__class__.__name__, "CustomConsole")
+        assert_equal(self.logger._console.listener.marker, "MYMARKER")
+
+    def test_custom_console_logger_bad_import(self):
+        from robot.errors import DataError
+        from robot.utils.asserts import assert_raises
+
+        assert_raises(
+            DataError, self.logger.register_console_logger, type="NonExistentModule"
+        )
+
     def _number_of_registered_loggers_should_be(self, number, logger=None):
         logger = logger or self.logger
         assert_equal(len(list(logger)), number)

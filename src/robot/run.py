@@ -457,10 +457,10 @@ class RobotFramework(Application):
                 stderr=options.get("stderr"),
             )
             raise
-        LOGGER.register_console_logger(**settings.console_output_config)
-        LOGGER.info(f"Settings:\n{settings}")
         if settings.pythonpath:
             sys.path = settings.pythonpath + sys.path
+        LOGGER.register_console_logger(**settings.console_output_config)
+        LOGGER.info(f"Settings:\n{settings}")
         builder = TestSuiteBuilder(
             included_extensions=settings.extension,
             included_files=settings.parse_include,

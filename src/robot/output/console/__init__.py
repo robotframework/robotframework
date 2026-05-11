@@ -29,7 +29,7 @@ def ConsoleOutput(
     stdout=None,
     stderr=None,
 ):
-    upper = type.upper()
+    upper = type.upper() if isinstance(type, str) else None
     if upper == "VERBOSE":
         return VerboseOutput(width, colors, links, markers, stdout, stderr)
     if upper == "DOTTED":
@@ -38,7 +38,4 @@ def ConsoleOutput(
         return QuietOutput(colors, stderr)
     if upper == "NONE":
         return NoOutput()
-    raise DataError(
-        f"Invalid console output type '{type}'. Available "
-        f"'VERBOSE', 'DOTTED', 'QUIET' and 'NONE'."
-    )
+    return None
