@@ -14,15 +14,19 @@
 #  limitations under the License.
 
 import sys
+from pathlib import Path
+from typing import Literal, TYPE_CHECKING
 
 from robot.errors import DataError
 from robot.utils import get_console_length, getshortdoc, isatty, pad_console_length
 
-from ..loggerapi import LoggerApi
 from .highlighting import HighlightingStream
 
+if TYPE_CHECKING:
+    from robot import result, running
 
-class VerboseOutput(LoggerApi):
+
+class VerboseOutput:
 
     def __init__(
         self,
@@ -73,7 +77,32 @@ class VerboseOutput(LoggerApi):
         if msg.level in ("WARN", "ERROR") and msg.console:
             self.writer.error(msg.message, msg.level, clear=self.running_test)
 
-    def result_file(self, kind, path):
+    def start_keyword(self, data: "running.Keyword", result: "result.Keyword"):
+        self.start_body_item(data, result)
+
+    def end_keyword(self, data: "running.Keyword", result: "result.Keyword"):
+        self.end_body_item(data, result)
+
+    def output_file(self, path: Path):
+        self.result_file("Output", path)
+
+    def report_file(self, path: Path):
+        self.result_file("Report", path)
+
+    def log_file(self, path: Path):
+        self.result_file("Log", path)
+
+    def xunit_file(self, path: Path):
+        self.result_file("XUnit", path)
+
+    def debug_file(self, path: Path):
+        self.result_file("Debug", path)
+
+    def result_file(
+        self,
+        kind: "Literal['Output', 'Report', 'Log', 'XUnit', 'Debug']",
+        path: Path,
+    ):
         self.writer.result_file(kind, path)
 
 

@@ -29,16 +29,20 @@ def ConsoleOutput(
     stdout=None,
     stderr=None,
 ):
+    from ..listeners import ListenerFacade
+
     upper = type.upper()
     if upper == "VERBOSE":
-        return VerboseOutput(width, colors, links, markers, stdout, stderr)
-    if upper == "DOTTED":
-        return DottedOutput(width, colors, links, stdout, stderr)
-    if upper == "QUIET":
-        return QuietOutput(colors, stderr)
-    if upper == "NONE":
-        return NoOutput()
-    raise DataError(
-        f"Invalid console output type '{type}'. Available "
-        f"'VERBOSE', 'DOTTED', 'QUIET' and 'NONE'."
-    )
+        output = VerboseOutput(width, colors, links, markers, stdout, stderr)
+    elif upper == "DOTTED":
+        output = DottedOutput(width, colors, links, stdout, stderr)
+    elif upper == "QUIET":
+        output = QuietOutput(colors, stderr)
+    elif upper == "NONE":
+        output = NoOutput()
+    else:
+        raise DataError(
+            f"Invalid console output type '{type}'. Available "
+            f"'VERBOSE', 'DOTTED', 'QUIET' and 'NONE'."
+        )
+    return ListenerFacade.create(output)
