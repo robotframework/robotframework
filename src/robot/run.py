@@ -329,12 +329,19 @@ Options
                           arguments the same way as with --listener.
     --parser parser *     Custom parser class or module. Parser classes accept
                           arguments the same way as with --listener.
-    --console type        How to report execution on the console.
+    --console type or class_or_module       How to report execution on the console.
+                          This option takes pre-defined types or custom classes or modules
+                          for further customization. Pre-defined types are listed below:
                           verbose:  report every suite and test (default)
                           dotted:   only show `.` for passed test, `s` for
                                     skipped tests, and `F` for failed tests
                           quiet:    no output except for errors and warnings
                           none:     no output whatsoever
+                          Other values passed are interpreted as Python
+                          class or module to customize console output.
+                          Argument format is the same as with --listener.
+                          Examples: --console MyConsole
+                                    --console path/to/Console.py:arg1:arg2
  -. --dotted              Shortcut for `--console dotted`.
     --quiet               Shortcut for `--console quiet`.
  -W --consolewidth chars  Width of the console output. Default is 78.
@@ -565,9 +572,10 @@ def run(*tests, **options):
     with Python ``None``. For example, using ``log=None`` is equivalent to
     ``--log NONE``.
 
-    ``listener``, ``prerunmodifier`` and ``prerebotmodifier`` options allow
-    passing values as Python objects in addition to module names these command
-    line options support. For example, ``run('tests', listener=MyListener())``.
+    ``listener``, ``prerunmodifier``, ``prerebotmodifier`` and ``console``
+    options allow passing values as Python objects in addition to module
+    names these command line options support. For example,
+    ``run('tests', listener=MyListener())``.
 
     To capture the standard output and error streams, pass an open file or
     file-like object as special keyword arguments ``stdout`` and ``stderr``,
