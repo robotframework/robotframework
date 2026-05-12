@@ -39,4 +39,4 @@ def ConsoleOutput(
             logger = QuietOutput(colors, stderr)
         elif upper == "NONE":
             logger = NoOutput()
-    return ListenerFacade.create(logger, kind="console")
+    return ListenerFacade.create(logger, kind="console logger")
