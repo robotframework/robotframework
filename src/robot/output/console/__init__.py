@@ -19,7 +19,7 @@ from .verbose import VerboseOutput
 
 
 def ConsoleOutput(
-    logger="verbose",
+    console="verbose",
     width=78,
     colors="AUTO",
     links="AUTO",
@@ -29,14 +29,14 @@ def ConsoleOutput(
 ):
     from ..listeners import ListenerFacade
 
-    if isinstance(logger, str):
-        upper = logger.upper()
+    if isinstance(console, str):
+        upper = console.upper()
         if upper == "VERBOSE":
-            logger = VerboseOutput(width, colors, links, markers, stdout, stderr)
+            console = VerboseOutput(width, colors, links, markers, stdout, stderr)
         elif upper == "DOTTED":
-            logger = DottedOutput(width, colors, links, stdout, stderr)
+            console = DottedOutput(width, colors, links, stdout, stderr)
         elif upper == "QUIET":
-            logger = QuietOutput(colors, stderr)
+            console = QuietOutput(colors, stderr)
         elif upper == "NONE":
-            logger = NoOutput()
-    return ListenerFacade.create(logger, kind="console logger")
+            console = NoOutput()
+    return ListenerFacade.create(console, kind="console logger")
