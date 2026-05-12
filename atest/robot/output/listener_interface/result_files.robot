@@ -60,6 +60,31 @@ Result files disables with v3 listener
     Validate result files
     ...    Output: None
 
+Only 'result_file' method with v3 listener
+    VAR    ${options}
+    ...    --listener "${V3}:${PATH}:only_result_file=True"
+    ...    --output myout.xml
+    ...    --report myrep.html
+    ...    --log mylog.html
+    ...    --xunit myxun.xml
+    ...    --debugfile mydeb.txt
+    Run Tests    ${options}    misc/pass_and_fail.robot    output=${OUTDIR}/myout.xml
+    Validate result files
+    ...    DEBUG: mydeb.txt
+    ...    OUTPUT: myout.xml
+    ...    XUNIT: myxun.xml
+    ...    LOG: mylog.html
+    ...    REPORT: myrep.html
+
+Result files disables with v3 listener having only 'result_file' method
+    VAR    ${options}
+    ...    --listener "${V3}:${PATH}:output_file_disabled=True:only_result_file=True"
+    ...    --log NONE
+    ...    --report NONE
+    ...    --output NONE
+    Run Tests Without Processing Output    ${options}    misc/pass_and_fail.robot
+    Validate result files
+
 *** Keywords ***
 Validate result files
     [Arguments]    @{files}

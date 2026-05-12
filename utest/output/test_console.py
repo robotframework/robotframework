@@ -74,8 +74,8 @@ class TestKeywordNotification(unittest.TestCase):
 
     def _write_marker(self, status="PASS", count=1):
         for i in range(count):
-            self.console.start_keyword(Stub(), Stub())
-            self.console.end_keyword(Stub(), Stub(status=status))
+            self.console.start_body_item(Stub(), Stub())
+            self.console.end_body_item(Stub(), Stub(status=status))
 
     def _verify(self, after="", before=""):
         assert_equal(str(self.stream), f"{before}X :: D  {after}")

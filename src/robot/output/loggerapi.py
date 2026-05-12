@@ -205,39 +205,39 @@ class LoggerApi:
 
         Calls :meth:`result_file` by default.
         """
-        self.result_file("Output", path)
+        self.result_file("OUTPUT", path)
 
     def report_file(self, path: Path):
         """Called when report file is closed.
 
         Calls :meth:`result_file` by default.
         """
-        self.result_file("Report", path)
+        self.result_file("REPORT", path)
 
     def log_file(self, path: Path):
         """Called when log file is closed.
 
         Calls :meth:`result_file` by default.
         """
-        self.result_file("Log", path)
+        self.result_file("LOG", path)
 
     def xunit_file(self, path: Path):
         """Called when xunit file is closed.
 
         Calls :meth:`result_file` by default.
         """
-        self.result_file("XUnit", path)
+        self.result_file("XUNIT", path)
 
     def debug_file(self, path: Path):
         """Called when debug file is closed.
 
         Calls :meth:`result_file` by default.
         """
-        self.result_file("Debug", path)
+        self.result_file("DEBUG", path)
 
     def result_file(
         self,
-        kind: Literal["Output", "Report", "Log", "XUnit", "Debug"],
+        kind: Literal["OUTPUT", "REPORT", "LOG", "XUNIT", "DEBUG"],
         path: Path,
     ):
         """Called when any result file is closed by default.

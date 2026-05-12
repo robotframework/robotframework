@@ -96,9 +96,9 @@ class TestLogger(unittest.TestCase):
         logger = LoggerMock()
         self.logger.register_logger(logger)
         self.logger.output_file("out.xml")
-        assert_equal(logger.result_file_args, ("Output", "out.xml"))
+        assert_equal(logger.result_file_args, ("OUTPUT", "out.xml"))
         self.logger.log_file("log.html")
-        assert_equal(logger.result_file_args, ("Log", "log.html"))
+        assert_equal(logger.result_file_args, ("LOG", "log.html"))
 
     def test_close(self):
         logger = LoggerMock()

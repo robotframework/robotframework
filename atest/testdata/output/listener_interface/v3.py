@@ -96,6 +96,10 @@ def xunit_file(path):
     print(f"Xunit: {path.name}", file=sys.__stderr__)
 
 
+def result_file(kind, path):
+    raise TypeError("Should not be called because more specific methods exist!")
+
+
 def library_import(library, importer):
     if library.name == "BuiltIn":
         library.find_keywords("Log", count=1).doc = "Changed!"

@@ -268,11 +268,27 @@ class ListenerV3Facade(ListenerFacade):
         self.resource_import = get("resource_import")
         self.variables_import = get("variables_import")
         # Result files
-        self.output_file = get("output_file")
-        self.report_file = get("report_file")
-        self.log_file = get("log_file")
-        self.xunit_file = get("xunit_file")
-        self.debug_file = get("debug_file")
+        result_file = get("result_file")
+        self.output_file = get(
+            "output_file",
+            lambda path: result_file("OUTPUT", path) if path is not None else None,
+        )
+        self.report_file = get(
+            "report_file",
+            lambda path: result_file("REPORT", path),
+        )
+        self.log_file = get(
+            "log_file",
+            lambda path: result_file("LOG", path),
+        )
+        self.xunit_file = get(
+            "xunit_file",
+            lambda path: result_file("XUNIT", path),
+        )
+        self.debug_file = get(
+            "debug_file",
+            lambda path: result_file("DEBUG", path),
+        )
         # Close
         self.close = get("close")
 

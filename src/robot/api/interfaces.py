@@ -46,7 +46,7 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 import sys
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Mapping, Sequence, TypedDict, Union
+from typing import Any, Literal, Mapping, Sequence, TypedDict, Union
 
 if sys.version_info >= (3, 10):
     from types import UnionType
@@ -80,6 +80,8 @@ TypeHints = Union[
 ]  # fmt: skip
 Tags = Sequence[str]
 Source = str
+# Type aliases used by ListenerV3
+ResultFileKind = Literal["OUTPUT", "REPORT", "LOG", "XUNIT", "DEBUG"]
 
 
 class DynamicLibrary(ABC):
@@ -985,40 +987,74 @@ class ListenerV3:
         the imported variable file.
         """
 
+    def result_file(self, kind: ResultFileKind, path: Path):
+        """Called, by default, when a result file like output or log is ready.
+
+        :param kind: The result file type.
+        :param path: An absolute path to the result file.
+
+        Not called if a more specific result file related method like
+        :meth:`output_file` or :meth:`log_file` has been implemented or
+        when creating a result file is disabled.
+
+        New in Robot Framework 7.5.
+        """
+
     def output_file(self, path: "Path | None"):
         """Called after the output file has been created.
 
         ``path`` is an absolute path to the output file or
         ``None`` if creating the output file is disabled.
+
+        Starting from Robot Framework 7.5, the default implementation calls
+        :meth:`result_file` if creating the output file is not disabled.
         """
+        if path is not None:
+            self.result_file("OUTPUT", path)
 
     def log_file(self, path: Path):
         """Called after the log file has been created.
 
         ``path`` is an absolute path to the log file.
         Not called if creating the log file is disabled.
+
+        Starting from Robot Framework 7.5, the default implementation calls
+        :meth:`result_file`.
         """
+        self.result_file("LOG", path)
 
     def report_file(self, path: Path):
         """Called after the report file has been created.
 
         ``path`` is an absolute path to the report file.
         Not called if creating the report file is disabled.
+
+        Starting from Robot Framework 7.5, the default implementation calls
+        :meth:`result_file`.
         """
+        self.result_file("REPORT", path)
 
     def xunit_file(self, path: Path):
         """Called after the xunit compatible output file has been created.
 
         ``path`` is an absolute path to the xunit file.
         Only called if creating the xunit file is enabled.
+
+        Starting from Robot Framework 7.5, the default implementation calls
+        :meth:`result_file`.
         """
+        self.result_file("XUNIT", path)
 
     def debug_file(self, path: Path):
         """Called after the debug file has been created.
 
         ``path`` is an absolute path to the debug file.
         Only called if creating the debug file is enabled.
+
+        Starting from Robot Framework 7.5, the default implementation calls
+        :meth:`result_file`.
         """
+        self.result_file("DEBUG", path)
 
     def close(self):
         """Called when the whole execution ends.
