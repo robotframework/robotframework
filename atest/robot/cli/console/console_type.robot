@@ -74,10 +74,10 @@ Custom console as module with functions
     Stderr Should Be Empty
 
 Custom console by dotted name
-    Run Tests    --console console_classes.MyConsole --pythonpath ${CONSOLES}    misc/pass_and_fail.robot
-    Stdout Should Contain    DOTTED: Suite 'Pass And Fail' started
-    Stdout Should Contain    DOTTED: Test 'Pass' PASS
-    Stdout Should Contain    DOTTED: Closing
+    Run Tests    --console CustomConsole.CustomConsole --pythonpath ${CONSOLES}    misc/pass_and_fail.robot
+    Stdout Should Contain    DEFAULT: Suite 'Pass And Fail' started
+    Stdout Should Contain    DEFAULT: Test 'Pass' PASS
+    Stdout Should Contain    DEFAULT: Closing
     Stderr Should Be Empty
 
 Custom console with named argument
