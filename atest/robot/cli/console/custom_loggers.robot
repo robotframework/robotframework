@@ -53,9 +53,10 @@ Custom console with named argument
     Stderr Should Be Empty
 
 Custom console with wrong arguments
+    ${path} =    Normalize Path    ${CONSOLES}${/}CustomConsole.py
     Run Tests Without Processing Output    --console ${CONSOLES}${/}CustomConsole.py:too:many:args    misc/pass_and_fail.robot
-    Stderr Should Start With    [ ERROR ] Taking console '
+    Stderr Should Be Equal To    [ ERROR ] Taking console '${CONSOLES}${/}CustomConsole.py:too:many:args' into use failed: Importing console '${path}' failed: Console 'CustomConsole' expected 0 to 1 arguments, got 3.${USAGE TIP}\n
 
 Non-existing custom console
     Run Tests Without Processing Output    --console NonExistent    misc/pass_and_fail.robot
-    Stderr Should Start With    [ ERROR ] Taking console 'NonExistent' into use failed: Importing console 'NonExistent' failed: ModuleNotFoundError: No module named 'NonExistent'
+    Stderr Should Match Regexp    \\[ ERROR \\] Taking console 'NonExistent' into use failed: Importing console 'NonExistent' failed: ModuleNotFoundError: No module named 'NonExistent'.*\\n\\nTry --help for usage information\\.
