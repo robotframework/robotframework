@@ -106,7 +106,7 @@ class Logger(AbstractLogger):
 
     def register_console_logger(
         self,
-        type="verbose",
+        logger="verbose",
         width=78,
         colors="AUTO",
         links="AUTO",
@@ -114,7 +114,7 @@ class Logger(AbstractLogger):
         stdout=None,
         stderr=None,
     ):
-        console = ConsoleOutput(type, width, colors, links, markers, stdout, stderr)
+        console = ConsoleOutput(logger, width, colors, links, markers, stdout, stderr)
         self.__console = console
         self._relay_cached_messages(console)
 

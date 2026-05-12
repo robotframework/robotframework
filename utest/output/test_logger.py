@@ -265,23 +265,23 @@ class TestLogger(unittest.TestCase):
                 pass
 
         console = MyConsole()
-        self.logger.register_console_logger(type=console)
+        self.logger.register_console_logger(logger=console)
         assert_true(self.logger._console is not None)
         assert_true(self.logger._console.listener is console)
 
     def test_custom_console_logger_by_path(self):
-        self.logger.register_console_logger(type=CUSTOM_CONSOLE)
+        self.logger.register_console_logger(logger=CUSTOM_CONSOLE)
         assert_equal(self.logger._console.listener.__class__.__name__, "CustomConsole")
         assert_equal(self.logger._console.listener.name, "DEFAULT")
 
     def test_custom_console_logger_by_path_with_args(self):
-        self.logger.register_console_logger(type=CUSTOM_CONSOLE + ":MYARG")
+        self.logger.register_console_logger(logger=CUSTOM_CONSOLE + ":MYARG")
         assert_equal(self.logger._console.listener.__class__.__name__, "CustomConsole")
         assert_equal(self.logger._console.listener.name, "MYARG")
 
     def test_custom_console_logger_bad_import(self):
         assert_raises(
-            DataError, self.logger.register_console_logger, type="NonExistentModule"
+            DataError, self.logger.register_console_logger, logger="NonExistentModule"
         )
 
     def _number_of_registered_loggers_should_be(self, number, logger=None):

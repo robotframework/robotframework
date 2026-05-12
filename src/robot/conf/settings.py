@@ -639,7 +639,7 @@ class RobotSettings(_BaseSettings):
     @property
     def console_output_config(self):
         return {
-            "type": self.console_type,
+            "logger": self.console_type,
             "width": self.console_width,
             "colors": self.console_colors,
             "links": self.console_links,

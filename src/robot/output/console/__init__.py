@@ -19,7 +19,7 @@ from .verbose import VerboseOutput
 
 
 def ConsoleOutput(
-    type="verbose",
+    logger="verbose",
     width=78,
     colors="AUTO",
     links="AUTO",
@@ -29,23 +29,14 @@ def ConsoleOutput(
 ):
     from ..listeners import ListenerFacade
 
-    output = _create_builtin_output(type, width, colors, links, markers, stdout, stderr)
-    if output is not None:
-        return ListenerFacade.create(output, kind="console")
-    # Custom console: type is a path/module name (str) or an object instance.
-    return ListenerFacade.create(type, kind="console")
-
-
-def _create_builtin_output(type, width, colors, links, markers, stdout, stderr):
-    if not isinstance(type, str):
-        return None
-    upper = type.upper()
-    if upper == "VERBOSE":
-        return VerboseOutput(width, colors, links, markers, stdout, stderr)
-    if upper == "DOTTED":
-        return DottedOutput(width, colors, links, stdout, stderr)
-    if upper == "QUIET":
-        return QuietOutput(colors, stderr)
-    if upper == "NONE":
-        return NoOutput()
-    return None
+    if isinstance(logger, str):
+        upper = logger.upper()
+        if upper == "VERBOSE":
+            logger = VerboseOutput(width, colors, links, markers, stdout, stderr)
+        elif upper == "DOTTED":
+            logger = DottedOutput(width, colors, links, stdout, stderr)
+        elif upper == "QUIET":
+            logger = QuietOutput(colors, stderr)
+        elif upper == "NONE":
+            logger = NoOutput()
+    return ListenerFacade.create(logger, kind="console")
