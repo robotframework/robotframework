@@ -72,6 +72,7 @@ class FileLogger(AbstractLogger, LoggerApi):
         )
 
     def result_file(self, kind, path):
+        kind = kind.title() if kind != "XUNIT" else "XUnit"
         self.info(f"{kind}: {path}")
 
     def close(self):

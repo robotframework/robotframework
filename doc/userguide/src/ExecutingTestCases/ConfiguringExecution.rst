@@ -3,7 +3,7 @@ Configuring execution
 
 This section explains different command line options that can be used
 for configuring the `test execution`_ or `post-processing
-outputs`_. Options related to generated `output files`_ are discussed in
+outputs`_. Options related to generated `result files`_ are discussed in
 the next section.
 
 .. contents::
@@ -360,7 +360,7 @@ same as not specifying this option at all.
          using the :option:`--merge` command line option.
 
 __ `When no tests match selection`_
-__ `Merging outputs`_
+__ `Merging results`_
 
 Re-executing failed test suites
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

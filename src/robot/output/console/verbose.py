@@ -15,15 +15,12 @@
 
 import sys
 from pathlib import Path
-from typing import Literal, TYPE_CHECKING
+from typing import Literal
 
 from robot.errors import DataError
 from robot.utils import get_console_length, getshortdoc, isatty, pad_console_length
 
 from .highlighting import HighlightingStream
-
-if TYPE_CHECKING:
-    from robot import result, running
 
 
 class VerboseOutput:
@@ -77,30 +74,12 @@ class VerboseOutput:
         if msg.level in ("WARN", "ERROR") and msg.console:
             self.writer.error(msg.message, msg.level, clear=self.running_test)
 
-    def start_keyword(self, data: "running.Keyword", result: "result.Keyword"):
-        self.start_body_item(data, result)
-
-    def end_keyword(self, data: "running.Keyword", result: "result.Keyword"):
-        self.end_body_item(data, result)
-
-    def output_file(self, path: Path):
-        self.result_file("Output", path)
-
-    def report_file(self, path: Path):
-        self.result_file("Report", path)
-
-    def log_file(self, path: Path):
-        self.result_file("Log", path)
-
-    def xunit_file(self, path: Path):
-        self.result_file("XUnit", path)
-
-    def debug_file(self, path: Path):
-        self.result_file("Debug", path)
+    def output_file(self, path: "Path | None"):
+        self.writer.result_file("OUTPUT", path)
 
     def result_file(
         self,
-        kind: "Literal['Output', 'Report', 'Log', 'XUnit', 'Debug']",
+        kind: Literal["OUTPUT", "REPORT", "LOG", "XUNIT", "DEBUG"],
         path: Path,
     ):
         self.writer.result_file(kind, path)

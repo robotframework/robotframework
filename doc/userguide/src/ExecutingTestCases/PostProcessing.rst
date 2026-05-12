@@ -87,20 +87,20 @@ are created by default, but they can be disabled by using value `NONE`
 
    rebot --include smoke --output smoke.xml --log none --report none original.xml
 
-Combining outputs
+Combining results
 -----------------
 
 An important feature in Rebot is its ability to combine
-outputs from different test execution rounds. This capability allows,
+results from different execution rounds. This capability allows,
 for example, running the same test cases on different environments and
-generating an overall report from all outputs. Combining outputs is
+generating an overall report from all outputs. Combining results is
 extremely easy, all that needs to be done is giving several output
 files as arguments::
 
    rebot output1.xml output2.xml
    rebot outputs/*.xml
 
-When outputs are combined, a new top-level test suite is created so
+When results are combined, a new top-level test suite is created so
 that test suites in the given output files are its child suites. This
 works the same way when `multiple test data files or directories are
 executed`__, and also in this case the name of the top-level test
@@ -109,12 +109,12 @@ and spaces. These automatically generated names are not that good, and
 it is often a good idea to use :option:`--name` to give a more
 meaningful name::
 
-   rebot --name Browser_Compatibility firefox.xml opera.xml safari.xml ie.xml
-   rebot --include smoke --name Smoke_Tests c:\results\*.xml
+   rebot --name "Browser Compatibility" firefox.xml opera.xml safari.xml ie.xml
+   rebot --include smoke --name Smoke c:\results\*.xml
 
 __ `Specifying test data to be executed`_
 
-Merging outputs
+Merging results
 ---------------
 
 If same tests are re-executed or a single test suite executed in pieces,
@@ -126,7 +126,6 @@ arguments and all other command line options can be used with it normally::
 
    rebot --merge original.xml merged.xml
    rebot --merge --name Example first.xml second.xml third.xml
-
 
 When suites are merged, documentation, suite setup and suite teardown are got
 from the last merged suite. Suite metadata from all merged suites is preserved
@@ -148,7 +147,7 @@ accomplished by `selecting test cases`_ by names (:option:`--test` and
 or by previous status (:option:`--rerunfailed` or :option:`--rerunfailedsuites`).
 
 Combining re-execution results with the original results using the default
-`combining outputs`_ approach does not work too well. The main problem is
+`combining results`_ approach does not work too well. The main problem is
 that you get separate test suites and possibly already fixed failures are
 also shown. In this situation it is better to use :option:`--merge (-R)`
 option to tell Rebot to merge the results instead. In practice this

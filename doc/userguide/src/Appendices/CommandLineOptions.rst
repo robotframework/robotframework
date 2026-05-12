@@ -36,14 +36,14 @@ Command line options for test execution
   --skiponfailure <tag>   Tests having given tag will be `skipped`_ if they fail.
   -v, --variable <name:value>   Sets `individual variables`_.
   -V, --variablefile <path:args>  Sets variables using `variable files`_.
-  -d, --outputdir <dir>   Defines where to `create output files`_.
+  -d, --outputdir <dir>   Defines where to `create result files`_.
   -o, --output <file>     Sets the path to the generated `output file`_.
   --legacyoutput          Creates output file in `Robot Framework 6.x compatible format`_.
   -l, --log <file>        Sets the path to the generated `log file`_.
   -r, --report <file>     Sets the path to the generated `report file`_.
   -x, --xunit <file>      Sets the path to the generated `xUnit compatible result file`_.
   -b, --debugfile <file>  A `debug file`_ that is written during execution.
-  -T, --timestampoutputs  `Adds a timestamp`_ to `output files`_ listed above.
+  -T, --timestampoutputs  `Adds a timestamp`_ to `result files`_ listed above.
   --splitlog              `Split log file`_ into smaller pieces that open in
                           browser transparently.
   --logtitle <title>      `Sets a title`_ for the generated test log.
@@ -100,7 +100,7 @@ Command line options for post-processing outputs
 ------------------------------------------------
 
   --rpa                   Turn on `generic automation`_ mode.
-  -R, --merge             Changes result combining behavior to `merging <merging outputs_>`__.
+  -R, --merge             Changes result combining behavior to `merging <merging results_>`__.
   -N, --name <name>       `Sets the name`_ of the top level test suite.
   -D, --doc <document>    `Sets the documentation`_ of the top-level test suite.
   -M, --metadata <name:value>  `Sets free metadata`_ for the top-level test suite.
@@ -110,13 +110,13 @@ Command line options for post-processing outputs
   -s, --suite <name>      `Selects the test suites`_ by name.
   -i, --include <tag>     `Selects the test cases`_ by tag.
   -e, --exclude <tag>     `Selects the test cases`_ by tag.
-  -d, --outputdir <dir>   Defines where to `create output files`_.
+  -d, --outputdir <dir>   Defines where to `create result files`_.
   -o, --output <file>     Sets the path to the generated `output file`_.
   --legacyoutput          Creates output file in `Robot Framework 6.x compatible format`_.
   -l, --log <file>        Sets the path to the generated `log file`_.
   -r, --report <file>     Sets the path to the generated `report file`_.
   -x, --xunit <file>      Sets the path to the generated `xUnit compatible result file`_.
-  -T, --timestampoutputs  `Adds a timestamp`_ to `output files`_ listed above.
+  -T, --timestampoutputs  `Adds a timestamp`_ to `result files`_ listed above.
   --splitlog              `Split log file`_ into smaller pieces that open in
                           browser transparently.
   --logtitle <title>      `Sets a title`_ for the generated test log.
@@ -172,9 +172,9 @@ Command line options for post-processing outputs
 .. _Randomizes: `Randomizing execution order`_
 .. _individual variables: `Command line variables`_
 
-.. _create output files: `Output directory`_
+.. _create result files: `Output directory`_
 .. _Robot Framework 6.x compatible format: `Legacy XML format`_
-.. _Adds a timestamp: `Timestamping output files`_
+.. _Adds a timestamp: `Timestamping result files`_
 .. _Split log file: `Splitting logs`_
 .. _Sets a title: `Setting titles`_
 .. _Sets background colors: `Setting background colors`_

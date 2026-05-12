@@ -4,7 +4,7 @@ Listener interface
 Robot Framework's listener interface provides a powerful mechanism for getting
 notifications and for inspecting and modifying data and results during execution.
 Listeners are called, for example, when suites, tests and keywords start and end,
-when output files are ready, and finally when the whole execution ends.
+when result files are ready, and finally when the whole execution ends.
 Example usages include communicating with external test management systems,
 sending a message when a test fails, and modifying tests during execution.
 
@@ -381,29 +381,33 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |   resource file. `None` when using the :name:`Import           |
    |                  |                  |   Variables` keyword.                                          |
    +------------------+------------------+----------------------------------------------------------------+
-   | output_file      | path             | Called when writing to an `output file`_ is ready.             |
+   | output_file      | path             | Called when the `output file`_ is ready.                       |
    |                  |                  |                                                                |
    |                  |                  | `path` is an absolute path to the file as a string or          |
    |                  |                  | a string `None` if creating the output file is disabled.       |
    +------------------+------------------+----------------------------------------------------------------+
-   | log_file         | path             | Called when writing to a `log file`_ is ready.                 |
+   | log_file         | path             | Called when the `log file`_ is ready.                          |
    |                  |                  |                                                                |
    |                  |                  | `path` is an absolute path to the file as a string.            |
+   |                  |                  |                                                                |
    |                  |                  | Not called if creating the log file is disabled.               |
    +------------------+------------------+----------------------------------------------------------------+
-   | report_file      | path             | Called when writing to a `report file`_ is ready.              |
+   | report_file      | path             | Called when the `report file`_ is ready.                       |
    |                  |                  |                                                                |
    |                  |                  | `path` is an absolute path to the file as a string.            |
+   |                  |                  |                                                                |
    |                  |                  | Not called if creating the report file is disabled.            |
    +------------------+------------------+----------------------------------------------------------------+
-   | xunit_file       | path             | Called when writing to an `xunit file`_ is ready.              |
+   | xunit_file       | path             | Called when the `xunit file`_ is ready.                        |
    |                  |                  |                                                                |
    |                  |                  | `path` is an absolute path to the file as a string.            |
+   |                  |                  |                                                                |
    |                  |                  | Only called if creating the xunit file is enabled.             |
    +------------------+------------------+----------------------------------------------------------------+
-   | debug_file       | path             | Called when writing to a `debug file`_ is ready.               |
+   | debug_file       | path             | Called when the `debug file`_ is ready.                        |
    |                  |                  |                                                                |
    |                  |                  | `path` is an absolute path to the file as a string.            |
+   |                  |                  |                                                                |
    |                  |                  | Only called if creating the debug file is enabled.             |
    +------------------+------------------+----------------------------------------------------------------+
    | close            |                  | Called when the whole test execution ends.                     |
@@ -603,30 +607,62 @@ and in the API docs of the optional ListenerV3_ base class.
    |                       |                  | dictionary is replaced with an object representing the imported    |
    |                       |                  | variable file.                                                     |
    +-----------------------+------------------+--------------------------------------------------------------------+
-   | output_file           | path             | Called when writing to an `output file`_ is ready.                 |
+   | result_file           | kind, path       | Called, by default, when a `result file`_ like output or log       |
+   |                       |                  | is ready.                                                          |
+   |                       |                  |                                                                    |
+   |                       |                  | `kind` is a string `OUTPUT`, `REPORT`, `LOG`, `XUNIT` or `DEBUG`.  |
+   |                       |                  | `path` is an absolute path to the file as a `pathlib.Path` object. |
+   |                       |                  |                                                                    |
+   |                       |                  | Not called if a more specific result file related method like      |
+   |                       |                  | `output_file` or `log_file` is implemented or when creating        |
+   |                       |                  | a result file is disabled.                                         |
+   |                       |                  |                                                                    |
+   |                       |                  | New in Robot Framework 7.5.                                        |
+   +-----------------------+------------------+--------------------------------------------------------------------+
+   | output_file           | path             | Called when the `output file`_ is ready.                           |
    |                       |                  |                                                                    |
    |                       |                  | `path` is an absolute path to the file as a `pathlib.Path` object  |
    |                       |                  | or the `None` object if creating the output file is disabled.      |
+   |                       |                  |                                                                    |
+   |                       |                  | Starting from Robot Framework 7.5, the generic `result_file`       |
+   |                       |                  | method is called if this method is not implemented and creating    |
+   |                       |                  | the output file is not disabled.                                   |
    +-----------------------+------------------+--------------------------------------------------------------------+
-   | log_file              | path             | Called when writing to a `log file`_ is ready.                     |
+   | log_file              | path             | Called when `log file`_ is ready.                                  |
    |                       |                  |                                                                    |
    |                       |                  | `path` is an absolute path to the file as a `pathlib.Path` object. |
+   |                       |                  |                                                                    |
    |                       |                  | Not called if creating the log file is disabled.                   |
+   |                       |                  |                                                                    |
+   |                       |                  | Starting from Robot Framework 7.5, the generic `result_file`       |
+   |                       |                  | method is called if this method is not implemented.                |
    +-----------------------+------------------+--------------------------------------------------------------------+
-   | report_file           | path             | Called when writing to a `report file`_ is ready.                  |
+   | report_file           | path             | Called when `report file`_ is ready.                               |
    |                       |                  |                                                                    |
    |                       |                  | `path` is an absolute path to the file as a `pathlib.Path` object. |
+   |                       |                  |                                                                    |
    |                       |                  | Not called if creating the report file is disabled.                |
+   |                       |                  |                                                                    |
+   |                       |                  | Starting from Robot Framework 7.5, the generic `result_file`       |
+   |                       |                  | method is called if this method is not implemented.                |
    +-----------------------+------------------+--------------------------------------------------------------------+
-   | xunit_file            | path             | Called when writing to an `xunit file`_ is ready.                  |
+   | xunit_file            | path             | Called when `xunit file`_ is ready.                                |
    |                       |                  |                                                                    |
    |                       |                  | `path` is an absolute path to the file as a `pathlib.Path` object. |
+   |                       |                  |                                                                    |
    |                       |                  | Only called if creating the xunit file is enabled.                 |
+   |                       |                  |                                                                    |
+   |                       |                  | Starting from Robot Framework 7.5, the generic `result_file`       |
+   |                       |                  | method is called if this method is not implemented.                |
    +-----------------------+------------------+--------------------------------------------------------------------+
-   | debug_file            | path             | Called when writing to a `debug file`_ is ready.                   |
+   | debug_file            | path             | Called when `debug file`_ is ready.                                |
    |                       |                  |                                                                    |
    |                       |                  | `path` is an absolute path to the file as a `pathlib.Path` object. |
+   |                       |                  |                                                                    |
    |                       |                  | Only called if creating the debug file is enabled.                 |
+   |                       |                  |                                                                    |
+   |                       |                  | Starting from Robot Framework 7.5, the generic `result_file`       |
+   |                       |                  | method is called if this method is not implemented.                |
    +-----------------------+------------------+--------------------------------------------------------------------+
    | close                 |                  | Called when the whole test execution ends.                         |
    |                       |                  |                                                                    |

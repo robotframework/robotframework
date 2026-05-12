@@ -99,7 +99,8 @@ class TestImportByPath(unittest.TestCase):
         path = create_temp_file("test.py")
         os.chdir(path.parent)
         try:
-            self._import_and_verify(Path("test.py"), remove="test")
+            path = Path("test.py").resolve()
+            self._import_and_verify(path, remove="test")
             self._assert_imported_message("test", path)
         finally:
             os.chdir(orig_cwd)
