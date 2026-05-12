@@ -272,12 +272,12 @@ class TestLogger(unittest.TestCase):
     def test_custom_console_logger_by_path(self):
         self.logger.register_console_logger(type=CUSTOM_CONSOLE)
         assert_equal(self.logger._console.listener.__class__.__name__, "CustomConsole")
-        assert_equal(self.logger._console.listener.marker, "CUSTOM")
+        assert_equal(self.logger._console.listener.name, "DEFAULT")
 
     def test_custom_console_logger_by_path_with_args(self):
-        self.logger.register_console_logger(type=CUSTOM_CONSOLE + ":MYMARKER")
+        self.logger.register_console_logger(type=CUSTOM_CONSOLE + ":MYARG")
         assert_equal(self.logger._console.listener.__class__.__name__, "CustomConsole")
-        assert_equal(self.logger._console.listener.marker, "MYMARKER")
+        assert_equal(self.logger._console.listener.name, "MYARG")
 
     def test_custom_console_logger_bad_import(self):
         assert_raises(

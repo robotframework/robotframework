@@ -3,27 +3,30 @@ import sys
 
 class CustomConsole:
 
-    def __init__(self, marker="CUSTOM"):
-        self.marker = marker
+    def __init__(self, name="DEFAULT"):
+        self.name = name
+
+    def write(self, message):
+        sys.__stdout__.write(message + "\n")
 
     def start_suite(self, data, result):
-        sys.__stdout__.write(f"{self.marker}: Suite '{result.name}' started\n")
+        self.write(f"{self.name}: Suite '{result.name}' started")
 
     def end_test(self, data, result):
-        sys.__stdout__.write(f"{self.marker}: Test '{result.name}' {result.status}\n")
+        self.write(f"{self.name}: Test '{result.name}' {result.status}")
 
     def message(self, msg):
         if msg.level in ("WARN", "ERROR"):
-            sys.__stdout__.write(f"{self.marker} {msg.level}: {msg.message}\n")
+            self.write(f"{self.name} {msg.level}: {msg.message}")
 
     def output_file(self, path):
-        sys.__stdout__.write(f"{self.marker}: Output: {path}\n")
+        self.write(f"{self.name}: Output: {path}")
 
     def report_file(self, path):
-        sys.__stdout__.write(f"{self.marker}: Report: {path}\n")
+        self.write(f"{self.name}: Report: {path}")
 
     def log_file(self, path):
-        sys.__stdout__.write(f"{self.marker}: Log: {path}\n")
+        self.write(f"{self.name}: Log: {path}")
 
     def close(self):
-        sys.__stdout__.write(f"{self.marker}: Closing\n")
+        self.write(f"{self.name}: Closing")

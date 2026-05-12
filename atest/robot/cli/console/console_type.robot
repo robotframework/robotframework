@@ -42,25 +42,25 @@ None
 
 Custom console by path
     Run Tests    --console ${CONSOLES}${/}CustomConsole.py    misc/pass_and_fail.robot
-    Stdout Should Contain    CUSTOM: Suite 'Pass And Fail' started
-    Stdout Should Contain    CUSTOM: Test 'Pass' PASS
-    Stdout Should Contain    CUSTOM: Test 'Fail' FAIL
-    Stdout Should Contain    CUSTOM: Output:
-    Stdout Should Contain    CUSTOM: Closing
+    Stdout Should Contain    DEFAULT: Suite 'Pass And Fail' started
+    Stdout Should Contain    DEFAULT: Test 'Pass' PASS
+    Stdout Should Contain    DEFAULT: Test 'Fail' FAIL
+    Stdout Should Contain    DEFAULT: Output:
+    Stdout Should Contain    DEFAULT: Closing
     Stderr Should Be Empty
 
 Custom console by path with argument
-    Run Tests    --console ${CONSOLES}${/}CustomConsole.py:MARKER    misc/pass_and_fail.robot
-    Stdout Should Contain    MARKER: Suite 'Pass And Fail' started
-    Stdout Should Contain    MARKER: Test 'Pass' PASS
-    Stdout Should Contain    MARKER: Closing
+    Run Tests    --console ${CONSOLES}${/}CustomConsole.py:ARGUMENT    misc/pass_and_fail.robot
+    Stdout Should Contain    ARGUMENT: Suite 'Pass And Fail' started
+    Stdout Should Contain    ARGUMENT: Test 'Pass' PASS
+    Stdout Should Contain    ARGUMENT: Closing
     Stderr Should Be Empty
 
 Custom console by module name
     Run Tests    --console CustomConsole --pythonpath ${CONSOLES}    misc/pass_and_fail.robot
-    Stdout Should Contain    CUSTOM: Suite 'Pass And Fail' started
-    Stdout Should Contain    CUSTOM: Test 'Pass' PASS
-    Stdout Should Contain    CUSTOM: Closing
+    Stdout Should Contain    DEFAULT: Suite 'Pass And Fail' started
+    Stdout Should Contain    DEFAULT: Test 'Pass' PASS
+    Stdout Should Contain    DEFAULT: Closing
     Stderr Should Be Empty
 
 Custom console as module with functions
@@ -81,7 +81,7 @@ Custom console by dotted name
     Stderr Should Be Empty
 
 Custom console with named argument
-    Run Tests    --console ${CONSOLES}${/}CustomConsole.py:marker=NAMED    misc/pass_and_fail.robot
+    Run Tests    --console ${CONSOLES}${/}CustomConsole.py:name=NAMED    misc/pass_and_fail.robot
     Stdout Should Contain    NAMED: Suite 'Pass And Fail' started
     Stdout Should Contain    NAMED: Test 'Pass' PASS
     Stdout Should Contain    NAMED: Closing
