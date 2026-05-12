@@ -1,5 +1,5 @@
 import unittest
-from os.path import abspath, dirname, join
+from pathlib import Path
 
 from robot.errors import DataError
 from robot.output.console.verbose import VerboseOutput
@@ -7,14 +7,14 @@ from robot.output.logger import Logger
 from robot.output.loggerapi import LoggerApi
 from robot.utils.asserts import assert_equal, assert_raises, assert_true
 
-CUSTOM_CONSOLE = join(
-    dirname(abspath(__file__)),
-    "..",
-    "..",
-    "atest",
-    "testresources",
-    "consoles",
-    "CustomConsole.py",
+CUSTOM_CONSOLE = str(
+    Path(__file__).resolve().parent
+    / ".."
+    / ".."
+    / "atest"
+    / "testresources"
+    / "consoles"
+    / "CustomConsole.py"
 )
 
 
