@@ -482,37 +482,41 @@ class ListenerV2:
         """Called after a variable file has been imported."""
 
     def output_file(self, path: str):
-        """Called after the output file has been created.
+        """Called when the output file is ready.
 
-        ``path`` is an absolute path to the output file or
-        a string ``None`` if creating the output file is disabled.
+        :param path: An absolute path to the output file or
+            a string ``None`` if creating the output file is disabled.
         """
 
     def log_file(self, path: str):
-        """Called after the log file has been created.
+        """Called when the log file is ready.
 
-        ``path`` is an absolute path to the log file.
+        :param path: An absolute path to the log file.
+
         Not called if creating the log file is disabled.
         """
 
     def report_file(self, path: str):
-        """Called after the report file has been created.
+        """Called when the report file is ready.
 
-        ``path`` is an absolute path to the report file.
+        :param path: An absolute path to the report file.
+
         Not called if creating the report file is disabled.
         """
 
     def xunit_file(self, path: str):
-        """Called after the xunit compatible output file has been created.
+        """Called when the xunit compatible output file is ready.
 
-        ``path`` is an absolute path to the xunit file.
+        :param path: An absolute path to the xunit file.
+
         Only called if creating the xunit file is enabled.
         """
 
     def debug_file(self, path: str):
-        """Called after the debug file has been created.
+        """Called when the debug file is ready.
 
-        ``path`` is an absolute path to the debug file.
+        :param path: An absolute path to the debug file.
+
         Only called if creating the debug file is enabled.
         """
 
@@ -1001,10 +1005,10 @@ class ListenerV3:
         """
 
     def output_file(self, path: "Path | None"):
-        """Called after the output file has been created.
+        """Called when the output file is ready.
 
-        ``path`` is an absolute path to the output file or
-        ``None`` if creating the output file is disabled.
+        :param path: An absolute path to the output file or
+          ``None`` if creating the output file is disabled.
 
         Starting from Robot Framework 7.5, the default implementation calls
         :meth:`result_file` if creating the output file is not disabled.
@@ -1013,9 +1017,10 @@ class ListenerV3:
             self.result_file("OUTPUT", path)
 
     def log_file(self, path: Path):
-        """Called after the log file has been created.
+        """Called when the log file is ready.
 
-        ``path`` is an absolute path to the log file.
+        :param path: An absolute path to the log file.
+
         Not called if creating the log file is disabled.
 
         Starting from Robot Framework 7.5, the default implementation calls
@@ -1024,9 +1029,10 @@ class ListenerV3:
         self.result_file("LOG", path)
 
     def report_file(self, path: Path):
-        """Called after the report file has been created.
+        """Called when the report file is ready.
 
-        ``path`` is an absolute path to the report file.
+        :param path: An absolute path to the report file.
+
         Not called if creating the report file is disabled.
 
         Starting from Robot Framework 7.5, the default implementation calls
@@ -1035,9 +1041,10 @@ class ListenerV3:
         self.result_file("REPORT", path)
 
     def xunit_file(self, path: Path):
-        """Called after the xunit compatible output file has been created.
+        """Called when the xunit compatible output file is ready.
 
-        ``path`` is an absolute path to the xunit file.
+        :param path: An absolute path to the xunit file.
+
         Only called if creating the xunit file is enabled.
 
         Starting from Robot Framework 7.5, the default implementation calls
@@ -1046,9 +1053,10 @@ class ListenerV3:
         self.result_file("XUNIT", path)
 
     def debug_file(self, path: Path):
-        """Called after the debug file has been created.
+        """Called when the debug file is ready.
 
-        ``path`` is an absolute path to the debug file.
+        :param path: An absolute path to the debug file.
+
         Only called if creating the debug file is enabled.
 
         Starting from Robot Framework 7.5, the default implementation calls
