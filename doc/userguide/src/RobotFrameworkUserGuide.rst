@@ -66,7 +66,7 @@
 .. include:: ExecutingTestCases/TaskExecution.rst
 .. include:: ExecutingTestCases/PostProcessing.rst
 .. include:: ExecutingTestCases/ConfiguringExecution.rst
-.. include:: ExecutingTestCases/OutputFiles.rst
+.. include:: ExecutingTestCases/ResultFiles.rst
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Extending Robot Framework
@@ -175,10 +175,10 @@
 .. _execution errors: `Errors and warnings during execution`_
 .. _test execution errors: `execution errors`_
 .. _simple pattern: `Simple patterns`_
+.. _result file: `Result files`_
+.. _output files: `Output file`_
 .. _output: `Output file`_
-.. _outputs: `output`_
-.. _output files: `output`_
-.. _XML output files: `output`_
+.. _XML output files: `output files`_
 .. _log: `Log file`_
 .. _logs: log_
 .. _log files: log_
