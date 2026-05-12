@@ -7,7 +7,7 @@ class CustomConsole:
         self.name = name
 
     def write(self, message):
-        sys.__stdout__.write(message + "\n")
+        print(message, file=sys.__stdout__)
 
     def start_suite(self, data, result):
         self.write(f"{self.name}: Suite '{result.name}' started")

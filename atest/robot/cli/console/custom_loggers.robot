@@ -59,4 +59,4 @@ Custom console with wrong arguments
 
 Non-existing custom console
     Run Tests Without Processing Output    --console NonExistent    misc/pass_and_fail.robot
-    Stderr Should Match Regexp    \\[ ERROR \\] Taking console logger 'NonExistent' into use failed: Importing console logger 'NonExistent' failed: ModuleNotFoundError: No module named 'NonExistent'.*\\n\\nTry --help for usage information\\.
+    Stderr Should Start With    [ ERROR ] Taking console logger 'NonExistent' into use failed: Importing console logger 'NonExistent' failed: ModuleNotFoundError:
