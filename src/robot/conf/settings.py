@@ -521,6 +521,8 @@ class RobotSettings(_BaseSettings):
             "Output",
             "LogLevel",
             "TimestampOutputs",
+            "ConsoleType",
+            "ConsoleTypeQuiet",
         }
         for opt in settings._opts:
             if opt in self and opt not in not_copied:
@@ -705,6 +707,8 @@ class RebotSettings(_BaseSettings):
         "StartTime"         : ("starttime", None),
         "EndTime"           : ("endtime", None),
         "Merge"             : ("merge", False),
+        "ConsoleType"       : ("console", "verbose"),
+        "ConsoleTypeQuiet"  : ("quiet", False),
     }  # fmt: skip
 
     def _output_disabled(self):
@@ -765,8 +769,15 @@ class RebotSettings(_BaseSettings):
         return self["Merge"]
 
     @property
+    def console(self):
+        if self["ConsoleTypeQuiet"]:
+            return "quiet"
+        return self["ConsoleType"]
+
+    @property
     def console_output_config(self):
         return {
+            "console": self.console,
             "colors": self.console_colors,
             "links": self.console_links,
             "stdout": self["StdOut"],
