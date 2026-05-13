@@ -10,7 +10,7 @@ ${V3}             ${DATADIR}/output/listener_interface/ResultFiles.py
 *** Test Cases ***
 Result files with v2 listener
     VAR    ${options}
-    ...    --listener "${V2}:${PATH}"
+    ...    --listener "${V2}${:}${PATH}"
     ...    --output myout.xml
     ...    --report myrep.html
     ...    --log mylog.html
@@ -26,7 +26,7 @@ Result files with v2 listener
 
 Result files disables with v2 listener
     VAR    ${options}
-    ...    --listener "${V2}:${PATH}:output_file_disabled=True"
+    ...    --listener "${V2}${:}${PATH}${:}output_file_disabled=True"
     ...    --log NONE
     ...    --report NONE
     ...    --output NONE
@@ -36,7 +36,7 @@ Result files disables with v2 listener
 
 Result files with v3 listener
     VAR    ${options}
-    ...    --listener "${V3}:${PATH}"
+    ...    --listener "${V3}${:}${PATH}"
     ...    --output myout.xml
     ...    --report myrep.html
     ...    --log mylog.html
@@ -52,7 +52,7 @@ Result files with v3 listener
 
 Result files disables with v3 listener
     VAR    ${options}
-    ...    --listener "${V3}:${PATH}:output_file_disabled=True"
+    ...    --listener "${V3}${:}${PATH}${:}output_file_disabled=True"
     ...    --log NONE
     ...    --report NONE
     ...    --output NONE
@@ -62,7 +62,7 @@ Result files disables with v3 listener
 
 Only 'result_file' method with v3 listener
     VAR    ${options}
-    ...    --listener "${V3}:${PATH}:only_result_file=True"
+    ...    --listener "${V3}${:}${PATH}${:}only_result_file=True"
     ...    --output myout.xml
     ...    --report myrep.html
     ...    --log mylog.html
@@ -78,7 +78,7 @@ Only 'result_file' method with v3 listener
 
 Result files disables with v3 listener having only 'result_file' method
     VAR    ${options}
-    ...    --listener "${V3}:${PATH}:output_file_disabled=True:only_result_file=True"
+    ...    --listener "${V3}${:}${PATH}${:}output_file_disabled=True:only_result_file=True"
     ...    --log NONE
     ...    --report NONE
     ...    --output NONE

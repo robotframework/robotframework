@@ -82,7 +82,7 @@ TimeoutError occurring during listener method is propagaged
 Run Tests With Listeners
     ${args} =    Join Command Line
     ...    --listener    ListenAll
-    ...    --listener    ListenAll:%{TEMPDIR}${/}${ALL_FILE2}
+    ...    --listener    ListenAll${:}%{TEMPDIR}${/}${ALL_FILE2}
     ...    --listener    module_listener
     ...    --listener    listeners.ListenSome
     ...    --listener    VerifyAttributes
