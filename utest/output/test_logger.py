@@ -1,9 +1,21 @@
 import unittest
+from pathlib import Path
 
+from robot.errors import DataError
 from robot.output.console.verbose import VerboseOutput
 from robot.output.logger import Logger
 from robot.output.loggerapi import LoggerApi
-from robot.utils.asserts import assert_equal, assert_true
+from robot.utils.asserts import assert_equal, assert_raises, assert_true
+
+CUSTOM_CONSOLE = str(
+    Path(__file__).resolve().parent
+    / ".."
+    / ".."
+    / "atest"
+    / "testresources"
+    / "consoles"
+    / "CustomConsole.py"
+)
 
 
 class MessageMock:
@@ -246,6 +258,31 @@ class TestLogger(unittest.TestCase):
             [listener, lib_listener, console, output, other],
         )
         assert_equal(list(logger), list(logger.end_loggers))
+
+    def test_custom_console_logger_by_object(self):
+        class MyConsole:
+            def start_suite(self, data, result):
+                pass
+
+        console = MyConsole()
+        self.logger.register_console_logger(console=console)
+        assert_true(self.logger._console is not None)
+        assert_true(self.logger._console.listener is console)
+
+    def test_custom_console_logger_by_path(self):
+        self.logger.register_console_logger(console=CUSTOM_CONSOLE)
+        assert_equal(self.logger._console.listener.__class__.__name__, "CustomConsole")
+        assert_equal(self.logger._console.listener.name, "DEFAULT")
+
+    def test_custom_console_logger_by_path_with_args(self):
+        self.logger.register_console_logger(console=CUSTOM_CONSOLE + ":MYARG")
+        assert_equal(self.logger._console.listener.__class__.__name__, "CustomConsole")
+        assert_equal(self.logger._console.listener.name, "MYARG")
+
+    def test_custom_console_logger_bad_import(self):
+        assert_raises(
+            DataError, self.logger.register_console_logger, console="NonExistentModule"
+        )
 
     def _number_of_registered_loggers_should_be(self, number, logger=None):
         logger = logger or self.logger

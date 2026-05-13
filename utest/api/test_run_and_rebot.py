@@ -452,5 +452,67 @@ class TestRelativeImportsFromPythonpath(RunningTestCase):
         self._assert_output(errors, "")
 
 
+class TestCustomConsole(RunningTestCase):
+    data = join(ROOT, "atest", "testdata", "misc", "pass_and_fail.robot")
+    remove_files = [OUTPUT_PATH, LOG_PATH, REPORT_PATH]
+
+    def test_run_with_console_object(self):
+        console = RecordingConsole()
+        assert_equal(run_without_outputs(self.data, console=console), 1)
+        methods = {name for name, _ in console.calls}
+        assert_true("start_suite" in methods)
+        assert_true("end_suite" in methods)
+        assert_true("start_test" in methods)
+        assert_true("end_test" in methods)
+        assert_true("close" in methods)
+        self._assert_outputs()
+
+    def test_run_with_console_object_gets_result_file_notifications(self):
+        console = RecordingConsole()
+        assert_equal(
+            run(
+                self.data,
+                output=OUTPUT_PATH,
+                log=LOG_PATH,
+                report=REPORT_PATH,
+                console=console,
+            ),
+            1,
+        )
+        methods = {name for name, _ in console.calls}
+        assert_true("output_file" in methods)
+        assert_true("log_file" in methods)
+        assert_true("report_file" in methods)
+
+
+class RecordingConsole:
+    def __init__(self):
+        self.calls = []
+
+    def start_suite(self, data, result):
+        self.calls.append(("start_suite", data.name))
+
+    def end_suite(self, data, result):
+        self.calls.append(("end_suite", data.name))
+
+    def start_test(self, data, result):
+        self.calls.append(("start_test", data.name))
+
+    def end_test(self, data, result):
+        self.calls.append(("end_test", data.name))
+
+    def output_file(self, path):
+        self.calls.append(("output_file", str(path)))
+
+    def log_file(self, path):
+        self.calls.append(("log_file", str(path)))
+
+    def report_file(self, path):
+        self.calls.append(("report_file", str(path)))
+
+    def close(self):
+        self.calls.append(("close", None))
+
+
 if __name__ == "__main__":
     unittest.main()

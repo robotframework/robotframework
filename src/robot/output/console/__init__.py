@@ -13,15 +13,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import DataError
-
 from .dotted import DottedOutput
 from .quiet import NoOutput, QuietOutput
 from .verbose import VerboseOutput
 
 
 def ConsoleOutput(
-    type="verbose",
+    console="verbose",
     width=78,
     colors="AUTO",
     links="AUTO",
@@ -31,18 +29,14 @@ def ConsoleOutput(
 ):
     from ..listeners import ListenerFacade
 
-    upper = type.upper()
-    if upper == "VERBOSE":
-        output = VerboseOutput(width, colors, links, markers, stdout, stderr)
-    elif upper == "DOTTED":
-        output = DottedOutput(width, colors, links, stdout, stderr)
-    elif upper == "QUIET":
-        output = QuietOutput(colors, stderr)
-    elif upper == "NONE":
-        output = NoOutput()
-    else:
-        raise DataError(
-            f"Invalid console output type '{type}'. Available "
-            f"'VERBOSE', 'DOTTED', 'QUIET' and 'NONE'."
-        )
-    return ListenerFacade.create(output)
+    if isinstance(console, str):
+        upper = console.upper()
+        if upper == "VERBOSE":
+            console = VerboseOutput(width, colors, links, markers, stdout, stderr)
+        elif upper == "DOTTED":
+            console = DottedOutput(width, colors, links, stdout, stderr)
+        elif upper == "QUIET":
+            console = QuietOutput(colors, stderr)
+        elif upper == "NONE":
+            console = NoOutput()
+    return ListenerFacade.create(console, kind="console logger")

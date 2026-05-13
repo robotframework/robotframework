@@ -37,10 +37,6 @@ None
     Stdout Should Be    empty.txt
     Stderr Should Be    empty.txt
 
-Invalid
-    Run Tests Without Processing Output    --Console Invalid    misc/pass_and_fail.robot
-    Stderr Should Be Equal To    [ ERROR ] Invalid console output type 'Invalid'. Available 'VERBOSE', 'DOTTED', 'QUIET' and 'NONE'.${USAGE TIP}\n
-
 --dotted
     Run and verify tests    --dotted
     Stdout Should Be    warnings_and_errors_stdout_dotted.txt

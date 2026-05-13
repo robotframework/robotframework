@@ -639,7 +639,7 @@ class RobotSettings(_BaseSettings):
     @property
     def console_output_config(self):
         return {
-            "type": self.console_type,
+            "console": self.console,
             "width": self.console_width,
             "colors": self.console_colors,
             "links": self.console_links,
@@ -649,7 +649,7 @@ class RobotSettings(_BaseSettings):
         }
 
     @property
-    def console_type(self):
+    def console(self):
         if self["ConsoleTypeQuiet"]:
             return "quiet"
         if self["ConsoleTypeDotted"]:

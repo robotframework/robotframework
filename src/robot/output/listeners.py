@@ -126,20 +126,23 @@ class ListenerFacade(LoggerApi, ABC):
         listener: "str | object",
         log_level: "LogLevel | SettableLevel" = "INFO",
         library: object = None,
+        kind: str = "listener",
     ) -> "ListenerFacade":
         if isinstance(log_level, str):
             log_level = LogLevel(log_level)
         try:
-            return cls._import_listener(listener, log_level, library)
+            return cls._import_listener(listener, log_level, library, kind)
         except DataError as err:
             name = listener if isinstance(listener, str) else type_name(listener)
-            raise DataError(f"Taking listener '{name}' into use failed: {err}")
+            raise DataError(f"Taking {kind} '{name}' into use failed: {err}")
 
     @classmethod
-    def _import_listener(cls, listener, log_level, library=None) -> "ListenerFacade":
+    def _import_listener(
+        cls, listener, log_level, library=None, kind="listener"
+    ) -> "ListenerFacade":
         if isinstance(listener, str):
             name, args = split_args_from_name_or_path(listener)
-            importer = Importer("listener", logger=LOGGER)
+            importer = Importer(kind, logger=LOGGER)
             listener = importer.import_class_or_module(
                 os.path.normpath(name),
                 instantiate_with_args=args,
