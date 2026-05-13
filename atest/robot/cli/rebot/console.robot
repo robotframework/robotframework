@@ -67,3 +67,7 @@ Custom console as module with functions
 Non-existing custom console
     Run Rebot Without Processing Output    --console NonExistent    ${INPUT FILE}
     Stderr Should Start With    [ ERROR ] Taking console logger 'NonExistent' into use failed:
+
+Dotted is not supported
+    Run Rebot Without Processing Output    --console dotted    ${INPUT FILE}
+    Stderr Should Be Equal To    [ ERROR ] Console type 'dotted' is not supported with Rebot.${USAGE TIP}\n

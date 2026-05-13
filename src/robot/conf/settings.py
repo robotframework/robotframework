@@ -772,7 +772,10 @@ class RebotSettings(_BaseSettings):
     def console(self):
         if self["ConsoleTypeQuiet"]:
             return "quiet"
-        return self["ConsoleType"]
+        console = self["ConsoleType"]
+        if isinstance(console, str) and console.upper() == "DOTTED":
+            raise DataError("Console type 'dotted' is not supported with Rebot.")
+        return console
 
     @property
     def console_output_config(self):
