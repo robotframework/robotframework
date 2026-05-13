@@ -272,72 +272,54 @@ class TestDocSplitter(unittest.TestCase):
 
 class TestSplitArgsFromNameOrPath(unittest.TestCase):
 
-    def setUp(self):
-        self.method = split_args_from_name_or_path
+    def verify(self, value, expected):
+        assert_equal(split_args_from_name_or_path(value), expected)
 
     def test_with_no_args(self):
         assert not os.path.exists("name"), "does not work if you have name folder!"
-        assert_equal(self.method("name"), ("name", []))
+        self.verify("name", ("name", []))
 
     def test_with_args(self):
         assert not os.path.exists("name"), "does not work if you have name folder!"
-        assert_equal(self.method("name:arg"), ("name", ["arg"]))
-        assert_equal(self.method("listener:v1:v2:v3"), ("listener", ["v1", "v2", "v3"]))
-        assert_equal(self.method("aa:bb:cc"), ("aa", ["bb", "cc"]))
+        self.verify("name:arg", ("name", ["arg"]))
+        self.verify("listener:v1:v2:v3", ("listener", ["v1", "v2", "v3"]))
+        self.verify("aa:bb:cc", ("aa", ["bb", "cc"]))
 
     def test_empty_args(self):
         assert not os.path.exists("foo"), "does not work if you have foo folder!"
-        assert_equal(self.method("foo:"), ("foo", [""]))
-        assert_equal(self.method("bar:arg1::arg3"), ("bar", ["arg1", "", "arg3"]))
-        assert_equal(self.method("3:"), ("3", [""]))
+        self.verify("foo:", ("foo", [""]))
+        self.verify("bar:arg1::arg3", ("bar", ["arg1", "", "arg3"]))
+        self.verify("3:", ("3", [""]))
 
     def test_semicolon_as_separator(self):
-        assert_equal(self.method("name;arg"), ("name", ["arg"]))
-        assert_equal(self.method("name;1;2;3"), ("name", ["1", "2", "3"]))
-        assert_equal(self.method("name;"), ("name", [""]))
+        self.verify("name;arg", ("name", ["arg"]))
+        self.verify("name;1;2;3", ("name", ["1", "2", "3"]))
+        self.verify("name;", ("name", [""]))
 
     def test_alternative_separator_in_value(self):
-        assert_equal(self.method("name;v:1;v:2"), ("name", ["v:1", "v:2"]))
-        assert_equal(self.method("name:v;1:v;2"), ("name", ["v;1", "v;2"]))
+        self.verify("name;v:1;v:2", ("name", ["v:1", "v:2"]))
+        self.verify("name:v;1:v;2", ("name", ["v;1", "v;2"]))
 
     def test_windows_path_without_args(self):
-        assert_equal(self.method("C:\\name.py"), ("C:\\name.py", []))
-        assert_equal(self.method("X:\\APPS\\listener"), ("X:\\APPS\\listener", []))
-        assert_equal(self.method("C:/varz.py"), ("C:/varz.py", []))
+        self.verify("C:\\name.py", ("C:\\name.py", []))
+        self.verify("X:\\APPS\\listener", ("X:\\APPS\\listener", []))
+        self.verify("C:/varz.py", ("C:/varz.py", []))
 
     def test_windows_path_with_args(self):
-        assert_equal(
-            self.method("C:\\name.py:arg1"),
-            ("C:\\name.py", ["arg1"]),
-        )
-        assert_equal(
-            self.method("D:\\APPS\\listener:v1:b2:z3"),
-            ("D:\\APPS\\listener", ["v1", "b2", "z3"]),
-        )
-        assert_equal(
-            self.method("C:/varz.py:arg"),
-            ("C:/varz.py", ["arg"]),
-        )
-        assert_equal(
-            self.method("C:\\file.py:arg;with;alternative;separator"),
+        self.verify("C:\\name.py:arg1", ("C:\\name.py", ["arg1"]))
+        self.verify("D:\\APPS\\listener:a:b:c", ("D:\\APPS\\listener", ["a", "b", "c"]))
+        self.verify("C:/varz.py:arg", ("C:/varz.py", ["arg"]))
+        self.verify(
+            "C:\\file.py:arg;with;alternative;separator",
             ("C:\\file.py", ["arg;with;alternative;separator"]),
         )
 
     def test_windows_path_with_semicolon_separator(self):
-        assert_equal(
-            self.method("C:\\name.py;arg1"),
-            ("C:\\name.py", ["arg1"]),
-        )
-        assert_equal(
-            self.method("D:\\APPS\\listener;v1;b2;z3"),
-            ("D:\\APPS\\listener", ["v1", "b2", "z3"]),
-        )
-        assert_equal(
-            self.method("C:/varz.py;arg"),
-            ("C:/varz.py", ["arg"]),
-        )
-        assert_equal(
-            self.method("C:\\file.py;arg:with:alternative:separator"),
+        self.verify("C:\\name.py;arg1", ("C:\\name.py", ["arg1"]))
+        self.verify("D:\\APPS\\listener;a;b;c", ("D:\\APPS\\listener", ["a", "b", "c"]))
+        self.verify("C:/varz.py;arg", ("C:/varz.py", ["arg"]))
+        self.verify(
+            "C:\\file.py;arg:with:alternative:separator",
             ("C:\\file.py", ["arg:with:alternative:separator"]),
         )
 
@@ -345,8 +327,8 @@ class TestSplitArgsFromNameOrPath(unittest.TestCase):
         path = "robot-framework-unit-test-file-12q3405909qasf"
         open(path, "w", encoding="ASCII").close()
         try:
-            assert_equal(self.method(path), (abspath(path), []))
-            assert_equal(self.method(path + ":arg"), (abspath(path), ["arg"]))
+            self.verify(path, (abspath(path), []))
+            self.verify(path + ":arg", (abspath(path), ["arg"]))
         finally:
             os.remove(path)
 
@@ -357,7 +339,7 @@ class TestSplitArgsFromNameOrPath(unittest.TestCase):
         path = "robot:framework:test:1:2:42"
         os.mkdir(path)
         try:
-            assert_equal(self.method(path), (abspath(path), []))
+            self.verify(path, (abspath(path), []))
         finally:
             os.rmdir(path)
 
