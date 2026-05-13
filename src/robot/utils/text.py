@@ -151,7 +151,7 @@ def split_args_from_name_or_path(name):
 def _get_arg_separator_index_from_name_or_path(name):
     colon_index = name.find(":")
     # Handle absolute Windows paths
-    if colon_index == 1 and name[2:3] in ("/", "\\"):
+    if colon_index == 1 and name[0].isalpha() and name[2:3] in ("/", "\\"):
         colon_index = name.find(":", colon_index + 1)
     semicolon_index = name.find(";")
     if colon_index == -1:
