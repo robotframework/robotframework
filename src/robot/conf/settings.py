@@ -69,6 +69,8 @@ class _BaseSettings:
         "FlattenKeywords"  : ("flattenkeywords", []),
         "PreRebotModifiers": ("prerebotmodifier", []),
         "StatusRC"         : ("statusrc", True),
+        "ConsoleType"      : ("console", "verbose"),
+        "ConsoleTypeQuiet" : ("quiet", False),
         "ConsoleColors"    : ("consolecolors", "AUTO"),
         "ConsoleLinks"     : ("consolelinks", "AUTO"),
         "PythonPath"       : ("pythonpath", []),
@@ -495,9 +497,7 @@ class RobotSettings(_BaseSettings):
         "Parsers"            : ("parser", []),
         "PreRunModifiers"    : ("prerunmodifier", []),
         "Listeners"          : ("listener", []),
-        "ConsoleType"        : ("console", "verbose"),
         "ConsoleTypeDotted"  : ("dotted", False),
-        "ConsoleTypeQuiet"   : ("quiet", False),
         "ConsoleWidth"       : ("consolewidth", 78),
         "ConsoleMarkers"     : ("consolemarkers", "AUTO"),
         "DebugFile"          : ("debugfile", None),
@@ -707,8 +707,6 @@ class RebotSettings(_BaseSettings):
         "StartTime"         : ("starttime", None),
         "EndTime"           : ("endtime", None),
         "Merge"             : ("merge", False),
-        "ConsoleType"       : ("console", "verbose"),
-        "ConsoleTypeQuiet"  : ("quiet", False),
     }  # fmt: skip
 
     def _output_disabled(self):
