@@ -1068,6 +1068,213 @@ class Process:
         except AttributeError:
             raise RuntimeError(f"Unsupported signal '{name}'.")
 
+    def send_input_to_process(
+        self,
+        input_data: "str | bytes | None" = None,
+        handle: Handle = None,
+        end_of_line: "str | None" = "\n",
+    ) -> None:
+        """Sends data to the process standard input without waiting for completion.
+
+        If ``handle`` is not given, uses the current `active process`.
+
+        ``input_data`` is the data to be sent to the process stdin. It can be
+        a string or bytes. If given as a string, it will be encoded using the
+        output encoding configured for the process.
+
+        ``end_of_line`` is appended after the input data. It defaults to ``\\n``
+        (newline). Set to ``None`` to send data without appending anything.
+
+        Note that this keyword does NOT wait for the process to complete.
+        Use `Wait For Process` to wait for completion and get the results.
+        The process must be started with ``stdin=PIPE``.
+
+        Example:
+        | ${process} = | Start Process | python | -i | stdin=PIPE | stdout=PIPE | stderr=PIPE |
+        | Send Input To Process | print('Hello') |
+        | Send Input To Process | print('World') |
+        | Send Input To Process | 2+2 | end_of_line=${None} |
+        | Send Input To Process | *2 |
+        | ${result} = | Wait For Process | ${process} |
+        | Should Contain | ${result.stdout} | Hello |
+        | Should Contain | ${result.stdout} | 6 |
+        """
+        process = self._processes[handle]
+        if process.stdin is None:
+            raise RuntimeError(
+                "Process started without stdin=PIPE. Cannot send data to stdin."
+            )
+
+        # Encode input data if it's a string
+        if isinstance(input_data, str):
+            data_to_send = input_data
+            if end_of_line is not None:
+                data_to_send += end_of_line
+            input_bytes = console_encode(data_to_send, force=True)
+        elif isinstance(input_data, bytes):
+            input_bytes = input_data
+            if end_of_line is not None:
+                input_bytes += console_encode(end_of_line, force=True)
+        else:
+            input_bytes = (
+                console_encode(end_of_line, force=True)
+                if end_of_line is not None
+                else b""
+            )
+
+        logger.info(f"Sending data to process stdin.")
+        process.stdin.write(input_bytes)
+        process.stdin.flush()
+
+    def read_output_from_process(
+        self,
+        handle: Handle = None,
+        stream: "str" = "stdout",
+        lines: "int | None" = 1,
+        wait: "float | None" = 0.1,
+    ):
+        """Read process output from files redirected during startup.
+
+        ``handle`` selects the process (uses active process if omitted).
+
+        ``stream`` selects which stream to return: ``stdout``, ``stderr``
+        or ``both``. ``both`` returns a tuple ``(stdout, stderr)``.
+
+        ``lines`` limits returned output to the last N lines. Default is
+        ``1``. Set to ``None`` or a non-positive value to return full output.
+
+        ``wait`` sets the time (in seconds) to wait before reading output from files.
+        Default is 0.1 seconds. Allows process to write output to file before reading.
+        Set to 0 or ``None`` to read immediately without waiting.
+
+        Process must be started with stdout and/or stderr redirected to files:
+        | Start Process | cmd | stdout=${file1} | stderr=${file2} |
+        | ${out} = | Read Output From Process | stream=stdout |
+        | Log | ${out} |
+
+        Raises error if process was not started with file redirection.
+        """
+        import time
+
+        # Wait for output to be written to files
+        if wait and wait > 0:
+            time.sleep(wait)
+
+        process = self._processes[handle]
+        result_obj = self._results.get(process)
+
+        stdout = b""
+        stderr = b""
+
+        # Read from files - files must have been specified
+        if result_obj and result_obj.stdout_path:
+            try:
+                logger.debug(f"Read std output from file:{result_obj.stdout_path}")
+                with open(result_obj.stdout_path, "rb") as f:
+                    stdout = f.read()
+            except (OSError, IOError) as e:
+                raise RuntimeError(
+                    f"Could not read stdout from {result_obj.stdout_path}: {e}"
+                )
+        else:
+            if stream in ("stdout", "both"):
+                raise RuntimeError(
+                    "Process not started with stdout redirected to file. "
+                    "Use: Start Process | cmd | stdout=/path/file |"
+                )
+
+        if result_obj and result_obj.stderr_path:
+            try:
+                logger.debug(f"Read error output from file:{result_obj.stderr_path}")
+                with open(result_obj.stderr_path, "rb") as f:
+                    stderr = f.read()
+            except (OSError, IOError) as e:
+                raise RuntimeError(
+                    f"Could not read stderr from {result_obj.stderr_path}: {e}"
+                )
+        else:
+            if stream in ("stderr", "both"):
+                raise RuntimeError(
+                    "Process not started with stderr redirected to file. "
+                    "Use: Start Process | cmd | stderr=/path/file |"
+                )
+
+        encoding = result_obj._output_encoding if result_obj else "CONSOLE"
+        out_text = console_decode(stdout, encoding)
+        err_text = console_decode(stderr, encoding)
+
+        out_text = out_text.replace("\r\n", "\n")
+        err_text = err_text.replace("\r\n", "\n")
+        if out_text.endswith("\n"):
+            out_text = out_text[:-1]
+        if err_text.endswith("\n"):
+            err_text = err_text[:-1]
+
+        def _trim(text: str) -> str:
+            if lines is None or lines <= 0:
+                return text
+            parts = text.splitlines()
+            if len(parts) <= lines:
+                return text
+            return "\n".join(parts[-lines:])
+
+        out_text = _trim(out_text)
+        err_text = _trim(err_text)
+
+        stream = (stream or "stdout").lower()
+        if stream == "stdout":
+            return out_text
+        if stream == "stderr":
+            return err_text
+        if stream == "both":
+            return out_text, err_text
+        raise RuntimeError("Invalid stream. Use 'stdout', 'stderr' or 'both'.")
+
+    def process_output_should_contain(
+        self,
+        expected: str,
+        handle: Handle = None,
+        stream: "str" = "stdout",
+        lines: "int | None" = 1,
+        wait: "float | None" = 0.1,
+    ):
+        """Verify that process output contains expected text.
+
+        Reads process output using `Read Output From Process` and verifies
+        that it contains the given ``expected`` text.
+
+        ``handle`` selects the process (uses active process if omitted).
+
+        ``stream`` selects which stream to check: ``stdout``, ``stderr`` or ``both``.
+
+        ``lines`` limits checked output to the last N lines. Default is ``1``.
+
+        ``wait`` sets the time to wait before reading, default 0.1 seconds.
+
+        Fails if the expected text is not found in the output.
+
+        Example:
+        | Start Process | cmd | stdout=out.txt | stderr=err.txt |
+        | Process Output Should Contain | Success |
+        | Process Output Should Contain | Error | stream=stderr |
+        """
+        output = self.read_output_from_process(
+            handle=handle, stream=stream, lines=lines, wait=wait
+        )
+
+        if isinstance(output, tuple):
+            # stream == "both"
+            out_text, err_text = output
+            combined = f"{out_text}\n{err_text}"
+        else:
+            combined = output
+
+        if expected not in combined:
+            raise AssertionError(
+                f"Expected text '{expected}' not found in process output.\n"
+                f"Output:\n{combined}"
+            )
+
     def get_process_id(self, handle: Handle = None) -> int:
         """Returns the process ID (pid) of the process as an integer.
 
