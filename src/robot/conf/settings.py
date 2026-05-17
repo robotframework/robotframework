@@ -69,6 +69,8 @@ class _BaseSettings:
         "FlattenKeywords"  : ("flattenkeywords", []),
         "PreRebotModifiers": ("prerebotmodifier", []),
         "StatusRC"         : ("statusrc", True),
+        "ConsoleType"      : ("console", "verbose"),
+        "ConsoleTypeQuiet" : ("quiet", False),
         "ConsoleColors"    : ("consolecolors", "AUTO"),
         "ConsoleLinks"     : ("consolelinks", "AUTO"),
         "PythonPath"       : ("pythonpath", []),
@@ -495,9 +497,7 @@ class RobotSettings(_BaseSettings):
         "Parsers"            : ("parser", []),
         "PreRunModifiers"    : ("prerunmodifier", []),
         "Listeners"          : ("listener", []),
-        "ConsoleType"        : ("console", "verbose"),
         "ConsoleTypeDotted"  : ("dotted", False),
-        "ConsoleTypeQuiet"   : ("quiet", False),
         "ConsoleWidth"       : ("consolewidth", 78),
         "ConsoleMarkers"     : ("consolemarkers", "AUTO"),
         "DebugFile"          : ("debugfile", None),
@@ -521,6 +521,8 @@ class RobotSettings(_BaseSettings):
             "Output",
             "LogLevel",
             "TimestampOutputs",
+            "ConsoleType",
+            "ConsoleTypeQuiet",
         }
         for opt in settings._opts:
             if opt in self and opt not in not_copied:
@@ -765,8 +767,15 @@ class RebotSettings(_BaseSettings):
         return self["Merge"]
 
     @property
+    def console(self):
+        if self["ConsoleTypeQuiet"]:
+            return "quiet"
+        return self["ConsoleType"]
+
+    @property
     def console_output_config(self):
         return {
+            "console": self.console,
             "colors": self.console_colors,
             "links": self.console_links,
             "stdout": self["StdOut"],
