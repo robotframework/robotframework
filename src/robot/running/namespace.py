@@ -23,6 +23,7 @@ from robot.libraries import STDLIBS
 from robot.output import LOGGER, Message
 from robot.utils import eq, find_file, normalize, RecommendationFinder, seq2str2
 
+from .builder.parsers import Parser
 from .context import EXECUTION_CONTEXTS
 from .importer import ImportCache, Importer
 from .invalidkeyword import InvalidKeyword
@@ -42,10 +43,18 @@ class Namespace:
         ".json",
     )
 
-    def __init__(self, variables, suite, resource, languages):
+    def __init__(
+        self,
+        variables,
+        suite,
+        resource,
+        languages,
+        resource_parsers: dict[str, Parser],
+    ):
         LOGGER.info(f"Initializing namespace for suite '{suite.full_name}'.")
         self.variables = variables
         self.languages = languages
+        self.resource_parsers = resource_parsers
         self._imports = resource.imports
         self._kw_store = KeywordStore(resource, languages)
         self._imported_variable_files = ImportCache()
@@ -97,7 +106,11 @@ class Namespace:
         path = self._resolve_name(import_)
         self._validate_not_importing_init_file(path)
         if overwrite or path not in self._kw_store.resources:
-            resource = IMPORTER.import_resource(path, self.languages)
+            resource = IMPORTER.import_resource(
+                path,
+                self.resource_parsers,
+                self.languages,
+            )
             self.variables.set_from_variable_section(resource.variables, overwrite)
             self._kw_store.resources[path] = resource
             self._handle_imports(resource.imports)
@@ -258,7 +271,6 @@ class Namespace:
 
 
 class KeywordStore:
-
     def __init__(self, suite_file, languages: Languages):
         self.suite_file = suite_file
         self.libraries = OrderedDict()
@@ -546,7 +558,6 @@ class KeywordStore:
 
 
 class KeywordRecommendationFinder:
-
     def __init__(self, *owners):
         self.owners = owners
 

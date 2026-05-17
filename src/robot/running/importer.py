@@ -20,6 +20,7 @@ from robot.output import LOGGER
 from robot.utils import normpath, seq2str, seq2str2
 
 from .builder import ResourceFileBuilder
+from .builder.parsers import Parser
 from .testlibraries import TestLibrary
 
 RESOURCE_EXTENSIONS = {
@@ -37,7 +38,6 @@ RESOURCE_EXTENSIONS = {
 
 
 class Importer:
-
     def __init__(self):
         self._library_cache = ImportCache()
         self._resource_cache = ImportCache()
@@ -74,21 +74,22 @@ class Importer:
             LOGGER.info(f"Imported library '{name}' with name '{alias}'.")
         return lib
 
-    def import_resource(self, path, lang=None):
-        self._validate_resource_extension(path)
+    def import_resource(self, path, custom_parsers: dict[str, Parser], lang=None):
+        self._validate_resource_extension(path, custom_parsers)
         if path in self._resource_cache:
             LOGGER.info(f"Found resource file '{path}' from cache.")
         else:
-            resource = ResourceFileBuilder(lang=lang).build(path)
+            resource = ResourceFileBuilder(custom_parsers, lang).build(path)
             self._resource_cache[path] = resource
         return self._resource_cache[path]
 
-    def _validate_resource_extension(self, path):
+    def _validate_resource_extension(self, path, parsers: dict[str, Parser]):
         extension = os.path.splitext(path)[1]
-        if extension.lower() not in RESOURCE_EXTENSIONS:
+        supported = RESOURCE_EXTENSIONS | {f".{ext}" for ext in parsers}
+        if extension.lower() not in supported:
             raise DataError(
                 f"Invalid resource file extension '{extension}'. "
-                f"Supported extensions are {seq2str(sorted(RESOURCE_EXTENSIONS))}."
+                f"Supported extensions are {seq2str(sorted(supported))}."
             )
 
     def _log_imported_library(self, name, args_str, lib):
