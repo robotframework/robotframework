@@ -177,16 +177,9 @@ class NoInitFileDirectoryParser(Parser):
 
 
 class CustomParser(Parser):
-
     def __init__(self, parser):
         self.parser = parser
-        if not getattr(parser, "parse", None):
-            raise TypeError(f"'{self.name}' does not have mandatory 'parse' method.")
-        if not self.extensions:
-            raise TypeError(
-                f"'{self.name}' does not have mandatory 'EXTENSION' or 'extension' "
-                f"attribute."
-            )
+        self._check_completeness(parser)
 
     @property
     def name(self) -> str:
@@ -228,3 +221,36 @@ class CustomParser(Parser):
                 f"Calling '{self.name}.{method_name}()' failed: {get_error_message()}"
             )
         return suite
+
+    def _check_completeness(self, parser):
+        parser_fn_count = 0
+
+        # TODO: Check fails when user parser inherits robot.api.interfaces.Parser
+        # if getattr(parser, "parse", None) and parser.parse != robot.api.interfaces.Parser.parse:
+
+        if getattr(parser, "parse", None):
+            if not self.extensions:
+                raise TypeError(
+                    f"'{self.name}' does not have mandatory 'EXTENSION' or 'extension' "
+                    f"attribute for method 'parse'."
+                )
+            parser_fn_count += 1
+
+        if getattr(parser, "parse_init", None):
+            if not self.extensions:
+                raise TypeError(
+                    f"'{self.name}' does not have mandatory 'EXTENSION' or 'extension' "
+                    f"attribute for method 'parse_init'."
+                )
+            parser_fn_count += 1
+
+        if getattr(parser, "parse_resource", None):
+            if not self.resource_extensions:
+                raise TypeError(
+                    f"'{self.name}' does not have mandatory 'RESOURCE_EXTENSION' or "
+                    f"'resource_extension' attribute for method 'parse_resource'."
+                )
+            parser_fn_count += 1
+
+        if parser_fn_count == 0:
+            raise TypeError(f"'{self.name}' does not have any parse methods.")
