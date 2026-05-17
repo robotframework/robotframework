@@ -101,7 +101,7 @@ class ResourceFile(ModelObject):
         """
         from .builder import ResourceFileBuilder
 
-        return ResourceFileBuilder(**config).build(path)
+        return ResourceFileBuilder(**config).build(Path(path))
 
     @classmethod
     def from_string(cls, string: str, **config) -> "ResourceFile":

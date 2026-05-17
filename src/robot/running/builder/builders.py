@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import traceback
 import warnings
 from os.path import normpath
 from pathlib import Path
@@ -22,16 +23,24 @@ from robot.conf import LanguagesLike
 from robot.errors import DataError
 from robot.output import LOGGER
 from robot.parsing import (
-    SuiteDirectory, SuiteFile, SuiteStructure, SuiteStructureBuilder,
-    SuiteStructureVisitor
+    SuiteDirectory,
+    SuiteFile,
+    SuiteStructure,
+    SuiteStructureBuilder,
+    SuiteStructureVisitor,
 )
 from robot.utils import Importer, seq2str, split_args_from_name_or_path, type_name
 
 from ..model import TestSuite
 from ..resourcemodel import ResourceFile
 from .parsers import (
-    CustomParser, JsonParser, MarkdownParser, NoInitFileDirectoryParser, Parser,
-    RestParser, RobotParser
+    CustomParser,
+    JsonParser,
+    MarkdownParser,
+    NoInitFileDirectoryParser,
+    Parser,
+    RestParser,
+    RobotParser,
 )
 from .settings import TestDefaults
 
@@ -112,8 +121,18 @@ class TestSuiteBuilder:
             resolved already at parsing time by default, but that can be
             changed by giving this argument ``False`` value.
         """
-        self.standard_parsers = self._get_standard_parsers(lang, process_curdir)
-        self.custom_parsers = self._get_custom_parsers(custom_parsers)
+        self.standard_suite_parsers = self._get_standard_suite_parsers(
+            lang,
+            process_curdir,
+        )
+        self.standard_resource_parsers = self._get_standard_resource_parsers(
+            lang,
+            process_curdir,
+        )
+        cust_parsers = self._get_custom_parsers(custom_parsers)
+        self.custom_suite_parsers = cust_parsers[0]
+        self.custom_resource_parsers = cust_parsers[1]
+
         self.defaults = defaults
         self.included_extensions = tuple(included_extensions or ())
         self.included_files = tuple(included_files or ())
@@ -127,7 +146,7 @@ class TestSuiteBuilder:
                 "the created suite instead."
             )
 
-    def _get_standard_parsers(
+    def _get_standard_suite_parsers(
         self,
         lang: LanguagesLike,
         process_curdir: bool,
@@ -148,8 +167,33 @@ class TestSuiteBuilder:
             "robot.md": markdown_parser,
         }
 
-    def _get_custom_parsers(self, parsers: Sequence[str]) -> "dict[str, CustomParser]":
-        custom_parsers = {}
+    def _get_standard_resource_parsers(
+        self,
+        lang: LanguagesLike,
+        process_curdir: bool,
+    ) -> "dict[str, Parser]":
+        robot_parser = RobotParser(lang, process_curdir)
+        rest_parser = RestParser(lang, process_curdir)
+        json_parser = JsonParser()
+        markdown_parser = MarkdownParser(lang, process_curdir)
+
+        # TODO: Finalize list
+        return {
+            "resource": robot_parser,
+            "robot": robot_parser,
+            # "rst": rest_parser,
+            # "rest": rest_parser,
+            # "json": json_parser,
+            # "rsrc": json_parser,
+            # "md": markdown_parser,
+            # "markdown": markdown_parser,
+        }
+
+    def _get_custom_parsers(
+        self, parsers: Sequence[str]
+    ) -> "tuple[dict[str, CustomParser], dict[str, CustomParser]]":
+        custom_suite_parsers = {}
+        custom_resource_parsers = {}
         importer = Importer("parser", LOGGER)
         for parser in parsers:
             if isinstance(parser, (str, Path)):
@@ -161,9 +205,12 @@ class TestSuiteBuilder:
                 custom_parser = CustomParser(parser)
             except TypeError as err:
                 raise DataError(f"Importing parser '{name}' failed: {err}")
+
             for ext in custom_parser.extensions:
-                custom_parsers[ext] = custom_parser
-        return custom_parsers
+                custom_suite_parsers[ext] = custom_parser
+            for ext in custom_parser.resource_extensions:
+                custom_resource_parsers[ext] = custom_parser
+        return (custom_suite_parsers, custom_resource_parsers)
 
     def build(self, *paths: "Path | str") -> TestSuite:
         """
@@ -171,13 +218,19 @@ class TestSuiteBuilder:
         :return: :class:`~robot.running.model.TestSuite` instance.
         """
         paths = self._normalize_paths(paths)
-        extensions = self.included_extensions + tuple(self.custom_parsers)
+        extensions = self.included_extensions + tuple(self.custom_suite_parsers)
         structure = SuiteStructureBuilder(extensions, self.included_files).build(*paths)
+
+        suite_parsers = self._get_suite_parsers()
+        resource_parsers = self._get_resource_parsers()
+
         suite = SuiteStructureParser(
-            self._get_parsers(paths),
+            suite_parsers,
+            resource_parsers,
             self.defaults,
             self.rpa,
         ).parse(structure)
+
         if not self.allow_empty_suite:
             self._validate_not_empty(suite, multi_source=len(paths) > 1)
         suite.remove_empty_suites(preserve_direct_children=len(paths) > 1)
@@ -199,18 +252,38 @@ class TestSuiteBuilder:
             )
         return tuple(paths)
 
-    def _get_parsers(self, paths: "Sequence[Path]") -> "dict[str | None, Parser]":
-        parsers = {None: NoInitFileDirectoryParser(), **self.custom_parsers}
-        robot_parser = self.standard_parsers["robot"]
-        for ext in (
-            *self.included_extensions,
-            *[self._get_ext(pattern) for pattern in self.included_files],
-            *[self._get_ext(pth) for pth in paths if pth.is_file()],
-        ):
-            ext = ext.lstrip(".").lower()
-            if ext not in parsers and ext.replace(".", "").isalnum():
-                parsers[ext] = self.standard_parsers.get(ext, robot_parser)
-        return parsers
+    def _get_suite_parsers(self) -> "dict[str | None, Parser]":
+        return {
+            None: NoInitFileDirectoryParser(),
+            **self.standard_suite_parsers,
+            **self.custom_suite_parsers,
+        }
+
+        # TODO: Ensure tests pass with new version
+        # parsers: dict[str | None, Parser] = {
+        #     None: NoInitFileDirectoryParser(),
+        #     **self.custom_suite_parsers,
+        # }
+
+        # for ext, std_parser in self.standard_suite_parsers.items():
+        #     if ext not in parsers:
+        #         parsers[ext] = std_parser
+
+        # return parsers
+
+    def _get_resource_parsers(self) -> "dict[str, Parser]":
+        return {
+            **self.standard_resource_parsers,
+            **self.custom_resource_parsers,
+        }
+
+        # parsers: dict[str, Parser] = {**custom_parsers}
+
+        # for ext, std_parser in self.standard_resource_parsers.items():
+        #     if ext not in parsers:
+        #         parsers[ext] = std_parser
+
+        # return parsers
 
     def _get_ext(self, path: "str | Path") -> str:
         if not isinstance(path, Path):
@@ -226,14 +299,15 @@ class TestSuiteBuilder:
 
 
 class SuiteStructureParser(SuiteStructureVisitor):
-
     def __init__(
         self,
-        parsers: "dict[str | None, Parser]",
+        suite_parsers: "dict[str | None, Parser]",
+        resource_parsers: "dict[str, Parser]",
         defaults: "TestDefaults | None" = None,
         rpa: "bool | None" = None,
     ):
-        self.parsers = parsers
+        self.suite_parsers = suite_parsers
+        self.resource_parsers = resource_parsers
         self.rpa = rpa
         self.defaults = defaults
         self.suite: TestSuite | None = None
@@ -280,37 +354,52 @@ class SuiteStructureParser(SuiteStructureVisitor):
     def _build_suite_file(self, structure: SuiteFile):
         source = cast(Path, structure.source)
         defaults = self.parent_defaults or TestDefaults()
-        parser = self.parsers[structure.extension]
+        parser = self.suite_parsers.get(
+            structure.extension,
+            self.suite_parsers["robot"],
+        )
         try:
             suite = parser.parse_suite_file(source, defaults)
             if not suite.tests:
                 LOGGER.info(f"Data source '{source}' has no tests or tasks.")
+            suite.custom_suite_parsers = self.suite_parsers
+            suite.custom_resource_parsers = self.resource_parsers
+            return suite
         except DataError as err:
             raise DataError(f"Parsing '{source}' failed: {err.message}") from err
-        return suite
 
     def _build_suite_directory(self, structure: SuiteDirectory):
         source = cast(Path, structure.init_file or structure.source)
         defaults = TestDefaults(self.parent_defaults)
-        parser = self.parsers[structure.extension]
+        parser = self.suite_parsers.get(
+            structure.extension,
+            self.suite_parsers["robot"],
+        )
         try:
             suite = parser.parse_init_file(source, defaults)
             if structure.is_multi_source:
                 suite.config(name="", source=None)
+            suite.custom_suite_parsers = self.suite_parsers
+            suite.custom_resource_parsers = self.resource_parsers
+            return suite, defaults
         except DataError as err:
             raise DataError(f"Parsing '{source}' failed: {err.message}")
-        return suite, defaults
 
 
 class ResourceFileBuilder:
-
-    def __init__(self, lang: LanguagesLike = None, process_curdir: bool = True):
+    def __init__(
+        self,
+        parsers: dict[str, Parser] = {},
+        lang: LanguagesLike = None,
+        process_curdir: bool = True,
+    ):
+        self.parsers = parsers
         self.lang = lang
         self.process_curdir = process_curdir
 
     def build(self, source: Path) -> ResourceFile:
-        if not isinstance(source, Path):
-            source = Path(source)
+        source = Path(source)
+
         LOGGER.info(f"Parsing resource file '{source}'.")
         resource = self._parse(source)
         if resource.imports or resource.variables or resource.keywords:
@@ -321,13 +410,11 @@ class ResourceFileBuilder:
         return resource
 
     def _parse(self, source: Path) -> ResourceFile:
-        suffix = source.suffix.lower()
-        if suffix in (".rst", ".rest"):
-            parser = RestParser(self.lang, self.process_curdir)
-        elif suffix in (".json", ".rsrc"):
-            parser = JsonParser()
-        elif suffix in (".md", ".markdown"):
-            parser = MarkdownParser(self.lang, self.process_curdir)
+        suffix = source.suffix.lower()[1:]
+
+        if suffix in self.parsers:
+            parser = self.parsers[suffix]
         else:
             parser = RobotParser(self.lang, self.process_curdir)
+
         return parser.parse_resource_file(source)

@@ -54,7 +54,7 @@ else:
     UnionType = type
 
 from robot import result, running
-from robot.running import TestDefaults as TestDefaults, TestSuite
+from robot.running import ResourceFile, TestDefaults as TestDefaults, TestSuite
 
 # Type aliases used by DynamicLibrary and HybridLibrary.
 Name = str
@@ -1105,10 +1105,10 @@ class Parser(ABC):
     """
 
     extension: "str | Sequence[str]"
+    resource_extension: "str | Sequence[str]"
 
-    @abstractmethod
     def parse(self, source: Path, defaults: TestDefaults) -> TestSuite:
-        """Mandatory method for parsing suite files.
+        """Optional method for parsing suite files.
 
         :param source: Path to the file to parse.
         :param defaults: Default values set for test in init files.
@@ -1129,5 +1129,12 @@ class Parser(ABC):
 
         If this method is not implemented, possible initialization files cause
         an error.
+        """
+        raise NotImplementedError
+
+    def parse_resource(self, source: Path) -> ResourceFile:
+        """Optional method for parsing resource files.
+
+        :param source: Path to the file to parse.
         """
         raise NotImplementedError

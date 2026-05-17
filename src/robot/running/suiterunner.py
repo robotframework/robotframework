@@ -18,10 +18,17 @@ from datetime import datetime
 from robot.errors import ExecutionStatus, PassExecution
 from robot.model import SuiteVisitor, TagPatterns
 from robot.result import (
-    Keyword as KeywordResult, Result, TestCase as TestResult, TestSuite as SuiteResult
+    Keyword as KeywordResult,
+    Result,
+    TestCase as TestResult,
+    TestSuite as SuiteResult,
 )
 from robot.utils import (
-    is_list_like, NormalizedDict, plural_or_not as s, seq2str, test_or_task
+    is_list_like,
+    NormalizedDict,
+    plural_or_not as s,
+    seq2str,
+    test_or_task,
 )
 from robot.variables import VariableScopes
 
@@ -34,7 +41,6 @@ from .timeouts import TestTimeout
 
 
 class SuiteRunner(SuiteVisitor):
-
     def __init__(self, output, settings):
         self.result = None
         self.output = output
@@ -83,7 +89,13 @@ class SuiteRunner(SuiteVisitor):
             self.settings.exit_on_error,
             self.settings.skip_teardown_on_exit,
         )
-        ns = Namespace(self.variables, result, data.resource, self.settings.languages)
+        ns = Namespace(
+            self.variables,
+            result,
+            data.resource,
+            self.settings.languages,
+            data.custom_resource_parsers,
+        )
         ns.start_suite()
         ns.variables.set_from_variable_section(data.resource.variables)
         EXECUTION_CONTEXTS.start_suite(result, ns, self.output, self.settings.dry_run)
