@@ -29,7 +29,7 @@ None
     Stdout Should Be Empty
     Stderr Should Be Empty
 
-Custom console by module name
+Custom console
     Run Rebot    --console CustomConsole --pythonpath ${CONSOLES} --log log.html --report report.html
     ...    ${INPUT FILE}
     Stdout Should Contain    DEFAULT: Output:

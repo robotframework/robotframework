@@ -266,7 +266,7 @@ Options
                           the same as with --listener.
                           Examples: --console verbose
                                     --console quiet
-                                    --console path/to/Con.py:arg1:arg2
+                                    --console path/to/Console.py:arg
     --quiet               Shortcut for `--console quiet`.
  -C --consolecolors auto|on|ansi|off  Use colors on console output or not.
                           auto: use colors when output not redirected (default)
