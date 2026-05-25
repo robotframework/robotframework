@@ -1105,3 +1105,7 @@ that covering them fully here in the User Guide is not possible. For more exampl
 you can see the `acceptance tests`__ using theses methods in various ways.
 
 __ https://github.com/robotframework/robotframework/tree/master/atest/testdata/output/listener_interface/body_items_v3
+
+The listener version 3 API is also used by `custom console loggers`_ that can
+replace the built-in console output (verbose, dotted, etc.) with a user-defined
+implementation.

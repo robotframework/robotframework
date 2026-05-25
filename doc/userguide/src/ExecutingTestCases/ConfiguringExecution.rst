@@ -817,6 +817,84 @@ Examples::
     robot --console quiet tests.robot
     robot --dotted tests.robot
 
+Custom console loggers
+~~~~~~~~~~~~~~~~~~~~~~
+
+In addition to the built-in values listed above, the :option:`--console` option
+accepts a path or name of a custom console logger class or module. The argument
+format is the same as with :option:`--listener`: a path to a Python file, a
+module name, or a dotted class name, with optional arguments separated by colons.
+
+Custom console loggers receive the same `listener version 3`__ method calls as
+normal listeners. Only methods that are implemented are called — missing methods
+are silently ignored. This means a minimal console only needs to implement the
+hooks it is interested in.
+
+__ `Listener interface`_
+
+Examples::
+
+    robot --console path/to/MyConsole.py tests.robot
+    robot --console MyConsole --pythonpath /path/to/consoles tests.robot
+    robot --console MyConsole.py:arg1:arg2 tests.robot
+
+The following example shows a custom console that provides a compact progress
+view with elapsed time and a running pass/fail counter — useful in CI pipelines
+or when the verbose output is too noisy but `dotted` does not provide enough
+context:
+
+.. sourcecode:: python
+
+    import sys
+    import time
+
+
+    class ProgressConsole:
+
+        def __init__(self):
+            self.passed = 0
+            self.failed = 0
+            self.skipped = 0
+            self.start_time = None
+
+        def start_suite(self, data, result):
+            if self.start_time is None:
+                self.start_time = time.time()
+
+        def end_test(self, data, result):
+            if result.passed:
+                self.passed += 1
+            elif result.failed:
+                self.failed += 1
+            else:
+                self.skipped += 1
+            elapsed = time.time() - self.start_time
+            total = self.passed + self.failed + self.skipped
+            status = '✓' if result.passed else '✗' if result.failed else '-'
+            print(f" {status} [{elapsed:>6.1f}s] {result.name}  "
+                  f"({total} done, {self.failed} failed)",
+                  file=sys.__stdout__)
+
+        def result_file(self, kind, path):
+            print(f"{kind}:  {path}", file=sys.__stdout__)
+
+        def close(self):
+            elapsed = time.time() - self.start_time
+            total = self.passed + self.failed + self.skipped
+            print(f"\n{total} tests in {elapsed:.1f}s: "
+                  f"{self.passed} passed, {self.failed} failed, "
+                  f"{self.skipped} skipped", file=sys.__stdout__)
+
+When using the `programmatic API`__, the ``console`` option also accepts
+a pre-instantiated Python object::
+
+    from robot import run
+    run('tests.robot', console=ProgressConsole())
+
+__ https://robot-framework.readthedocs.io
+
+.. note:: Support for custom console loggers is new in Robot Framework 7.5.
+
 Console width
 ~~~~~~~~~~~~~
 
