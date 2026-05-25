@@ -221,7 +221,7 @@ Controlling Rebot console output
 
 By default, Rebot reports output file paths and possible errors and warnings
 on the console. This can be controlled with the :option:`--console` option
-that supports the following values:
+that supports the following case-insensitive values:
 
 `verbose`
     Report output file paths, errors and warnings (default).
