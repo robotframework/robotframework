@@ -2,8 +2,8 @@ Configuring execution
 =====================
 
 This section explains different command line options that can be used
-for configuring the `test execution`_ or `post-processing
-outputs`_. Options related to generated `result files`_ are discussed in
+for configuring the `test execution`_ or `post-processing outputs`_.
+Options related to the generated `execution artifacts`_ are discussed in
 the next section.
 
 .. contents::

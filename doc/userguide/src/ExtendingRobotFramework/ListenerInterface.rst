@@ -607,8 +607,8 @@ and in the API docs of the optional ListenerV3_ base class.
    |                       |                  | dictionary is replaced with an object representing the imported    |
    |                       |                  | variable file.                                                     |
    +-----------------------+------------------+--------------------------------------------------------------------+
-   | result_file           | kind, path       | Called, by default, when a `result file`_ like output or log       |
-   |                       |                  | is ready.                                                          |
+   | result_file           | kind, path       | Called, by default, when a `result file <result files>`__          |
+   |                       |                  | like an output file or a log file is ready.                        |
    |                       |                  |                                                                    |
    |                       |                  | `kind` is a string `OUTPUT`, `REPORT`, `LOG`, `XUNIT` or `DEBUG`.  |
    |                       |                  | `path` is an absolute path to the file as a `pathlib.Path` object. |

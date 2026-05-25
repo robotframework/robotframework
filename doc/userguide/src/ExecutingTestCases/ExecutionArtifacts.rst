@@ -1,36 +1,34 @@
-Result files
-============
+Execution artifacts
+===================
 
-Several result files are created when tests are executed, and all of
-them are somehow related to execution results. This section discusses what
-files are created, how to configure where they are created, and how
+Several execution artifacts are created when tests are executed, and all of
+them are somehow related to execution results. This section discusses which
+result files are created, how to configure where they are created, and how
 to fine-tune their contents.
 
 .. contents::
    :depth: 2
    :local:
 
-Different result files
-----------------------
-
-This section explains what different result files can be created and
-how to configure where they are created. Result files are configured
-using command line options, which get the path to the result file in
-question as an argument. A special value `NONE` (case-insensitive)
-can be used to disable creating a certain result file.
-
 Output directory
-~~~~~~~~~~~~~~~~
+----------------
 
-All result files can be set using an absolute path, in which case they
-are created to the specified place, but in other cases, the path is
-considered relative to the output directory. The default output
-directory is the directory where the execution is started from, but it
-can be altered with the :option:`--outputdir (-d)` option. The path
-set with this option is, again, relative to the execution directory,
-but can naturally be given also as an absolute path. Regardless of how
-a path to an individual result file is obtained, its parent directory
-is created automatically, if it does not exist already.
+The output directory is the place where result files are stored by default.
+The default output directory is the directory where the execution is started
+from, but it can be altered with the :option:`--outputdir (-d)` option. The path
+set with this option is relative to the execution directory, but it can naturally
+be given also as an absolute path::
+
+   robot --outputdir results example.robot
+   robot --outputdir /tmp/outputs example.robot
+
+Result files
+------------
+
+This section explains what different result files can be created and how to
+configure them. As discussed above, result file paths are relative to the
+`output directory`_, but paths can also be absolute. A special value `NONE`
+(case-insensitive) can be used to disable creating a certain result file.
 
 .. _output.xml:
 
@@ -102,8 +100,8 @@ getting an higher-level overview.
 
 The command line option :option:`--log (-l)` determines where log
 files are created. Unless the special value `NONE` is used,
-log files are always created and their default name is
-:file:`log.html`.
+log files are always created. The default value is :file:`log.html`
+and paths are relative to the `output directory`_.
 
 .. figure:: src/ExecutingTestCases/log_passed.png
    :target: src/ExecutingTestCases/log_passed.html
@@ -136,9 +134,9 @@ color is green, if all tests pass and bright red if any test fails.
 Background can also be yellow, which means that all tests were skipped_.
 
 The command line option :option:`--report (-r)` determines where
-report files are created. Similarly as log files, reports are always
-created unless `NONE` is used as a value, and their default
-name is :file:`report.html`.
+report files are created. Similarly as with log files, reports files are
+automatically created unless `NONE` is used as a value, the default value is
+:file:`report.html` and values are relative to the `output directory`_.
 
 .. figure:: src/ExecutingTestCases/report_passed.png
    :target: src/ExecutingTestCases/report_passed.html
@@ -187,12 +185,11 @@ Debug files are plain text files that are written during the test
 execution. All messages got from test libraries are written to them,
 as well as information about started and ended test suites, test cases
 and keywords. Debug files can be used for monitoring the test
-execution. This can be done using, for example, a separate
-`fileviewer.py <https://bitbucket.org/robotframework/robottools/src/master/fileviewer/>`__
-tool, or in UNIX-like systems, simply with the ``tail -f`` command.
+execution.
 
 Debug files are not created unless the command line option
-:option:`--debugfile (-b)` is used explicitly.
+:option:`--debugfile (-b)` is used explicitly. They are relative to the
+`output directory`_ similarly as other result files.
 
 Timestamping result files
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -218,10 +215,6 @@ respectively.
 Example::
 
    robot --logtitle "Smoke Test Log" --reporttitle "Smoke Test Report" --include smoke my_tests/
-
-.. note:: Prior to Robot Framework 3.1, underscores in the given titles were
-          converted to spaces. Nowadays spaces need to be escaped or quoted
-          like in the example above.
 
 Setting background colors
 ~~~~~~~~~~~~~~~~~~~~~~~~~
