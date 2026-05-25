@@ -825,18 +825,18 @@ accepts a path or name of a custom console logger class or module. The argument
 format is the same as with :option:`--listener`: a path to a Python file, a
 module name, or a dotted class name, with optional arguments separated by colons.
 
+Examples::
+
+    robot --console path/to/myconsole.py tests.robot
+    robot --console MyConsole --pythonpath /path/to/consoles tests.robot
+    robot --console CustomConsole.py:arg1:arg2 tests.robot
+
 Custom console loggers receive the same `listener version 3`__ method calls as
 normal listeners. Only methods that are implemented are called — missing methods
 are silently ignored. This means a minimal console only needs to implement the
 hooks it is interested in.
 
 __ `Listener interface`_
-
-Examples::
-
-    robot --console path/to/MyConsole.py tests.robot
-    robot --console MyConsole --pythonpath /path/to/consoles tests.robot
-    robot --console MyConsole.py:arg1:arg2 tests.robot
 
 The following example shows a custom console that provides a compact progress
 view with elapsed time and a running pass/fail counter — useful in CI pipelines
