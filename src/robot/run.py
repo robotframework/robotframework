@@ -341,7 +341,7 @@ Options
                           the same as with --listener.
                           Examples: --console verbose
                                     --console MyConsole
-                                    --console path/to/Con.py:arg1:arg2
+                                    --console path/to/Console.py:arg
  -. --dotted              Shortcut for `--console dotted`.
     --quiet               Shortcut for `--console quiet`.
  -W --consolewidth chars  Width of the console output. Default is 78.

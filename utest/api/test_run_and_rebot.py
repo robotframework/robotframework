@@ -514,5 +514,26 @@ class RecordingConsole:
         self.calls.append(("close", None))
 
 
+class TestRebotCustomConsole(RunningTestCase):
+    data = join(ROOT, "atest", "testdata", "rebot", "created_normal.xml")
+    remove_files = [OUTPUT_PATH, LOG_PATH, REPORT_PATH]
+
+    def test_rebot_with_console_object(self):
+        console = RecordingConsole()
+        assert_equal(
+            rebot(self.data, output=OUTPUT_PATH, log=LOG_PATH,
+                  report=REPORT_PATH, console=console),
+            1,
+        )
+        methods = {name for name, _ in console.calls}
+        assert_true("output_file" in methods)
+        assert_true("log_file" in methods)
+        assert_true("report_file" in methods)
+        assert_true("close" in methods)
+        # Rebot doesn't run tests, so no execution events.
+        assert_true("start_suite" not in methods)
+        assert_true("end_test" not in methods)
+
+
 if __name__ == "__main__":
     unittest.main()

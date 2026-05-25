@@ -256,6 +256,18 @@ Options
                           failures. Error codes are returned normally.
     --prerebotmodifier class *  Class to programmatically modify the result
                           model before creating outputs.
+    --console console     How to report on the console.
+                          Built-in consoles:
+                          verbose: show output file paths (default)
+                          quiet:   no output except for errors/warnings
+                          none:    no output whatsoever
+                          Other values are interpreted as a custom
+                          console class or module. Argument format is
+                          the same as with --listener.
+                          Examples: --console verbose
+                                    --console quiet
+                                    --console path/to/Console.py:arg
+    --quiet               Shortcut for `--console quiet`.
  -C --consolecolors auto|on|ansi|off  Use colors on console output or not.
                           auto: use colors when output not redirected (default)
                           on:   always use colors
@@ -352,9 +364,9 @@ class Rebot(RobotFramework):
                 stderr=options.get("stderr"),
             )
             raise
-        LOGGER.register_console_logger(**settings.console_output_config)
         if settings.pythonpath:
             sys.path = settings.pythonpath + sys.path
+        LOGGER.register_console_logger(**settings.console_output_config)
         LOGGER.disable_message_cache()
         rc = ResultWriter(*datasources).write_results(settings)
         if rc < 0:
@@ -409,12 +421,14 @@ def rebot(*outputs, **options):
         from robot import rebot
 
         rebot('path/to/output.xml')
+        rebot('o1.xml', 'o2.xml', name='Example', log=None, console='quiet')
         with open('stdout.txt', 'w') as stdout:
             rebot('o1.xml', 'o2.xml', name='Example', log=None, stdout=stdout)
 
     Equivalent command line usage::
 
         rebot path/to/output.xml
+        rebot --name Example --log NONE --console quiet o1.xml o2.xml
         rebot --name Example --log NONE o1.xml o2.xml > stdout.txt
     """
     return Rebot().execute(*outputs, **options)
