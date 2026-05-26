@@ -19,6 +19,8 @@ There are two supported listener interface versions, `listener version 2`_ and
 called with different arguments. The newer listener version 3 is more powerful
 and generally recommended.
 
+.. note:: The listener interface is used also by `custom console loggers`_.
+
 __ `Registering listeners from command line`_
 __ `Libraries as listeners`_
 
@@ -1105,7 +1107,3 @@ that covering them fully here in the User Guide is not possible. For more exampl
 you can see the `acceptance tests`__ using theses methods in various ways.
 
 __ https://github.com/robotframework/robotframework/tree/master/atest/testdata/output/listener_interface/body_items_v3
-
-The listener version 3 API is also used by `custom console loggers`_ that can
-replace the built-in console output (verbose, dotted, etc.) with a user-defined
-implementation.

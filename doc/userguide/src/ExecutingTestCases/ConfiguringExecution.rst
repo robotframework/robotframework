@@ -831,7 +831,7 @@ Examples::
     robot --console MyConsole --pythonpath /path/to/consoles tests.robot
     robot --console CustomConsole.py:arg1:arg2 tests.robot
 
-Custom console loggers receive the same `listener version 3`__ method calls as
+Custom console loggers receive the same `listener method calls`__ as
 normal listeners. Only methods that are implemented are called — missing methods
 are silently ignored. This means a minimal console only needs to implement the
 hooks it is interested in.
@@ -845,7 +845,6 @@ context:
 
 .. sourcecode:: python
 
-    import sys
     import time
 
 
@@ -871,19 +870,22 @@ context:
             elapsed = time.time() - self.start_time
             total = self.passed + self.failed + self.skipped
             status = '✓' if result.passed else '✗' if result.failed else '-'
-            print(f" {status} [{elapsed:>6.1f}s] {result.name}  "
-                  f"({total} done, {self.failed} failed)",
-                  file=sys.__stdout__)
+            print(
+                f" {status} [{elapsed:>6.1f}s] {result.name}  "
+                f"({total} done, {self.failed} failed)"
+            )
 
         def result_file(self, kind, path):
-            print(f"{kind}:  {path}", file=sys.__stdout__)
+            print(f"{kind}:  {path}")
 
         def close(self):
             elapsed = time.time() - self.start_time
             total = self.passed + self.failed + self.skipped
-            print(f"\n{total} tests in {elapsed:.1f}s: "
-                  f"{self.passed} passed, {self.failed} failed, "
-                  f"{self.skipped} skipped", file=sys.__stdout__)
+            print(
+                f"\n{total} tests in {elapsed:.1f}s: "
+                f"{self.passed} passed, {self.failed} failed, "
+                f"{self.skipped} skipped"
+            )
 
 When using the `programmatic API`__, the ``console`` option also accepts
 a pre-instantiated Python object::
