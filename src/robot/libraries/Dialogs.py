@@ -18,19 +18,34 @@
 ``Dialogs`` is Robot Framework's standard library that provides means
 for pausing the test or task execution and getting input from users.
 
-Long lines in the provided messages are wrapped automatically. If you want
-to wrap lines manually, you can add newlines using the ``\\n`` character
-sequence.
+In addition to the simple `Pause Execution` dialog and the various
+input/selection dialogs, the library also provides an interactive
+`Debug` keyword which opens a step debugger with Step In / Step Over /
+Step Out / Continue / Abort controls, plus live keyword-stack and
+variables panels. See the `Debug` keyword's own documentation for full
+details and the explicit non-goals (no reverse execution, no DAP
+server, no Python-level stepping).
+
+All dialogs require a graphical display. Setting the
+``ROBOT_NO_DIALOGS`` environment variable makes the `Debug` keyword
+fail fast with a clear error instead of hanging when a stray call is
+hit on headless CI.
+
+Long lines in the provided messages are wrapped automatically. If you
+want to wrap lines manually, you can add newlines using the ``\\n``
+character sequence.
 """
 
 from robot.version import get_version
 
+from ._debugger import _DebugController
 from .dialogs_py import (
     InputDialog, MessageDialog, MultipleSelectionDialog, PassFailDialog, SelectionDialog
 )
 
 __version__ = get_version()
 __all__ = [
+    "debug",
     "execute_manual_step",
     "get_selection_from_user",
     "get_selections_from_user",
@@ -45,6 +60,56 @@ def pause_execution(message: str = "Execution paused. Press OK to continue."):
     ``message`` is the message shown in the dialog.
     """
     MessageDialog(message).show()
+
+
+def debug(message: str = "Debugger paused."):
+    """Pauses execution and opens an interactive step debugger dialog.
+
+    Unlike `Pause Execution`, which only blocks until the user clicks
+    ``Ok``, this keyword opens a debugger window with controls to:
+
+    - **Step In** — stop on the very next body item (any depth), so the
+      user can drill into the next keyword call, FOR iteration, IF
+      branch, etc.
+    - **Step Over** — run the next sibling body item to completion and
+      stop before the one after it (or after returning from the current
+      scope).
+    - **Step Out** — run the rest of the current scope and stop after
+      returning to the caller.
+    - **Continue** — resume normal execution until the next ``Debug``
+      keyword is hit.
+    - **Abort** — gracefully end the entire run (same effect as Ctrl-C
+      handled by ``STOP_SIGNAL_MONITOR``).
+
+    The dialog also shows the live keyword stack and the variables
+    visible at the current scope (read-only).
+
+    ``message`` is the header text shown in the initial dialog.
+
+    Example:
+    | Some Keyword
+    | Debug    Inspect state before the API call
+    | Other Keyword
+
+    *Non-goals (deliberate):*
+
+    - This keyword does **not** support stepping backward / reverse
+      execution. Library keywords typically cause irreversible side
+      effects (network calls, browser interactions, file I/O), so true
+      time-travel debugging is not possible in the general case.
+    - This keyword does **not** open a DAP (Debug Adapter Protocol)
+      session. For IDE-integrated breakpoint debugging in VS Code or
+      IntelliJ, use the external ``RobotCode`` extension.
+    - This keyword does **not** step into Python code inside library
+      keywords. Use ``pdb`` / ``debugpy`` for Python-level debugging.
+
+    *Headless environments:* the dialog requires a graphical display.
+    On Linux/macOS without ``DISPLAY`` (or ``WAYLAND_DISPLAY``) — or
+    on any platform with ``ROBOT_NO_DIALOGS`` set to a truthy value —
+    the keyword fails fast with a clear error; remove the call from
+    the test or guard it behind a tag before running on headless CI.
+    """
+    _DebugController.instance().pause(message)
 
 
 def execute_manual_step(message: str, default_error: str = ""):

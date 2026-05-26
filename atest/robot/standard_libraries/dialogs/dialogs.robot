@@ -87,3 +87,15 @@ Garbage Collection In Thread Should Not Cause Problems
 
 Timeout can close dialog
     Check Test Case    ${TESTNAME}
+
+Debug Continue
+    Check Test Case    ${TESTNAME}
+
+Debug Step In
+    Check Test Case    ${TESTNAME}
+
+Debug Step Over Skips Nested Keyword
+    Check Test Case    ${TESTNAME}
+
+Debug Abort Terminates Run
+    Check Test Case    ${TESTNAME}

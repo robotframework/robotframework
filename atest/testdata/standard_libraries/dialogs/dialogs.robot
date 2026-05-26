@@ -163,3 +163,28 @@ Timeout can close dialog
     [Documentation]    FAIL Test timeout 1 second exceeded.
     [Timeout]    1 second
     Pause Execution    Wait for timeout.
+
+Debug Continue
+    Debug    Verify Step In / Step Over / Step Out / Continue / Abort buttons exist,\nthen press <C> for Continue.
+
+Debug Step In
+    Debug    Press <I> for Step In. The dialog should open again on the next Log.
+    Log    First sibling after Debug
+    Log    Second sibling
+    Debug    Then press <C> to finish.
+
+Debug Step Over Skips Nested Keyword
+    Debug    Press <O> for Step Over.
+    Debug Nested Helper
+    Log    After nested helper - dialog should open here.
+    Debug    Press <C> to finish.
+
+Debug Abort Terminates Run
+    [Documentation]  FAIL Test execution aborted from debugger.
+    Debug    Press <A> to Abort. The whole run will stop.
+    Log    Should not be reached.
+
+*** Keywords ***
+Debug Nested Helper
+    Log    Inside nested helper
+    Log    Still inside nested helper
