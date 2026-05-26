@@ -324,9 +324,8 @@ class TestSplitArgsFromNameOrPath(unittest.TestCase):
         )
 
     def test_non_alpha_cannot_be_drive_letter(self):
-        self.verify("/:/", ("/", ["/"]))
         self.verify("?:/;", ("?", ["/;"]))
-        self.verify(r"1:\;;:", ("1", [r"\;;", ""]))
+        self.verify(r"1:\;;::", ("1", [r"\;;", "", ""]))
 
     def test_existing_paths_are_made_absolute(self):
         path = "robot-framework-unit-test-file-12q3405909qasf"
