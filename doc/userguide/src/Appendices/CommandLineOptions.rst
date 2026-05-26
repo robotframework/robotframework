@@ -83,7 +83,8 @@ Command line options for test execution
   --prerunmodifier <name:args>    Activate `programmatic modification of test data`_.
   --prerebotmodifier <name:args>  Activate `programmatic modification of results`_.
   --randomize <all|suites|tests|none>  `Randomizes`_ test execution order.
-  --console <verbose|dotted|quiet|none>  `Console output type`_.
+  --console <verbose|dotted|quiet|none|custom>  `Console output type`_.
+                          Also accepts `custom console loggers`_.
   --dotted                Shortcut for `--console dotted`.
   --quiet                 Shortcut for `--console quiet`.
   -W, --consolewidth <width>  `Sets the width`_ of the console output.
@@ -146,6 +147,9 @@ Command line options for post-processing outputs
   --processemptysuite     Processes output files even if files contain
                           `empty test suites`_.
   --prerebotmodifier <name:args>  Activate `programmatic modification of results`_.
+  --console <verbose|quiet|none|custom>  `Controlling Rebot console output`_.
+                          Also accepts `custom console loggers`_.
+  --quiet                 Shortcut for `--console quiet`.
   -C, --consolecolors <auto|on|ansi|off>  `Specifies are colors`_ used on the console.
   --consolelinks <auto|off>  Controls `making paths to results files hyperlinks <Console links_>`_.
   -P, --pythonpath <path>   Additional locations to add to the `module search path`_.

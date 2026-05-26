@@ -19,6 +19,8 @@ There are two supported listener interface versions, `listener version 2`_ and
 called with different arguments. The newer listener version 3 is more powerful
 and generally recommended.
 
+.. note:: The listener interface is used also by `custom console loggers`_.
+
 __ `Registering listeners from command line`_
 __ `Libraries as listeners`_
 

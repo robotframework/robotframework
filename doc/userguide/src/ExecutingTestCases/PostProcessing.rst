@@ -215,3 +215,27 @@ The JSON output file structure is documented in the :file:`result.json` `schema 
           Prior to Robot Framework 7.2 JSON output files contained only
           information about the executed suite, but nowadays they contain
           the same result data as `XML output files`_.
+
+Controlling Rebot console output
+---------------------------------
+
+By default, Rebot reports output file paths and possible errors and warnings
+on the console. This can be controlled with the :option:`--console` option
+that supports the following case-insensitive values:
+
+`verbose`
+    Report output file paths, errors and warnings (default).
+
+`quiet`
+    No output except for errors and warnings.
+
+`none`
+    No output whatsoever.
+
+The :option:`--quiet` option is a shortcut for `--console quiet`.
+
+In addition to the built-in values, :option:`--console` also accepts
+`custom console loggers`_, using the same mechanism as with ``robot``.
+
+.. note:: Support for :option:`--console` and :option:`--quiet` with Rebot
+          is new in Robot Framework 7.5.
