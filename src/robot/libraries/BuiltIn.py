@@ -1841,6 +1841,53 @@ class _Variables(_BuiltInBase):
         except VariableError:
             return self._variables.replace_scalar(default)
 
+    def get_variable_type(self, item: object) -> str:
+        """Returns the runtime type of the given ``item``.
+
+        The returned type name is normalized to be Robot Framework friendly.
+
+        Examples:
+        | ${type} = | Get Variable Type | ${value} |
+        | Should Be Equal | ${type} | string |
+
+        The returned value is one of the following:
+
+        | = Python type = | = Returned value = |
+        | ``str``         | ``string``         |
+        | ``int``         | ``integer``        |
+        | ``float``       | ``float``          |
+        | ``bool``        | ``boolean``        |
+        | ``list``        | ``list``           |
+        | ``dict``        | ``dictionary``     |
+        | ``tuple``       | ``tuple``          |
+        | ``set``         | ``set``            |
+        | ``NoneType``    | ``none``           |
+
+        Custom objects return ``object``.
+
+        This keyword checks the actual runtime Python type of the value, not
+        the Robot Framework variable syntax used to access it.
+        """
+        if item is None:
+            return "none"
+        if isinstance(item, bool):
+            return "boolean"
+        if isinstance(item, str):
+            return "string"
+        if isinstance(item, int):
+            return "integer"
+        if isinstance(item, float):
+            return "float"
+        if isinstance(item, list):
+            return "list"
+        if isinstance(item, dict):
+            return "dictionary"
+        if isinstance(item, tuple):
+            return "tuple"
+        if isinstance(item, set):
+            return "set"
+        return "object"
+
     def log_variables(self, level: logger.LogLevel = "INFO"):
         """Logs all variables in the current scope with given log level."""
         variables = self.get_variables()
