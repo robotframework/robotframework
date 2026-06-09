@@ -521,8 +521,13 @@ class TestRebotCustomConsole(RunningTestCase):
     def test_rebot_with_console_object(self):
         console = RecordingConsole()
         assert_equal(
-            rebot(self.data, output=OUTPUT_PATH, log=LOG_PATH,
-                  report=REPORT_PATH, console=console),
+            rebot(
+                self.data,
+                output=OUTPUT_PATH,
+                log=LOG_PATH,
+                report=REPORT_PATH,
+                console=console,
+            ),
             1,
         )
         methods = {name for name, _ in console.calls}
