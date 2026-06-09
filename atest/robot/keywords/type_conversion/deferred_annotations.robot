@@ -16,3 +16,6 @@ Annotation not available during execution but is known
 
 Non-existing annotation
     Check Test Case    ${TESTNAME}
+
+Invalid annotation
+    Check Log Message    ${ERRORS}[0]    Error in library 'DeferredAnnotations': Adding keyword 'invalid' failed: division by zero    ERROR

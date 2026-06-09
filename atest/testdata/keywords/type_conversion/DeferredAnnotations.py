@@ -23,6 +23,9 @@ class Library:
     def non_existing(self, arg: NonExisting):  # noqa: F821
         return arg
 
+    def invalid(self, arg: 1 / 0):
+        pass
+
 
 class Argument:
 

@@ -59,7 +59,7 @@ class PythonArgumentParser(ArgumentParser):
             sig = signature(method, **config)
         except ValueError:  # Can occur with C functions (incl. many builtins).
             return ArgumentSpec(name, self.type, var_positional="args")
-        except TypeError as err:  # Occurs if handler isn't actually callable.
+        except Exception as err:
             raise DataError(str(err))
         parameters = list(sig.parameters.values())
         # `inspect.signature` drops `self` with bound methods and that's the case when
