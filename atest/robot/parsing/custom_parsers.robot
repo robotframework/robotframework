@@ -40,6 +40,13 @@ Override Robot parser
     Validate Suite    ${SUITE.suites[0]}    Tests    ${DIR}/tests.robot
     ...    Test in Robot file=PASS
 
+Resource file
+    Run Tests    --parser ${DIR}/ResourceParser.py    ${DIR}
+
+    Validate Suite    ${SUITE}    Custom    ${DIR}    custom=False
+    ...    Test from preprocessor=PASS
+    ...    Test in Robot file=PASS
+
 Multiple parsers
     Run Tests    --parser ${DIR}/CustomParser.py:ROBOT --PARSER ${DIR}/custom.py    ${DIR}
     Validate Directory Suite    custom_robot=True
@@ -66,6 +73,10 @@ Failing parser
     ...    Parsing '${DIR}${/}__init__.init' failed:
     ...    Calling 'CustomParser.parse_init()' failed:
     ...    TypeError: Ooops in init!
+    Parsing Should Fail    fail=True:resource=True
+    ...    Parsing '${DIR}${/}something.resource' failed:
+    ...    Calling 'CustomParser.parse_resource()' failed:
+    ...    TypeError: Ooops in resource!
 
 Bad return value
     Parsing Should Fail    bad_return=True
@@ -76,6 +87,10 @@ Bad return value
     ...    Parsing '${DIR}${/}__init__.init' failed:
     ...    Calling 'CustomParser.parse_init()' failed:
     ...    TypeError: Return value should be 'robot.running.TestSuite', got 'integer'.
+    Parsing Should Fail    bad_return=True:resource=True
+    ...    Parsing '${DIR}${/}something.resource' failed:
+    ...    Calling 'CustomParser.parse_resource()' failed:
+    ...    TypeError: Return value should be 'robot.running.resourcemodel.ResourceFile', got 'boolean'.
 
 *** Keywords ***
 Validate Suite

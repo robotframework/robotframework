@@ -18,6 +18,7 @@ from abc import ABC
 from inspect import signature
 from pathlib import Path
 from textwrap import dedent
+from typing import Callable
 
 from robot.conf import LanguagesLike
 from robot.errors import DataError
@@ -31,7 +32,6 @@ from .transformers import ResourceBuilder, SuiteBuilder
 
 
 class Parser(ABC):
-
     @property
     def name(self) -> str:
         return type(self).__name__
@@ -55,7 +55,7 @@ class RobotParser(Parser):
 
     def parse_suite_file(self, source: Path, defaults: TestDefaults) -> TestSuite:
         model = get_model(
-            self._get_source(source),
+            source,
             data_only=True,
             curdir=self._get_curdir(source),
             lang=self.lang,
@@ -65,7 +65,7 @@ class RobotParser(Parser):
 
     def parse_init_file(self, source: Path, defaults: TestDefaults) -> TestSuite:
         model = get_init_model(
-            self._get_source(source),
+            source,
             data_only=True,
             curdir=self._get_curdir(source),
             lang=self.lang,
@@ -92,17 +92,13 @@ class RobotParser(Parser):
     def _get_curdir(self, source: Path) -> "str | None":
         return str(source.parent).replace("\\", "\\\\") if self.process_curdir else None
 
-    def _get_source(self, source: Path) -> "Path | str":
-        return source
-
     def parse_resource_file(self, source: Path) -> ResourceFile:
         model = get_resource_model(
-            self._get_source(source),
+            source,
             data_only=True,
             curdir=self._get_curdir(source),
             lang=self.lang,
         )
-        model.source = source
         return self.parse_resource_model(model)
 
     def parse_resource_model(self, model: File) -> ResourceFile:
@@ -152,7 +148,6 @@ class MarkdownParser(RobotParser):
 
 
 class JsonParser(Parser):
-
     def parse_suite_file(self, source: Path, defaults: TestDefaults) -> TestSuite:
         return TestSuite.from_json(source)
 
@@ -167,7 +162,6 @@ class JsonParser(Parser):
 
 
 class NoInitFileDirectoryParser(Parser):
-
     def parse_init_file(self, source: Path, defaults: TestDefaults) -> TestSuite:
         return TestSuite(
             name=TestSuite.name_from_source(source),
@@ -177,16 +171,9 @@ class NoInitFileDirectoryParser(Parser):
 
 
 class CustomParser(Parser):
-
     def __init__(self, parser):
         self.parser = parser
-        if not getattr(parser, "parse", None):
-            raise TypeError(f"'{self.name}' does not have mandatory 'parse' method.")
-        if not self.extensions:
-            raise TypeError(
-                f"'{self.name}' does not have mandatory 'EXTENSION' or 'extension' "
-                f"attribute."
-            )
+        self._check_completeness(parser)
 
     @property
     def name(self) -> str:
@@ -201,17 +188,42 @@ class CustomParser(Parser):
         extensions = [ext] if isinstance(ext, str) else list(ext or ())
         return tuple(ext.lower().lstrip(".") for ext in extensions)
 
+    @property
+    def resource_extensions(self) -> "tuple[str, ...]":
+        ext = (
+            getattr(self.parser, "RESOURCE_EXTENSION", None)
+            or getattr(self.parser, "resource_extension", None)
+        )  # fmt: skip
+        extensions = [ext] if isinstance(ext, str) else list(ext or ())
+        return tuple(ext.lower().lstrip(".") for ext in extensions)
+
     def parse_suite_file(self, source: Path, defaults: TestDefaults) -> TestSuite:
-        return self._parse(self.parser.parse, source, defaults)
+        parse_suite = getattr(self.parser, "parse", None)
+        try:
+            return self._parse_suite(parse_suite, source, defaults)
+        except NotImplementedError:
+            return super().parse_suite_file(source, defaults)  # Raises DataError
 
     def parse_init_file(self, source: Path, defaults: TestDefaults) -> TestSuite:
         parse_init = getattr(self.parser, "parse_init", None)
         try:
-            return self._parse(parse_init, source, defaults, init=True)
+            return self._parse_suite(parse_init, source, defaults)
         except NotImplementedError:
             return super().parse_init_file(source, defaults)  # Raises DataError
 
-    def _parse(self, method, source, defaults, init=False) -> TestSuite:
+    def parse_resource_file(self, source: Path) -> ResourceFile:
+        parse_resource = getattr(self.parser, "parse_resource", None)
+        try:
+            return self._parse_resource(parse_resource, source)
+        except NotImplementedError:
+            return super().parse_resource_file(source)  # Raises DataError
+
+    def _parse_suite(
+        self,
+        method: None | Callable[..., TestSuite],
+        source: Path,
+        defaults: TestDefaults,
+    ) -> TestSuite:
         if not method:
             raise NotImplementedError
         accepts_defaults = len(signature(method).parameters) == 2
@@ -223,8 +235,60 @@ class CustomParser(Parser):
                     f"'{type_name(suite)}'."
                 )
         except Exception:
-            method_name = "parse" if not init else "parse_init"
             raise DataError(
-                f"Calling '{self.name}.{method_name}()' failed: {get_error_message()}"
+                f"Calling '{self.name}.{method.__name__}()' failed: {get_error_message()}"
             )
         return suite
+
+    def _parse_resource(
+        self,
+        method: None | Callable[..., ResourceFile],
+        source: Path,
+    ) -> ResourceFile:
+        if not method:
+            raise NotImplementedError
+        try:
+            resource = method(source)
+            if not isinstance(resource, ResourceFile):
+                raise TypeError(
+                    f"Return value should be 'robot.running.ResourceFile', got "
+                    f"'{type_name(resource)}'."
+                )
+        except Exception:
+            raise DataError(
+                f"Calling '{self.name}.{method.__name__}()' failed: {get_error_message()}"
+            )
+        return resource
+
+    def _check_completeness(self, parser):
+        parser_fn_count = 0
+
+        # TODO: Check fails when user parser inherits robot.api.interfaces.Parser
+        # if getattr(parser, "parse", None) and parser.parse != robot.api.interfaces.Parser.parse:
+
+        if getattr(parser, "parse", None):
+            if not self.extensions:
+                raise TypeError(
+                    f"'{self.name}' does not have mandatory 'EXTENSION' or 'extension' "
+                    f"attribute for method 'parse'."
+                )
+            parser_fn_count += 1
+
+        if getattr(parser, "parse_init", None):
+            if not self.extensions:
+                raise TypeError(
+                    f"'{self.name}' does not have mandatory 'EXTENSION' or 'extension' "
+                    f"attribute for method 'parse_init'."
+                )
+            parser_fn_count += 1
+
+        if getattr(parser, "parse_resource", None):
+            if not self.resource_extensions:
+                raise TypeError(
+                    f"'{self.name}' does not have mandatory 'RESOURCE_EXTENSION' or "
+                    f"'resource_extension' attribute for method 'parse_resource'."
+                )
+            parser_fn_count += 1
+
+        if parser_fn_count == 0:
+            raise TypeError(f"'{self.name}' does not have any parse methods.")

@@ -691,7 +691,7 @@ class TestSuite(model.TestSuite[Keyword, TestCase]):
 
     test_class = TestCase  #: Internal usage only.
     fixture_class = Keyword  #: Internal usage only.
-    __slots__ = ()
+    __slots__ = ("custom_suite_parsers", "custom_resource_parsers")
 
     def __init__(
         self,
@@ -707,6 +707,9 @@ class TestSuite(model.TestSuite[Keyword, TestCase]):
         #: keywords the suite owns. When data is parsed from the file system,
         #: this data comes from the same test case file that creates the suite.
         self.resource = None
+
+        self.custom_resource_parsers = {}
+        self.custom_suite_parsers = {}
 
     @setter
     def resource(self, resource: "ResourceFile | dict | None") -> "ResourceFile":
