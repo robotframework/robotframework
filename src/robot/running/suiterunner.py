@@ -150,6 +150,7 @@ class SuiteRunner(SuiteVisitor):
             self._resolve_setting(data.tags),
             self._get_timeout(data),
             data.lineno,
+            metadata=data.metadata.copy(),
             start_time=datetime.now(),
         )
         if result.tags.robot("exclude"):

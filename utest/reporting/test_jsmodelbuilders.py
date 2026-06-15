@@ -95,6 +95,7 @@ class TestBuildTestSuite(unittest.TestCase):
             ["t1", "t2"],
             "1 minute",
             42,
+            None,
             "PASS",
             "Msg",
             "2011-12-04 19:22:22.222",
@@ -109,6 +110,7 @@ class TestBuildTestSuite(unittest.TestCase):
             "<b>Doc</b>",
             ("t1", "t2"),
             "1 minute",
+            (),
             1,
             "Msg",
             0,
@@ -281,7 +283,7 @@ class TestBuildTestSuite(unittest.TestCase):
         self._verify_mapped(
             model[-2][0][-1], context.strings, ((10, 2, "Message"), (11, 1, ""))
         )
-        self._verify_status(model[-3][0][4], start=1000)
+        self._verify_status(model[-3][0][5], start=1000)
 
     def test_if(self):
         test = TestSuite().tests.create()
@@ -397,6 +399,7 @@ class TestBuildTestSuite(unittest.TestCase):
         doc="",
         tags=(),
         timeout="",
+        metadata=(),
         status=0,
         message="",
         start=None,
@@ -408,7 +411,7 @@ class TestBuildTestSuite(unittest.TestCase):
             status = (*status, message)
         doc = f"<p>{doc}</p>" if doc else ""
         return self._build_and_verify(
-            TestBuilder, test, name, timeout, doc, tags, status, body
+            TestBuilder, test, name, timeout, doc, tags, metadata, status, body
         )
 
     def _verify_body_item(

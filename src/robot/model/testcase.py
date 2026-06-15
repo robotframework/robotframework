@@ -22,6 +22,7 @@ from .body import Body, BodyItem
 from .fixture import create_fixture
 from .itemlist import ItemList
 from .keyword import Keyword
+from .metadata import Metadata
 from .modelobject import DataDict, ModelObject
 from .tags import Tags
 
@@ -55,11 +56,13 @@ class TestCase(ModelObject, Generic[KW]):
         tags: "Tags|Sequence[str]" = (),
         timeout: "str|None" = None,
         lineno: "int|None" = None,
+        metadata: "dict|None" = None,
         parent: "TestSuite[KW, TestCase[KW]]|None" = None,
     ):
         self.name = name
         self.doc = doc
         self.tags = tags
+        self.metadata = metadata
         self.timeout = timeout
         self.lineno = lineno
         self.parent = parent
@@ -76,6 +79,11 @@ class TestCase(ModelObject, Generic[KW]):
     def tags(self, tags: "Tags|Sequence[str]") -> Tags:
         """Test tags as a :class:`~.model.tags.Tags` object."""
         return Tags(tags)
+
+    @setter
+    def metadata(self, metadata: "dict|None") -> Metadata:
+        """Test metadata as a :class:`~.model.metadata.Metadata` object."""
+        return Metadata(metadata)
 
     @property
     def setup(self) -> KW:
@@ -207,6 +215,8 @@ class TestCase(ModelObject, Generic[KW]):
             data["doc"] = self.doc
         if self.tags:
             data["tags"] = tuple(self.tags)
+        if self.metadata:
+            data["metadata"] = self.metadata
         if self.timeout:
             data["timeout"] = self.timeout
         if self.lineno:
