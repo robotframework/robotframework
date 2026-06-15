@@ -72,6 +72,12 @@ Get Index From List with empty string as start index is deprecated
     ...    Using an empty string as a start index with the 'Get Index From List' keyword is deprecated. Use '0' instead.
     ...    WARN
 
+Get Index From List with negative indices
+    Check Test Case    ${TEST NAME}
+
+Get Index From List with indices out-of-bounds
+    Check Test Case    ${TEST NAME}
+
 Get Index From List with invalid index
     Check Test Case    ${TEST NAME}
 

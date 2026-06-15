@@ -17,6 +17,11 @@ from abc import ABC, abstractmethod
 from inspect import isclass, Parameter, signature
 from typing import Any, Callable, get_type_hints
 
+try:
+    from annotationlib import Format
+except ImportError:
+    Format = None
+
 from robot.errors import DataError
 from robot.utils import NOT_SET, split_from_equals
 from robot.variables import search_variable
@@ -30,13 +35,13 @@ class ArgumentParser(ABC):
     def __init__(
         self,
         type: str = "Keyword",
-        error_reporter: "Callable[[str], None]|None" = None,
+        error_reporter: "Callable[[str], None] | None" = None,
     ):
         self.type = type
         self.error_reporter = error_reporter
 
     @abstractmethod
-    def parse(self, source: Any, name: "str|None" = None) -> ArgumentSpec:
+    def parse(self, source: Any, name: "str | None" = None) -> ArgumentSpec:
         raise NotImplementedError
 
     def _report_error(self, error: str):
@@ -50,10 +55,11 @@ class PythonArgumentParser(ArgumentParser):
 
     def parse(self, method, name=None):
         try:
-            sig = signature(method)
+            config = {"annotation_format": Format.FORWARDREF} if Format else {}
+            sig = signature(method, **config)
         except ValueError:  # Can occur with C functions (incl. many builtins).
             return ArgumentSpec(name, self.type, var_positional="args")
-        except TypeError as err:  # Occurs if handler isn't actually callable.
+        except Exception as err:
             raise DataError(str(err))
         parameters = list(sig.parameters.values())
         # `inspect.signature` drops `self` with bound methods and that's the case when
@@ -116,9 +122,16 @@ class PythonArgumentParser(ArgumentParser):
         try:
             return get_type_hints(method)
         except Exception:  # Can raise pretty much anything
-            # Not all functions have `__annotations__`.
-            # https://github.com/robotframework/robotframework/issues/4059
-            return getattr(method, "__annotations__", {})
+            try:
+                # Not all functions have `__annotations__`.
+                # https://github.com/robotframework/robotframework/issues/4059
+                return getattr(method, "__annotations__", {})
+            except Exception:
+                # Handle deferred annotations on Python 3.14.
+                # https://github.com/robotframework/robotframework/issues/5658
+                if Format:
+                    return get_type_hints(method, format=Format.STRING)
+                return {}
 
 
 class ArgumentSpecParser(ArgumentParser):

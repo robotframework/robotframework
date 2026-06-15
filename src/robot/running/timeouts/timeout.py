@@ -27,7 +27,7 @@ class Timeout(Sortable):
 
     def __init__(
         self,
-        timeout: "float|str|None" = None,
+        timeout: "float | str | None" = None,
         variables=None,
         start: bool = False,
     ):
@@ -45,7 +45,7 @@ class Timeout(Sortable):
         else:
             self.start_time = -1
 
-    def _parse(self, timeout, variables) -> "float|None":
+    def _parse(self, timeout, variables) -> "float | None":
         if not timeout:
             return None
         if variables:
@@ -84,8 +84,8 @@ class Timeout(Sortable):
     def run(
         self,
         runnable: "Callable[..., object]",
-        args: "Sequence|None" = None,
-        kwargs: "Mapping|None" = None,
+        args: "Sequence | None" = None,
+        kwargs: "Mapping | None" = None,
     ) -> object:
         """Convenience method to directly run code with a timeout."""
         return self.get_runner().run(runnable, args, kwargs)
@@ -124,7 +124,7 @@ class TestTimeout(Timeout):
 
     def __init__(
         self,
-        timeout: "float|str|None" = None,
+        timeout: "float | str | None" = None,
         variables=None,
         start: bool = False,
         rpa: bool = False,

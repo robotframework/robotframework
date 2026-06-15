@@ -14,23 +14,25 @@
 #  limitations under the License.
 
 import difflib
+from collections.abc import Sequence
+from typing import Callable
 
 from robot.utils import seq2str
 
 
 class RecommendationFinder:
 
-    def __init__(self, normalizer=None):
+    def __init__(self, normalizer: "Callable[[str], str] | None" = None):
         self.normalizer = normalizer or (lambda x: x)
 
     def find_and_format(
         self,
-        name,
-        candidates,
-        message,
-        max_matches=10,
-        check_missing_argument_separator=False,
-    ):
+        name: str,
+        candidates: "Sequence[str]",
+        message: str,
+        max_matches: int = 10,
+        check_missing_argument_separator: bool = False,
+    ) -> str:
         recommendations = self.find(name, candidates, max_matches)
         if recommendations:
             return self.format(message, recommendations)
@@ -40,7 +42,12 @@ class RecommendationFinder:
                 return f"{message} {recommendation}"
         return message
 
-    def find(self, name, candidates, max_matches=10):
+    def find(
+        self,
+        name: str,
+        candidates: "Sequence[str]",
+        max_matches: int = 10,
+    ) -> "list[str]":
         """Return a list of close matches to `name` from `candidates`."""
         if not name or not candidates:
             return []
@@ -52,7 +59,7 @@ class RecommendationFinder:
         )
         return self._get_original_candidates(norm_matches, norm_candidates)
 
-    def format(self, message, recommendations):
+    def format(self, message: str, recommendations: "Sequence[str]") -> str:
         """Add recommendations to the given message.
 
         The recommendation string looks like::

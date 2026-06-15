@@ -26,16 +26,16 @@ from robot.utils import get_error_message
 
 
 class SuiteStructure(ABC):
-    source: "Path|None"
-    init_file: "Path|None"
-    children: "list[SuiteStructure]|None"
+    source: "Path | None"
+    init_file: "Path | None"
+    children: "list[SuiteStructure] | None"
 
     def __init__(
         self,
         extensions: "ValidExtensions",
-        source: "Path|None",
-        init_file: "Path|None" = None,
-        children: "Sequence[SuiteStructure]|None" = None,
+        source: "Path | None",
+        init_file: "Path | None" = None,
+        children: "Sequence[SuiteStructure] | None" = None,
     ):
         self._extensions = extensions
         self.source = source
@@ -43,12 +43,12 @@ class SuiteStructure(ABC):
         self.children = list(children) if children is not None else None
 
     @property
-    def extension(self) -> "str|None":
+    def extension(self) -> "str | None":
         source = self._get_source_file()
         return self._extensions.get_extension(source) if source else None
 
     @abstractmethod
-    def _get_source_file(self) -> "Path|None":
+    def _get_source_file(self) -> "Path | None":
         raise NotImplementedError
 
     @abstractmethod
@@ -75,13 +75,13 @@ class SuiteDirectory(SuiteStructure):
     def __init__(
         self,
         extensions: "ValidExtensions",
-        source: "Path|None" = None,
-        init_file: "Path|None" = None,
+        source: "Path | None" = None,
+        init_file: "Path | None" = None,
         children: Sequence[SuiteStructure] = (),
     ):
         super().__init__(extensions, source, init_file, children)
 
-    def _get_source_file(self) -> "Path|None":
+    def _get_source_file(self) -> "Path | None":
         return self.init_file
 
     @property
@@ -119,7 +119,7 @@ class SuiteStructureBuilder:
 
     def __init__(
         self,
-        extensions: Sequence[str] = (".robot", ".rbt", ".robot.rst"),
+        extensions: Sequence[str] = (".robot", ".rbt", ".robot.rst", ".robot.md"),
         included_files: Sequence[str] = (),
     ):
         self.extensions = ValidExtensions(extensions, included_files)
@@ -213,16 +213,16 @@ class ValidExtensions:
 
 class IncludedFiles:
 
-    def __init__(self, patterns: "Sequence[str|Path]" = ()):
+    def __init__(self, patterns: "Sequence[str | Path]" = ()):
         self.patterns = [self._compile(i) for i in patterns]
 
-    def _compile(self, pattern: "str|Path") -> "re.Pattern":
+    def _compile(self, pattern: "str | Path") -> "re.Pattern":
         pattern = self._dir_to_recursive(self._path_to_abs(self._normalize(pattern)))
         # Handle recursive glob patterns.
         parts = [self._translate(p) for p in pattern.split("**")]
         return re.compile(".*".join(parts), re.IGNORECASE)
 
-    def _normalize(self, pattern: "str|Path") -> str:
+    def _normalize(self, pattern: "str | Path") -> str:
         if isinstance(pattern, Path):
             pattern = str(pattern)
         return os.path.normpath(pattern).replace("\\", "/")

@@ -41,17 +41,17 @@ class ArgumentSpec(metaclass=SetterAwareType):
 
     def __init__(
         self,
-        name: "str|Callable[[], str]|None" = None,
+        name: "str | Callable[[], str] | None" = None,
         type: str = "Keyword",
         positional_only: Sequence[str] = (),
         positional_or_named: Sequence[str] = (),
-        var_positional: "str|None" = None,
+        var_positional: "str | None" = None,
         named_only: Sequence[str] = (),
-        var_named: "str|None" = None,
-        defaults: "Mapping[str, Any]|None" = None,
+        var_named: "str | None" = None,
+        defaults: "Mapping[str, Any] | None" = None,
         embedded: Sequence[str] = (),
-        types: "Mapping|Sequence|None" = None,
-        return_type: "TypeInfo|None" = None,
+        types: "Mapping | Sequence | None" = None,
+        return_type: "TypeInfo | None" = None,
     ):
         self.name = name
         self.type = type
@@ -66,19 +66,19 @@ class ArgumentSpec(metaclass=SetterAwareType):
         self.return_type = return_type
 
     @property
-    def name(self) -> "str|None":
+    def name(self) -> "str | None":
         return self._name if not callable(self._name) else self._name()
 
     @name.setter
-    def name(self, name: "str|Callable[[], str]|None"):
+    def name(self, name: "str | Callable[[], str] | None"):
         self._name = name
 
     @setter
-    def types(self, types: "Mapping|Sequence|None") -> "dict[str, TypeInfo]|None":
+    def types(self, types: "Mapping | Sequence | None") -> "dict[str, TypeInfo] | None":
         return TypeValidator(self).validate(types)
 
     @setter
-    def return_type(self, hint) -> "TypeInfo|None":
+    def return_type(self, hint) -> "TypeInfo | None":
         if hint in (None, type(None)):
             return None
         if isinstance(hint, TypeInfo):
@@ -240,7 +240,7 @@ class ArgInfo:
         self,
         kind: str,
         name: str = "",
-        type: "TypeInfo|None" = None,
+        type: "TypeInfo | None" = None,
         default: Any = NOT_SET,
     ):
         self.kind = kind
@@ -259,7 +259,7 @@ class ArgInfo:
         return False
 
     @property
-    def default_repr(self) -> "str|None":
+    def default_repr(self) -> "str | None":
         if self.default is NOT_SET:
             return None
         if isinstance(self.default, Enum):

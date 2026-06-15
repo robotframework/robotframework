@@ -15,6 +15,9 @@ Suite file extensions
 :file:`.robot.rst`
     Suite file using the `reStructuredText format`_.
 
+:file:`.robot.md`
+    Suite file using the `Markdown format`_.
+
 :file:`.rbt`
     Suite file using the `JSON format`_.
 
@@ -37,10 +40,14 @@ Resource file extensions
 :file:`.rst` and :file:`.rest`
     Resource file using the `reStructuredText format`__.
 
+:file:`.md` and :file:`.markdown`
+    Resource file using the `Markdown format`__.
+
 :file:`.rsrc` and :file:`.json`
     Resource file using the `JSON format`__.
 
 __ `Resource files using reStructured text format`_
+__ `Resource files using Markdown format`_
 __ `Resource files using JSON format`_
 
 Media type

@@ -28,7 +28,7 @@ class WindowsRunner(Runner):
         self,
         timeout: float,
         timeout_error: TimeoutExceeded,
-        data_error: "DataError|None" = None,
+        data_error: "DataError | None" = None,
     ):
         super().__init__(timeout, timeout_error, data_error)
         self._runner_thread_id = current_thread().ident

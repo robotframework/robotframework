@@ -17,10 +17,13 @@ Named argument syntax
 Listener Using BuiltIn
     Check Test Case    ${TESTNAME}
 
-Use 'Run Keyword' with non-Unicode values
+Use 'Run Keyword' with non-string values
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc[0, 0, 0]}    42
     Check Log Message    ${tc[0, 1, 0]}    \xff
+
+Use dictionary returned by 'Get Variables' with non-string keys
+    Check Test Case    ${TESTNAME}
 
 Use BuiltIn keywords with timeouts
     ${tc} =    Check Test Case    ${TESTNAME}

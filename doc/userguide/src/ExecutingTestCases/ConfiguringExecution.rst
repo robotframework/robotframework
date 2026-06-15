@@ -2,8 +2,8 @@ Configuring execution
 =====================
 
 This section explains different command line options that can be used
-for configuring the `test execution`_ or `post-processing
-outputs`_. Options related to generated `output files`_ are discussed in
+for configuring the `test execution`_ or `post-processing outputs`_.
+Options related to the generated `execution artifacts`_ are discussed in
 the next section.
 
 .. contents::
@@ -23,6 +23,7 @@ on the extension:
 - :file:`.robot` files and files that are not recognized are parsed using
   the normal `Robot Framework parser`__.
 - :file:`.rst` and :file:`.rest` files are parsed using the `reStructuredText parser`__.
+- :file:`.md` and :file:`.markdown` files are parsed using the `Markdown parser`__.
 - :file:`.rbt` and :file:`.json` files are parsed using the `JSON parser`__.
 - Files supported by `custom parsers`__ are parsed by a matching parser.
 
@@ -31,10 +32,12 @@ Examples::
     robot example.robot    # Standard Robot Framework parser.
     robot example.tsv      # Must be compatible with the standard parser.
     robot example.rst      # reStructuredText parser.
+    robot example.md       # Markdown parser.
     robot x.robot y.rst    # Parse both files using an appropriate parser.
 
 __ `Supported file formats`_
 __ `reStructuredText format`_
+__ `Markdown format`_
 __ `JSON format`_
 __ `Using custom parsers`_
 
@@ -48,6 +51,7 @@ the following rules:
   (:file:`_`) are ignored.
 - :file:`.robot` files are parsed using the normal `Robot Framework parser`__.
 - :file:`.robot.rst` files are parsed using the `reStructuredText parser`__.
+- :file:`.robot.md` files are parsed using the `Markdown parser`__.
 - :file:`.rbt` files are parsed using the `JSON parser`__.
 - Files supported by `custom parsers`__ are parsed by a matching parser.
 - Other files are ignored unless parsing them has been enabled by using
@@ -57,6 +61,7 @@ the following rules:
 __ `Suite directories`_
 __ `Supported file formats`_
 __ `reStructuredText format`_
+__ `Markdown format`_
 __ `JSON format`_
 __ `Using custom parsers`_
 
@@ -98,6 +103,7 @@ even if they by `default would not be`__. What parser to use depends on
 the used extension:
 
 - :file:`.rst` and :file:`.rest` files are parsed using the `reStructuredText parser`__.
+- :file:`.md` and :file:`.markdown` files are parsed using the `Markdown parser`__.
 - :file:`.json` files are parsed using the `JSON parser`__.
 - Other files are parsed using the normal `Robot Framework parser`__.
 
@@ -109,6 +115,7 @@ to quote or escape the pattern like `'*.robot'` or `\*.robot`.
 
 __ `Included and excluded files`_
 __ `reStructuredText format`_
+__ `Markdown format`_
 __ `JSON format`_
 __ `Supported file formats`_
 
@@ -353,7 +360,7 @@ same as not specifying this option at all.
          using the :option:`--merge` command line option.
 
 __ `When no tests match selection`_
-__ `Merging outputs`_
+__ `Merging results`_
 
 Re-executing failed test suites
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -809,6 +816,86 @@ Examples::
 
     robot --console quiet tests.robot
     robot --dotted tests.robot
+
+Custom console loggers
+~~~~~~~~~~~~~~~~~~~~~~
+
+In addition to the built-in values listed above, the :option:`--console` option
+accepts a path or name of a custom console logger class or module. The argument
+format is the same as with :option:`--listener`: a path to a Python file, a
+module name, or a dotted class name, with optional arguments separated by colons.
+
+Examples::
+
+    robot --console path/to/myconsole.py tests.robot
+    robot --console MyConsole --pythonpath /path/to/consoles tests.robot
+    robot --console CustomConsole.py:arg1:arg2 tests.robot
+
+Custom console loggers receive the same `listener method calls`__ as
+normal listeners. Only methods that are implemented are called — missing methods
+are silently ignored. This means a minimal console only needs to implement the
+hooks it is interested in.
+
+__ `Listener interface`_
+
+The following example shows a custom console that provides a compact progress
+view with elapsed time and a running pass/fail counter — useful in CI pipelines
+or when the verbose output is too noisy but `dotted` does not provide enough
+context:
+
+.. sourcecode:: python
+
+    import time
+
+
+    class ProgressConsole:
+
+        def __init__(self):
+            self.passed = 0
+            self.failed = 0
+            self.skipped = 0
+            self.start_time = None
+
+        def start_suite(self, data, result):
+            if self.start_time is None:
+                self.start_time = time.time()
+
+        def end_test(self, data, result):
+            if result.passed:
+                self.passed += 1
+            elif result.failed:
+                self.failed += 1
+            else:
+                self.skipped += 1
+            elapsed = time.time() - self.start_time
+            total = self.passed + self.failed + self.skipped
+            status = '✓' if result.passed else '✗' if result.failed else '-'
+            print(
+                f" {status} [{elapsed:>6.1f}s] {result.name}  "
+                f"({total} done, {self.failed} failed)"
+            )
+
+        def result_file(self, kind, path):
+            print(f"{kind}:  {path}")
+
+        def close(self):
+            elapsed = time.time() - self.start_time
+            total = self.passed + self.failed + self.skipped
+            print(
+                f"\n{total} tests in {elapsed:.1f}s: "
+                f"{self.passed} passed, {self.failed} failed, "
+                f"{self.skipped} skipped"
+            )
+
+When using the `programmatic API`__, the ``console`` option also accepts
+a pre-instantiated Python object::
+
+    from robot import run
+    run('tests.robot', console=ProgressConsole())
+
+__ https://robot-framework.readthedocs.io
+
+.. note:: Support for custom console loggers is new in Robot Framework 7.5.
 
 Console width
 ~~~~~~~~~~~~~

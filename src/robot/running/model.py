@@ -62,7 +62,7 @@ if TYPE_CHECKING:
     from .resourcemodel import ResourceFile, UserKeyword
 
 
-IT = TypeVar("IT", bound="IfBranch|TryBranch")
+IT = TypeVar("IT", bound="IfBranch | TryBranch")
 BodyItemParent = Union[
     "TestSuite", "TestCase", "UserKeyword", "For", "While", "If", "IfBranch",
     "Try", "TryBranch", "Group", None
@@ -88,7 +88,7 @@ class WithSource:
     __slots__ = ()
 
     @property
-    def source(self) -> "Path|None":
+    def source(self) -> "Path | None":
         return self.parent.source if self.parent is not None else None
 
 
@@ -109,7 +109,7 @@ class Argument:
     we can consider preserving it if it turns out to be useful.
     """
 
-    def __init__(self, name: "str|None", value: Any):
+    def __init__(self, name: "str | None", value: Any):
         """
         :param name: Argument name. If ``None``, argument is considered positional.
         :param value: Argument value.
@@ -150,12 +150,12 @@ class Keyword(model.Keyword, WithSource):
     def __init__(
         self,
         name: str = "",
-        args: "Sequence[str|Argument|Any]" = (),
-        named_args: "Mapping[str, Any]|None" = None,
+        args: "Sequence[str | Argument | Any]" = (),
+        named_args: "Mapping[str, Any] | None" = None,
         assign: Sequence[str] = (),
         type: str = BodyItem.KEYWORD,
         parent: BodyItemParent = None,
-        lineno: "int|None" = None,
+        lineno: "int | None" = None,
     ):
         super().__init__(name, args, assign, type, parent)
         self.named_args = named_args
@@ -179,10 +179,10 @@ class ForIteration(model.ForIteration, WithSource):
 
     def __init__(
         self,
-        assign: "Mapping[str, str]|None" = None,
+        assign: "Mapping[str, str] | None" = None,
         parent: BodyItemParent = None,
-        lineno: "int|None" = None,
-        error: "str|None" = None,
+        lineno: "int | None" = None,
+        error: "str | None" = None,
     ):
         super().__init__(assign, parent)
         self.lineno = lineno
@@ -199,12 +199,12 @@ class For(model.For, WithSource):
         assign: Sequence[str] = (),
         flavor: Literal["IN", "IN RANGE", "IN ENUMERATE", "IN ZIP"] = "IN",
         values: Sequence[str] = (),
-        start: "str|None" = None,
-        mode: "str|None" = None,
-        fill: "str|None" = None,
+        start: "str | None" = None,
+        mode: "str | None" = None,
+        fill: "str | None" = None,
         parent: BodyItemParent = None,
-        lineno: "int|None" = None,
-        error: "str|None" = None,
+        lineno: "int | None" = None,
+        error: "str | None" = None,
     ):
         super().__init__(assign, flavor, values, start, mode, fill, parent)
         self.lineno = lineno
@@ -236,7 +236,7 @@ class For(model.For, WithSource):
         )
         return ForRunner(context, self.flavor, run, templated).run(self, result)
 
-    def get_iteration(self, assign: "Mapping[str, str]|None" = None) -> ForIteration:
+    def get_iteration(self, assign: "Mapping[str, str] | None" = None) -> ForIteration:
         iteration = ForIteration(assign, self, self.lineno, self.error)
         iteration.body = [item.to_dict() for item in self.body]
         return iteration
@@ -249,8 +249,8 @@ class WhileIteration(model.WhileIteration, WithSource):
     def __init__(
         self,
         parent: BodyItemParent = None,
-        lineno: "int|None" = None,
-        error: "str|None" = None,
+        lineno: "int | None" = None,
+        error: "str | None" = None,
     ):
         super().__init__(parent)
         self.lineno = lineno
@@ -264,13 +264,13 @@ class While(model.While, WithSource):
 
     def __init__(
         self,
-        condition: "str|None" = None,
-        limit: "str|None" = None,
-        on_limit: "str|None" = None,
-        on_limit_message: "str|None" = None,
+        condition: "str | None" = None,
+        limit: "str | None" = None,
+        on_limit: "str | None" = None,
+        on_limit_message: "str | None" = None,
         parent: BodyItemParent = None,
-        lineno: "int|None" = None,
-        error: "str|None" = None,
+        lineno: "int | None" = None,
+        error: "str | None" = None,
     ):
         super().__init__(condition, limit, on_limit, on_limit_message, parent)
         self.lineno = lineno
@@ -308,8 +308,8 @@ class Group(model.Group, WithSource):
         self,
         name: str = "",
         parent: BodyItemParent = None,
-        lineno: "int|None" = None,
-        error: "str|None" = None,
+        lineno: "int | None" = None,
+        error: "str | None" = None,
     ):
         super().__init__(name, parent)
         self.lineno = lineno
@@ -335,9 +335,9 @@ class IfBranch(model.IfBranch, WithSource):
     def __init__(
         self,
         type: str = BodyItem.IF,
-        condition: "str|None" = None,
+        condition: "str | None" = None,
         parent: BodyItemParent = None,
-        lineno: "int|None" = None,
+        lineno: "int | None" = None,
     ):
         super().__init__(type, condition, parent)
         self.lineno = lineno
@@ -358,8 +358,8 @@ class If(model.If, WithSource):
     def __init__(
         self,
         parent: BodyItemParent = None,
-        lineno: "int|None" = None,
-        error: "str|None" = None,
+        lineno: "int | None" = None,
+        error: "str | None" = None,
     ):
         super().__init__(parent)
         self.lineno = lineno
@@ -385,10 +385,10 @@ class TryBranch(model.TryBranch, WithSource):
         self,
         type: str = BodyItem.TRY,
         patterns: Sequence[str] = (),
-        pattern_type: "str|None" = None,
-        assign: "str|None" = None,
+        pattern_type: "str | None" = None,
+        assign: "str | None" = None,
         parent: BodyItemParent = None,
-        lineno: "int|None" = None,
+        lineno: "int | None" = None,
     ):
         super().__init__(type, patterns, pattern_type, assign, parent)
         self.lineno = lineno
@@ -416,8 +416,8 @@ class Try(model.Try, WithSource):
     def __init__(
         self,
         parent: BodyItemParent = None,
-        lineno: "int|None" = None,
-        error: "str|None" = None,
+        lineno: "int | None" = None,
+        error: "str | None" = None,
     ):
         super().__init__(parent)
         self.lineno = lineno
@@ -442,12 +442,12 @@ class Var(model.Var, WithSource):
     def __init__(
         self,
         name: str = "",
-        value: "str|Sequence[str]" = (),
-        scope: "str|None" = None,
-        separator: "str|None" = None,
+        value: "str | Sequence[str]" = (),
+        scope: "str | None" = None,
+        separator: "str | None" = None,
         parent: BodyItemParent = None,
-        lineno: "int|None" = None,
-        error: "str|None" = None,
+        lineno: "int | None" = None,
+        error: "str | None" = None,
     ):
         super().__init__(name, value, scope, separator, parent)
         self.lineno = lineno
@@ -524,8 +524,8 @@ class Return(model.Return, WithSource):
         self,
         values: Sequence[str] = (),
         parent: BodyItemParent = None,
-        lineno: "int|None" = None,
-        error: "str|None" = None,
+        lineno: "int | None" = None,
+        error: "str | None" = None,
     ):
         super().__init__(values, parent)
         self.lineno = lineno
@@ -556,8 +556,8 @@ class Continue(model.Continue, WithSource):
     def __init__(
         self,
         parent: BodyItemParent = None,
-        lineno: "int|None" = None,
-        error: "str|None" = None,
+        lineno: "int | None" = None,
+        error: "str | None" = None,
     ):
         super().__init__(parent)
         self.lineno = lineno
@@ -588,8 +588,8 @@ class Break(model.Break, WithSource):
     def __init__(
         self,
         parent: BodyItemParent = None,
-        lineno: "int|None" = None,
-        error: "str|None" = None,
+        lineno: "int | None" = None,
+        error: "str | None" = None,
     ):
         super().__init__(parent)
         self.lineno = lineno
@@ -621,7 +621,7 @@ class Error(model.Error, WithSource):
         self,
         values: Sequence[str] = (),
         parent: BodyItemParent = None,
-        lineno: "int|None" = None,
+        lineno: "int | None" = None,
         error: str = "",
     ):
         super().__init__(values, parent)
@@ -657,12 +657,12 @@ class TestCase(model.TestCase[Keyword]):
         name: str = "",
         doc: str = "",
         tags: Sequence[str] = (),
-        timeout: "str|None" = None,
-        lineno: "int|None" = None,
-        metadata: "Mapping[str, str]|None" = None,
-        parent: "TestSuite|None" = None,
-        template: "str|None" = None,
-        error: "str|None" = None,
+        timeout: "str | None" = None,
+        lineno: "int | None" = None,
+        metadata: "Mapping[str, str] | None" = None,
+        parent: "TestSuite | None" = None,
+        template: "str | None" = None,
+        error: "str | None" = None,
     ):
         super().__init__(name, doc, tags, timeout, lineno, metadata, parent)
         #: Name of the keyword that has been used as a template when building the test.
@@ -679,7 +679,7 @@ class TestCase(model.TestCase[Keyword]):
         return data
 
     @setter
-    def body(self, body: "Sequence[BodyItem|DataDict]") -> Body:
+    def body(self, body: "Sequence[BodyItem | DataDict]") -> Body:
         """Test body as a :class:`~robot.running.Body` object."""
         return self.body_class(self, body)
 
@@ -698,10 +698,10 @@ class TestSuite(model.TestSuite[Keyword, TestCase]):
         self,
         name: str = "",
         doc: str = "",
-        metadata: "Mapping[str, str]|None" = None,
-        source: "Path|str|None" = None,
-        rpa: "bool|None" = False,
-        parent: "TestSuite|None" = None,
+        metadata: "Mapping[str, str] | None" = None,
+        source: "Path | str | None" = None,
+        rpa: "bool | None" = False,
+        parent: "TestSuite | None" = None,
     ):
         super().__init__(name, doc, metadata, source, rpa, parent)
         #: :class:`ResourceFile` instance containing imports, variables and
@@ -710,7 +710,7 @@ class TestSuite(model.TestSuite[Keyword, TestCase]):
         self.resource = None
 
     @setter
-    def resource(self, resource: "ResourceFile|dict|None") -> "ResourceFile":
+    def resource(self, resource: "ResourceFile | dict | None") -> "ResourceFile":
         from .resourcemodel import ResourceFile
 
         if resource is None:
@@ -721,7 +721,7 @@ class TestSuite(model.TestSuite[Keyword, TestCase]):
         return resource
 
     @classmethod
-    def from_file_system(cls, *paths: "Path|str", **config) -> "TestSuite":
+    def from_file_system(cls, *paths: "Path | str", **config) -> "TestSuite":
         """Create a :class:`TestSuite` object based on the given ``paths``.
 
         :param paths: File or directory paths where to read the data from.
@@ -738,9 +738,9 @@ class TestSuite(model.TestSuite[Keyword, TestCase]):
     def from_model(
         cls,
         model: "File",
-        name: "str|None" = None,
+        name: "str | None" = None,
         *,
-        defaults: "TestDefaults|None" = None,
+        defaults: "TestDefaults | None" = None,
     ) -> "TestSuite":
         """Create a :class:`TestSuite` object based on the given ``model``.
 
@@ -778,7 +778,7 @@ class TestSuite(model.TestSuite[Keyword, TestCase]):
         cls,
         string: str,
         *,
-        defaults: "TestDefaults|None" = None,
+        defaults: "TestDefaults | None" = None,
         **config,
     ) -> "TestSuite":
         """Create a :class:`TestSuite` object based on the given ``string``.
@@ -806,7 +806,7 @@ class TestSuite(model.TestSuite[Keyword, TestCase]):
         self,
         randomize_suites: bool = False,
         randomize_tests: bool = False,
-        randomize_seed: "int|None" = None,
+        randomize_seed: "int | None" = None,
         **options,
     ):
         """A shortcut to configure a suite using one method call.
@@ -834,7 +834,7 @@ class TestSuite(model.TestSuite[Keyword, TestCase]):
         self,
         suites: bool = True,
         tests: bool = True,
-        seed: "int|None" = None,
+        seed: "int | None" = None,
     ):
         """Randomizes the order of suites and/or tests, recursively.
 
@@ -846,7 +846,9 @@ class TestSuite(model.TestSuite[Keyword, TestCase]):
         self.visit(Randomizer(suites, tests, seed))
 
     @setter
-    def suites(self, suites: "Sequence[TestSuite|DataDict]") -> TestSuites["TestSuite"]:
+    def suites(
+        self, suites: "Sequence[TestSuite | DataDict]"
+    ) -> TestSuites["TestSuite"]:
         return TestSuites["TestSuite"](self.__class__, self, suites)
 
     def run(self, settings=None, **options) -> Result:

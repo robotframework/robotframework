@@ -70,7 +70,7 @@ class File(Container):
     def __init__(
         self,
         sections: "Sequence[Section]" = (),
-        source: "Path|None" = None,
+        source: "Path | None" = None,
         languages: Sequence[str] = (),
     ):
         super().__init__()
@@ -78,7 +78,7 @@ class File(Container):
         self.source = source
         self.languages = list(languages)
 
-    def save(self, output: "Path|str|TextIO|None" = None):
+    def save(self, output: "Path | str | TextIO | None" = None):
         """Save model to the given ``output`` or to the original source file.
 
         The ``output`` can be a path to a file or an already opened file
@@ -99,7 +99,7 @@ class Block(Container, ABC):
 
     def __init__(
         self,
-        header: "Statement|None",
+        header: "Statement | None",
         body: Body = (),
         errors: Errors = (),
     ):
@@ -125,7 +125,7 @@ class Block(Container, ABC):
 
 
 class Section(Block):
-    header: "SectionHeader|None"
+    header: "SectionHeader | None"
 
 
 class SettingSection(Section):
@@ -150,7 +150,7 @@ class KeywordSection(Section):
 
 
 class CommentSection(Section):
-    header: "SectionHeader|None"
+    header: "SectionHeader | None"
 
 
 class ImplicitCommentSection(CommentSection):
@@ -158,7 +158,7 @@ class ImplicitCommentSection(CommentSection):
 
     def __init__(
         self,
-        header: "Statement|None" = None,
+        header: "Statement | None" = None,
         body: Body = (),
         errors: Errors = (),
     ):
@@ -201,7 +201,7 @@ class NestedBlock(Block):
         self,
         header: Statement,
         body: Body = (),
-        end: "End|None" = None,
+        end: "End | None" = None,
         errors: Errors = (),
     ):
         super().__init__(header, body, errors)
@@ -216,14 +216,14 @@ class If(NestedBlock):
     """
 
     _fields = ("header", "body", "orelse", "end")
-    header: "IfHeader|ElseIfHeader|ElseHeader"
+    header: "IfHeader | ElseIfHeader | ElseHeader"
 
     def __init__(
         self,
         header: Statement,
         body: Body = (),
-        orelse: "If|None" = None,
-        end: "End|None" = None,
+        orelse: "If | None" = None,
+        end: "End | None" = None,
         errors: Errors = (),
     ):
         super().__init__(header, body, end, errors)
@@ -234,7 +234,7 @@ class If(NestedBlock):
         return self.header.type
 
     @property
-    def condition(self) -> "str|None":
+    def condition(self) -> "str | None":
         return self.header.condition
 
     @property
@@ -310,19 +310,19 @@ class For(NestedBlock):
         return self.header.values
 
     @property
-    def flavor(self) -> "str|None":
+    def flavor(self) -> "str | None":
         return self.header.flavor
 
     @property
-    def start(self) -> "str|None":
+    def start(self) -> "str | None":
         return self.header.start
 
     @property
-    def mode(self) -> "str|None":
+    def mode(self) -> "str | None":
         return self.header.mode
 
     @property
-    def fill(self) -> "str|None":
+    def fill(self) -> "str | None":
         return self.header.fill
 
     def validate(self, ctx: "ValidationContext"):
@@ -334,14 +334,14 @@ class For(NestedBlock):
 
 class Try(NestedBlock):
     _fields = ("header", "body", "next", "end")
-    header: "TryHeader|ExceptHeader|ElseHeader|FinallyHeader"
+    header: "TryHeader | ExceptHeader | ElseHeader | FinallyHeader"
 
     def __init__(
         self,
         header: Statement,
         body: Body = (),
-        next: "Try|None" = None,
-        end: "End|None" = None,
+        next: "Try | None" = None,
+        end: "End | None" = None,
         errors: Errors = (),
     ):
         super().__init__(header, body, end, errors)
@@ -356,15 +356,15 @@ class Try(NestedBlock):
         return getattr(self.header, "patterns", ())
 
     @property
-    def pattern_type(self) -> "str|None":
+    def pattern_type(self) -> "str | None":
         return getattr(self.header, "pattern_type", None)
 
     @property
-    def assign(self) -> "str|None":
+    def assign(self) -> "str | None":
         return getattr(self.header, "assign", None)
 
     @property
-    def variable(self) -> "str|None":  # TODO: Remove in RF 8.0.
+    def variable(self) -> "str | None":  # TODO: Remove in RF 8.0.
         warnings.warn(
             "'Try.variable' is deprecated and will be removed in "
             "Robot Framework 8.0. Use 'Try.assign' instead."
@@ -428,15 +428,15 @@ class While(NestedBlock):
         return self.header.condition
 
     @property
-    def limit(self) -> "str|None":
+    def limit(self) -> "str | None":
         return self.header.limit
 
     @property
-    def on_limit(self) -> "str|None":
+    def on_limit(self) -> "str | None":
         return self.header.on_limit
 
     @property
-    def on_limit_message(self) -> "str|None":
+    def on_limit_message(self) -> "str | None":
         return self.header.on_limit_message
 
     def validate(self, ctx: "ValidationContext"):
@@ -463,7 +463,7 @@ class Group(NestedBlock):
 
 class ModelWriter(ModelVisitor):
 
-    def __init__(self, output: "Path|str|TextIO"):
+    def __init__(self, output: "Path | str | TextIO"):
         if isinstance(output, (Path, str)):
             self.writer = file_writer(output)
             self.close_writer = True
@@ -511,7 +511,7 @@ class ValidationContext:
             self.blocks.pop()
 
     @property
-    def parent_block(self) -> "Block|None":
+    def parent_block(self) -> "Block | None":
         return self.blocks[-1] if self.blocks else None
 
     @property
@@ -538,10 +538,10 @@ class ValidationContext:
 class FirstStatementFinder(ModelVisitor):
 
     def __init__(self):
-        self.statement: "Statement|None" = None
+        self.statement: Statement | None = None
 
     @classmethod
-    def find_from(cls, model: Node) -> "Statement|None":
+    def find_from(cls, model: Node) -> "Statement | None":
         finder = cls()
         finder.visit(model)
         return finder.statement
@@ -558,10 +558,10 @@ class FirstStatementFinder(ModelVisitor):
 class LastStatementFinder(ModelVisitor):
 
     def __init__(self):
-        self.statement: "Statement|None" = None
+        self.statement: Statement | None = None
 
     @classmethod
-    def find_from(cls, model: Node) -> "Statement|None":
+    def find_from(cls, model: Node) -> "Statement | None":
         finder = cls()
         finder.visit(model)
         return finder.statement

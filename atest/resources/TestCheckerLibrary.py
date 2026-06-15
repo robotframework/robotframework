@@ -162,7 +162,7 @@ class TestCheckerLibrary:
         with open("doc/schema/result.json", encoding="UTF-8") as f:
             return JSONValidator(json.load(f))
 
-    def process_output(self, path: "None|Path", validate: "bool|None" = None):
+    def process_output(self, path: "None | Path", validate: "bool | None" = None):
         set_suite_variable = BuiltIn().set_suite_variable
         if path is None:
             set_suite_variable("$SUITE", None)

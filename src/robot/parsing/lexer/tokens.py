@@ -170,11 +170,11 @@ class Token:
 
     def __init__(
         self,
-        type: "str|None" = None,
-        value: "str|None" = None,
+        type: "str | None" = None,
+        value: "str | None" = None,
         lineno: int = -1,
         col_offset: int = -1,
-        error: "str|None" = None,
+        error: "str | None" = None,
     ):
         self.type = type
         if value is None:

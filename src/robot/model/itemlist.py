@@ -52,12 +52,12 @@ class ItemList(MutableSequence[T]):
     def __init__(
         self,
         item_class: Type[T],
-        common_attrs: "dict[str, Any]|None" = None,
-        items: "Iterable[T|DataDict]" = (),
+        common_attrs: "dict[str, Any] | None" = None,
+        items: "Iterable[T | DataDict]" = (),
     ):
         self._item_class = item_class
         self._common_attrs = common_attrs
-        self._items: "list[T]" = []
+        self._items: list[T] = []
         if items:
             self.extend(items)
 
@@ -66,12 +66,12 @@ class ItemList(MutableSequence[T]):
         """Create a new item using the provided arguments."""
         return self.append(self._item_class(*args, **kwargs))
 
-    def append(self, item: "T|DataDict") -> T:
+    def append(self, item: "T | DataDict") -> T:
         item = self._check_type_and_set_attrs(item)
         self._items.append(item)
         return item
 
-    def _check_type_and_set_attrs(self, item: "T|DataDict") -> T:
+    def _check_type_and_set_attrs(self, item: "T | DataDict") -> T:
         if not isinstance(item, self._item_class):
             if isinstance(item, dict):
                 item = self._item_from_dict(item)
@@ -85,7 +85,7 @@ class ItemList(MutableSequence[T]):
                 setattr(item, attr, value)
         return item
 
-    def _type_name(self, item: "type|object") -> str:
+    def _type_name(self, item: "type | object") -> str:
         typ = item if isinstance(item, type) else type(item)
         return full_name(typ) if issubclass(typ, ModelObject) else typ.__name__
 
@@ -94,10 +94,10 @@ class ItemList(MutableSequence[T]):
             return self._item_class.from_dict(data)  # type: ignore
         return self._item_class(**data)
 
-    def extend(self, items: "Iterable[T|DataDict]"):
+    def extend(self, items: "Iterable[T | DataDict]"):
         self._items.extend(self._check_type_and_set_attrs(i) for i in items)
 
-    def insert(self, index: int, item: "T|DataDict"):
+    def insert(self, index: int, item: "T | DataDict"):
         item = self._check_type_and_set_attrs(item)
         self._items.insert(index, item)
 
@@ -123,7 +123,7 @@ class ItemList(MutableSequence[T]):
     @overload
     def __getitem__(self: Self, index: slice, /) -> Self: ...
 
-    def __getitem__(self: Self, index: "int|slice", /) -> "T|Self":
+    def __getitem__(self: Self, index: "int | slice", /) -> "T | Self":
         if isinstance(index, slice):
             return self._create_new_from(self._items[index])
         return self._items[index]
@@ -137,20 +137,20 @@ class ItemList(MutableSequence[T]):
         return new
 
     @overload
-    def __setitem__(self, index: int, item: "T|DataDict", /): ...
+    def __setitem__(self, index: int, item: "T | DataDict", /): ...
 
     @overload
-    def __setitem__(self, index: slice, items: "Iterable[T|DataDict]", /): ...
+    def __setitem__(self, index: slice, items: "Iterable[T | DataDict]", /): ...
 
     def __setitem__(
-        self, index: "int|slice", item: "T|DataDict|Iterable[T|DataDict]", /
+        self, index: "int | slice", item: "T | DataDict | Iterable[T | DataDict]", /
     ):
         if isinstance(index, slice):
             self._items[index] = [self._check_type_and_set_attrs(i) for i in item]
         else:
             self._items[index] = self._check_type_and_set_attrs(item)
 
-    def __delitem__(self, index: "int|slice", /):
+    def __delitem__(self, index: "int | slice", /):
         del self._items[index]
 
     def __contains__(self, item: Any, /) -> bool:

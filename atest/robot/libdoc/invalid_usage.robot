@@ -31,7 +31,7 @@ Invalid specdocformat for HTML output format
     --specdocformat HTML BuiltIn ${OUT HTML}    The --specdocformat option is not applicable with HTML outputs.
 
 Invalid doc format
-    --docformat inv BuiltIn ${OUT HTML}    Doc format must be 'ROBOT', 'TEXT', 'HTML' or 'REST', got 'INV'.
+    --docformat inv BuiltIn ${OUT HTML}    Doc format must be 'ROBOT', 'MARKDOWN', 'TEXT', 'HTML' or 'REST', got 'INV'.
 
 Invalid doc format in library
     ${TESTDATADIR}/DocFormatInvalid.py ${OUT HTML}   Invalid documentation format 'INVALID'.

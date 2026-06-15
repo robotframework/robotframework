@@ -46,9 +46,9 @@ class VariableResolver(Resolvable):
     def __init__(
         self,
         value: Sequence[str],
-        name: "str|None" = None,
-        type: "str|None" = None,
-        error_reporter: "Callable[[str], None]|None" = None,
+        name: "str | None" = None,
+        type: "str | None" = None,
+        error_reporter: "Callable[[str], None] | None" = None,
     ):
         self.value = tuple(value)
         self.name = name
@@ -61,9 +61,9 @@ class VariableResolver(Resolvable):
     def from_name_and_value(
         cls,
         name: str,
-        value: "str|Sequence[str]",
-        separator: "str|None" = None,
-        error_reporter: "Callable[[str], None]|None" = None,
+        value: "str | Sequence[str]",
+        separator: "str | None" = None,
+        error_reporter: "Callable[[str], None] | None" = None,
     ) -> "VariableResolver":
         match = search_variable(name, parse_type=True)
         if not match.is_assign(allow_nested=True):
@@ -82,7 +82,7 @@ class VariableResolver(Resolvable):
         return klass(value, match.name, match.type, error_reporter)
 
     @classmethod
-    def from_variable(cls, var: "Var|Variable") -> "VariableResolver":
+    def from_variable(cls, var: "Var | Variable") -> "VariableResolver":
         if var.error:
             raise DataError(var.error)
         return cls.from_name_and_value(
@@ -158,8 +158,8 @@ class ScalarVariableResolver(VariableResolver):
 
     def __init__(
         self,
-        value: "str|Sequence[str]",
-        separator: "str|None" = None,
+        value: "str | Sequence[str]",
+        separator: "str | None" = None,
         name=None,
         type=None,
         error_reporter=None,

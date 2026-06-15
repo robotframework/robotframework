@@ -12,7 +12,6 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
 from abc import ABC, abstractmethod
 from typing import Iterable, Iterator, overload, Sequence
 
@@ -31,8 +30,9 @@ class Tags(Sequence[str]):
     def robot(self, name: str) -> bool:
         """Check do tags contain a reserved tag in format `robot:<name>`.
 
-        `tags.robot('<name>')` is same as `'robot:<name>' in tags`,
-        but the former is considerably faster.
+        `tags.robot('<name>')` is same as `'robot:<name>' in tags`, but using
+        this method is considerably faster. This method requires the ``name``
+        to be in lowercase, though, while checking with `in` is case-insensitive.
         """
         return name in self._reserved
 
@@ -45,28 +45,33 @@ class Tags(Sequence[str]):
 
     def _normalize(self, tags):
         nd = NormalizedDict.fromkeys([str(t) for t in tags], ignore="_")
-        if "" in nd:
+        # Inspecting already normalized names is performance optimization.
+        normalized = nd.normalized_keys
+        if "" in normalized:
             del nd[""]
-        if "NONE" in nd:
-            del nd["NONE"]
-        reserved = [tag[6:] for tag in nd.normalized_keys if tag[:6] == "robot:"]
+        if "none" in normalized:
+            del nd["none"]
+        reserved = [n[6:] for n in normalized if n[:6] == "robot:"]
         return tuple(nd), tuple(reserved)
 
     def add(self, tags: Iterable[str], remove_negated: bool = False):
-        tags = tuple(Tags(tags))
+        tags = Tags(tags)
         if remove_negated:
             remove = [t[1:] for t in tags if t[0] == "-"]
             if remove:
-                self.remove(remove)
+                self._remove(remove, "removing tags using '-tag' syntax")
                 tags = [t for t in tags if t[0] != "-"]
-        self.__init__(tuple(self) + tuple(tags))
+        self.__init__([*self, *tags])
 
     def remove(self, tags: Iterable[str]):
-        match = TagPatterns(tags).match
+        self._remove(tags, "removing tags")
+
+    def _remove(self, tags: Iterable[str], usage):
+        match = TagPatterns(tags, usage).match
         self.__init__([t for t in self if not match(t)])
 
     def match(self, tags: Iterable[str]) -> bool:
-        return TagPatterns(tags).match(self)
+        return TagPatterns(tags, "matching tags").match(self)
 
     def __contains__(self, tags: Iterable[str]) -> bool:
         return self.match(tags)
@@ -99,19 +104,24 @@ class Tags(Sequence[str]):
     @overload
     def __getitem__(self, index: slice) -> "Tags": ...
 
-    def __getitem__(self, index: "int|slice") -> "str|Tags":
+    def __getitem__(self, index: "int | slice") -> "str | Tags":
         if isinstance(index, slice):
             return Tags(self._tags[index])
         return self._tags[index]
 
     def __add__(self, other: Iterable[str]) -> "Tags":
-        return Tags(tuple(self) + tuple(Tags(other)))
+        return Tags([*self, *Tags(other)])
 
 
 class TagPatterns(Sequence["TagPattern"]):
+    """Represents a list of tag patterns like ``tag``, ``t*`` or ``x OR y``.
 
-    def __init__(self, patterns: Iterable[str] = ()):
-        self._patterns = tuple(TagPattern.from_string(p) for p in Tags(patterns))
+    The ``usage`` parameter should only be used internally by Robot Framework
+    itself. See ``TagPattern.from_string`` for more details if needed.
+    """
+
+    def __init__(self, patterns: Iterable[str] = (), usage: "str | None" = None):
+        self._patterns = tuple(TagPattern.from_string(p, usage) for p in Tags(patterns))
 
     @property
     def is_constant(self):
@@ -144,16 +154,70 @@ class TagPattern(ABC):
     is_constant = False
 
     @classmethod
-    def from_string(cls, pattern: str) -> "TagPattern":
-        pattern = pattern.replace(" ", "")
+    def from_string(cls, pattern: str, usage: "str | None" = None) -> "TagPattern":
+        """Create ``TagPattern`` object from string like ``tag``, ``t*`` or ``x OR y``.
+
+        ``usage`` is used in a deprecation warning if a pattern uses Boolean operators
+        in deprecated format like ``XORY``. It should only be used internally by
+        Robot Framework itself for giving context where the pattern was used. When
+        a usage is given, warning is logged using Robot's own global ``LOGGER`` and
+        otherwise the warning is logged using Python's ``logging`` module.
+        """
         if "NOT" in pattern:
-            must_match, *must_not_match = pattern.split("NOT")
+            must_match, *must_not_match = cls._split(pattern, "NOT", usage)
             return NotTagPattern(must_match, must_not_match)
         if "OR" in pattern:
-            return OrTagPattern(pattern.split("OR"))
-        if "AND" in pattern or "&" in pattern:
-            return AndTagPattern(pattern.replace("&", "AND").split("AND"))
+            return OrTagPattern(cls._split(pattern, "OR", usage))
+        if "&" in pattern:
+            cls._deprecated(
+                pattern,
+                "Boolean operator '&' is deprecated, use 'AND' instead.",
+                usage,
+            )
+            pattern = pattern.replace("&", " AND ")
+        if "AND" in pattern:
+            return AndTagPattern(cls._split(pattern, "AND", usage))
         return SingleTagPattern(pattern)
+
+    @classmethod
+    def _split(cls, pattern, operator, usage=None):
+        tokens = f" {pattern} ".split(operator)
+        for token in tokens:
+            if not cls._validate(token, operator):
+                cls._deprecated(
+                    pattern,
+                    f"'{operator}' is currently considered to be a Boolean operator, "
+                    f"but in the future operators must be surrounded with spaces or "
+                    f"tag names must be lower case.",
+                    usage,
+                )
+                break
+        return tokens
+
+    @classmethod
+    def _validate(cls, token, operator):
+        if not token or token[0].isspace() and token[-1].isspace():
+            return True
+        remaining_operators = {"NOT": ("OR", "AND"), "OR": ("AND",), "AND": ()}
+        for exclude in remaining_operators[operator]:
+            if exclude in token:
+                token = token.replace(exclude, "")
+        return token.lower() == token
+
+    @classmethod
+    def _deprecated(cls, pattern, message, usage=None):
+        message = (
+            f"The behavior of tag pattern '{pattern}' will change in "
+            f"Robot Framework 8.0: {message}"
+        )
+        if usage:
+            from robot.output import LOGGER
+
+            LOGGER.warn(f"Problems when {usage}: {message}")
+        else:
+            import warnings
+
+            warnings.warn(message)
 
     @abstractmethod
     def match(self, tags: Iterable[str]) -> bool:
@@ -162,6 +226,9 @@ class TagPattern(ABC):
     @abstractmethod
     def __iter__(self) -> Iterator["TagPattern"]:
         raise NotImplementedError
+
+    def __getitem__(self, index: int) -> "TagPattern":
+        return list(self)[index]
 
     @abstractmethod
     def __str__(self) -> str:
@@ -172,16 +239,18 @@ class SingleTagPattern(TagPattern):
 
     def __init__(self, pattern: str):
         # Normalization is handled here, not in Matcher, for performance reasons.
-        # This way we can normalize tags only once.
+        # With this configuration all normalizations in Matcher are no-ops.
         self._matcher = Matcher(
             normalize(pattern, ignore="_"),
             caseless=False,
             spaceless=False,
         )
+        # Preserve original patter mostly for string representation purposes.
+        self._pattern = pattern.strip()
 
     @property
     def is_constant(self):
-        pattern = self._matcher.pattern
+        pattern = self._pattern
         return not ("*" in pattern or "?" in pattern or "[" in pattern)
 
     def match(self, tags: Iterable[str]) -> bool:
@@ -192,7 +261,7 @@ class SingleTagPattern(TagPattern):
         yield self
 
     def __str__(self) -> str:
-        return self._matcher.pattern
+        return self._pattern
 
     def __bool__(self) -> bool:
         return bool(self._matcher)

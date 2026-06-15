@@ -86,12 +86,13 @@ Options
                           documentation to HTML. The default is RAW with XML
                           spec files and HTML with JSON specs and when using
                           the special LIBSPEC format.
- -F --docformat ROBOT|HTML|TEXT|REST
+ -F --docformat ROBOT|MARKDOWN|HTML|TEXT|REST
                           Specifies the source documentation format. Possible
                           values are Robot Framework's documentation format,
-                          HTML, plain text, and reStructuredText. The default
-                          value can be specified in library source code and
-                          the initial default value is ROBOT.
+                          Markdown, HTML, plain text and reStructuredText.
+                          The default value can be specified in library source
+                          code and the initial default value is ROBOT. Markdown
+                          support is new in RF 7.5.
     --theme DARK|LIGHT|NONE
                           Use dark or light HTML theme. If this option is not
                           used, or the value is NONE, the theme is selected
@@ -225,7 +226,7 @@ class LibDoc(Application):
         return self._validate(
             "Doc format",
             docformat,
-            ("ROBOT", "TEXT", "HTML", "REST"),
+            ("ROBOT", "MARKDOWN", "TEXT", "HTML", "REST"),
         )
 
     def _get_format_and_specdocformat(self, format, specdocformat, output):

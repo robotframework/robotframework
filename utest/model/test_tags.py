@@ -1,4 +1,5 @@
 import unittest
+import warnings
 
 from robot.model.tags import TagPattern, TagPatterns, Tags
 from robot.utils import seq2str
@@ -237,6 +238,21 @@ class TestTagPatterns(unittest.TestCase):
         assert_true(patterns.match(["x", "Y", "z"]))
         assert_true(patterns.match(["a", "y", "z", "b", "X"]))
 
+    def test_ampersand_is_deprecated(self):
+        with warnings.catch_warnings(record=True) as w:
+            patterns = TagPatterns(["x&y&z"])
+        assert_equal(w[0].category, UserWarning)
+        assert_equal(
+            str(w[0].message),
+            "The behavior of tag pattern 'x&y&z' will change in Robot Framework 8.0: "
+            "Boolean operator '&' is deprecated, use 'AND' instead.",
+        )
+        assert_false(patterns.match([]))
+        assert_false(patterns.match(["x"]))
+        assert_true(patterns.match(["x", "y", "z"]))
+        assert_false(patterns.match(["y", "z"]))
+        assert_equal(str(patterns[0]), "x AND y AND z")
+
     def test_or(self):
         patterns = TagPatterns(["xORy", "???ORz"])
         assert_false(patterns.match([]))
@@ -349,12 +365,42 @@ class TestTagPatterns(unittest.TestCase):
         assert_false(patterns.match("e"))
         assert_false(patterns.match("f"))
 
+    def test_valid_operator_usage(self):
+        for pattern, expected in [
+            ("X AND Y", False),
+            ("X OR Y", True),
+            ("X NOT Y", True),
+            ("NOT X OR Y AND Z", False),
+            ("xANDy", False),
+            ("*OR?", True),
+            ("xNOT2", True),
+            ("NOT?OR-AND]", False),
+        ]:
+            assert_equal(TagPatterns(pattern).match("X"), expected)
+            assert_equal(TagPatterns(pattern.replace(" ", " ")).match("X"), expected)
+
+    def test_deprecated_operator_usage(self):
+        for pattern, expected in [
+            ("XANDY", False),
+            ("XORY", True),
+            ("XNOTY", True),
+            ("NOTXORYANDZ", False),
+        ]:
+            with warnings.catch_warnings(record=True) as w:
+                assert_equal(TagPatterns(pattern).match("X"), expected)
+            assert_equal(w[0].category, UserWarning)
+            assert_true(
+                str(w[0].message).startswith(
+                    f"The behavior of tag pattern '{pattern}' will change"
+                )
+            )
+
     def test_str(self):
         for pattern in [
             "a",
             "NOT a",
-            "a NOT b",
-            "a AND b",
+            "A NOT B",
+            "a AND b_c",
             "a OR b",
             "a*",
             "a OR b NOT c OR d AND e OR ??",
@@ -364,13 +410,10 @@ class TestTagPatterns(unittest.TestCase):
                 f"[{pattern}]",
             )
             assert_equal(
-                str(TagPatterns(pattern.replace(" ", ""))),
-                f"[{pattern}]",
+                str(TagPatterns([pattern, "x", pattern, "Y", "X"])),
+                f"[{pattern}, x, Y]",
             )
-            assert_equal(
-                str(TagPatterns([pattern, "x", pattern, "y"])),
-                f"[{pattern}, x, y]",
-            )
+        assert_equal(str(TagPatterns("aNOTbORcANDd")), "[a NOT b OR c AND d]")
 
     def test_non_ascii(self):
         pattern = "ä OR å NOT æ AND ☃ OR ??"
@@ -387,6 +430,19 @@ class TestTagPatterns(unittest.TestCase):
             assert_true(TagPatterns(true).is_constant)
         for false in ["x*"], ["x", "y?"], ["[abc]"], ["xORy"], ["xANDy"], ["x", "NOTy"]:
             assert_false(TagPatterns(false).is_constant)
+
+    def test_iter_len_getitem(self):
+        patterns = TagPatterns(["a", "b", "c OR d"])
+        assert_equal(len(patterns), 3)
+        assert_equal(list(patterns), [patterns[0], patterns[1], patterns[2]])
+
+    def test_TagPattern_iter_getitem(self):
+        a, b, c, d = TagPatterns(["a", "b AND *", "c OR *", "NOT d"])
+        assert_equal(list(a), [a])
+        assert_equal(a[0], a)
+        assert_equal(list(b), [b[0], b[1]])
+        assert_equal(list(c), [c[0], c[1]])
+        assert_equal(list(d), [d[0], d[1]])
 
 
 class AndOrPatternGenerator:

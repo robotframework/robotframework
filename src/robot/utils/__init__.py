@@ -166,12 +166,6 @@ from .typehints import (
 from .unic import prepr as prepr, safe_str as safe_str
 
 
-def read_rest_data(rstfile):
-    from .restreader import read_rest_data
-
-    return read_rest_data(rstfile)
-
-
 def unic(item):
     # Cannot be deprecated using '__getattr__' because a module with same name exists.
     warnings.warn(
@@ -217,6 +211,11 @@ def __getattr__(name):
     def is_pathlike(item):
         return isinstance(item, PathLike)
 
+    def read_rest_data(rstfile):
+        from robot.running.builder.restreader import read_rest_data
+
+        return read_rest_data(rstfile)
+
     deprecated = {
         "RERAISED_EXCEPTIONS": (KeyboardInterrupt, SystemExit, MemoryError),
         "FALSE_STRINGS": FALSE_STRINGS,
@@ -237,6 +236,7 @@ def __getattr__(name):
         "roundup": round,
         "py2to3": py2to3,
         "py3to2": py3to2,
+        "read_rest_data": read_rest_data,
     }
 
     if name in deprecated:

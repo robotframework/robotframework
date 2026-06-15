@@ -29,9 +29,9 @@ from .blockparsers import KeywordParser, Parser, TestCaseParser
 class FileParser(Parser):
     model: File
 
-    def __init__(self, source: "Source|None" = None):
+    def __init__(self, source: "Source | None" = None):
         super().__init__(File(source=self._get_path(source)))
-        self.parsers: "dict[str, type[SectionParser]]" = {
+        self.parsers: dict[str, type[SectionParser]] = {
             Token.SETTING_HEADER: SettingSectionParser,
             Token.VARIABLE_HEADER: VariableSectionParser,
             Token.TESTCASE_HEADER: TestCaseSectionParser,
@@ -45,7 +45,7 @@ class FileParser(Parser):
             Token.EOL: ImplicitCommentSectionParser,
         }
 
-    def _get_path(self, source: "Source|None") -> "Path|None":
+    def _get_path(self, source: "Source | None") -> "Path | None":
         if not source:
             return None
         if isinstance(source, str) and "\n" not in source:
@@ -62,7 +62,7 @@ class FileParser(Parser):
 
     def parse(self, statement: Statement) -> "SectionParser":
         parser_class = self.parsers[statement.type]
-        model_class: "type[Section]" = parser_class.__annotations__["model"]
+        model_class: type[Section] = parser_class.__annotations__["model"]
         parser = parser_class(model_class(statement))
         self.model.sections.append(parser.model)
         return parser
@@ -74,7 +74,7 @@ class SectionParser(Parser):
     def handles(self, statement: Statement) -> bool:
         return statement.type not in Token.HEADER_TOKENS
 
-    def parse(self, statement: Statement) -> "Parser|None":
+    def parse(self, statement: Statement) -> "Parser | None":
         self.model.body.append(statement)
         return None
 
@@ -102,7 +102,7 @@ class InvalidSectionParser(SectionParser):
 class TestCaseSectionParser(SectionParser):
     model: TestCaseSection
 
-    def parse(self, statement: Statement) -> "Parser|None":
+    def parse(self, statement: Statement) -> "Parser | None":
         if statement.type == Token.TESTCASE_NAME:
             parser = TestCaseParser(TestCase(statement))
             self.model.body.append(parser.model)
@@ -113,7 +113,7 @@ class TestCaseSectionParser(SectionParser):
 class KeywordSectionParser(SectionParser):
     model: KeywordSection
 
-    def parse(self, statement: Statement) -> "Parser|None":
+    def parse(self, statement: Statement) -> "Parser | None":
         if statement.type == Token.KEYWORD_NAME:
             parser = KeywordParser(Keyword(statement))
             self.model.body.append(parser.model)

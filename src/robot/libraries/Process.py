@@ -298,11 +298,11 @@ class ProcessConfiguration:
         }
 
     def __str__(self):
-        printable_env = self.env
-        if len(self.secret_env_keys):
-            printable_env = self.env.copy()
-            for k in self.secret_env_keys:
-                printable_env[k] = str(Secret(""))
+        if self.secret_env_keys:
+            secret_env = dict.fromkeys(self.secret_env_keys, str(Secret("")))
+            env = {**self.env, **secret_env}
+        else:
+            env = self.env
         return f"""\
 cwd:     {self.cwd}
 shell:   {self.shell}
@@ -310,7 +310,7 @@ stdout:  {self._stream_name(self.stdout_stream)}
 stderr:  {self._stream_name(self.stderr_stream)}
 stdin:   {self._stream_name(self.stdin_stream)}
 alias:   {self.alias}
-env:     {printable_env}"""
+env:     {env}"""
 
     def _stream_name(self, stream):
         if hasattr(stream, "name"):

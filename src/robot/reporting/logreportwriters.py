@@ -41,7 +41,7 @@ class _LogReportWriter:
 class LogWriter(_LogReportWriter):
     usage = "log"
 
-    def write(self, path: "Path|str", config):
+    def write(self, path: "Path | str", config):
         if isinstance(path, str):
             path = Path(path)
         self._write_file(path, config, LOG)
@@ -62,7 +62,7 @@ class LogWriter(_LogReportWriter):
 class ReportWriter(_LogReportWriter):
     usage = "report"
 
-    def write(self, path: "Path|str", config):
+    def write(self, path: "Path | str", config):
         if isinstance(path, str):
             path = Path(path)
         self._write_file(path, config, REPORT)

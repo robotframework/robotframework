@@ -46,7 +46,7 @@ def binary_file_writer(path=None):
     return writer
 
 
-def create_destination_directory(path: "Path|str", usage=None):
+def create_destination_directory(path: "Path | str", usage=None):
     if not isinstance(path, Path):
         path = Path(path)
     if not path.parent.exists():

@@ -1,6 +1,5 @@
 *** Settings ***
 Library                  Annotations.py
-Library                  DeferredAnnotations.py
 Library                  OperatingSystem
 Resource                 conversion.resource
 
@@ -174,6 +173,9 @@ String
     String               ${42}                     '42'
     String               ${None}                   'None'
     String               ${LIST}                   "['foo', 'bar']"
+
+String sub type
+    String sub type      Hello!                    'Hello!'
 
 Invalid string
     [Template]           Conversion Should Fail
@@ -702,8 +704,3 @@ Explicit conversion failure is used if both conversions fail
     [Template]    Conversion Should Fail
     Type and default 4                             BANG!                 type=list         error=Invalid expression.
     Type and default 3                             BANG!                 type=timedelta    error=Invalid time string 'BANG!'.
-
-Deferred evaluation of annotations
-    [Tags]    require-py3.14
-    ${value} =    Deferred evaluation of annotations    PEP 649
-    Should be equal    ${value}    PEP 649

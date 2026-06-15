@@ -42,8 +42,8 @@ class _List:
         Mainly useful for converting tuples and other iterable to lists.
         Use `Create List` from the BuiltIn library for constructing new lists.
 
-        To split strings into characters, the `Split String To Characters` from
-        the String Library can be used.
+        Use `Split String To Characters` from the String library for splitting
+        strings to a list of characters.
         """
         return list(item)  # type: ignore
 
@@ -81,9 +81,7 @@ class _List:
 
         If the absolute value of the index is greater than
         the length of the list, the value is added at the end
-        (positive index) or the beginning (negative index). An index
-        can be given either as an integer or a string that can be
-        converted to an integer.
+        (positive index) or the beginning (negative index).
 
         Starting from Robot Framework 7.4, the modified list is also returned.
 
@@ -123,8 +121,6 @@ class _List:
         Index ``0`` means the first position, ``1`` the second and so on.
         Similarly, ``-1`` is the last position, ``-2`` second last, and so on.
         Using an index that does not exist on the list causes an error.
-        The index can be either an integer or a string that can be converted to
-        an integer.
 
         Starting from Robot Framework 7.4, the modified list is also returned.
 
@@ -135,7 +131,8 @@ class _List:
         | ${L3} = ['a', 'xxx', 'yyy']
 
         Starting from Robot Framework 6.1, it is also possible to use the native
-        item assignment syntax. This is equivalent to the above:
+        item assignment syntax instead of this keyword. This is equivalent to
+        the above:
         | ${L3}[1] =  | Set Variable | xxx |
         | ${L3}[-1] = | Set Variable | yyy |
         """
@@ -172,8 +169,6 @@ class _List:
         Index ``0`` means the first position, ``1`` the second and so on.
         Similarly, ``-1`` is the last position, ``-2`` the second last, and so on.
         Using an index that does not exist on the list causes an error.
-        The index can be either an integer or a string that can be converted
-        to an integer.
 
         Example:
         | ${x} = | Remove From List | ${L2} | 0 |
@@ -205,13 +200,10 @@ class _List:
     def get_from_list(self, list_: Sequence, index: int) -> object:
         """Returns the value specified with an ``index`` from ``list``.
 
-        The given list is never altered by this keyword.
-
         Index ``0`` means the first position, ``1`` the second, and so on.
-        Similarly, ``-1`` is the last position, ``-2`` the second last, and so on.
-        Using an index that does not exist on the list causes an error.
-        The index can be either an integer or a string that can be converted
-        to an integer.
+        Negative indices work so that ``-1`` is the last position, ``-2``
+        the second last, and so on. Using an index that does not exist on
+        the list causes an error.
 
         Examples (including Python equivalents in comments):
         | ${x} = | Get From List | ${L5} | 0  | # L5[0]  |
@@ -232,23 +224,23 @@ class _List:
         start: "int | Literal['']" = 0,
         end: "int | None" = None,
     ) -> Sequence:
-        """Returns a slice of the given list between ``start`` and ``end`` indexes.
+        """Returns a slice of the given list between ``start`` and ``end`` indices.
 
-        The given list is never altered by this keyword.
+        Indices have the same semantics as with `Get From List`. A difference is
+        that too big or small indices are considered to be the same as the biggest
+        or smallest valid indices, respectively, instead of causing an error.
 
-        If both ``start`` and ``end`` are given, a sublist containing values
-        from ``start`` to ``end`` is returned. This is the same as
-        ``list[start:end]`` in Python. To get all items from the beginning,
-        use 0 as the start value, and to get all items until and including
-        the end, use ``None`` (default) as the end value.
+        The item matching the start index is included in the returned slice, but
+        the item matching the end index is not.
 
-        Using ``start`` or ``end`` not found on the list is the same as using
-        the largest (or smallest) available index.
+        To get all items from the beginning, use ``0`` (default) as the start index.
+        To get all items until and including the end, use ``None`` (default) or
+        list's length as the end index.
 
         Examples (incl. Python equivalents in comments):
-        | ${x} = | Get Slice From List | ${L5} | 2      | 4 | # L5[2:4]    |
-        | ${y} = | Get Slice From List | ${L5} | 1      |   | # L5[1:None] |
-        | ${z} = | Get Slice From List | ${L5} | end=-2 |   | # L5[0:-2]   |
+        | ${x} = | Get Slice From List | ${L5} | 2      | 4 | # L5[2:4]  |
+        | ${y} = | Get Slice From List | ${L5} | 1      |   | # L5[1:]   |
+        | ${z} = | Get Slice From List | ${L5} | end=-2 |   | # L5[0:-2] |
         =>
         | ${x} = ['c', 'd']
         | ${y} = ['b', 'c', 'd', 'e']
@@ -275,7 +267,7 @@ class _List:
 
         The search can be narrowed to the selected sublist by the ``start`` and
         ``end`` indexes having the same semantics as with `Get Slice From List`
-        keyword. The given list is never altered by this keyword.
+        keyword.
 
         Example:
         | ${x} = | Count Values In List | ${L3} | b |
@@ -296,14 +288,25 @@ class _List:
 
         The search can be narrowed to the selected sublist by the ``start`` and
         ``end`` indexes having the same semantics as with `Get Slice From List`
-        keyword. In case the value is not found, -1 is returned. The given list
-        is never altered by this keyword.
+        keyword. The returned index is always the index of the value in the
+        original list.
+
+        If the value is not found, ``-1`` is returned.
 
         Example:
         | ${x} = | Get Index From List | ${L5} | d |
+        | ${y} = | Get Index From List | ${L5} | d | start=-4 |
+        | ${z} = | Get Index From List | ${L5} | c | start=3 |
         =>
         | ${x} = 3
+        | ${y} = 3
+        | ${z} = -1
         | ${L5} is not changed
+
+        Starting from Robot Framework 7.5, the returned index is always positive
+        if the value is found. With earlier versions negative start indices
+        yielded negative return values making it impossible to know did ``-1``
+        mean that the value had that index or that the value was not found.
         """
         if start == "":
             # Deprecated in RF 7.4. TODO: Remove in RF 9.
@@ -312,9 +315,13 @@ class _List:
                 "keyword is deprecated. Use '0' instead."
             )
             start = 0
+        if start < 0:
+            increment = max(start + len(list_), 0)
+        else:
+            increment = start
         list_ = self.get_slice_from_list(list_, start, end)
         try:
-            return start + list_.index(value)
+            return list_.index(value) + increment
         except ValueError:
             return -1
 
@@ -324,18 +331,13 @@ class _List:
         By default, returns a new list with same items as in the original.
         Set the ``deepcopy`` argument to a true value if also items should
         be copied.
-
-        The given list is never altered by this keyword.
         """
         if deepcopy:
             return copy.deepcopy(list_)
         return list_[:]
 
     def reverse_list(self, list_: MutableSequence) -> MutableSequence:
-        """Reverses the given list in place.
-
-        Note that the given list is changed and nothing is returned. Use
-        `Copy List` first, if you need to keep also the original order.
+        """Reverses the given list.
 
         Starting from Robot Framework 7.4, the reversed list is also returned.
 
@@ -347,14 +349,10 @@ class _List:
         return list_
 
     def sort_list(self, list_: MutableSequence) -> MutableSequence:
-        """Sorts the given list in place.
+        """Sorts the given list.
 
         Sorting fails if items in the list are not comparable with each others.
         For example, sorting a list containing strings and numbers is not possible.
-
-        Note that the given list is changed and nothing is returned. Use
-        `Copy List` first, if you need to preserve the list also in the original
-        order.
 
         Starting from Robot Framework 7.4, the sorted list is also returned.
         """
@@ -647,7 +645,7 @@ class _Dictionary:
         key: object,
         default: object = NOT_SET,
     ) -> object:
-        """Pops the given ``key`` from the ``dictionary`` and returns its value.
+        """Removes the given ``key`` from the ``dictionary`` and returns its value.
 
         The keyword fails if the given ``key`` cannot be found from the ``dictionary``
         by default. If optional ``default`` value is given, it will be returned instead.
@@ -670,7 +668,7 @@ class _Dictionary:
     ) -> MutableMapping:
         """Keeps the given ``keys`` in the ``dictionary`` and removes all others.
 
-        If the given ``key`` does not exist in the ``dictionary``, it is ignored.
+        If a certain key does not exist in the ``dictionary``, it is ignored.
 
         Starting from Robot Framework 7.4, the modified dictionary is also returned.
 
@@ -693,8 +691,6 @@ class _Dictionary:
         By default, returns a new dictionary with same items as in the original.
         Set the ``deepcopy`` argument to a true value if also items should
         be copied.
-
-        The given dictionary is never altered by this keyword.
         """
         if deepcopy:
             return copy.deepcopy(dictionary)
@@ -710,8 +706,6 @@ class _Dictionary:
         By default, keys are returned in sorted order (assuming they are
         sortable), but they can be returned in the original order by giving
         ``sort_keys`` a false value.
-
-        The given ``dictionary`` is never altered by this keyword.
 
         Example:
         | ${sorted} =   | Get Dictionary Keys | ${D3} |
@@ -735,8 +729,6 @@ class _Dictionary:
         values. By default, keys are sorted and values returned in that order,
         but this can be changed by giving ``sort_keys`` a false value.
 
-        The given ``dictionary`` is never altered by this keyword.
-
         Example:
         | ${sorted} =   | Get Dictionary Values | ${D3} |
         | ${unsorted} = | Get Dictionary Values | ${D3} | sort_keys=False |
@@ -759,8 +751,6 @@ class _Dictionary:
         second item is a corresponding value, third item is the second key,
         and so on.
 
-        The given ``dictionary`` is never altered by this keyword.
-
         Example:
         | ${sorted} =   | Get Dictionary Items | ${D3} |
         | ${unsorted} = | Get Dictionary Items | ${D3} | sort_keys=False |
@@ -779,8 +769,6 @@ class _Dictionary:
         If the given ``key`` cannot be found from the ``dictionary``, this
         keyword fails. If optional ``default`` value is given, it will be
         returned instead of failing.
-
-        The given dictionary is never altered by this keyword.
 
         Example:
         | ${value} = | Get From Dictionary | ${D3} | b |

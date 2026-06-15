@@ -37,7 +37,7 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 from datetime import datetime, timedelta
 from io import StringIO
 from pathlib import Path
-from typing import Literal, Mapping, overload, Sequence, TextIO, TypeVar, Union
+from typing import Final, Literal, Mapping, overload, Sequence, TextIO, TypeVar, Union
 
 from robot import model
 from robot.model import (
@@ -52,8 +52,8 @@ from .messagefilter import MessageFilter
 from .modeldeprecation import DeprecatedAttributesMixin
 from .suiteteardownfailed import SuiteTeardownFailed, SuiteTeardownFailureHandler
 
-IT = TypeVar("IT", bound="IfBranch|TryBranch")
-FW = TypeVar("FW", bound="ForIteration|WhileIteration")
+IT = TypeVar("IT", bound="IfBranch | TryBranch")
+FW = TypeVar("FW", bound="ForIteration | WhileIteration")
 BodyItemParent = Union[
     "TestSuite", "TestCase", "Keyword", "For", "ForIteration", "If", "IfBranch",
     "Try", "TryBranch", "While", "WhileIteration", "Group", None
@@ -94,16 +94,16 @@ class Message(model.Message):
 
 
 class StatusMixin:
-    PASS = "PASS"
-    FAIL = "FAIL"
-    SKIP = "SKIP"
-    NOT_RUN = "NOT RUN"
-    NOT_SET = "NOT SET"
+    PASS: Final = "PASS"
+    FAIL: Final = "FAIL"
+    SKIP: Final = "SKIP"
+    NOT_RUN: Final = "NOT RUN"
+    NOT_SET: Final = "NOT SET"
     status: Literal["PASS", "FAIL", "SKIP", "NOT RUN", "NOT SET"]
     __slots__ = ()
 
     @property
-    def start_time(self) -> "datetime|None":
+    def start_time(self) -> "datetime | None":
         """Execution start time as a ``datetime`` or as a ``None`` if not set.
 
         If start time is not set, it is calculated based :attr:`end_time`
@@ -121,13 +121,13 @@ class StatusMixin:
         return None
 
     @start_time.setter
-    def start_time(self, start_time: "datetime|str|None"):
+    def start_time(self, start_time: "datetime | str | None"):
         if isinstance(start_time, str):
             start_time = datetime.fromisoformat(start_time)
         self._start_time = start_time
 
     @property
-    def end_time(self) -> "datetime|None":
+    def end_time(self) -> "datetime | None":
         """Execution end time as a ``datetime`` or as a ``None`` if not set.
 
         If end time is not set, it is calculated based :attr:`start_time`
@@ -145,7 +145,7 @@ class StatusMixin:
         return None
 
     @end_time.setter
-    def end_time(self, end_time: "datetime|str|None"):
+    def end_time(self, end_time: "datetime | str | None"):
         if isinstance(end_time, str):
             end_time = datetime.fromisoformat(end_time)
         self._end_time = end_time
@@ -181,13 +181,13 @@ class StatusMixin:
         return elapsed
 
     @elapsed_time.setter
-    def elapsed_time(self, elapsed_time: "timedelta|int|float|None"):
+    def elapsed_time(self, elapsed_time: "timedelta | int | float | None"):
         if isinstance(elapsed_time, (int, float)):
             elapsed_time = timedelta(seconds=elapsed_time)
         self._elapsed_time = elapsed_time
 
     @property
-    def starttime(self) -> "str|None":
+    def starttime(self) -> "str | None":
         """Execution start time as a string or as a ``None`` if not set.
 
         The string format is ``%Y%m%d %H:%M:%S.%f``.
@@ -198,11 +198,11 @@ class StatusMixin:
         return self._datetime_to_timestr(self.start_time)
 
     @starttime.setter
-    def starttime(self, starttime: "str|None"):
+    def starttime(self, starttime: "str | None"):
         self.start_time = self._timestr_to_datetime(starttime)
 
     @property
-    def endtime(self) -> "str|None":
+    def endtime(self) -> "str | None":
         """Execution end time as a string or as a ``None`` if not set.
 
         The string format is ``%Y%m%d %H:%M:%S.%f``.
@@ -213,7 +213,7 @@ class StatusMixin:
         return self._datetime_to_timestr(self.end_time)
 
     @endtime.setter
-    def endtime(self, endtime: "str|None"):
+    def endtime(self, endtime: "str | None"):
         self.end_time = self._timestr_to_datetime(endtime)
 
     @property
@@ -225,7 +225,7 @@ class StatusMixin:
         """
         return round(self.elapsed_time.total_seconds() * 1000)
 
-    def _timestr_to_datetime(self, ts: "str|None") -> "datetime|None":
+    def _timestr_to_datetime(self, ts: "str | None") -> "datetime | None":
         if not ts:
             return None
         ts = ts.ljust(24, "0")
@@ -239,7 +239,7 @@ class StatusMixin:
             int(ts[18:24]),
         )
 
-    def _datetime_to_timestr(self, dt: "datetime|None") -> "str|None":
+    def _datetime_to_timestr(self, dt: "datetime | None") -> "str | None":
         if not dt:
             return None
         return dt.isoformat(" ", timespec="milliseconds").replace("-", "")
@@ -315,12 +315,12 @@ class ForIteration(model.ForIteration, StatusMixin, DeprecatedAttributesMixin):
 
     def __init__(
         self,
-        assign: "Mapping[str, str]|None" = None,
+        assign: "Mapping[str, str] | None" = None,
         status: str = "FAIL",
         message: str = "",
-        start_time: "datetime|str|None" = None,
-        end_time: "datetime|str|None" = None,
-        elapsed_time: "timedelta|int|float|None" = None,
+        start_time: "datetime | str | None" = None,
+        end_time: "datetime | str | None" = None,
+        elapsed_time: "timedelta | int | float | None" = None,
         parent: BodyItemParent = None,
     ):
         super().__init__(assign, parent)
@@ -345,14 +345,14 @@ class For(model.For, StatusMixin, DeprecatedAttributesMixin):
         assign: Sequence[str] = (),
         flavor: Literal["IN", "IN RANGE", "IN ENUMERATE", "IN ZIP"] = "IN",
         values: Sequence[str] = (),
-        start: "str|None" = None,
-        mode: "str|None" = None,
-        fill: "str|None" = None,
+        start: "str | None" = None,
+        mode: "str | None" = None,
+        fill: "str | None" = None,
         status: str = "FAIL",
         message: str = "",
-        start_time: "datetime|str|None" = None,
-        end_time: "datetime|str|None" = None,
-        elapsed_time: "timedelta|int|float|None" = None,
+        start_time: "datetime | str | None" = None,
+        end_time: "datetime | str | None" = None,
+        elapsed_time: "timedelta | int | float | None" = None,
         parent: BodyItemParent = None,
     ):
         super().__init__(assign, flavor, values, start, mode, fill, parent)
@@ -363,7 +363,7 @@ class For(model.For, StatusMixin, DeprecatedAttributesMixin):
         self.elapsed_time = elapsed_time
 
     @setter
-    def body(self, iterations: "Sequence[ForIteration|DataDict]") -> iterations_class:
+    def body(self, iterations: "Sequence[ForIteration | DataDict]") -> iterations_class:
         return self.iterations_class(self.iteration_class, self, iterations)
 
     @property
@@ -382,9 +382,9 @@ class WhileIteration(model.WhileIteration, StatusMixin, DeprecatedAttributesMixi
         self,
         status: str = "FAIL",
         message: str = "",
-        start_time: "datetime|str|None" = None,
-        end_time: "datetime|str|None" = None,
-        elapsed_time: "timedelta|int|float|None" = None,
+        start_time: "datetime | str | None" = None,
+        end_time: "datetime | str | None" = None,
+        elapsed_time: "timedelta | int | float | None" = None,
         parent: BodyItemParent = None,
     ):
         super().__init__(parent)
@@ -406,15 +406,15 @@ class While(model.While, StatusMixin, DeprecatedAttributesMixin):
 
     def __init__(
         self,
-        condition: "str|None" = None,
-        limit: "str|None" = None,
-        on_limit: "str|None" = None,
-        on_limit_message: "str|None" = None,
+        condition: "str | None" = None,
+        limit: "str | None" = None,
+        on_limit: "str | None" = None,
+        on_limit_message: "str | None" = None,
         status: str = "FAIL",
         message: str = "",
-        start_time: "datetime|str|None" = None,
-        end_time: "datetime|str|None" = None,
-        elapsed_time: "timedelta|int|float|None" = None,
+        start_time: "datetime | str | None" = None,
+        end_time: "datetime | str | None" = None,
+        elapsed_time: "timedelta | int | float | None" = None,
         parent: BodyItemParent = None,
     ):
         super().__init__(condition, limit, on_limit, on_limit_message, parent)
@@ -425,7 +425,9 @@ class While(model.While, StatusMixin, DeprecatedAttributesMixin):
         self.elapsed_time = elapsed_time
 
     @setter
-    def body(self, iterations: "Sequence[WhileIteration|DataDict]") -> iterations_class:
+    def body(
+        self, iterations: "Sequence[WhileIteration | DataDict]"
+    ) -> iterations_class:
         return self.iterations_class(self.iteration_class, self, iterations)
 
     @property
@@ -446,9 +448,9 @@ class Group(model.Group, StatusMixin, DeprecatedAttributesMixin):
         name: str = "",
         status: str = "FAIL",
         message: str = "",
-        start_time: "datetime|str|None" = None,
-        end_time: "datetime|str|None" = None,
-        elapsed_time: "timedelta|int|float|None" = None,
+        start_time: "datetime | str | None" = None,
+        end_time: "datetime | str | None" = None,
+        elapsed_time: "timedelta | int | float | None" = None,
         parent: BodyItemParent = None,
     ):
         super().__init__(name, parent)
@@ -473,12 +475,12 @@ class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
     def __init__(
         self,
         type: str = BodyItem.IF,
-        condition: "str|None" = None,
+        condition: "str | None" = None,
         status: str = "FAIL",
         message: str = "",
-        start_time: "datetime|str|None" = None,
-        end_time: "datetime|str|None" = None,
-        elapsed_time: "timedelta|int|float|None" = None,
+        start_time: "datetime | str | None" = None,
+        end_time: "datetime | str | None" = None,
+        elapsed_time: "timedelta | int | float | None" = None,
         parent: BodyItemParent = None,
     ):
         super().__init__(type, condition, parent)
@@ -506,9 +508,9 @@ class If(model.If, StatusMixin, DeprecatedAttributesMixin):
         self,
         status: str = "FAIL",
         message: str = "",
-        start_time: "datetime|str|None" = None,
-        end_time: "datetime|str|None" = None,
-        elapsed_time: "timedelta|int|float|None" = None,
+        start_time: "datetime | str | None" = None,
+        end_time: "datetime | str | None" = None,
+        elapsed_time: "timedelta | int | float | None" = None,
         parent: BodyItemParent = None,
     ):
         super().__init__(parent)
@@ -530,13 +532,13 @@ class TryBranch(model.TryBranch, StatusMixin, DeprecatedAttributesMixin):
         self,
         type: str = BodyItem.TRY,
         patterns: Sequence[str] = (),
-        pattern_type: "str|None" = None,
-        assign: "str|None" = None,
+        pattern_type: "str | None" = None,
+        assign: "str | None" = None,
         status: str = "FAIL",
         message: str = "",
-        start_time: "datetime|str|None" = None,
-        end_time: "datetime|str|None" = None,
-        elapsed_time: "timedelta|int|float|None" = None,
+        start_time: "datetime | str | None" = None,
+        end_time: "datetime | str | None" = None,
+        elapsed_time: "timedelta | int | float | None" = None,
         parent: BodyItemParent = None,
     ):
         super().__init__(type, patterns, pattern_type, assign, parent)
@@ -564,9 +566,9 @@ class Try(model.Try, StatusMixin, DeprecatedAttributesMixin):
         self,
         status: str = "FAIL",
         message: str = "",
-        start_time: "datetime|str|None" = None,
-        end_time: "datetime|str|None" = None,
-        elapsed_time: "timedelta|int|float|None" = None,
+        start_time: "datetime | str | None" = None,
+        end_time: "datetime | str | None" = None,
+        elapsed_time: "timedelta | int | float | None" = None,
         parent: BodyItemParent = None,
     ):
         super().__init__(parent)
@@ -588,14 +590,14 @@ class Var(model.Var, StatusMixin, DeprecatedAttributesMixin):
     def __init__(
         self,
         name: str = "",
-        value: "str|Sequence[str]" = (),
-        scope: "str|None" = None,
-        separator: "str|None" = None,
+        value: "str | Sequence[str]" = (),
+        scope: "str | None" = None,
+        separator: "str | None" = None,
         status: str = "FAIL",
         message: str = "",
-        start_time: "datetime|str|None" = None,
-        end_time: "datetime|str|None" = None,
-        elapsed_time: "timedelta|int|float|None" = None,
+        start_time: "datetime | str | None" = None,
+        end_time: "datetime | str | None" = None,
+        elapsed_time: "timedelta | int | float | None" = None,
         parent: BodyItemParent = None,
     ):
         super().__init__(name, value, scope, separator, parent)
@@ -607,7 +609,7 @@ class Var(model.Var, StatusMixin, DeprecatedAttributesMixin):
         self.body = ()
 
     @setter
-    def body(self, body: "Sequence[BodyItem|DataDict]") -> Body:
+    def body(self, body: "Sequence[BodyItem | DataDict]") -> Body:
         """Child messages and possible other constructs.
 
         Contains the message logged about assignment. Contains something else
@@ -637,9 +639,9 @@ class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
         values: Sequence[str] = (),
         status: str = "FAIL",
         message: str = "",
-        start_time: "datetime|str|None" = None,
-        end_time: "datetime|str|None" = None,
-        elapsed_time: "timedelta|int|float|None" = None,
+        start_time: "datetime | str | None" = None,
+        end_time: "datetime | str | None" = None,
+        elapsed_time: "timedelta | int | float | None" = None,
         parent: BodyItemParent = None,
     ):
         super().__init__(values, parent)
@@ -651,7 +653,7 @@ class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
         self.body = ()
 
     @setter
-    def body(self, body: "Sequence[BodyItem|DataDict]") -> Body:
+    def body(self, body: "Sequence[BodyItem | DataDict]") -> Body:
         """Child keywords and messages.
 
         Typically empty. Only contains something if running RETURN has failed
@@ -676,9 +678,9 @@ class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
         self,
         status: str = "FAIL",
         message: str = "",
-        start_time: "datetime|str|None" = None,
-        end_time: "datetime|str|None" = None,
-        elapsed_time: "timedelta|int|float|None" = None,
+        start_time: "datetime | str | None" = None,
+        end_time: "datetime | str | None" = None,
+        elapsed_time: "timedelta | int | float | None" = None,
         parent: BodyItemParent = None,
     ):
         super().__init__(parent)
@@ -690,7 +692,7 @@ class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
         self.body = ()
 
     @setter
-    def body(self, body: "Sequence[BodyItem|DataDict]") -> Body:
+    def body(self, body: "Sequence[BodyItem | DataDict]") -> Body:
         """Child keywords and messages.
 
         Typically empty. Only contains something if running CONTINUE has failed
@@ -715,9 +717,9 @@ class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
         self,
         status: str = "FAIL",
         message: str = "",
-        start_time: "datetime|str|None" = None,
-        end_time: "datetime|str|None" = None,
-        elapsed_time: "timedelta|int|float|None" = None,
+        start_time: "datetime | str | None" = None,
+        end_time: "datetime | str | None" = None,
+        elapsed_time: "timedelta | int | float | None" = None,
         parent: BodyItemParent = None,
     ):
         super().__init__(parent)
@@ -729,7 +731,7 @@ class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
         self.body = ()
 
     @setter
-    def body(self, body: "Sequence[BodyItem|DataDict]") -> Body:
+    def body(self, body: "Sequence[BodyItem | DataDict]") -> Body:
         """Child keywords and messages.
 
         Typically empty. Only contains something if running BREAK has failed
@@ -755,9 +757,9 @@ class Error(model.Error, StatusMixin, DeprecatedAttributesMixin):
         values: Sequence[str] = (),
         status: str = "FAIL",
         message: str = "",
-        start_time: "datetime|str|None" = None,
-        end_time: "datetime|str|None" = None,
-        elapsed_time: "timedelta|int|float|None" = None,
+        start_time: "datetime | str | None" = None,
+        end_time: "datetime | str | None" = None,
+        elapsed_time: "timedelta | int | float | None" = None,
         parent: BodyItemParent = None,
     ):
         super().__init__(values, parent)
@@ -769,7 +771,7 @@ class Error(model.Error, StatusMixin, DeprecatedAttributesMixin):
         self.body = ()
 
     @setter
-    def body(self, body: "Sequence[BodyItem|DataDict]") -> Body:
+    def body(self, body: "Sequence[BodyItem | DataDict]") -> Body:
         """Body typically containing only the related error message."""
         return self.body_class(self, body)
 
@@ -803,20 +805,20 @@ class Keyword(model.Keyword, StatusMixin):
 
     def __init__(
         self,
-        name: "str|None" = "",
-        owner: "str|None" = None,
-        source_name: "str|None" = None,
+        name: "str | None" = "",
+        owner: "str | None" = None,
+        source_name: "str | None" = None,
         doc: str = "",
         args: Sequence[str] = (),
         assign: Sequence[str] = (),
         tags: Sequence[str] = (),
-        timeout: "str|None" = None,
+        timeout: "str | None" = None,
         type: str = BodyItem.KEYWORD,
         status: str = "FAIL",
         message: str = "",
-        start_time: "datetime|str|None" = None,
-        end_time: "datetime|str|None" = None,
-        elapsed_time: "timedelta|int|float|None" = None,
+        start_time: "datetime | str | None" = None,
+        end_time: "datetime | str | None" = None,
+        elapsed_time: "timedelta | int | float | None" = None,
         parent: BodyItemParent = None,
     ):
         super().__init__(name, args, assign, type, parent)
@@ -837,7 +839,7 @@ class Keyword(model.Keyword, StatusMixin):
         self.body = ()
 
     @setter
-    def body(self, body: "Sequence[BodyItem|DataDict]") -> Body:
+    def body(self, body: "Sequence[BodyItem | DataDict]") -> Body:
         """Keyword body.
 
         Body can consist of child keywords, messages, and control structures
@@ -855,7 +857,7 @@ class Keyword(model.Keyword, StatusMixin):
         return self.body.filter(messages=True)  # type: ignore
 
     @property
-    def full_name(self) -> "str|None":
+    def full_name(self) -> "str | None":
         """Keyword name in format ``owner.name``.
 
         Just ``name`` if :attr:`owner` is not set. In practice this is the
@@ -872,21 +874,21 @@ class Keyword(model.Keyword, StatusMixin):
 
     # TODO: Deprecate 'kwname', 'libname' and 'sourcename' loudly in RF 8.
     @property
-    def kwname(self) -> "str|None":
+    def kwname(self) -> "str | None":
         """Deprecated since Robot Framework 7.0. Use :attr:`name` instead."""
         return self.name
 
     @kwname.setter
-    def kwname(self, name: "str|None"):
+    def kwname(self, name: "str | None"):
         self.name = name
 
     @property
-    def libname(self) -> "str|None":
+    def libname(self) -> "str | None":
         """Deprecated since Robot Framework 7.0. Use :attr:`owner` instead."""
         return self.owner
 
     @libname.setter
-    def libname(self, name: "str|None"):
+    def libname(self, name: "str | None"):
         self.owner = name
 
     @property
@@ -909,7 +911,7 @@ class Keyword(model.Keyword, StatusMixin):
         return self._setup
 
     @setup.setter
-    def setup(self, setup: "Keyword|DataDict|None"):
+    def setup(self, setup: "Keyword | DataDict | None"):
         self._setup = create_fixture(self.__class__, setup, self, self.SETUP)
 
     @property
@@ -954,7 +956,7 @@ class Keyword(model.Keyword, StatusMixin):
         return self._teardown
 
     @teardown.setter
-    def teardown(self, teardown: "Keyword|DataDict|None"):
+    def teardown(self, teardown: "Keyword | DataDict | None"):
         self._teardown = create_fixture(self.__class__, teardown, self, self.TEARDOWN)
 
     @property
@@ -1012,15 +1014,15 @@ class TestCase(model.TestCase[Keyword], StatusMixin):
         name: str = "",
         doc: str = "",
         tags: Sequence[str] = (),
-        timeout: "str|None" = None,
-        lineno: "int|None" = None,
-        metadata: "Mapping[str, str]|None" = None,
+        timeout: "str | None" = None,
+        lineno: "int | None" = None,
+        metadata: "Mapping[str, str] | None" = None,
         status: str = "FAIL",
         message: str = "",
-        start_time: "datetime|str|None" = None,
-        end_time: "datetime|str|None" = None,
-        elapsed_time: "timedelta|int|float|None" = None,
-        parent: "TestSuite|None" = None,
+        start_time: "datetime | str | None" = None,
+        end_time: "datetime | str | None" = None,
+        elapsed_time: "timedelta | int | float | None" = None,
+        parent: "TestSuite | None" = None,
     ):
         super().__init__(name, doc, tags, timeout, lineno, metadata, parent)
         self.status = status
@@ -1034,7 +1036,7 @@ class TestCase(model.TestCase[Keyword], StatusMixin):
         return False
 
     @setter
-    def body(self, body: "Sequence[BodyItem|DataDict]") -> Body:
+    def body(self, body: "Sequence[BodyItem | DataDict]") -> Body:
         """Test body."""
         return self.body_class(self, body)
 
@@ -1061,14 +1063,14 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
         self,
         name: str = "",
         doc: str = "",
-        metadata: "Mapping[str, str]|None" = None,
-        source: "Path|str|None" = None,
+        metadata: "Mapping[str, str] | None" = None,
+        source: "Path | str | None" = None,
         rpa: bool = False,
         message: str = "",
-        start_time: "datetime|str|None" = None,
-        end_time: "datetime|str|None" = None,
-        elapsed_time: "timedelta|int|float|None" = None,
-        parent: "TestSuite|None" = None,
+        start_time: "datetime | str | None" = None,
+        end_time: "datetime | str | None" = None,
+        elapsed_time: "timedelta | int | float | None" = None,
+        parent: "TestSuite | None" = None,
     ):
         super().__init__(name, doc, metadata, source, rpa, parent)
         #: Possible suite setup or teardown error message.
@@ -1149,7 +1151,9 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
         return self.statistics.message
 
     @setter
-    def suites(self, suites: "Sequence[TestSuite|DataDict]") -> TestSuites["TestSuite"]:
+    def suites(
+        self, suites: "Sequence[TestSuite | DataDict]"
+    ) -> TestSuites["TestSuite"]:
         return TestSuites["TestSuite"](self.__class__, self, suites)
 
     def remove_keywords(self, how: str):
@@ -1230,7 +1234,7 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
         return super().from_dict(data)
 
     @classmethod
-    def from_json(cls, source: "str|bytes|TextIO|Path") -> "TestSuite":
+    def from_json(cls, source: "str | bytes | TextIO | Path") -> "TestSuite":
         """Create suite based on results in JSON.
 
         The data is given as the ``source`` parameter. It can be:
@@ -1254,9 +1258,9 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
     def to_xml(self, file: None = None) -> str: ...
 
     @overload
-    def to_xml(self, file: "TextIO|Path|str") -> None: ...
+    def to_xml(self, file: "TextIO | Path | str") -> None: ...
 
-    def to_xml(self, file: "None|TextIO|Path|str" = None) -> "str|None":
+    def to_xml(self, file: "None | TextIO | Path | str" = None) -> "str | None":
         """Serialize suite into XML.
 
         The format is the same that is used with normal output.xml files, but
@@ -1285,7 +1289,7 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
                 output.close()
         return output.getvalue() if file is None else None
 
-    def _get_output(self, output) -> "tuple[TextIO|StringIO, bool]":
+    def _get_output(self, output) -> "tuple[TextIO | StringIO, bool]":
         close = False
         if output is None:
             output = StringIO()
@@ -1295,7 +1299,7 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
         return output, close
 
     @classmethod
-    def from_xml(cls, source: "str|TextIO|Path") -> "TestSuite":
+    def from_xml(cls, source: "str | TextIO | Path") -> "TestSuite":
         """Create suite based on results in XML.
 
         The data is given as the ``source`` parameter. It can be:

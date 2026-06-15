@@ -27,7 +27,7 @@ class PosixRunner(Runner):
         self,
         timeout: float,
         timeout_error: TimeoutExceeded,
-        data_error: "DataError|None" = None,
+        data_error: "DataError | None" = None,
     ):
         super().__init__(timeout, timeout_error, data_error)
         self._orig_alrm = None

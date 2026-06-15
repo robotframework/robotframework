@@ -3,23 +3,23 @@ Suite Setup       My Setup
 Resource          atest_resource.robot
 
 *** Test Cases ***
-Statistics Should Be Written to XML
+Statistics should be written to XML
     ${output} =    Get File    ${OUTFILE}
     ${exp} =    Catenate    SEPARATOR=\\r?\\n    (?s)    <statistics>    <total>    .*    </total>
     ...    <tag>    .*    </tag>    <suite>    .*    </suite>    </statistics>
     Should Match Regexp    ${output}    ${exp}
 
-Total statistics should be Correct
+Total statistics should be correct
     ${stats} =    Get Element    ${OUTFILE}    statistics/total
     ${total} =    Call Method    ${stats}    find    stat
     Node Should Be Correct    ${total}    All Tests    12    1
 
-Tag statistics should be Correct
+Tag statistics should be correct
     ${stats} =    Get Element    ${OUTFILE}    statistics/tag
     Tag Node Should Be Correct    ${stats[0]}    Custom title AND-OR-NOT
     ...    1    0    info=combined    combined=d1 AND d2
-    Tag Node Should Be Correct    ${stats[1]}    F1 NOT T 1
-    ...    4    0    info=combined    combined=F1 NOT T 1
+    Tag Node Should Be Correct    ${stats[1]}    F1 NOT T_1
+    ...    4    0    info=combined    combined=F1 NOT T_1
     Tag Node Should Be Correct    ${stats[2]}    d1
     ...    1    0
     Tag Node Should Be Correct    ${stats[3]}    d2

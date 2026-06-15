@@ -43,6 +43,7 @@ class Matcher:
         regexp: bool = False,
     ):
         self.pattern = pattern
+        # Make normalizing a no-op if nothing needs to be normalized.
         if caseless or spaceless or ignore:
             self._normalize = lambda s: normalize(s, ignore, caseless, spaceless)
         else:

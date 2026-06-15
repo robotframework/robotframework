@@ -32,7 +32,7 @@ class InvalidKeyword(KeywordImplementation):
 
     type = KeywordImplementation.INVALID_KEYWORD
 
-    def _get_embedded(self, name) -> "EmbeddedArguments|None":
+    def _get_embedded(self, name) -> "EmbeddedArguments | None":
         try:
             return super()._get_embedded(name)
         except DataError:
@@ -47,7 +47,7 @@ class InvalidKeyword(KeywordImplementation):
 
 class InvalidKeywordRunner:
 
-    def __init__(self, keyword: InvalidKeyword, name: "str|None" = None):
+    def __init__(self, keyword: InvalidKeyword, name: "str | None" = None):
         self.keyword = keyword
         self.name = name or keyword.name
         if not keyword.error:

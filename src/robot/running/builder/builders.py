@@ -30,7 +30,8 @@ from robot.utils import Importer, seq2str, split_args_from_name_or_path, type_na
 from ..model import TestSuite
 from ..resourcemodel import ResourceFile
 from .parsers import (
-    CustomParser, JsonParser, NoInitFileDirectoryParser, Parser, RestParser, RobotParser
+    CustomParser, JsonParser, MarkdownParser, NoInitFileDirectoryParser, Parser,
+    RestParser, RobotParser
 )
 from .settings import TestDefaults
 
@@ -62,11 +63,16 @@ class TestSuiteBuilder:
     def __init__(
         self,
         included_suites: str = "DEPRECATED",
-        included_extensions: Sequence[str] = (".robot", ".rbt", ".robot.rst"),
+        included_extensions: Sequence[str] = (
+            ".robot",
+            ".rbt",
+            ".robot.rst",
+            ".robot.md",
+        ),
         included_files: Sequence[str] = (),
         custom_parsers: Sequence[str] = (),
-        defaults: "TestDefaults|None" = None,
-        rpa: "bool|None" = None,
+        defaults: "TestDefaults | None" = None,
+        rpa: "bool | None" = None,
         lang: LanguagesLike = None,
         allow_empty_suite: bool = False,
         process_curdir: bool = True,
@@ -129,6 +135,7 @@ class TestSuiteBuilder:
         robot_parser = RobotParser(lang, process_curdir)
         rest_parser = RestParser(lang, process_curdir)
         json_parser = JsonParser()
+        markdown_parser = MarkdownParser(lang, process_curdir)
         return {
             "robot": robot_parser,
             "rst": rest_parser,
@@ -136,6 +143,9 @@ class TestSuiteBuilder:
             "robot.rst": rest_parser,
             "rbt": json_parser,
             "json": json_parser,
+            "md": markdown_parser,
+            "markdown": markdown_parser,
+            "robot.md": markdown_parser,
         }
 
     def _get_custom_parsers(self, parsers: Sequence[str]) -> "dict[str, CustomParser]":
@@ -155,7 +165,7 @@ class TestSuiteBuilder:
                 custom_parsers[ext] = custom_parser
         return custom_parsers
 
-    def build(self, *paths: "Path|str") -> TestSuite:
+    def build(self, *paths: "Path | str") -> TestSuite:
         """
         :param paths: Paths to test data files or directories.
         :return: :class:`~robot.running.model.TestSuite` instance.
@@ -173,7 +183,7 @@ class TestSuiteBuilder:
         suite.remove_empty_suites(preserve_direct_children=len(paths) > 1)
         return suite
 
-    def _normalize_paths(self, paths: "Sequence[Path|str]") -> "tuple[Path, ...]":
+    def _normalize_paths(self, paths: "Sequence[Path | str]") -> "tuple[Path, ...]":
         if not paths:
             raise DataError("One or more source paths required.")
         # Cannot use `Path.resolve()` here because it resolves all symlinks which
@@ -189,7 +199,7 @@ class TestSuiteBuilder:
             )
         return tuple(paths)
 
-    def _get_parsers(self, paths: "Sequence[Path]") -> "dict[str|None, Parser]":
+    def _get_parsers(self, paths: "Sequence[Path]") -> "dict[str | None, Parser]":
         parsers = {None: NoInitFileDirectoryParser(), **self.custom_parsers}
         robot_parser = self.standard_parsers["robot"]
         for ext in (
@@ -202,7 +212,7 @@ class TestSuiteBuilder:
                 parsers[ext] = self.standard_parsers.get(ext, robot_parser)
         return parsers
 
-    def _get_ext(self, path: "str|Path") -> str:
+    def _get_ext(self, path: "str | Path") -> str:
         if not isinstance(path, Path):
             path = Path(path)
         return "".join(path.suffixes)
@@ -219,18 +229,18 @@ class SuiteStructureParser(SuiteStructureVisitor):
 
     def __init__(
         self,
-        parsers: "dict[str|None, Parser]",
-        defaults: "TestDefaults|None" = None,
-        rpa: "bool|None" = None,
+        parsers: "dict[str | None, Parser]",
+        defaults: "TestDefaults | None" = None,
+        rpa: "bool | None" = None,
     ):
         self.parsers = parsers
         self.rpa = rpa
         self.defaults = defaults
-        self.suite: "TestSuite|None" = None
-        self._stack: "list[tuple[TestSuite, TestDefaults]]" = []
+        self.suite: TestSuite | None = None
+        self._stack: list[tuple[TestSuite, TestDefaults]] = []
 
     @property
-    def parent_defaults(self) -> "TestDefaults|None":
+    def parent_defaults(self) -> "TestDefaults | None":
         return self._stack[-1][-1] if self._stack else self.defaults
 
     def parse(self, structure: SuiteStructure) -> TestSuite:
@@ -316,6 +326,8 @@ class ResourceFileBuilder:
             parser = RestParser(self.lang, self.process_curdir)
         elif suffix in (".json", ".rsrc"):
             parser = JsonParser()
+        elif suffix in (".md", ".markdown"):
+            parser = MarkdownParser(self.lang, self.process_curdir)
         else:
             parser = RobotParser(self.lang, self.process_curdir)
         return parser.parse_resource_file(source)

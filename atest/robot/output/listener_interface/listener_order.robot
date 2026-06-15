@@ -44,7 +44,7 @@ Validate close order
 Invalid priority
     ${listener} =    Normalize Path    ${LISTENER}
     Check Log Message    ${ERRORS}[0]    Taking listener '${listener}:NOT USED:invalid' into use failed: Invalid listener priority 'invalid'.    ERROR
-    Check Log Message    ${ERRORS}[1]    Error in library 'BAD': Registering listeners failed: Taking listener 'SELF' into use failed: Invalid listener priority 'bad'.    ERROR
+    Check Log Message    ${ERRORS}[1]    Error in library 'BAD': Registering listeners failed: Taking listener 'ListenerOrder' into use failed: Invalid listener priority 'bad'.    ERROR
 
 *** Keywords ***
 Run Tests With Ordered Listeners

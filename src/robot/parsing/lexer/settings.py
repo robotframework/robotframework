@@ -56,7 +56,7 @@ class Settings(ABC):
     )  # fmt: skip
 
     def __init__(self, languages: Languages):
-        self.settings: "dict[str, list[Token]|None]" = dict.fromkeys(self.names)
+        self.settings: dict[str, list[Token] | None] = dict.fromkeys(self.names)
         self.languages = languages
 
     def lex(self, statement: StatementTokens):
@@ -253,12 +253,12 @@ class TestCaseSettings(Settings):
         parent_template = self.parent.settings["Test Template"]
         return self._has_value(template) or self._has_value(parent_template)
 
-    def _has_disabling_value(self, setting: "StatementTokens|None") -> bool:
+    def _has_disabling_value(self, setting: "StatementTokens | None") -> bool:
         if setting is None:
             return False
         return setting == [] or setting[0].value.upper() == "NONE"
 
-    def _has_value(self, setting: "StatementTokens|None") -> bool:
+    def _has_value(self, setting: "StatementTokens | None") -> bool:
         return bool(setting and setting[0].value)
 
     def _not_valid_here(self, name: str) -> str:

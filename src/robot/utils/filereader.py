@@ -92,7 +92,7 @@ class FileReader:  # FIXME: Rename to SourceReader
             yield self._decode(line, remove_bom=first_line)
             first_line = False
 
-    def _decode(self, content: "str|bytes", remove_bom: bool = True) -> str:
+    def _decode(self, content: "str | bytes", remove_bom: bool = True) -> str:
         if isinstance(content, bytes):
             content = content.decode("UTF-8")
         if remove_bom and content.startswith("\ufeff"):

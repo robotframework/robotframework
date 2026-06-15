@@ -50,11 +50,12 @@ class TestFilterByIncludeTags(FilterBaseTest):
     def test_normalization(self):
         self._test(Filter(include_tags=["T 1", "_T_2_"]), ["t1", "t2"], ["t1"])
 
-    def test_and_and_not(self):
-        self._test(Filter(include_tags=["t1ANDs31"]), ["t1"], [])
-        self._test(Filter(include_tags=["?1ANDs*2ANDx"]), [], ["t1"])
-        self._test(Filter(include_tags=["t1ANDs*NOTx"]), ["t1"], [])
-        self._test(Filter(include_tags=["t1AND?1NOTs*ANDx"]), ["t1"], [])
+    def test_operators(self):
+        self._test(Filter(include_tags=["t1 AND s31"]), ["t1"], [])
+        self._test(Filter(include_tags=["t1 OR s31"]), ["t1", "t2"], ["t1"])
+        self._test(Filter(include_tags=["?1 AND s*2 AND x"]), [], ["t1"])
+        self._test(Filter(include_tags=["t1 AND s* NOT x"]), ["t1"], [])
+        self._test(Filter(include_tags=["t1 AND ?1 NOT s* AND x"]), ["t1"], [])
 
 
 class TestFilterByExcludeTags(FilterBaseTest):
@@ -82,11 +83,12 @@ class TestFilterByExcludeTags(FilterBaseTest):
     def test_normalization(self):
         self._test(Filter(exclude_tags=["T 1", "_T_2_"]), ["t3"], [])
 
-    def test_and_and_not(self):
-        self._test(Filter(exclude_tags=["t1ANDs31"]), ["t2", "t3"], ["t1"])
-        self._test(Filter(exclude_tags=["?1ANDs*2ANDx"]), ["t1", "t2", "t3"], [])
-        self._test(Filter(exclude_tags=["t1ANDs*NOTx"]), ["t2", "t3"], ["t1"])
-        self._test(Filter(exclude_tags=["t1AND?1NOTs*ANDx"]), ["t2", "t3"], ["t1"])
+    def test_operators(self):
+        self._test(Filter(exclude_tags=["t1 AND s31"]), ["t2", "t3"], ["t1"])
+        self._test(Filter(exclude_tags=["t1 OR s31"]), ["t3"], [])
+        self._test(Filter(exclude_tags=["?1 AND s*2 AND x"]), ["t1", "t2", "t3"], [])
+        self._test(Filter(exclude_tags=["t1 AND s* NOT x"]), ["t2", "t3"], ["t1"])
+        self._test(Filter(exclude_tags=["t1 AND * NOT s* AND x"]), ["t2", "t3"], ["t1"])
 
 
 class TestFilterByTestName(FilterBaseTest):

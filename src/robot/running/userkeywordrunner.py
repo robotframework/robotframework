@@ -36,7 +36,7 @@ if TYPE_CHECKING:
 
 class UserKeywordRunner:
 
-    def __init__(self, keyword: "UserKeyword", name: "str|None" = None):
+    def __init__(self, keyword: "UserKeyword", name: "str | None" = None):
         self.keyword = keyword
         self.name = name or keyword.name
         self.pre_run_messages = ()

@@ -13,28 +13,46 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from collections.abc import Mapping, Sequence
 from functools import partial
+from typing import NoReturn
 
 from robot.errors import VariableError
 from robot.utils import is_dict_like, is_list_like, normalize, RecommendationFinder
 
 
-def variable_not_found(name, candidates, message=None, deco_braces=True):
-    """Raise DataError for missing variable name.
+def variable_not_found(
+    name: str,
+    candidates: "Mapping[str, object]",
+    message: "str | None" = None,
+    deco_braces: bool = True,
+) -> NoReturn:
+    """Raise `VariableError` for missing variable name.
 
-    Return recommendations for similar variable names if any are found.
+    Error message includes recommendations for similar variable names if any are
+    found. Finding recommendations has a performance effect, so this function
+    should only been called when such information is actually useful.
     """
-    candidates = _decorate_candidates(name[0], candidates, deco_braces)
-    normalizer = partial(normalize, ignore="$@&%{}_")
-    message = RecommendationFinder(normalizer).find_and_format(
-        name,
+    recommender = RecommendationFinder(normalizer=partial(normalize, ignore="$@&%{}_"))
+    recommendations = _decorate_recommendations(
+        name[0],
+        recommender.find(name, candidates),
         candidates,
-        message=message or f"Variable '{name}' not found.",
+        deco_braces,
+    )
+    message = recommender.format(
+        message or f"Variable '{name}' not found.",
+        recommendations,
     )
     raise VariableError(message)
 
 
-def _decorate_candidates(identifier, candidates, deco_braces=True):
+def _decorate_recommendations(
+    identifier: str,
+    recommendations: "Sequence[str]",
+    candidates: "Mapping[str, object]",
+    deco_braces: bool = True,
+) -> "list[str]":
     template = "%s{%s}" if deco_braces else "%s%s"
     is_included = {
         "$": lambda value: True,
@@ -44,6 +62,6 @@ def _decorate_candidates(identifier, candidates, deco_braces=True):
     }[identifier]
     return [
         template % (identifier, name)
-        for name in candidates
+        for name in recommendations
         if is_included(candidates[name])
     ]

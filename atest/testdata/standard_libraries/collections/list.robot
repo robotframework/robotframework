@@ -115,15 +115,29 @@ Count Values In List with invalid index
 
 Get Index From List
     [Template]    Verify Result
-    Get Index From List    ${LONG}    ${2}            expected=2     type=int
-    Get Index From List    ${LONG}    ${2}    3       expected=8     type=int
-    Get Index From List    ${LONG}    43    4    7    expected=5     type=int
-    Get Index From List    ${LONG}    43   end=8      expected=5     type=int
-    Get Index From List    ${LONG}    nonex           expected=-1    type=int
+    Get Index From List    ${LONG}    ${2}              expected=2     type=int
+    Get Index From List    ${LONG}    ${2}    3         expected=8     type=int
+    Get Index From List    ${LONG}    43      4    7    expected=5     type=int
+    Get Index From List    ${LONG}    43      end=8     expected=5     type=int
+    Get Index From List    ${LONG}    nonex             expected=-1    type=int
 
 Get Index From List with empty string as start index is deprecated
     [Template]    Verify Result
     Get Index From List    ${LONG}    43    ${EMPTY}    8    expected=5     type=int
+
+Get Index From List with negative indices
+    [Template]    Verify Result
+    Get Index From List    ${LONG}    ${2}     -1          expected=8     type=int
+    Get Index From List    ${LONG}    43       -4    -2    expected=5     type=int
+    Get Index From List    ${LONG}    nonex    -3          expected=-1    type=int
+    Get Index From List    ${LONG}    43       -2          expected=-1    type=int
+
+Get Index From List with indices out-of-bounds
+    [Template]    Verify Result
+    Get Index From List    ${LONG}    43    100         expected=-1    type=int
+    Get Index From List    ${LONG}    43    end=100     expected=5     type=int
+    Get Index From List    ${LONG}    43    -100        expected=5     type=int
+    Get Index From List    ${LONG}    43    end=-100    expected=-1    type=int
 
 Get Index From List with invalid index
     [Template]    Verify Error

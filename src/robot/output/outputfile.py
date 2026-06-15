@@ -29,7 +29,7 @@ class OutputFile(LoggerApi):
 
     def __init__(
         self,
-        path: "Path|None",
+        path: "Path | None",
         log_level: LogLevel,
         rpa: bool = False,
         legacy_output: bool = False,

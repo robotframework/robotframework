@@ -17,6 +17,14 @@ Remove from test using pattern
     [Tags]    -tag[12]    -*esc*
     Remove from keyword using pattern
 
+Remove from test using operator
+    [Tags]    -NOT tag1 OR t*3
+    Remove from keyword using operator
+
+Deprecated operator usage in test
+    [Tags]    -NOTTAG1ORT*3
+    Deprecated operator usage in keyword
+
 Escaped
     [Tags]    \-escaped
     No Operation

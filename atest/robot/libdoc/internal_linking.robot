@@ -52,9 +52,10 @@ Linking to second and third level headers
     Doc Should Contain    ${MODEL}    <h4 id="Third level">Third level</h4>
 
 Only headers in introduction are linkable
+    [Documentation]    Starting from RF 7.5 all headers get id, though.
     [Template]    NONE
     Doc Should Contain Name    ${MODEL['keywords'][2]}    not linkable
-    Doc Should Contain    ${MODEL['keywords'][2]}    <h2>Not linkable</h2>
+    Doc Should Contain    ${MODEL['keywords'][2]}    <h2 id="Not linkable">Not linkable</h2>
 
 Special characters are percent encoded
     ${MODEL['keywords'][0]}

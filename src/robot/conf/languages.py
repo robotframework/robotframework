@@ -20,6 +20,7 @@ from typing import Iterable, Iterator, Union
 
 from robot.errors import DataError
 from robot.utils import classproperty, Importer, is_list_like, normalize
+from robot.version import VERSION
 
 LanguageLike = Union["Language", str, Path]
 LanguagesLike = Union["Languages", LanguageLike, Iterable[LanguageLike], None]
@@ -39,7 +40,7 @@ class Languages:
 
     def __init__(
         self,
-        languages: "Iterable[LanguageLike]|LanguageLike|None" = (),
+        languages: "Iterable[LanguageLike] | LanguageLike | None" = (),
         add_english: bool = True,
     ):
         """
@@ -51,12 +52,13 @@ class Languages:
 
         :meth:`add_language` can be used to add languages after initialization.
         """
-        self.languages: "list[Language]" = []
-        self.headers: "dict[str, str]" = {}
-        self.settings: "dict[str, str]" = {}
-        self.bdd_prefixes: "set[str]" = set()
-        self.true_strings: "set[str]" = {"True", "1"}
-        self.false_strings: "set[str]" = {"False", "0", "None", ""}
+        self.languages: list[Language] = []
+        self.headers: dict[str, str] = {}
+        self.settings: dict[str, str] = {}
+        self.bdd_prefixes: set[str] = set()
+        self.true_strings: set[str] = {"True", "1"}
+        self.false_strings: set[str] = {"False", "0", "None", ""}
+        self.deprecations: dict[str, tuple[str, str | None]] = {}
         for lang in self._get_languages(languages, add_english):
             self._add_language(lang)
         self._bdd_prefix_regexp = None
@@ -110,15 +112,41 @@ class Languages:
         if lang in self.languages:
             return
         self.languages.append(lang)
-        self.headers.update({n.title(): lang.headers[n] for n in lang.headers if n})
-        self.settings.update({n.title(): lang.settings[n] for n in lang.settings if n})
+        self.headers.update({n.title(): v for n, v in lang.headers.items() if n})
+        self.settings.update({n.title(): v for n, v in lang.settings.items() if n})
         self.bdd_prefixes |= {p.title() for p in lang.bdd_prefixes}
         self.true_strings |= {s.title() for s in lang.true_strings}
         self.false_strings |= {s.title() for s in lang.false_strings}
+        for old, new_and_version in lang.deprecations.items():
+            try:
+                self._add_deprecation(old, new_and_version, lang)
+            except ValueError as err:
+                raise ValueError(
+                    f"Invalid configuration for language '{lang.name}': "
+                    f"Invalid deprecated item '{old}': {err}"
+                ) from None
+
+    def _add_deprecation(self, old, new_and_version, lang: "Language"):
+        try:
+            new, version = new_and_version
+            if not (version is None or re.fullmatch(r"\d+\.\d+", version)):
+                raise ValueError
+        except (ValueError, TypeError):
+            raise ValueError(
+                f"Value must be tuple containing new value and version in format "
+                f"'X.Y', got {new_and_version!r}."
+            )
+        if new in lang.headers:
+            self.headers[old.title()] = lang.headers[new].title()
+        elif new in lang.settings:
+            self.settings[old.title()] = lang.settings[new].title()
+        else:
+            raise ValueError(f"New value '{new}' is not used in headers or settings.")
+        self.deprecations[old.title()] = (new, version)
 
     def _get_languages(self, languages, add_english=True) -> "list[Language]":
         languages, available = self._resolve_languages(languages, add_english)
-        returned: "list[Language]" = []
+        returned: list[Language] = []
         for lang in languages:
             if isinstance(lang, Language):
                 returned.append(lang)
@@ -169,6 +197,26 @@ class Languages:
         module = Importer("language file").import_module(name_or_path)
         return [value() for _, value in inspect.getmembers(module, is_language)]
 
+    def get_deprecation(self, marker: str, kind: str) -> "str | None":
+        normalized = marker.title()
+        if normalized not in self.deprecations:
+            return None
+        new_marker, version = self.deprecations[normalized]
+        if not self._deprecation_active(version):
+            return None
+        since_version = f" since Robot Framework {version}" if version else ""
+        return (
+            f"{kind.capitalize()} '{marker}' has been deprecated{since_version}. "
+            f"Use '{new_marker}' instead."
+        )
+
+    def _deprecation_active(self, version: "str | None") -> bool:
+        if version is None:
+            return True
+        robot_version = [int(v) for v in re.match(r"(\d+)\.(\d+)", VERSION).groups()]
+        depr_version = [int(v) for v in version.split(".")]
+        return robot_version > depr_version
+
     def __iter__(self) -> "Iterator[Language]":
         return iter(self.languages)
 
@@ -179,48 +227,74 @@ class Language:
     New translations can be added by extending this class and setting class
     attributes listed below.
 
-    Language :attr:`code` is got based on the class name and :attr:`name`
-    based on the docstring.
+    Language :attr:`code` is got based on the class name and :attr:`name` based
+    on the docstring. Built-in languages must have both of them set properly,
+    and new built-in languages must also have a note telling when they have been
+    added. See existing languages for examples.
+
+    Section headers and settings can be deprecated by using the :attr:`deprecations`
+    dictionary. Keys must be deprecated terms and values must be tuples containing
+    new terms and versions when terms were deprecated in format 'X.Y'. For example,
+    the following deprecates French section header "Unités de test" in favor of
+    "Cas de test" in Robot Framework 7.5::
+
+        deprecations = {"Unités de test": ("Cas de test", "7.5")}
+
+    When a term is deprecated, the original term must also be replaced with the new
+    term. Deprecated terms continue to work until they are removed from the
+    ``deprecations`` dictionary.
+
+    Deprecation warnings are emitted starting from the next non-bugfix release after
+    deprecation. For example, if a term is deprecated in version 7.5, there are
+    no deprecation warnings in 7.5.1 or in other 7.5.x releases, but warnings start
+    automatically in 7.6 (or in 8.0 if that is the next release). If deprecation is
+    needed with custom language files not tied to Robot Framework versions, version
+    in the ``deprecation`` dictionary can be set to ``None``. In that case deprecation
+    warnings are emitted immediately.
+
+    Deprecation supports is new in Robot Framework 7.5. Possible deprecation
+    configuration is silently ignored with earlier versions.
     """
 
-    settings_header = None
-    variables_header = None
-    test_cases_header = None
-    tasks_header = None
-    keywords_header = None
-    comments_header = None
-    library_setting = None
-    resource_setting = None
-    variables_setting = None
-    name_setting = None
-    documentation_setting = None
-    metadata_setting = None
-    suite_setup_setting = None
-    suite_teardown_setting = None
-    test_setup_setting = None
-    task_setup_setting = None
-    test_teardown_setting = None
-    task_teardown_setting = None
-    test_template_setting = None
-    task_template_setting = None
-    test_timeout_setting = None
-    task_timeout_setting = None
-    test_tags_setting = None
-    task_tags_setting = None
-    keyword_tags_setting = None
-    tags_setting = None
-    setup_setting = None
-    teardown_setting = None
-    template_setting = None
-    timeout_setting = None
-    arguments_setting = None
-    given_prefixes = []
-    when_prefixes = []
-    then_prefixes = []
-    and_prefixes = []
-    but_prefixes = []
-    true_strings = []
-    false_strings = []
+    settings_header: "str | None" = None
+    variables_header: "str | None" = None
+    test_cases_header: "str | None" = None
+    tasks_header: "str | None" = None
+    keywords_header: "str | None" = None
+    comments_header: "str | None" = None
+    library_setting: "str | None" = None
+    resource_setting: "str | None" = None
+    variables_setting: "str | None" = None
+    name_setting: "str | None" = None
+    documentation_setting: "str | None" = None
+    metadata_setting: "str | None" = None
+    suite_setup_setting: "str | None" = None
+    suite_teardown_setting: "str | None" = None
+    test_setup_setting: "str | None" = None
+    task_setup_setting: "str | None" = None
+    test_teardown_setting: "str | None" = None
+    task_teardown_setting: "str | None" = None
+    test_template_setting: "str | None" = None
+    task_template_setting: "str | None" = None
+    test_timeout_setting: "str | None" = None
+    task_timeout_setting: "str | None" = None
+    test_tags_setting: "str | None" = None
+    task_tags_setting: "str | None" = None
+    keyword_tags_setting: "str | None" = None
+    tags_setting: "str | None" = None
+    setup_setting: "str | None" = None
+    teardown_setting: "str | None" = None
+    template_setting: "str | None" = None
+    timeout_setting: "str | None" = None
+    arguments_setting: "str | None" = None
+    given_prefixes: Iterable[str] = []
+    when_prefixes: Iterable[str] = []
+    then_prefixes: Iterable[str] = []
+    and_prefixes: Iterable[str] = []
+    but_prefixes: Iterable[str] = []
+    true_strings: Iterable[str] = []
+    false_strings: Iterable[str] = []
+    deprecations: "dict[str, tuple[str, str | None]]" = {}
 
     @classmethod
     def from_name(cls, name) -> "Language":
@@ -261,16 +335,17 @@ class Language:
     def name(cls) -> str:
         """Language name like 'Finnish' or 'Brazilian Portuguese'.
 
-        Got from the first line of the class docstring.
+        Got from the first line of the class docstring. If class has no docstring,
+        name is got from the class name.
 
         This special property can be accessed also directly from the class.
         """
         if cls is Language:
             return cls.__dict__["name"]
-        return cls.__doc__.splitlines()[0] if cls.__doc__ else ""
+        return cls.__doc__.splitlines()[0] if cls.__doc__ else cls.__name__
 
     @property
-    def headers(self) -> "dict[str|None, str]":
+    def headers(self) -> "dict[str | None, str]":
         return {
             self.settings_header: En.settings_header,
             self.variables_header: En.variables_header,
@@ -281,7 +356,7 @@ class Language:
         }
 
     @property
-    def settings(self) -> "dict[str|None, str]":
+    def settings(self) -> "dict[str | None, str]":
         return {
             self.library_setting: En.library_setting,
             self.resource_setting: En.resource_setting,
@@ -312,13 +387,13 @@ class Language:
 
     @property
     def bdd_prefixes(self) -> "set[str]":
-        return (
-            set(self.given_prefixes)
-            | set(self.when_prefixes)
-            | set(self.then_prefixes)
-            | set(self.and_prefixes)
-            | set(self.but_prefixes)
-        )
+        return {
+            *self.given_prefixes,
+            *self.when_prefixes,
+            *self.then_prefixes,
+            *self.and_prefixes,
+            *self.but_prefixes,
+        }
 
     def __eq__(self, other):
         return isinstance(other, type(self))

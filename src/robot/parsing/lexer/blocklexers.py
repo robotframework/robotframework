@@ -38,7 +38,7 @@ class BlockLexer(Lexer, ABC):
 
     def __init__(self, ctx: LexingContext):
         super().__init__(ctx)
-        self.lexers: "list[Lexer]" = []
+        self.lexers: list[Lexer] = []
 
     def accepts_more(self, statement: StatementTokens) -> bool:
         return True
@@ -244,9 +244,9 @@ class KeywordLexer(TestOrKeywordLexer):
 
 
 class NestedBlockLexer(BlockLexer, ABC):
-    ctx: "TestCaseContext|KeywordContext"
+    ctx: "TestCaseContext | KeywordContext"
 
-    def __init__(self, ctx: "TestCaseContext|KeywordContext"):
+    def __init__(self, ctx: "TestCaseContext | KeywordContext"):
         super().__init__(ctx)
         self._block_level = 0
 

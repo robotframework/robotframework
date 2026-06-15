@@ -29,9 +29,7 @@ class VariableStore:
         self.data = NormalizedDict(ignore="_")
         self._variables = variables
 
-    def resolve_delayed(self, item=None):
-        if item:
-            return self._resolve_delayed(*item)
+    def resolve_delayed(self):
         for name, value in list(self.data.items()):
             try:
                 self._resolve_delayed(name, value)
@@ -40,37 +38,36 @@ class VariableStore:
         return None
 
     def _resolve_delayed(self, name, value):
-        if not self._is_resolvable(value):
+        try:
+            if not isinstance(value, Resolvable):
+                return value
+        except Exception:
             return value
         try:
-            self.data[name] = value.resolve(self._variables)
+            resolved = value.resolve(self._variables)
         except DataError as err:
             # Recursive resolving may have already removed variable.
             if name in self.data:
                 self.data.pop(name)
                 value.report_error(str(err))
-            variable_not_found(f"${{{name}}}", self.data)
-        return self.data[name]
-
-    def _is_resolvable(self, value):
-        try:
-            return isinstance(value, Resolvable)
-        except Exception:
-            return False
+            raise
+        self.data[name] = resolved
+        return resolved
 
     def __getitem__(self, name):
-        if name not in self.data:
-            variable_not_found(f"${{{name}}}", self.data)
-        return self._resolve_delayed(name, self.data[name])
+        return self._get(name)
 
     def get(self, name, default=NOT_SET, decorated=True):
+        if decorated:
+            name = self._undecorate(name)
+        return self._get(name, default)
+
+    def _get(self, name, default=NOT_SET):
         try:
-            if decorated:
-                name = self._undecorate(name)
-            return self[name]
-        except DataError:
+            return self._resolve_delayed(name, self.data[name])
+        except (KeyError, DataError):
             if default is NOT_SET:
-                raise
+                variable_not_found(f"${{{name}}}", self.data)
             return default
 
     def pop(self, name, decorated=True):

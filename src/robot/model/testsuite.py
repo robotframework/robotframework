@@ -27,6 +27,8 @@ from .itemlist import ItemList
 from .keyword import Keyword
 from .metadata import Metadata
 from .modelobject import DataDict, ModelObject
+from .namepatterns import NamePatterns
+from .tags import TagPatterns
 from .tagsetter import TagSetter
 from .testcase import TestCase, TestCases
 from .visitor import SuiteVisitor
@@ -58,10 +60,10 @@ class TestSuite(ModelObject, Generic[KW, TC]):
         self,
         name: str = "",
         doc: str = "",
-        metadata: "Mapping[str, str]|None" = None,
-        source: "Path|str|None" = None,
-        rpa: "bool|None" = False,
-        parent: "TestSuite[KW, TC]|None" = None,
+        metadata: "Mapping[str, str] | None" = None,
+        source: "Path | str | None" = None,
+        rpa: "bool | None" = False,
+        parent: "TestSuite[KW, TC] | None" = None,
     ):
         self._name = name
         self.doc = doc
@@ -71,12 +73,15 @@ class TestSuite(ModelObject, Generic[KW, TC]):
         self.rpa = rpa
         self.suites = []
         self.tests = []
-        self._setup: "KW|None" = None
-        self._teardown: "KW|None" = None
-        self._my_visitors: "list[SuiteVisitor]" = []
+        self._setup: KW | None = None
+        self._teardown: KW | None = None
+        self._my_visitors: list[SuiteVisitor] = []
 
     @staticmethod
-    def name_from_source(source: "Path|str|None", extension: Sequence[str] = ()) -> str:
+    def name_from_source(
+        source: "Path | str | None",
+        extension: Sequence[str] = (),
+    ) -> str:
         """Create suite name based on the given ``source``.
 
         This method is used by Robot Framework itself when it builds suites.
@@ -156,13 +161,13 @@ class TestSuite(ModelObject, Generic[KW, TC]):
         self._name = name
 
     @setter
-    def source(self, source: "Path|str|None") -> "Path|None":
+    def source(self, source: "Path | str | None") -> "Path | None":
         return source if isinstance(source, (Path, type(None))) else Path(source)
 
     def adjust_source(
         self,
-        relative_to: "Path|str|None" = None,
-        root: "Path|str|None" = None,
+        relative_to: "Path | str | None" = None,
+        root: "Path | str | None" = None,
     ):
         """Adjust suite source and child suite sources, recursively.
 
@@ -218,11 +223,11 @@ class TestSuite(ModelObject, Generic[KW, TC]):
         return self.full_name
 
     @setter
-    def metadata(self, metadata: "Mapping[str, str]|None") -> Metadata:
+    def metadata(self, metadata: "Mapping[str, str] | None") -> Metadata:
         """Free suite metadata as a :class:`~.metadata.Metadata` object."""
         return Metadata(metadata)
 
-    def validate_execution_mode(self) -> "bool|None":
+    def validate_execution_mode(self) -> "bool | None":
         """Validate that suite execution mode is set consistently.
 
         Raise an exception if the execution mode is not set (i.e. the :attr:`rpa`
@@ -250,12 +255,12 @@ class TestSuite(ModelObject, Generic[KW, TC]):
 
     @setter
     def suites(
-        self, suites: "Sequence[TestSuite|DataDict]"
+        self, suites: "Sequence[TestSuite | DataDict]"
     ) -> "TestSuites[TestSuite[KW, TC]]":
         return TestSuites["TestSuite"](self.__class__, self, suites)
 
     @setter
-    def tests(self, tests: "Sequence[TC|DataDict]") -> TestCases[TC]:
+    def tests(self, tests: "Sequence[TC | DataDict]") -> TestCases[TC]:
         return TestCases[TC](self.test_class, self, tests)
 
     @property
@@ -294,7 +299,7 @@ class TestSuite(ModelObject, Generic[KW, TC]):
         return self._setup
 
     @setup.setter
-    def setup(self, setup: "KW|DataDict|None"):
+    def setup(self, setup: "KW | DataDict | None"):
         self._setup = create_fixture(
             self.fixture_class,
             setup,
@@ -332,7 +337,7 @@ class TestSuite(ModelObject, Generic[KW, TC]):
         return self._teardown
 
     @teardown.setter
-    def teardown(self, teardown: "KW|DataDict|None"):
+    def teardown(self, teardown: "KW | DataDict | None"):
         self._teardown = create_fixture(
             self.fixture_class,
             teardown,
@@ -410,10 +415,10 @@ class TestSuite(ModelObject, Generic[KW, TC]):
 
     def filter(
         self,
-        included_suites: "Sequence[str]|None" = None,
-        included_tests: "Sequence[str]|None" = None,
-        included_tags: "Sequence[str]|None" = None,
-        excluded_tags: "Sequence[str]|None" = None,
+        included_suites: "NamePatterns | Sequence[str] | None" = None,
+        included_tests: "NamePatterns | Sequence[str] | None" = None,
+        included_tags: "TagPatterns | Sequence[str] | None" = None,
+        excluded_tags: "TagPatterns | Sequence[str] | None" = None,
     ):
         """Select test cases and remove others from this suite.
 
@@ -463,7 +468,7 @@ class TestSuite(ModelObject, Generic[KW, TC]):
         visitor.visit_suite(self)
 
     def to_dict(self) -> "dict[str, Any]":
-        data: "dict[str, Any]" = {"name": self.name}
+        data: dict[str, Any] = {"name": self.name}
         if self.doc:
             data["doc"] = self.doc
         if self.metadata:
@@ -489,7 +494,7 @@ class TestSuites(ItemList[TS]):
     def __init__(
         self,
         suite_class: Type[TS] = TestSuite,
-        parent: "TS|None" = None,
-        suites: "Sequence[TS|DataDict]" = (),
+        parent: "TS | None" = None,
+        suites: "Sequence[TS | DataDict]" = (),
     ):
         super().__init__(suite_class, {"parent": parent}, suites)

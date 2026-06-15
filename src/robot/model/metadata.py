@@ -26,7 +26,7 @@ class Metadata(NormalizedDict[str]):
 
     def __init__(
         self,
-        initial: "Mapping[str, str]|Iterable[tuple[str, str]]|None" = None,
+        initial: "Mapping[str, str] | Iterable[tuple[str, str]] | None" = None,
     ):
         super().__init__(initial, ignore="_")
 

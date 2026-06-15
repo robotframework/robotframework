@@ -11,6 +11,7 @@ Library           library_import_by_path.robot
 Library           library_scope/
 Library           spaces in path/SpacePathLib.py
 Library           this_does_not_exist.py
+Library           dir_for_libs/dots.are.not.allowed.py
 Library           nön_äscii_dïr/valid.py
 Library           nön_äscii_dïr/invalid.py
 

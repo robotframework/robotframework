@@ -6,6 +6,7 @@ setuptools > 75
 twine > 6
 wheel
 docutils
+markdown
 pygments >= 2.8
 sphinx
 sphinx-rtd-theme

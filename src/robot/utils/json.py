@@ -57,7 +57,7 @@ class JsonLoader:
         config["object_pairs_hook"] = merge_duplicate_lists
         return config
 
-    def load(self, source: "str|bytes|TextIO|Path") -> DataDict:
+    def load(self, source: "str | bytes | TextIO | Path") -> DataDict:
         try:
             data = self._load(source)
         except (json.JSONDecodeError, TypeError):
@@ -66,7 +66,7 @@ class JsonLoader:
             raise TypeError(f"Expected dictionary, got {type_name(data)}.")
         return data
 
-    def _load(self, source: "str|bytes|TextIO|Path") -> object:
+    def _load(self, source: "str | bytes | TextIO | Path") -> object:
         if self._is_path(source):
             with open(source, encoding="UTF-8") as file:
                 return json.load(file, **self.config)
@@ -74,7 +74,7 @@ class JsonLoader:
             return json.load(source, **self.config)
         return json.loads(source, **self.config)
 
-    def _is_path(self, source: "str|bytes|TextIO|Path") -> bool:
+    def _is_path(self, source: "str | bytes | TextIO | Path") -> bool:
         if isinstance(source, Path):
             return True
         return isinstance(source, str) and "{" not in source
@@ -98,9 +98,13 @@ class JsonDumper:
     def dump(self, data: DataDict, output: None = None) -> str: ...
 
     @overload
-    def dump(self, data: DataDict, output: "TextIO|Path|str") -> None: ...
+    def dump(self, data: DataDict, output: "TextIO | Path | str") -> None: ...
 
-    def dump(self, data: DataDict, output: "None|TextIO|Path|str" = None) -> "None|str":
+    def dump(
+        self,
+        data: DataDict,
+        output: "None | TextIO | Path | str" = None,
+    ) -> "None | str":
         if not output:
             return json.dumps(data, **self.config)
         elif isinstance(output, (str, Path)):

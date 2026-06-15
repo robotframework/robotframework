@@ -181,6 +181,52 @@ defines `${MESSAGE}` variable and creates :name:`My Keyword` keyword:
 
 __ `reStructuredText format`_
 
+Resource files using Markdown format
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The `Markdown format`_ that can be used with `suite files`_ works also with
+resource files. Such resource files can use either :file:`.md` or
+:file:`.markdown` extension and they are otherwise imported exactly as normal
+resource files:
+
+.. sourcecode:: robotframework
+
+   *** Settings ***
+   Resource         example.md
+
+When parsing resource files using the Markdown format, Robot Framework
+ignores all data outside fenced code blocks with the ``robotframework`` or ``robot``
+language tag exactly the same way as when parsing `Markdown suite files`__.
+For example, the following resource file imports :name:`OperatingSystem` library,
+defines ``${MESSAGE}`` variable and creates :name:`My Keyword` keyword:
+
+.. sourcecode:: markdown
+
+    # Resource file using Markdown
+
+    This text is outside code blocks and thus ignored.
+
+    ```robotframework
+    *** Settings ***
+    Library          OperatingSystem
+
+    *** Variables ***
+    ${MESSAGE}       Hello, world!
+    ```
+
+    Also this text is outside code blocks and ignored. Code blocks not
+    containing Robot Framework data are ignored as well.
+
+    ```robotframework
+    # Both space and pipe separated formats are supported.
+
+    | *** Keywords ***  |                        |         |
+    | My Keyword        | [Arguments]            | ${path} |
+    |                   | Directory Should Exist | ${path} |
+    ```
+
+__ `Markdown format`_
+
 Resource files using JSON format
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

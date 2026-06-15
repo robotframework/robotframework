@@ -47,10 +47,10 @@ class Filter(EmptySuiteRemover):
 
     def __init__(
         self,
-        include_suites: "NamePatterns|Sequence[str]|None" = None,
-        include_tests: "NamePatterns|Sequence[str]|None" = None,
-        include_tags: "TagPatterns|Sequence[str]|None" = None,
-        exclude_tags: "TagPatterns|Sequence[str]|None" = None,
+        include_suites: "NamePatterns | Sequence[str] | None" = None,
+        include_tests: "NamePatterns | Sequence[str] | None" = None,
+        include_tags: "TagPatterns | Sequence[str] | None" = None,
+        exclude_tags: "TagPatterns | Sequence[str] | None" = None,
     ):
         super().__init__()
         self.include_suites = include_suites
@@ -59,25 +59,25 @@ class Filter(EmptySuiteRemover):
         self.exclude_tags = exclude_tags
 
     @setter
-    def include_suites(self, suites) -> "NamePatterns|None":
+    def include_suites(self, suites) -> "NamePatterns | None":
         return self._patterns_or_none(suites, NamePatterns)
 
     @setter
-    def include_tests(self, tests) -> "NamePatterns|None":
+    def include_tests(self, tests) -> "NamePatterns | None":
         return self._patterns_or_none(tests, NamePatterns)
 
     @setter
-    def include_tags(self, tags) -> "TagPatterns|None":
-        return self._patterns_or_none(tags, TagPatterns)
+    def include_tags(self, tags) -> "TagPatterns | None":
+        return self._patterns_or_none(tags, TagPatterns, "including tests by tags")
 
     @setter
-    def exclude_tags(self, tags) -> "TagPatterns|None":
-        return self._patterns_or_none(tags, TagPatterns)
+    def exclude_tags(self, tags) -> "TagPatterns | None":
+        return self._patterns_or_none(tags, TagPatterns, "excluding tests by tags")
 
-    def _patterns_or_none(self, items, pattern_class):
+    def _patterns_or_none(self, items, pattern_class, *extra):
         if items is None or isinstance(items, pattern_class):
             return items
-        return pattern_class(items)
+        return pattern_class(items, *extra)
 
     def start_suite(self, suite: "TestSuite"):
         if not self:

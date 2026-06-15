@@ -8,19 +8,26 @@ ${INPUT 3}          ${DATADIR}${/}testdoc
 ${OUTFILE}          %{TEMPDIR}/testdoc-output.html
 ${ARGFILE 1}        %{TEMPDIR}/testdoc_argfile_1.txt
 ${ARGFILE 2}        %{TEMPDIR}/testdoc_argfile_2.txt
+${DEPRECATION}      [ WARN ] The built-in Testdoc tool has been deprecated in favor of the new and enhanced external Testdoc tool.
+...                 Learn more about the new tool at https://marvkler.github.io/robotframework-testdoc/.
 
 *** Keywords ***
 Run TestDoc
-    [Arguments]    @{args}    ${rc}=0    ${remove_outfile}=True
-    Run Keyword If    ${remove outfile}    Remove File    ${OUTFILE}
-    ${result} =    Run Process    @{INTERPRETER.testdoc}    @{args}    ${OUTFILE}    stderr=STDOUT
+    [Arguments]    @{args}    ${rc}=0    ${remove_outfile}=True    ${deprecated}=True
+    IF    ${remove outfile}    Remove File    ${OUTFILE}
+    ${result} =    Run Process    @{INTERPRETER.testdoc}    @{args}    ${OUTFILE}
     Should Be Equal As Integers    ${result.rc}    ${rc}
     ...    Unpexted rc ${result.rc}. Output was:\n${result.stdout}    values=False
+    IF    ${deprecated}
+        Should Be Equal    ${result.stderr}    ${DEPRECATION}
+    ELSE
+        Should Be Empty    ${result.stderr}
+    END
     Set Test Variable    ${OUTPUT}    ${result.stdout}
 
 TestDoc Run Should Fail
     [Arguments]    ${error}    @{args}    ${remove_outfile}=True
-    Run TestDoc    @{args}    rc=252    remove_outfile=${remove_outfile}
+    Run TestDoc    @{args}    rc=252    remove_outfile=${remove_outfile}    deprecated=False
     Should Match    ${OUTPUT}    ${error}${USAGE TIP}
 
 Testdoc Should Contain

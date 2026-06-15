@@ -26,7 +26,7 @@ class setter(Generic[T, V, A]):
     Usage::
 
         @setter
-        def source(self, source: str|Path) -> Path:
+        def source(self, source: str | Path) -> Path:
             return source if isinstance(source, Path) else Path(source)
 
     The setter method is called when the attribute is assigned like::
@@ -46,7 +46,7 @@ class setter(Generic[T, V, A]):
             return self._source
 
         @source.setter
-        def source(self, source: src|Path):
+        def source(self, source: src | Path):
             self._source = source if isinstance(source, Path) else Path(source)
 
     When using ``setter`` with ``__slots__``, the special ``_setter__xxx``

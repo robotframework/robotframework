@@ -27,7 +27,7 @@ from .fileparser import FileParser
 def get_model(
     source: Source,
     data_only: bool = False,
-    curdir: "str|None" = None,
+    curdir: "str | None" = None,
     lang: LanguagesLike = None,
 ) -> File:
     """Parses the given source into a model represented as an AST.
@@ -63,7 +63,7 @@ def get_model(
 def get_resource_model(
     source: Source,
     data_only: bool = False,
-    curdir: "str|None" = None,
+    curdir: "str | None" = None,
     lang: LanguagesLike = None,
 ) -> File:
     """Parses the given source into a resource file model.
@@ -77,7 +77,7 @@ def get_resource_model(
 def get_init_model(
     source: Source,
     data_only: bool = False,
-    curdir: "str|None" = None,
+    curdir: "str | None" = None,
     lang: LanguagesLike = None,
 ) -> File:
     """Parses the given source into an init file model.
@@ -93,7 +93,7 @@ def _get_model(
     token_getter: Callable[..., Iterator[Token]],
     source: Source,
     data_only: bool,
-    curdir: "str|None",
+    curdir: "str | None",
     lang: LanguagesLike,
 ):
     tokens = token_getter(source, data_only, lang=lang)
@@ -106,7 +106,7 @@ def _get_model(
 
 def _tokens_to_statements(
     tokens: Iterator[Token],
-    curdir: "str|None",
+    curdir: "str | None",
 ) -> Iterator[Statement]:
     statement = []
     EOS = Token.EOS
@@ -122,7 +122,7 @@ def _tokens_to_statements(
 
 def _statements_to_model(statements: Iterator[Statement], source: Source) -> File:
     root = FileParser(source=source)
-    stack: "list[Parser]" = [root]
+    stack: list[Parser] = [root]
     for statement in statements:
         while not stack[-1].handles(statement):
             stack.pop()

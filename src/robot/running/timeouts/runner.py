@@ -20,13 +20,13 @@ from robot.utils import WINDOWS
 
 
 class Runner:
-    runner_implementation: "type[Runner]|None" = None
+    runner_implementation: "type[Runner] | None" = None
 
     def __init__(
         self,
         timeout: float,
         timeout_error: TimeoutExceeded,
-        data_error: "DataError|None" = None,
+        data_error: "DataError | None" = None,
     ):
         self.timeout = round(timeout, 3)
         self.timeout_error = timeout_error
@@ -39,7 +39,7 @@ class Runner:
         cls,
         timeout: float,
         timeout_error: TimeoutExceeded,
-        data_error: "DataError|None" = None,
+        data_error: "DataError | None" = None,
     ) -> "Runner":
         runner = cls.runner_implementation
         if not runner:
@@ -64,8 +64,8 @@ class Runner:
     def run(
         self,
         runnable: "Callable[..., object]",
-        args: "Sequence|None" = None,
-        kwargs: "Mapping|None" = None,
+        args: "Sequence | None" = None,
+        kwargs: "Mapping | None" = None,
     ) -> object:
         if self.data_error:
             raise self.data_error

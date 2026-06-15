@@ -105,7 +105,7 @@ class Lexer:
         self.lexer = FileLexer(ctx)
         self.data_only = data_only
         self.tokenize_variables = tokenize_variables
-        self.statements: "list[list[Token]]" = []
+        self.statements: list[list[Token]] = []
 
     def input(self, source: Source):
         for statement in Tokenizer().tokenize(self._read(source), self.data_only):

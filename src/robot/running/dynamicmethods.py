@@ -117,8 +117,8 @@ class RunKeyword(DynamicMethod):
     def __init__(
         self,
         instance,
-        keyword_name: "str|None" = None,
-        supports_named_args: "bool|None" = None,
+        keyword_name: "str | None" = None,
+        supports_named_args: "bool | None" = None,
     ):
         super().__init__(instance)
         self.keyword_name = keyword_name
@@ -155,7 +155,7 @@ class GetKeywordDocumentation(DynamicMethod):
 class GetKeywordArguments(DynamicMethod):
     _underscore_name = "get_keyword_arguments"
 
-    def __init__(self, instance, supports_named_args: "bool|None" = None):
+    def __init__(self, instance, supports_named_args: "bool | None" = None):
         super().__init__(instance)
         if supports_named_args is None:
             self.supports_named_args = RunKeyword(instance).supports_named_args

@@ -57,12 +57,12 @@ class LibraryKeyword(KeywordImplementation):
         self,
         owner: "TestLibrary",
         name: str = "",
-        args: "ArgumentSpec|None" = None,
+        args: "ArgumentSpec | None" = None,
         doc: str = "",
-        tags: "Tags|Sequence[str]" = (),
-        resolve_args_until: "int|None" = None,
-        parent: "BodyItemParent|None" = None,
-        error: "str|None" = None,
+        tags: "Tags | Sequence[str]" = (),
+        resolve_args_until: "int | None" = None,
+        parent: "BodyItemParent | None" = None,
+        error: "str | None" = None,
     ):
         super().__init__(name, args, doc, tags, owner=owner, parent=parent, error=error)
         self._resolve_args_until = resolve_args_until
@@ -72,7 +72,7 @@ class LibraryKeyword(KeywordImplementation):
         raise NotImplementedError
 
     @property
-    def lineno(self) -> "int|None":
+    def lineno(self) -> "int | None":
         method = self.method
         try:
             lines, start_lineno = inspect.getsourcelines(inspect.unwrap(method))
@@ -85,7 +85,7 @@ class LibraryKeyword(KeywordImplementation):
 
     def create_runner(
         self,
-        name: "str|None",
+        name: "str | None",
         languages: "LanguagesLike" = None,
     ) -> LibraryKeywordRunner:
         if self.embedded:
@@ -97,8 +97,8 @@ class LibraryKeyword(KeywordImplementation):
 
     def resolve_arguments(
         self,
-        args: "Sequence[str|Any]",
-        named_args: "Mapping[str, Any]|None" = None,
+        args: "Sequence[str | Any]",
+        named_args: "Mapping[str, Any] | None" = None,
         variables=None,
         languages: "LanguagesLike" = None,
     ) -> "tuple[list, list]":
@@ -133,12 +133,12 @@ class StaticKeyword(LibraryKeyword):
         method_name: str,
         owner: "TestLibrary",
         name: str = "",
-        args: "ArgumentSpec|None" = None,
+        args: "ArgumentSpec | None" = None,
         doc: str = "",
-        tags: "Tags|Sequence[str]" = (),
-        resolve_args_until: "int|None" = None,
-        parent: "BodyItemParent|None" = None,
-        error: "str|None" = None,
+        tags: "Tags | Sequence[str]" = (),
+        resolve_args_until: "int | None" = None,
+        parent: "BodyItemParent | None" = None,
+        error: "str | None" = None,
     ):
         super().__init__(
             owner,
@@ -158,7 +158,7 @@ class StaticKeyword(LibraryKeyword):
         return getattr(self.owner.instance, self.method_name)
 
     @property
-    def source(self) -> "Path|None":
+    def source(self) -> "Path | None":
         # `getsourcefile` can return None and raise TypeError.
         try:
             if self.method is None:
@@ -196,12 +196,12 @@ class DynamicKeyword(LibraryKeyword):
         self,
         owner: "DynamicLibrary",
         name: str = "",
-        args: "ArgumentSpec|None" = None,
+        args: "ArgumentSpec | None" = None,
         doc: str = "",
-        tags: "Tags|Sequence[str]" = (),
-        resolve_args_until: "int|None" = None,
-        parent: "BodyItemParent|None" = None,
-        error: "str|None" = None,
+        tags: "Tags | Sequence[str]" = (),
+        resolve_args_until: "int | None" = None,
+        parent: "BodyItemParent | None" = None,
+        error: "str | None" = None,
     ):
         # TODO: It would probably be better not to convert name we got from
         # `get_keyword_names`. That would have some backwards incompatibility
@@ -229,15 +229,15 @@ class DynamicKeyword(LibraryKeyword):
         )
 
     @property
-    def source(self) -> "Path|None":
+    def source(self) -> "Path | None":
         return self._source_info[0] or super().source
 
     @property
-    def lineno(self) -> "int|None":
+    def lineno(self) -> "int | None":
         return self._source_info[1]
 
     @property
-    def _source_info(self) -> "tuple[Path|None, int]":
+    def _source_info(self) -> "tuple[Path | None, int]":
         if not self.__source_info:
             get_keyword_source = GetKeywordSource(self.owner.instance)
             try:
@@ -263,8 +263,8 @@ class DynamicKeyword(LibraryKeyword):
 
     def resolve_arguments(
         self,
-        args: "Sequence[str|Any]",
-        named_args: "Mapping[str, Any]|None" = None,
+        args: "Sequence[str | Any]",
+        named_args: "Mapping[str, Any] | None" = None,
         variables=None,
         languages: "LanguagesLike" = None,
     ) -> "tuple[list, list]":
@@ -302,11 +302,11 @@ class LibraryInit(LibraryKeyword):
         self,
         owner: "TestLibrary",
         name: str = "",
-        args: "ArgumentSpec|None" = None,
+        args: "ArgumentSpec | None" = None,
         doc: str = "",
-        tags: "Tags|Sequence[str]" = (),
-        positional: "list|None" = None,
-        named: "dict|None" = None,
+        tags: "Tags | Sequence[str]" = (),
+        positional: "list | None" = None,
+        named: "dict | None" = None,
     ):
         super().__init__(owner, name, args, doc, tags)
         self.positional = positional or []
@@ -327,7 +327,7 @@ class LibraryInit(LibraryKeyword):
         self._doc = doc
 
     @property
-    def method(self) -> "Callable[..., None]|None":
+    def method(self) -> "Callable[..., None] | None":
         """Initializer method.
 
         ``None`` with module based libraries and when class based libraries
@@ -359,7 +359,7 @@ class LibraryInit(LibraryKeyword):
 class KeywordCreator(Generic[K]):
     keyword_class: "type[K]"
 
-    def __init__(self, name: str, library: "TestLibrary|None" = None):
+    def __init__(self, name: str, library: "TestLibrary | None" = None):
         self.name = name
         self.library = library
         self.extra = {}
@@ -460,7 +460,7 @@ class DynamicKeywordCreator(KeywordCreator[DynamicKeyword]):
 class LibraryInitCreator(KeywordCreator[LibraryInit]):
     keyword_class = LibraryInit
 
-    def __init__(self, method: "Callable[..., None]|None"):
+    def __init__(self, method: "Callable[..., None] | None"):
         super().__init__("__init__")
         self.method = method if is_init(method) else lambda: None
 

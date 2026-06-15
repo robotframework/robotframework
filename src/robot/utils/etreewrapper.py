@@ -26,7 +26,7 @@ class ETSource:
 
     def __init__(self, source: Source):
         self._source = source
-        self._opened: "BytesIO | None" = None
+        self._opened: BytesIO | None = None
 
     def __enter__(self) -> "IO | Path | str | bytes":
         self._opened = self._open_if_necessary(self._source)

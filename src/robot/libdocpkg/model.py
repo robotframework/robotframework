@@ -17,6 +17,7 @@ import json
 import re
 from itertools import chain
 
+from robot.api.deco import DocFormat
 from robot.model import Tags
 from robot.running import ArgInfo, ArgumentSpec, TypeInfo
 from robot.utils import getshortdoc, setter, Sortable
@@ -36,7 +37,7 @@ class LibraryDoc:
         version="",
         type="LIBRARY",
         scope="TEST",
-        doc_format="ROBOT",
+        doc_format: DocFormat = "ROBOT",
         source=None,
         lineno=-1,
     ):
@@ -117,7 +118,7 @@ class LibraryDoc:
             self.doc,
             self.doc_format,
         )
-        self._doc = formatter.html(self.doc, intro=True)
+        self._doc = formatter.html(self.doc)
         for item in self.inits + self.keywords:
             # If 'short_doc' is not set, it is generated automatically based on 'doc'
             # when accessed. Generate and set it to avoid HTML format affecting it.
@@ -245,7 +246,7 @@ class KeywordDoc(Sortable):
         type_docs = self.type_docs.get("return", {})
         return self._type_to_dict(return_type, type_docs)
 
-    def _type_to_dict(self, type: "TypeInfo|None", type_docs: dict):
+    def _type_to_dict(self, type: "TypeInfo | None", type_docs: dict):
         if not type:
             return None
         return {

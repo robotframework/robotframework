@@ -178,7 +178,9 @@ class TestStatus(ExecutionStatus):
     def __init__(self, parent, test, skip_on_failure=(), rpa=False):
         super().__init__(parent)
         self.test = test
-        self.skip_on_failure_tags = TagPatterns(skip_on_failure)
+        self.skip_on_failure_tags = TagPatterns(
+            skip_on_failure, "finding tests to be skipped on failure based on tags"
+        )
         self.rpa = rpa
 
     def test_failed(self, message=None, error=None):

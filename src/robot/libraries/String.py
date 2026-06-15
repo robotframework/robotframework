@@ -150,13 +150,17 @@ class String:
         elif not exclude:
             exclude = []
         if isinstance(string, bytes):
-            exclude = [
-                e.encode("latin-1") if isinstance(e, str) else e for e in exclude
-            ]
+            exclude = [self._ensure_bytes(e) for e in exclude]
             split, join = rb"(\s+)", b""
         else:
             split, join = r"(\s+)", ""
-        exclude = [re.compile(e) for e in exclude]
+        try:
+            exclude = [re.compile(e) for e in exclude]
+        except re.error as err:
+            raise ValueError(
+                f"Compiling exclude pattern {err.pattern!r} to a regular expression "
+                f"failed: {err}"
+            )
 
         def title(word):
             if any(e.fullmatch(word) for e in exclude) or not word.islower():
@@ -286,7 +290,14 @@ class String:
     def _ensure_bytes(self, value: "str | bytes | None") -> "bytes | None":
         if isinstance(value, bytes) or value is None:
             return value
-        return value.encode("latin-1")
+        try:
+            return value.encode("latin-1")
+        except UnicodeEncodeError as err:
+            invalid = value[err.start : err.end]
+            raise ValueError(
+                f"String '{value}' cannot be converted to bytes: Characters must have "
+                f"code point below 256, but '{invalid}' has code point {ord(invalid)}."
+            )
 
     def get_line_count(self, string: "str | bytes") -> int:
         """Returns and logs the number of lines in the given string."""

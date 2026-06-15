@@ -3,22 +3,22 @@ Suite Setup       My Setup
 Resource          atest_resource.robot
 
 *** Test Cases ***
-Statistics Should Be Written to XML
+Statistics should be written to XML
     ${output} =    Get File    ${OUTFILE}
     ${exp} =    Catenate    SEPARATOR=\\r?\\n
     ...    (?s)    <statistics>    <total>    .*    </total>
     ...    <tag>    .*    </tag>    <suite>    .*    </suite>    </statistics>
     Should Match Regexp    ${output}    ${exp}
 
-Total statistics should be Correct
+Total statistics should be correct
     ${stats} =    Get Element    ${OUTFILE}    statistics/total
     ${total} =    Call Method    ${stats}    find    stat
     Node Should Be Correct    ${total}    All Tests    12    1
 
-Tag statistics should be Correct
+Tag statistics should be correct
     ${stats} =    Get Element    ${OUTFILE}    statistics/tag
-    Tag Node Should Be Correct    ${stats[1]}    D1 OR sub3 OR t2 OR or and not
-    ...    4    0    info=combined    combined=D1 OR sub3 OR t2 OR or and not
+    Tag Node Should Be Correct    ${stats[1]}    d1 OR sub3 OR t2 OR or_and_not
+    ...    4    0    info=combined    combined=d1 OR sub3 OR t2 OR or_and_not
     Tag Node Should Be Correct    ${stats[2]}    f1 AND t1
     ...    5    1    info=combined    combined=f1 AND t1
     Tag Node Should Be Correct    ${stats[3]}    F1 NOT T1
@@ -38,7 +38,7 @@ Tag statistics should be Correct
     Tag Node Should Be Correct    ${stats[10]}    XXX
     ...    12    1
 
-Combined Tag Statistics Name Can Be Given
+Combined tag statistics name can be given
     ${stats} =    Get Element    ${OUTFILE}    statistics/tag
     Tag Node Should Be Correct    ${stats[0]}    Combined tag with new name AND-OR-NOT
     ...    1    0    info=combined    combined=d1 AND d2
@@ -63,11 +63,11 @@ My Setup
     ...    --tagstatlink ?1:url:title
     ...    --tagstatcombine f1ANDt1
     ...    --tagstatcombine NOTt1
-    ...    --tagstatcombine D1ORsub3ORt2_OR_or_and_not
-    ...    --tagstatcombine "d1ANDd2:Combined tag with new name AND-OR-NOT"
+    ...    --tagstatcombine d1ORsub3ORt2ORor_and_not
+    ...    --tagstatcombine "d1 AND d2:Combined tag with new name AND-OR-NOT"
     ...    --suitestatlevel 2
     ...    --tagstatexclude t2
-    ...    --TagStatComb F1NOT_T1
+    ...    --TagStatComb "F1 NOT T1"
     ...    --SetTag XXX
     Run Tests    ${options}    misc/suites
 

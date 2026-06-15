@@ -19,7 +19,7 @@ from typing import Callable
 from .statements import Node
 
 # Unbound method and thus needs `NodeVisitor` as `self`.
-VisitorMethod = Callable[[NodeVisitor, Node], "None|Node|list[Node]"]
+VisitorMethod = Callable[[NodeVisitor, Node], "None | Node | list[Node]"]
 
 
 class VisitorFinder:
@@ -37,7 +37,7 @@ class VisitorFinder:
         return cls.__visitor_cache[node_cls]
 
     @classmethod
-    def _find_visitor_from_class(cls, node_cls: "type[Node]") -> "VisitorMethod|None":
+    def _find_visitor_from_class(cls, node_cls: "type[Node]") -> "VisitorMethod | None":
         method_name = "visit_" + node_cls.__name__
         method = getattr(cls, method_name, None)
         if callable(method):
@@ -61,7 +61,7 @@ class VisitorFinder:
         }[method_name]
         return getattr(cls, name, None)
 
-    def generic_visit(self, node: Node) -> "None|Node|list[Node]":
+    def generic_visit(self, node: Node) -> "None | Node | list[Node]":
         raise NotImplementedError
 
 
@@ -96,6 +96,6 @@ class ModelTransformer(NodeTransformer, VisitorFinder):
     <https://docs.python.org/library/ast.html#ast.NodeTransformer>`__.
     """
 
-    def visit(self, node: Node) -> "None|Node|list[Node]":
+    def visit(self, node: Node) -> "None | Node | list[Node]":
         visitor_method = self._find_visitor(type(node))
         return visitor_method(self, node)

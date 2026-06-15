@@ -29,7 +29,7 @@ K = TypeVar("K", bound=KeywordImplementation)
 
 class KeywordFinder(Generic[K]):
 
-    def __init__(self, owner: "TestLibrary|ResourceFile"):
+    def __init__(self, owner: "TestLibrary | ResourceFile"):
         self.owner = owner
         self.cache: KeywordCache | None = None
 
@@ -37,9 +37,9 @@ class KeywordFinder(Generic[K]):
     def find(self, name: str, count: Literal[1]) -> "K": ...
 
     @overload
-    def find(self, name: str, count: "int|None" = None) -> "list[K]": ...
+    def find(self, name: str, count: "int | None" = None) -> "list[K]": ...
 
-    def find(self, name: str, count: "int|None" = None) -> "list[K]|K":
+    def find(self, name: str, count: "int | None" = None) -> "list[K] | K":
         """Find keywords based on the given ``name``.
 
         With normal keywords matching is a case, space and underscore insensitive
@@ -74,7 +74,7 @@ class KeywordCache(Generic[K]):
             else:
                 add_normal(kw.name, kw)
 
-    def find(self, name: str, count: "int|None" = None) -> "list[K]|K":
+    def find(self, name: str, count: "int | None" = None) -> "list[K] | K":
         try:
             keywords = [self.normal[name]]
         except KeyError:

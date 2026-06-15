@@ -62,12 +62,12 @@ class Result:
 
     def __init__(
         self,
-        source: "Path|str|None" = None,
-        suite: "TestSuite|None" = None,
-        errors: "ExecutionErrors|None" = None,
-        rpa: "bool|None" = None,
+        source: "Path | str | None" = None,
+        suite: "TestSuite | None" = None,
+        errors: "ExecutionErrors | None" = None,
+        rpa: "bool | None" = None,
         generator: str = "unknown",
-        generation_time: "datetime|str|None" = None,
+        generation_time: "datetime | str | None" = None,
     ):
         self.source = Path(source) if isinstance(source, str) else source
         self.suite = suite or TestSuite()
@@ -79,7 +79,7 @@ class Result:
         self._stat_config = {}
 
     @setter
-    def rpa(self, rpa: "bool|None") -> "bool|None":
+    def rpa(self, rpa: "bool | None") -> "bool | None":
         if rpa is not None:
             self._set_suite_rpa(self.suite, rpa)
         return rpa
@@ -90,7 +90,7 @@ class Result:
             self._set_suite_rpa(child, rpa)
 
     @setter
-    def generation_time(self, timestamp: "datetime|str|None") -> "datetime|None":
+    def generation_time(self, timestamp: "datetime | str | None") -> "datetime | None":
         if datetime is None:
             return None
         if isinstance(timestamp, str):
@@ -154,10 +154,10 @@ class Result:
     @classmethod
     def from_json(
         cls,
-        source: "str|bytes|TextIO|Path",
+        source: "str | bytes | TextIO | Path",
         include_keywords: bool = True,
         flattened_keywords: Sequence[str] = (),
-        rpa: "bool|None" = None,
+        rpa: "bool | None" = None,
     ) -> "Result":
         """Construct a result object from JSON data.
 
@@ -249,7 +249,7 @@ class Result:
     @overload
     def to_json(
         self,
-        file: "TextIO|Path|str",
+        file: "TextIO | Path | str",
         *,
         include_statistics: bool = True,
         ensure_ascii: bool = False,
@@ -259,13 +259,13 @@ class Result:
 
     def to_json(
         self,
-        file: "None|TextIO|Path|str" = None,
+        file: "None | TextIO | Path | str" = None,
         *,
         include_statistics: bool = True,
         ensure_ascii: bool = False,
         indent: int = 0,
         separators: "tuple[str, str]" = (",", ":"),
-    ) -> "str|None":
+    ) -> "str | None":
         """Serialize results into JSON.
 
         The ``file`` parameter controls what to do with the resulting JSON data.

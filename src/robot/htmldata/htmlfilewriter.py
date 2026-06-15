@@ -30,7 +30,7 @@ class HtmlFileWriter:
         self.output = output
         self.model_writer = model_writer
 
-    def write(self, template: "Path|str"):
+    def write(self, template: "Path | str"):
         if not isinstance(template, Path):
             template = Path(template)
         writers = self._get_writers(template.parent)
@@ -95,7 +95,7 @@ class InliningWriter(Writer, ABC):
         self.writer = writer
         self.base_dir = base_dir
 
-    def inline_file(self, path: "Path|str", tag: str, attrs: dict):
+    def inline_file(self, path: "Path | str", tag: str, attrs: dict):
         self.writer.start(tag, attrs)
         for line in HtmlTemplate(self.base_dir / path):
             self.writer.content(line, escape=False, newline=True)

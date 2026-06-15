@@ -5,14 +5,12 @@ import time
 class ListenAll:
     ROBOT_LISTENER_API_VERSION = "2"
 
-    def __init__(self, *path, output_file_disabled=False):
-        path = ":".join(path) if path else self._get_default_path()
+    def __init__(self, path=None, output_file_disabled=False):
+        if path is None:
+            path = os.path.join(os.getenv("TEMPDIR"), "listen_all.txt")
         self.outfile = open(path, "w", encoding="UTF-8")
         self.output_file_disabled = output_file_disabled
         self.start_attrs = []
-
-    def _get_default_path(self):
-        return os.path.join(os.getenv("TEMPDIR"), "listen_all.txt")
 
     def start_suite(self, name, attrs):
         meta = " ".join(f"{k}: {v}" for k, v in attrs["metadata"].items())

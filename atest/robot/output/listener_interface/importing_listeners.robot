@@ -54,28 +54,28 @@ Unsupported version
 
 *** Keywords ***
 Run Tests With Listeners
-    ${listeners} =    Catenate
-    ...    --listener ListenAll
-    ...    --listener listeners.ListenSome
-    ...    --listener module_listener
-    ...    --listener listener_versions.V2
-    ...    --listener listener_versions.V2AsNonInt
-    ...    --listener listener_versions.V3Implicit
-    ...    --listener listener_versions.V3Explicit
-    ...    --listener listener_versions.V3AsNonInt
-    ...    --listener listeners.WithArgs:value
-    ...    --listener "listeners.WithArgs:a1:a;2"
-    ...    --listener "listeners.WithArgs;semi;colons:here"
-    ...    --listener listeners.WithArgs:arg2=args:arg1=named
-    ...    --listener listeners.WithArgConversion:42:yes
-    ...    --listener ${LISTENERS}${/}ListenAll.py:%{TEMPDIR}${/}${ALL_FILE2}
-    ...    --listener listeners.WithArgs
-    ...    --listener listeners.WithArgs:1:2:3
-    ...    --listener NonExistingListener
-    ...    --listener unsupported_listeners.V1Listener
-    ...    --listener unsupported_listeners.V4Listener
-    ...    --listener unsupported_listeners.InvalidVersionListener
-    Run Tests    ${listeners}    misc/pass_and_fail.robot
+    ${args} =    Join Command Line
+    ...    --listener    ListenAll
+    ...    --listener    listeners.ListenSome
+    ...    --listener    module_listener
+    ...    --listener    listener_versions.V2
+    ...    --listener    listener_versions.V2AsNonInt
+    ...    --listener    listener_versions.V3Implicit
+    ...    --listener    listener_versions.V3Explicit
+    ...    --listener    listener_versions.V3AsNonInt
+    ...    --listener    listeners.WithArgs:value
+    ...    --listener    listeners.WithArgs:a1:a;2
+    ...    --listener    listeners.WithArgs;semi;colons:here
+    ...    --listener    listeners.WithArgs:arg2=args:arg1=named
+    ...    --listener    listeners.WithArgConversion:42:yes
+    ...    --listener    ${LISTENERS}${/}ListenAll.py${:}%{TEMPDIR}${/}${ALL_FILE2}
+    ...    --listener    listeners.WithArgs
+    ...    --listener    listeners.WithArgs:1:2:3
+    ...    --listener    NonExistingListener
+    ...    --listener    unsupported_listeners.V1Listener
+    ...    --listener    unsupported_listeners.V4Listener
+    ...    --listener    unsupported_listeners.InvalidVersionListener
+    Run Tests    ${args}    misc/pass_and_fail.robot
 
 Importing Listener Failed
     [Arguments]    ${index}    ${name}    ${error}    ${pattern}=False

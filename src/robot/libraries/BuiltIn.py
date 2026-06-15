@@ -260,7 +260,7 @@ class _Converter(_BuiltInBase):
         item: object,
         base: "int | None" = None,
         prefix: "str | None" = None,
-        length: "int|None" = None,
+        length: "int | None" = None,
     ) -> str:
         """Converts the given item to a binary string.
 
@@ -2414,8 +2414,8 @@ class _RunKeyword(_BuiltInBase):
         | `Run Keyword If` | '${status}' == 'PASS' | Some Action | arg | ELSE | Another Action |
 
         The return value of this keyword is the return value of the actually
-        executed keyword or Python ``None`` if no keyword was executed (i.e.
-        if ``condition`` was false). Hence, it is recommended to use ELSE
+        executed keyword or Python ``None`` if no keyword is executed (i.e.
+        if ``condition`` is false). Hence, it is recommended to use ELSE
         and/or ELSE IF branches to conditionally assign return values from
         keyword to variables (see `Set Variable If` you need to set fixed
         values conditionally). This is illustrated by the example below:
@@ -2426,8 +2426,8 @@ class _RunKeyword(_BuiltInBase):
         | ...         | ELSE             | Final keyword to handle abnormal cases | ${rc} |
         | ${var2} =   | `Run Keyword If` | ${condition}  | Some keyword |
 
-        In this example, ${var2} will be set to ``None`` if ${condition} is
-        false.
+        In this example, ``${var2}`` will be set to ``None`` if ``${condition}``
+        is false.
 
         Notice that ``ELSE`` and ``ELSE IF`` control words must be used
         explicitly and thus cannot come from variables. If you need to use

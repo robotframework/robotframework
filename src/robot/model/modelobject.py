@@ -15,7 +15,7 @@
 
 import copy
 from pathlib import Path
-from typing import Any, Dict, overload, TextIO, Type, TypeVar
+from typing import Any, Dict, Final, overload, TextIO, Type, TypeVar
 
 from robot.errors import DataError
 from robot.utils import JsonDumper, JsonLoader, SetterAwareType, type_name
@@ -25,31 +25,31 @@ DataDict = Dict[str, Any]
 
 
 class ModelObject(metaclass=SetterAwareType):
-    SUITE = "SUITE"
-    TEST = "TEST"
-    TASK = TEST
-    KEYWORD = "KEYWORD"
-    SETUP = "SETUP"
-    TEARDOWN = "TEARDOWN"
-    FOR = "FOR"
-    ITERATION = "ITERATION"
-    IF_ELSE_ROOT = "IF/ELSE ROOT"
-    IF = "IF"
-    ELSE_IF = "ELSE IF"
-    ELSE = "ELSE"
-    TRY_EXCEPT_ROOT = "TRY/EXCEPT ROOT"
-    TRY = "TRY"
-    EXCEPT = "EXCEPT"
-    FINALLY = "FINALLY"
-    WHILE = "WHILE"
-    GROUP = "GROUP"
-    VAR = "VAR"
-    RETURN = "RETURN"
-    CONTINUE = "CONTINUE"
-    BREAK = "BREAK"
-    ERROR = "ERROR"
-    MESSAGE = "MESSAGE"
-    KEYWORD_TYPES = (KEYWORD, SETUP, TEARDOWN)
+    SUITE: Final = "SUITE"
+    TEST: Final = "TEST"
+    TASK: Final = TEST
+    KEYWORD: Final = "KEYWORD"
+    SETUP: Final = "SETUP"
+    TEARDOWN: Final = "TEARDOWN"
+    FOR: Final = "FOR"
+    ITERATION: Final = "ITERATION"
+    IF_ELSE_ROOT: Final = "IF/ELSE ROOT"
+    IF: Final = "IF"
+    ELSE_IF: Final = "ELSE IF"
+    ELSE: Final = "ELSE"
+    TRY_EXCEPT_ROOT: Final = "TRY/EXCEPT ROOT"
+    TRY: Final = "TRY"
+    EXCEPT: Final = "EXCEPT"
+    FINALLY: Final = "FINALLY"
+    WHILE: Final = "WHILE"
+    GROUP: Final = "GROUP"
+    VAR: Final = "VAR"
+    RETURN: Final = "RETURN"
+    CONTINUE: Final = "CONTINUE"
+    BREAK: Final = "BREAK"
+    ERROR: Final = "ERROR"
+    MESSAGE: Final = "MESSAGE"
+    KEYWORD_TYPES: Final = (KEYWORD, SETUP, TEARDOWN)
     type: str
     repr_args = ()
     __slots__ = ()
@@ -71,7 +71,7 @@ class ModelObject(metaclass=SetterAwareType):
             )
 
     @classmethod
-    def from_json(cls: Type[T], source: "str|bytes|TextIO|Path") -> T:
+    def from_json(cls: Type[T], source: "str | bytes | TextIO | Path") -> T:
         """Create this object based on JSON data.
 
         The data is given as the ``source`` parameter. It can be:
@@ -119,7 +119,7 @@ class ModelObject(metaclass=SetterAwareType):
     @overload
     def to_json(
         self,
-        file: "TextIO|Path|str",
+        file: "TextIO | Path | str",
         *,
         ensure_ascii: bool = False,
         indent: int = 0,
@@ -128,12 +128,12 @@ class ModelObject(metaclass=SetterAwareType):
 
     def to_json(
         self,
-        file: "None|TextIO|Path|str" = None,
+        file: "None | TextIO | Path | str" = None,
         *,
         ensure_ascii: bool = False,
         indent: int = 0,
         separators: "tuple[str, str]" = (",", ":"),
-    ) -> "str|None":
+    ) -> "str | None":
         """Serialize this object into JSON.
 
         The object is first converted to a Python dictionary using the

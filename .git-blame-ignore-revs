@@ -1,2 +1,6 @@
 # Code formatting.
 d2cdcfa9863e405983ecafc47e2e7e5af9da68f4
+# Remove unnecessary quotes from variable annotations.
+a9f153afce8495f66cf0f52b430beeaf346f7b48
+# Reformat stringified unions in annotations.
+39ccb4364f5879a915f697f256f32e6919717eb0

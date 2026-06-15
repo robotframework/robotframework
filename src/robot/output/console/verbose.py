@@ -14,15 +14,16 @@
 #  limitations under the License.
 
 import sys
+from pathlib import Path
+from typing import Literal
 
 from robot.errors import DataError
 from robot.utils import get_console_length, getshortdoc, isatty, pad_console_length
 
-from ..loggerapi import LoggerApi
 from .highlighting import HighlightingStream
 
 
-class VerboseOutput(LoggerApi):
+class VerboseOutput:
 
     def __init__(
         self,
@@ -73,7 +74,14 @@ class VerboseOutput(LoggerApi):
         if msg.level in ("WARN", "ERROR") and msg.console:
             self.writer.error(msg.message, msg.level, clear=self.running_test)
 
-    def result_file(self, kind, path):
+    def output_file(self, path: "Path | None"):
+        self.writer.result_file("OUTPUT", path)
+
+    def result_file(
+        self,
+        kind: Literal["OUTPUT", "REPORT", "LOG", "XUNIT", "DEBUG"],
+        path: Path,
+    ):
         self.writer.result_file(kind, path)
 
 

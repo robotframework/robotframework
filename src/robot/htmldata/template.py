@@ -39,7 +39,7 @@ else:
 
 class HtmlTemplate(Iterable):
 
-    def __init__(self, path: "Path|str"):
+    def __init__(self, path: "Path | str"):
         # Need to use `os.path.normpath` because `Path` does not support
         # normalizing only `..` components.
         path = Path(normpath(path))

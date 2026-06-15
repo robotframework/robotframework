@@ -33,8 +33,8 @@ class EmbeddedArguments:
         self,
         name: re.Pattern,
         args: Sequence[str] = (),
-        custom_patterns: "Mapping[str, str]|None" = None,
-        types: "Sequence[TypeInfo|None]" = (),
+        custom_patterns: "Mapping[str, str] | None" = None,
+        types: "Sequence[TypeInfo | None]" = (),
     ):
         self.name = name
         self.args = tuple(args)
@@ -42,10 +42,10 @@ class EmbeddedArguments:
         self.types = types
 
     @classmethod
-    def from_name(cls, name: str) -> "EmbeddedArguments|None":
+    def from_name(cls, name: str) -> "EmbeddedArguments | None":
         return EmbeddedArgumentParser().parse(name) if "${" in name else None
 
-    def match(self, name: str) -> "re.Match|None":
+    def match(self, name: str) -> "re.Match | None":
         """Deprecated since Robot Framework 7.3."""
         warnings.warn(
             "'EmbeddedArguments.match()' is deprecated since Robot Framework 7.3. Use "
@@ -127,7 +127,7 @@ class EmbeddedArgumentParser:
     _regexp_group_escape = r"(?:\1)"
     _default_pattern = ".*?"
 
-    def parse(self, string: str) -> "EmbeddedArguments|None":
+    def parse(self, string: str) -> "EmbeddedArguments | None":
         name_parts = []
         args = []
         custom_patterns = {}
@@ -150,7 +150,7 @@ class EmbeddedArgumentParser:
         name = self._compile_regexp("".join(name_parts))
         return EmbeddedArguments(name, args, custom_patterns, types)
 
-    def _parse_arg(self, arg: str) -> "tuple[str, str|None, str|None]":
+    def _parse_arg(self, arg: str) -> "tuple[str, str | None, str | None]":
         if ":" not in arg:
             return arg, None, None
         match = re.fullmatch("([^:]+): ([^:]+)(:(.*))?", arg)
@@ -198,7 +198,7 @@ class EmbeddedArgumentParser:
     def _add_variable_placeholder_pattern(self, pattern: str) -> str:
         return rf"{pattern}|={VARIABLE_PLACEHOLDER}-\d+="
 
-    def _get_type_info(self, name: str, typ: str) -> "TypeInfo|None":
+    def _get_type_info(self, name: str, typ: str) -> "TypeInfo | None":
         var = f"${{{name}: {typ}}}"
         try:
             return TypeInfo.from_variable(var)

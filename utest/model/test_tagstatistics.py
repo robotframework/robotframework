@@ -57,28 +57,28 @@ class TestTagStatistics(unittest.TestCase):
     def test_combine_with_name(self):
         for comb_tags, expected_name in [
             ([], ""),
-            ([("t1&t2", "my name")], "my name"),
-            ([("t1NOTt3", "Others")], "Others"),
-            ([("1:2&2:3", "nAme")], "nAme"),
+            ([("t1 AND t2", "my name")], "my name"),
+            ([("t1 NOT t3", "Others")], "Others"),
+            ([("1:2 AND 2:3", "nAme")], "nAme"),
             ([("3*", "")], "3*"),
-            ([("4NOT5", "Some new name")], "Some new name"),
+            ([("4 NOT 5", "Some new name")], "Some new name"),
         ]:
             builder = TagStatisticsBuilder(combined=comb_tags)
             assert_equal(bool(list(builder.stats)), bool(expected_name))
             if expected_name:
                 assert_equal([s.name for s in builder.stats], [expected_name])
 
-    def test_is_combined_with_and_statements(self):
+    def test_is_combined_with_AND(self):
         for comb_tags, test_tags, expected_count in [
             ("t1", ["t1"], 1),
             ("t1", ["t2"], 0),
-            ("t1&t2", ["t1"], 0),
-            ("t1&t2", ["t1", "t2"], 1),
-            ("t1&t2", ["T1", "t 2", "t3"], 1),
+            ("t1 AND t2", ["t1"], 0),
+            ("t1 AND t2", ["t1", "t2"], 1),
+            ("t1 AND t2", ["T1", "t 2", "t3"], 1),
             ("t*", ["s", "t", "u"], 1),
             ("t*", ["s", "tee", "t"], 1),
-            ("t*&s", ["s", "tee", "t"], 1),
-            ("t*&s&non", ["s", "tee", "t"], 0),
+            ("t* AND s", ["s", "tee", "t"], 1),
+            ("t* AND s AND non", ["s", "tee", "t"], 0),
         ]:
             self._verify_combined_statistics(comb_tags, test_tags, expected_count)
 
@@ -87,51 +87,51 @@ class TestTagStatistics(unittest.TestCase):
         builder.add_test(TestCase(tags=test_tags))
         assert_equal([s.total for s in builder.stats if s.combined], [expected_count])
 
-    def test_is_combined_with_not_statements(self):
+    def test_is_combined_with_NOT(self):
         for comb_tags, test_tags, expected_count in [
-            ("t1NOTt2", [], 0),
-            ("t1NOTt2", ["t1"], 1),
-            ("t1NOTt2", ["t1", "t2"], 0),
-            ("t1NOTt2", ["t3"], 0),
-            ("t1NOTt2", ["t3", "t2"], 0),
-            ("t*NOTt2", ["t1"], 1),
-            ("t*NOTt2", ["t"], 1),
-            ("t*NOTt2", ["TEE"], 1),
-            ("t*NOTt2", ["T2"], 0),
-            ("T*NOTT?", ["t"], 1),
-            ("T*NOTT?", ["tt"], 0),
-            ("T*NOTT?", ["ttt"], 1),
-            ("T*NOTT?", ["tt", "t"], 0),
-            ("T*NOTT?", ["ttt", "something"], 1),
-            ("tNOTs*NOTr", ["t"], 1),
-            ("tNOTs*NOTr", ["t", "s"], 0),
-            ("tNOTs*NOTr", ["S", "T"], 0),
-            ("tNOTs*NOTr", ["R", "T", "s"], 0),
-            ("*NOTt", ["t"], 0),
-            ("*NOTt", ["e"], 1),
-            ("*NOTt", [], 0),
+            ("t1 NOT t2", [], 0),
+            ("t1 NOT t2", ["t1"], 1),
+            ("t1 NOT t2", ["t1", "t2"], 0),
+            ("t1 NOT t2", ["t3"], 0),
+            ("t1 NOT t2", ["t3", "t2"], 0),
+            ("t* NOT t2", ["t1"], 1),
+            ("t* NOT t2", ["t"], 1),
+            ("t* NOT t2", ["TEE"], 1),
+            ("t* NOT t2", ["T2"], 0),
+            ("T* NOT T?", ["t"], 1),
+            ("T* NOT T?", ["tt"], 0),
+            ("T* NOT T?", ["ttt"], 1),
+            ("T* NOT T?", ["tt", "t"], 0),
+            ("T* NOT T?", ["ttt", "something"], 1),
+            ("t NOT s* NOT r", ["t"], 1),
+            ("t NOT s* NOT r", ["t", "s"], 0),
+            ("t NOT s* NOT r", ["S", "T"], 0),
+            ("t NOT s* NOT r", ["R", "T", "s"], 0),
+            ("* NOT t", ["t"], 0),
+            ("* NOT t", ["e"], 1),
+            ("* NOT t", [], 0),
         ]:
             self._verify_combined_statistics(comb_tags, test_tags, expected_count)
 
-    def test_starting_with_not(self):
+    def test_starting_with_NOT(self):
         for comb_tags, test_tags, expected_count in [
-            ("NOTt", ["t"], 0),
-            ("NOTt", ["e"], 1),
-            ("NOTt", [], 1),
-            ("NOTtORe", ["e"], 0),
-            ("NOTtORe", ["e", "t"], 0),
-            ("NOTtORe", ["h"], 1),
-            ("NOTtORe", [], 1),
-            ("NOTtANDe", [], 1),
-            ("NOTtANDe", ["t"], 1),
-            ("NOTtANDe", ["t", "e"], 0),
-            ("NOTtNOTe", ["t", "e"], 0),
-            ("NOTtNOTe", ["t"], 0),
-            ("NOTtNOTe", ["e"], 0),
-            ("NOTtNOTe", ["d"], 1),
-            ("NOTtNOTe", [], 1),
-            ("NOT*", ["t"], 0),
-            ("NOT*", [], 1),
+            ("NOT t", ["t"], 0),
+            ("NOT t", ["e"], 1),
+            ("NOT T", [], 1),
+            ("NOT t OR e", ["e"], 0),
+            ("NOT t OR e", ["e", "t"], 0),
+            ("NOT T OR E", ["h"], 1),
+            ("NOT t OR e", [], 1),
+            ("NOT t AND e", [], 1),
+            ("NOT t AND e", ["t"], 1),
+            ("NOT t AND e", ["t", "e"], 0),
+            ("NOT t NOT e", ["t", "e"], 0),
+            ("NOT t NOT e", ["t"], 0),
+            ("NOT t NOT e", ["e"], 0),
+            ("NOT t NOT e", ["d"], 1),
+            ("NOT t NOT e", [], 1),
+            ("NOT *", ["t"], 0),
+            ("NOT *", [], 1),
         ]:
             self._verify_combined_statistics(comb_tags, test_tags, expected_count)
 
@@ -176,15 +176,15 @@ class TestTagStatistics(unittest.TestCase):
     def test_combine(self):
         # This is more like an acceptance test than a unit test ...
         for comb_tags, tests_tags in [
-            (["t1&t2"], [["t1", "t2", "t3"], ["t1", "t3"]]),
-            (["1&2&3"], [["1", "2", "3"], ["1", "2", "3", "4"]]),
-            (["1&2", "1&3"], [["1", "2", "3"], ["1", "3"], ["1"]]),
+            (["t1 AND t2"], [["t1", "t2", "t3"], ["t1", "t3"]]),
+            (["1 AND 2 AND 3"], [["1", "2", "3"], ["1", "2", "3", "4"]]),
+            (["1 AND 2", "1 AND 3"], [["1", "2", "3"], ["1", "3"], ["1"]]),
             (["t*"], [["t1", "x", "y"], ["tee", "z"], ["t"]]),
-            (["t?&s"], [["t1", "s"], ["tt", "s", "u"], ["tee", "s"]]),
-            (["t*&s", "*"], [["s", "t", "u"], ["tee", "s"], [], ["x"]]),
-            (["tNOTs"], [["t", "u"], ["t", "s"]]),
+            (["t? AND s"], [["t1", "s"], ["tt", "s", "u"], ["tee", "s"]]),
+            (["t* AND s", "*"], [["s", "t", "u"], ["tee", "s"], [], ["x"]]),
+            (["t NOT s"], [["t", "u"], ["t", "s"]]),
             (
-                ["tNOTs", "t&s", "tNOTsNOTu", "t&sNOTu"],
+                ["t NOT s", "t AND s", "t NOT s NOT u", "t AND s NOT u"],
                 [["t", "u"], ["t", "s"], ["s", "t", "u"], ["t"], ["t", "v"]],
             ),
             (["nonex"], [["t1"], ["t1,t2"], []]),

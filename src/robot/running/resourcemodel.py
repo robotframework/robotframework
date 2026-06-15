@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from pathlib import Path
-from typing import Any, Iterable, Literal, overload, Sequence, TYPE_CHECKING
+from typing import Any, Final, Iterable, Literal, overload, Sequence, TYPE_CHECKING
 
 from robot import model
 from robot.model import BodyItem, create_fixture, DataDict, ModelObject, Tags
@@ -40,8 +40,8 @@ class ResourceFile(ModelObject):
 
     def __init__(
         self,
-        source: "Path|str|None" = None,
-        owner: "TestSuite|None" = None,
+        source: "Path | str | None" = None,
+        owner: "TestSuite | None" = None,
         doc: str = "",
     ):
         self.source = source
@@ -53,7 +53,7 @@ class ResourceFile(ModelObject):
         self.keywords = []
 
     @property
-    def source(self) -> "Path|None":
+    def source(self) -> "Path | None":
         if self._source:
             return self._source
         if self.owner:
@@ -61,13 +61,13 @@ class ResourceFile(ModelObject):
         return None
 
     @source.setter
-    def source(self, source: "Path|str|None"):
+    def source(self, source: "Path | str | None"):
         if isinstance(source, str):
             source = Path(source)
         self._source = source
 
     @property
-    def name(self) -> "str|None":
+    def name(self) -> "str | None":
         """Resource file name.
 
         ``None`` if resource file is part of a suite or if it does not have
@@ -90,7 +90,7 @@ class ResourceFile(ModelObject):
         return UserKeywords(self, keywords)
 
     @classmethod
-    def from_file_system(cls, path: "Path|str", **config) -> "ResourceFile":
+    def from_file_system(cls, path: "Path | str", **config) -> "ResourceFile":
         """Create a :class:`ResourceFile` object based on the give ``path``.
 
         :param path: File path where to read the data from.
@@ -143,14 +143,14 @@ class ResourceFile(ModelObject):
     def find_keywords(
         self,
         name: str,
-        count: "int|None" = None,
+        count: "int | None" = None,
     ) -> "list[UserKeyword]": ...
 
     def find_keywords(
         self,
         name: str,
-        count: "int|None" = None,
-    ) -> "list[UserKeyword]|UserKeyword":
+        count: "int | None" = None,
+    ) -> "list[UserKeyword] | UserKeyword":
         return self.keyword_finder.find(name, count)
 
     def to_dict(self) -> DataDict:
@@ -178,14 +178,14 @@ class UserKeyword(KeywordImplementation):
     def __init__(
         self,
         name: str = "",
-        args: "ArgumentSpec|Sequence[str]|None" = (),
+        args: "ArgumentSpec | Sequence[str] | None" = (),
         doc: str = "",
-        tags: "Tags|Sequence[str]" = (),
-        timeout: "str|None" = None,
-        lineno: "int|None" = None,
-        owner: "ResourceFile|None" = None,
-        parent: "BodyItemParent|None" = None,
-        error: "str|None" = None,
+        tags: "Tags | Sequence[str]" = (),
+        timeout: "str | None" = None,
+        lineno: "int | None" = None,
+        owner: "ResourceFile | None" = None,
+        parent: "BodyItemParent | None" = None,
+        error: "str | None" = None,
     ):
         super().__init__(name, args, doc, tags, lineno, owner, parent, error)
         self.timeout = timeout
@@ -194,7 +194,7 @@ class UserKeyword(KeywordImplementation):
         self.body = []
 
     @setter
-    def args(self, spec: "ArgumentSpec|Sequence[str]|None") -> ArgumentSpec:
+    def args(self, spec: "ArgumentSpec | Sequence[str] | None") -> ArgumentSpec:
         if not spec:
             spec = ArgumentSpec()
         elif not isinstance(spec, ArgumentSpec):
@@ -203,7 +203,7 @@ class UserKeyword(KeywordImplementation):
         return spec
 
     @setter
-    def body(self, body: "Sequence[BodyItem|DataDict]") -> Body:
+    def body(self, body: "Sequence[BodyItem | DataDict]") -> Body:
         return Body(self, body)
 
     @property
@@ -217,7 +217,7 @@ class UserKeyword(KeywordImplementation):
         return self._setup
 
     @setup.setter
-    def setup(self, setup: "Keyword|DataDict|None"):
+    def setup(self, setup: "Keyword | DataDict | None"):
         self._setup = create_fixture(self.fixture_class, setup, self, Keyword.SETUP)
 
     @property
@@ -236,7 +236,7 @@ class UserKeyword(KeywordImplementation):
         return self._teardown
 
     @teardown.setter
-    def teardown(self, teardown: "Keyword|DataDict|None"):
+    def teardown(self, teardown: "Keyword | DataDict | None"):
         self._teardown = create_fixture(
             self.fixture_class,
             teardown,
@@ -259,9 +259,9 @@ class UserKeyword(KeywordImplementation):
 
     def create_runner(
         self,
-        name: "str|None",
+        name: "str | None",
         languages: "LanguagesLike" = None,
-    ) -> "UserKeywordRunner|EmbeddedArgumentsRunner":
+    ) -> "UserKeywordRunner | EmbeddedArgumentsRunner":
         if self.embedded:
             return EmbeddedArgumentsRunner(self, name)
         return UserKeywordRunner(self)
@@ -327,10 +327,10 @@ class Variable(ModelObject):
         self,
         name: str = "",
         value: Sequence[str] = (),
-        separator: "str|None" = None,
-        owner: "ResourceFile|None" = None,
-        lineno: "int|None" = None,
-        error: "str|None" = None,
+        separator: "str | None" = None,
+        owner: "ResourceFile | None" = None,
+        lineno: "int | None" = None,
+        error: "str | None" = None,
     ):
         self.name = name
         self.value = tuple(value)
@@ -340,7 +340,7 @@ class Variable(ModelObject):
         self.error = error
 
     @property
-    def source(self) -> "Path|None":
+    def source(self) -> "Path | None":
         return self.owner.source if self.owner is not None else None
 
     def report_error(self, message: str, level: str = "ERROR"):
@@ -367,19 +367,19 @@ class Variable(ModelObject):
 class Import(ModelObject):
     """Represents library, resource file or variable file import."""
 
+    LIBRARY: Final = "LIBRARY"
+    RESOURCE: Final = "RESOURCE"
+    VARIABLES: Final = "VARIABLES"
     repr_args = ("type", "name", "args", "alias")
-    LIBRARY = "LIBRARY"
-    RESOURCE = "RESOURCE"
-    VARIABLES = "VARIABLES"
 
     def __init__(
         self,
         type: Literal["LIBRARY", "RESOURCE", "VARIABLES"],
         name: str,
         args: Sequence[str] = (),
-        alias: "str|None" = None,
-        owner: "ResourceFile|Keyword|None" = None,
-        lineno: "int|None" = None,
+        alias: "str | None" = None,
+        owner: "ResourceFile | Keyword | None" = None,
+        lineno: "int | None" = None,
     ):
         if type not in (self.LIBRARY, self.RESOURCE, self.VARIABLES):
             raise ValueError(
@@ -394,11 +394,11 @@ class Import(ModelObject):
         self.lineno = lineno
 
     @property
-    def source(self) -> "Path|None":
+    def source(self) -> "Path | None":
         return self.owner.source if self.owner is not None else None
 
     @property
-    def directory(self) -> "Path|None":
+    def directory(self) -> "Path | None":
         source = self.source
         return source.parent if source and not source.is_dir() else source
 
@@ -445,13 +445,13 @@ class Imports(model.ItemList):
         self,
         name: str,
         args: Sequence[str] = (),
-        alias: "str|None" = None,
-        lineno: "int|None" = None,
+        alias: "str | None" = None,
+        lineno: "int | None" = None,
     ) -> Import:
         """Create library import."""
         return self.create(Import.LIBRARY, name, args, alias, lineno=lineno)
 
-    def resource(self, name: str, lineno: "int|None" = None) -> Import:
+    def resource(self, name: str, lineno: "int | None" = None) -> Import:
         """Create resource import."""
         return self.create(Import.RESOURCE, name, lineno=lineno)
 
@@ -459,7 +459,7 @@ class Imports(model.ItemList):
         self,
         name: str,
         args: Sequence[str] = (),
-        lineno: "int|None" = None,
+        lineno: "int | None" = None,
     ) -> Import:
         """Create variables import."""
         return self.create(Import.VARIABLES, name, args, lineno=lineno)
@@ -491,19 +491,21 @@ class UserKeywords(model.ItemList[UserKeyword]):
         self.invalidate_keyword_cache()
         super().__init__(UserKeyword, {"owner": owner}, items=keywords)
 
-    def append(self, item: "UserKeyword|DataDict") -> UserKeyword:
+    def append(self, item: "UserKeyword | DataDict") -> UserKeyword:
         self.invalidate_keyword_cache()
         return super().append(item)
 
-    def extend(self, items: "Iterable[UserKeyword|DataDict]"):
+    def extend(self, items: "Iterable[UserKeyword | DataDict]"):
         self.invalidate_keyword_cache()
         return super().extend(items)
 
-    def __setitem__(self, index: "int|slice", item: "Iterable[UserKeyword|DataDict]"):
+    def __setitem__(
+        self, index: "int | slice", item: "Iterable[UserKeyword | DataDict]"
+    ):
         self.invalidate_keyword_cache()
         return super().__setitem__(index, item)
 
-    def insert(self, index: int, item: "UserKeyword|DataDict"):
+    def insert(self, index: int, item: "UserKeyword | DataDict"):
         self.invalidate_keyword_cache()
         super().insert(index, item)
 

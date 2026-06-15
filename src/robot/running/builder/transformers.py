@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from typing import Union
+
 from robot.errors import DataError
 from robot.output import LOGGER
 from robot.parsing import File, ModelVisitor, Token
@@ -22,6 +24,8 @@ from robot.variables import VariableMatches
 from ..model import For, Group, If, IfBranch, TestCase, TestSuite, Try, TryBranch, While
 from ..resourcemodel import ResourceFile, UserKeyword
 from .settings import FileSettings
+
+HasBody = Union[TestCase, UserKeyword, For, If, Try, While, Group]
 
 
 class SettingsBuilder(ModelVisitor):
@@ -193,10 +197,7 @@ class ResourceBuilder(ModelVisitor):
 
 class BodyBuilder(ModelVisitor):
 
-    def __init__(
-        self,
-        model: "TestCase|UserKeyword|For|If|Try|While|Group|None" = None,
-    ):
+    def __init__(self, model: "HasBody | None" = None):
         self.model = model
 
     def visit_For(self, node):
@@ -396,11 +397,7 @@ class KeywordBuilder(BodyBuilder):
             self.model.args = node.values
 
     def visit_Tags(self, node):
-        for tag in node.values:
-            if tag.startswith("-"):
-                self.model.tags.remove(tag[1:])
-            else:
-                self.model.tags.add(tag)
+        self.model.tags.add(node.values, remove_negated=True)
 
     def visit_ReturnSetting(self, node):
         ErrorReporter(self.model.source).visit(node)
@@ -427,7 +424,7 @@ class KeywordBuilder(BodyBuilder):
 class ForBuilder(BodyBuilder):
     model: For
 
-    def __init__(self, parent: "TestCase|UserKeyword|For|If|Try|While|Group"):
+    def __init__(self, parent: HasBody):
         super().__init__(parent.body.create_for())
 
     def build(self, node):
@@ -454,9 +451,9 @@ class ForBuilder(BodyBuilder):
 
 
 class IfBuilder(BodyBuilder):
-    model: "IfBranch|None"
+    model: "IfBranch | None"
 
-    def __init__(self, parent: "TestCase|UserKeyword|For|If|Try|While|Group"):
+    def __init__(self, parent: HasBody):
         super().__init__()
         self.root = parent.body.create_if()
 
@@ -497,9 +494,9 @@ class IfBuilder(BodyBuilder):
 
 
 class TryBuilder(BodyBuilder):
-    model: "TryBranch|None"
+    model: "TryBranch | None"
 
-    def __init__(self, parent: "TestCase|UserKeyword|For|If|Try|While|Group"):
+    def __init__(self, parent: HasBody):
         super().__init__()
         self.root = parent.body.create_try()
 
@@ -530,7 +527,7 @@ class TryBuilder(BodyBuilder):
 class WhileBuilder(BodyBuilder):
     model: While
 
-    def __init__(self, parent: "TestCase|UserKeyword|For|If|Try|While|Group"):
+    def __init__(self, parent: HasBody):
         super().__init__(parent.body.create_while())
 
     def build(self, node):
@@ -556,7 +553,7 @@ class WhileBuilder(BodyBuilder):
 class GroupBuilder(BodyBuilder):
     model: Group
 
-    def __init__(self, parent: "TestCase|UserKeyword|For|If|Try|While|Group"):
+    def __init__(self, parent: HasBody):
         super().__init__(parent.body.create_group())
 
     def build(self, node):

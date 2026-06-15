@@ -24,7 +24,7 @@ class Tokenizer:
     _pipe_splitter = re.compile(r"((?:\A|\s+)\|(?:\s+|\Z))", re.UNICODE)
 
     def tokenize(self, data: str, data_only: bool = False) -> "Iterator[list[Token]]":
-        current: "list[Token]" = []
+        current: list[Token] = []
         for lineno, line in enumerate(data.splitlines(not data_only), start=1):
             tokens = self._tokenize_line(line, lineno, not data_only)
             tokens, starts_new = self._cleanup_tokens(tokens, data_only)

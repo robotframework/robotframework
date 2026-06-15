@@ -32,7 +32,9 @@ class TypeValidator:
     def __init__(self, spec: "ArgumentSpec"):
         self.spec = spec
 
-    def validate(self, types: "Mapping|Sequence|None") -> "dict[str, TypeInfo]|None":
+    def validate(
+        self, types: "Mapping | Sequence | None"
+    ) -> "dict[str, TypeInfo] | None":
         if types is None:
             return None
         if not types:

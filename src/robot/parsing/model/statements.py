@@ -57,7 +57,7 @@ class Statement(Node, ABC):
     statement_handlers: "ClassVar[dict[str, Type[Statement]]]" = {}
     # Accepted configuration options. If the value is a tuple, it lists accepted
     # values. If the used value contains a variable, it cannot be validated.
-    options: "dict[str, tuple|None]" = {}
+    options: "dict[str, tuple | None]" = {}
 
     def __init__(self, tokens: "Sequence[Token]", errors: "Sequence[str]" = ()):
         self.tokens = tuple(tokens)
@@ -127,7 +127,7 @@ class Statement(Node, ABC):
     def data_tokens(self) -> "list[Token]":
         return [t for t in self.tokens if t.type not in Token.NON_DATA_TOKENS]
 
-    def get_token(self, *types: str) -> "Token|None":
+    def get_token(self, *types: str) -> "Token | None":
         """Return a token with any of the given ``types``.
 
         If there are no matches, return ``None``. If there are multiple
@@ -146,9 +146,9 @@ class Statement(Node, ABC):
     def get_value(self, type: str, default: str) -> str: ...
 
     @overload
-    def get_value(self, type: str, default: None = None) -> "str|None": ...
+    def get_value(self, type: str, default: None = None) -> "str | None": ...
 
-    def get_value(self, type: str, default: "str|None" = None) -> "str|None":
+    def get_value(self, type: str, default: "str | None" = None) -> "str | None":
         """Return value of a token with the given ``type``.
 
         If there are no matches, return ``default``. If there are multiple
@@ -161,7 +161,7 @@ class Statement(Node, ABC):
         """Return values of tokens having any of the given ``types``."""
         return tuple(t.value for t in self.tokens if t.type in types)
 
-    def get_option(self, name: str, default: "str|None" = None) -> "str|None":
+    def get_option(self, name: str, default: "str | None" = None) -> "str | None":
         """Return value of a configuration option with the given ``name``.
 
         If the option has not been used, return ``default``.
@@ -231,7 +231,7 @@ class DocumentationOrMetadata(Statement, ABC):
                 base_offset = first.col_offset
 
     def _get_line_tokens(self) -> "Iterator[list[Token]]":
-        line: "list[Token]" = []
+        line: list[Token] = []
         lineno = -1
         # There are no EOLs during execution or if data has been parsed with
         # `data_only=True` otherwise, so we need to look at line numbers to
@@ -278,7 +278,7 @@ class DocumentationOrMetadata(Statement, ABC):
 class SingleValue(Statement, ABC):
 
     @property
-    def value(self) -> "str|None":
+    def value(self) -> "str | None":
         values = self.get_values(Token.NAME, Token.ARGUMENT)
         if values and values[0].upper() != "NONE":
             return values[0]
@@ -319,7 +319,7 @@ class SectionHeader(Statement):
     def from_params(
         cls,
         type: str,
-        name: "str|None" = None,
+        name: "str | None" = None,
         eol: str = EOL,
     ) -> "SectionHeader":
         if not name:
@@ -355,7 +355,7 @@ class LibraryImport(Statement):
         cls,
         name: str,
         args: "Sequence[str]" = (),
-        alias: "str|None" = None,
+        alias: "str | None" = None,
         separator: str = FOUR_SPACES,
         eol: str = EOL,
     ) -> "LibraryImport":
@@ -388,7 +388,7 @@ class LibraryImport(Statement):
         return self.get_values(Token.ARGUMENT)
 
     @property
-    def alias(self) -> "str|None":
+    def alias(self) -> "str | None":
         separator = self.get_token(Token.AS)
         return self.get_tokens(Token.NAME)[-1].value if separator else None
 
@@ -769,8 +769,8 @@ class Variable(Statement):
     def from_params(
         cls,
         name: str,
-        value: "str|Sequence[str]",
-        value_separator: "str|None" = None,
+        value: "str | Sequence[str]",
+        value_separator: "str | None" = None,
         separator: str = FOUR_SPACES,
         eol: str = EOL,
     ) -> "Variable":
@@ -801,7 +801,7 @@ class Variable(Statement):
         return self.get_values(Token.ARGUMENT)
 
     @property
-    def separator(self) -> "str|None":
+    def separator(self) -> "str | None":
         return self.get_option("separator")
 
     def validate(self, ctx: "ValidationContext"):
@@ -999,7 +999,7 @@ class Arguments(MultiValue):
         return cls(tokens)
 
     def validate(self, ctx: "ValidationContext"):
-        errors: "list[str]" = []
+        errors: list[str] = []
         UserKeywordArgumentParser(error_reporter=errors.append).parse(self.values)
         self.errors = tuple(errors)
 
@@ -1157,20 +1157,20 @@ class ForHeader(Statement):
         return self.get_values(Token.ARGUMENT)
 
     @property
-    def flavor(self) -> "str|None":
+    def flavor(self) -> "str | None":
         separator = self.get_token(Token.FOR_SEPARATOR)
         return normalize_whitespace(separator.value) if separator else None
 
     @property
-    def start(self) -> "str|None":
+    def start(self) -> "str | None":
         return self.get_option("start") if self.flavor == "IN ENUMERATE" else None
 
     @property
-    def mode(self) -> "str|None":
+    def mode(self) -> "str | None":
         return self.get_option("mode") if self.flavor == "IN ZIP" else None
 
     @property
-    def fill(self) -> "str|None":
+    def fill(self) -> "str | None":
         return self.get_option("fill") if self.flavor == "IN ZIP" else None
 
     def validate(self, ctx: "ValidationContext"):
@@ -1196,7 +1196,7 @@ class ForHeader(Statement):
 class IfElseHeader(Statement, ABC):
 
     @property
-    def condition(self) -> "str|None":
+    def condition(self) -> "str | None":
         values = self.get_values(Token.ARGUMENT)
         return ", ".join(values) if values else None
 
@@ -1344,8 +1344,8 @@ class ExceptHeader(Statement):
     def from_params(
         cls,
         patterns: "Sequence[str]" = (),
-        type: "str|None" = None,
-        assign: "str|None" = None,
+        type: "str | None" = None,
+        assign: "str | None" = None,
         indent: str = FOUR_SPACES,
         separator: str = FOUR_SPACES,
         eol: str = EOL,
@@ -1376,15 +1376,15 @@ class ExceptHeader(Statement):
         return self.get_values(Token.ARGUMENT)
 
     @property
-    def pattern_type(self) -> "str|None":
+    def pattern_type(self) -> "str | None":
         return self.get_option("type")
 
     @property
-    def assign(self) -> "str|None":
+    def assign(self) -> "str | None":
         return self.get_value(Token.VARIABLE)
 
     @property
-    def variable(self) -> "str|None":  # TODO: Remove in RF 8.0.
+    def variable(self) -> "str | None":  # TODO: Remove in RF 8.0.
         warnings.warn(
             "'ExceptHeader.variable' is deprecated and will be removed in "
             "Robot Framework 8.0. Use 'ExceptHeader.assigns' instead."
@@ -1427,9 +1427,9 @@ class WhileHeader(Statement):
     def from_params(
         cls,
         condition: str,
-        limit: "str|None" = None,
-        on_limit: "str|None " = None,
-        on_limit_message: "str|None" = None,
+        limit: "str | None" = None,
+        on_limit: "str | None " = None,
+        on_limit_message: "str | None" = None,
         indent: str = FOUR_SPACES,
         separator: str = FOUR_SPACES,
         eol: str = EOL,
@@ -1463,15 +1463,15 @@ class WhileHeader(Statement):
         return ", ".join(self.get_values(Token.ARGUMENT))
 
     @property
-    def limit(self) -> "str|None":
+    def limit(self) -> "str | None":
         return self.get_option("limit")
 
     @property
-    def on_limit(self) -> "str|None":
+    def on_limit(self) -> "str | None":
         return self.get_option("on_limit")
 
     @property
-    def on_limit_message(self) -> "str|None":
+    def on_limit_message(self) -> "str | None":
         return self.get_option("on_limit_message")
 
     def validate(self, ctx: "ValidationContext"):
@@ -1535,9 +1535,9 @@ class Var(Statement):
     def from_params(
         cls,
         name: str,
-        value: "str|Sequence[str]",
-        scope: "str|None" = None,
-        value_separator: "str|None" = None,
+        value: "str | Sequence[str]",
+        scope: "str | None" = None,
+        value_separator: "str | None" = None,
         indent: str = FOUR_SPACES,
         separator: str = FOUR_SPACES,
         eol: str = EOL,
@@ -1579,11 +1579,11 @@ class Var(Statement):
         return self.get_values(Token.ARGUMENT)
 
     @property
-    def scope(self) -> "str|None":
+    def scope(self) -> "str | None":
         return self.get_option("scope")
 
     @property
-    def separator(self) -> "str|None":
+    def separator(self) -> "str | None":
         return self.get_option("separator")
 
     def validate(self, ctx: "ValidationContext"):
@@ -1688,10 +1688,14 @@ class Config(Statement):
         return cls(tokens)
 
     @property
-    def language(self) -> "Language|None":
-        value = " ".join(self.get_values(Token.CONFIG))
-        lang = value.split(":", 1)[1].strip()
+    def language(self) -> "Language | None":
+        lang = self._get_value("language")
         return Language.from_name(lang) if lang else None
+
+    def _get_value(self, name: str) -> "str | None":
+        value = " ".join(self.get_values(Token.CONFIG))
+        config, value = value.split(":", 1)
+        return value.strip() if config.lower() == name else None
 
 
 @Statement.register

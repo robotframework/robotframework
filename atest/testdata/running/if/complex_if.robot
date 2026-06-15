@@ -1,9 +1,8 @@
 *** Variables ***
-${var}            ${1}
+${calculator}     ${1}
 
 *** Test Cases ***
 Multiple keywords in if
-    ${calculator}=    Set Variable    1
     IF    'kuu on taivaalla'
         ${calculator}=    Evaluate    1+${calculator}
         ${calculator}=    Evaluate    1+${calculator}
@@ -12,7 +11,6 @@ Multiple keywords in if
     Should be equal    ${calculator}    ${4}
 
 Nested ifs
-    ${calculator}=    Set Variable    1
     IF    'kuu on taivaalla taas'
         ${calculator}=    Evaluate    1+${calculator}
         IF    'sininen on taivas'
@@ -53,15 +51,6 @@ For loop inside if
         ${value}=    Set Variable    123
     END
     Should be equal    ${value}    3
-
-For loop inside for loop
-    ${checker}    Set Variable    wrong
-    FOR    ${first}    IN    1    2    3
-        FOR    ${second}    IN    4    5    6
-            ${checker}    Set Variable    ${first} - ${second}
-        END
-    END
-    Should be equal    ${checker}    3 - 6
 
 Direct Boolean condition
     [Documentation]    PASS From the condition
@@ -131,21 +120,6 @@ If creating variable
     Should be equal    ${var}    expected
     Should be equal    ${outer}    inside
 
-If inside if
-    IF    ${True}
-        IF    ${False}
-            Fail    stupid but possible
-        END
-    ELSE IF    ${True}
-        IF    ${False}
-            Fail    stupid but possible
-        END
-    ELSE
-        IF    ${False}
-            Fail    stupid but possible
-        END
-    END
-
 If with comments
     IF    ${True}    # comment here is ok
         Log    no operation    # Here is also ok
@@ -163,7 +137,7 @@ If with invalid condition after valid is ok
     END
 
 If with dollar var from variables table
-    IF    $var == 1
+    IF    $calculator == 1
         Log    hello
     ELSE
         Fail

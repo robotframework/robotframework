@@ -89,7 +89,7 @@ class FlattenByTagMatcher:
         if isinstance(flatten, str):
             flatten = [flatten]
         patterns = [p[4:] for p in flatten if p[:4].lower() == "tag:"]
-        self._matcher = TagPatterns(patterns)
+        self._matcher = TagPatterns(patterns, "finding flattened keywords by tags")
 
     def match(self, tags):
         return self._matcher.match(tags)
@@ -132,7 +132,7 @@ class FlattenByTags(SuiteVisitor):
         if isinstance(flatten, str):
             flatten = [flatten]
         patterns = [p[4:] for p in flatten if p[:4].lower() == "tag:"]
-        self.matcher = TagPatterns(patterns)
+        self.matcher = TagPatterns(patterns, "finding flattened keywords by tags")
 
     def start_suite(self, suite):
         return bool(self.matcher)
@@ -153,8 +153,8 @@ class MessageFinder(SuiteVisitor):
         self.messages.append(message)
 
 
-# TODO: Refactor this module in RF 7.4.
+# TODO: Refactor this module!
 # - Currently code working with XML tags and model objects is somewhat messy.
 #   Either separate it better or make it more generic.
-# - MessageFinder API is now that nice.
+# - MessageFinder API is not that nice.
 # - The module doesn't anymore contain only matchers so it should be renamed.

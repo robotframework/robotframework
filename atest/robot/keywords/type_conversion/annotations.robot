@@ -54,6 +54,9 @@ Invalid boolean
 String
     Check Test Case    ${TESTNAME}
 
+String sub type
+    Check Test Case    ${TESTNAME}
+
 Invalid string
     Check Test Case    ${TESTNAME}
 
@@ -262,9 +265,4 @@ Default value is used if explicit type conversion fails
     Check Test Case    ${TESTNAME}
 
 Explicit conversion failure is used if both conversions fail
-    Check Test Case    ${TESTNAME}
-
-Deferred evaluation of annotations
-    [Documentation]    https://peps.python.org/pep-0649
-    [Tags]    require-py3.14
     Check Test Case    ${TESTNAME}

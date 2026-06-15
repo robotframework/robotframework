@@ -56,8 +56,8 @@ class Importer:
 
     def import_class_or_module(
         self,
-        name_or_path: "str|Path",
-        instantiate_with_args: "Sequence|None" = None,
+        name_or_path: "str | Path",
+        instantiate_with_args: "Sequence | None" = None,
         return_source: bool = False,
     ):
         """Imports Python class or module based on the given name or path.
@@ -104,7 +104,7 @@ class Importer:
         else:
             return self._handle_return_values(imported, source, return_source)
 
-    def import_module(self, name_or_path: "str|Path"):
+    def import_module(self, name_or_path: "str | Path"):
         """Imports Python module based on the given name or path.
 
         :param name_or_path:
@@ -155,8 +155,8 @@ class Importer:
 
     def import_class_or_module_by_path(
         self,
-        path: "str|Path",
-        instantiate_with_args: "Sequence|None" = None,
+        path: "str | Path",
+        instantiate_with_args: "Sequence | None" = None,
     ):
         """Import a Python module or class using a file system path.
 
@@ -339,6 +339,8 @@ class ByPathImporter(_Importer):
 
     def _import_by_path(self, path):
         module_dir, module_name = self._split_path_to_module(path)
+        if "." in module_name:
+            raise DataError("Module name cannot contain dots when importing by path.")
         sys.path.insert(0, module_dir)
         try:
             return self._import(module_name)

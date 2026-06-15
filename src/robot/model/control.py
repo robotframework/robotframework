@@ -28,8 +28,8 @@ if TYPE_CHECKING:
     from .message import Message
 
 
-IT = TypeVar("IT", bound="IfBranch|TryBranch")
-FW = TypeVar("FW", bound="ForIteration|WhileIteration")
+IT = TypeVar("IT", bound="IfBranch | TryBranch")
+FW = TypeVar("FW", bound="ForIteration | WhileIteration")
 
 
 class Branches(BaseBranches[
@@ -56,7 +56,7 @@ class ForIteration(BodyItem):
 
     def __init__(
         self,
-        assign: "Mapping[str, str]|None" = None,
+        assign: "Mapping[str, str] | None" = None,
         parent: BodyItemParent = None,
     ):
         self.assign = OrderedDict(assign or ())
@@ -73,7 +73,7 @@ class ForIteration(BodyItem):
         return self.assign
 
     @setter
-    def body(self, body: "Sequence[BodyItem|DataDict]") -> Body:
+    def body(self, body: "Sequence[BodyItem | DataDict]") -> Body:
         return self.body_class(self, body)
 
     def visit(self, visitor: SuiteVisitor):
@@ -105,9 +105,9 @@ class For(BodyItem):
         assign: Sequence[str] = (),
         flavor: Literal["IN", "IN RANGE", "IN ENUMERATE", "IN ZIP"] = "IN",
         values: Sequence[str] = (),
-        start: "str|None" = None,
-        mode: "str|None" = None,
-        fill: "str|None" = None,
+        start: "str | None" = None,
+        mode: "str | None" = None,
+        fill: "str | None" = None,
         parent: BodyItemParent = None,
     ):
         self.assign = tuple(assign)
@@ -137,7 +137,7 @@ class For(BodyItem):
         self.assign = assign
 
     @setter
-    def body(self, body: "Sequence[BodyItem|DataDict]") -> Body:
+    def body(self, body: "Sequence[BodyItem | DataDict]") -> Body:
         return self.body_class(self, body)
 
     def visit(self, visitor: SuiteVisitor):
@@ -187,7 +187,7 @@ class WhileIteration(BodyItem):
         self.body = ()
 
     @setter
-    def body(self, body: "Sequence[BodyItem|DataDict]") -> Body:
+    def body(self, body: "Sequence[BodyItem | DataDict]") -> Body:
         return self.body_class(self, body)
 
     def visit(self, visitor: SuiteVisitor):
@@ -208,10 +208,10 @@ class While(BodyItem):
 
     def __init__(
         self,
-        condition: "str|None" = None,
-        limit: "str|None" = None,
-        on_limit: "str|None" = None,
-        on_limit_message: "str|None" = None,
+        condition: "str | None" = None,
+        limit: "str | None" = None,
+        on_limit: "str | None" = None,
+        on_limit_message: "str | None" = None,
         parent: BodyItemParent = None,
     ):
         self.condition = condition
@@ -222,7 +222,7 @@ class While(BodyItem):
         self.body = ()
 
     @setter
-    def body(self, body: "Sequence[BodyItem|DataDict]") -> Body:
+    def body(self, body: "Sequence[BodyItem | DataDict]") -> Body:
         return self.body_class(self, body)
 
     def visit(self, visitor: SuiteVisitor):
@@ -272,7 +272,7 @@ class Group(BodyItem):
         self.body = ()
 
     @setter
-    def body(self, body: "Sequence[BodyItem|DataDict]") -> Body:
+    def body(self, body: "Sequence[BodyItem | DataDict]") -> Body:
         return self.body_class(self, body)
 
     def visit(self, visitor: SuiteVisitor):
@@ -298,7 +298,7 @@ class IfBranch(BodyItem):
     def __init__(
         self,
         type: str = BodyItem.IF,
-        condition: "str|None" = None,
+        condition: "str | None" = None,
         parent: BodyItemParent = None,
     ):
         self.type = type
@@ -307,7 +307,7 @@ class IfBranch(BodyItem):
         self.body = ()
 
     @setter
-    def body(self, body: "Sequence[BodyItem|DataDict]") -> Body:
+    def body(self, body: "Sequence[BodyItem | DataDict]") -> Body:
         return self.body_class(self, body)
 
     @property
@@ -351,7 +351,7 @@ class If(BodyItem):
         self.body = ()
 
     @setter
-    def body(self, branches: "Sequence[BodyItem|DataDict]") -> branches_class:
+    def body(self, branches: "Sequence[BodyItem | DataDict]") -> branches_class:
         return self.branches_class(self.branch_class, self, branches)
 
     @property
@@ -377,8 +377,8 @@ class TryBranch(BodyItem):
         self,
         type: str = BodyItem.TRY,
         patterns: Sequence[str] = (),
-        pattern_type: "str|None" = None,
-        assign: "str|None" = None,
+        pattern_type: "str | None" = None,
+        assign: "str | None" = None,
         parent: BodyItemParent = None,
     ):
         if (patterns or pattern_type or assign) and type != BodyItem.EXCEPT:
@@ -391,7 +391,7 @@ class TryBranch(BodyItem):
         self.body = ()
 
     @property
-    def variable(self) -> "str|None":  # TODO: Remove in RF 8.0.
+    def variable(self) -> "str | None":  # TODO: Remove in RF 8.0.
         """Deprecated since Robot Framework 7.0. Use :attr:`assign` instead."""
         warnings.warn(
             "'TryBranch.variable' is deprecated and will be removed in "
@@ -400,7 +400,7 @@ class TryBranch(BodyItem):
         return self.assign
 
     @variable.setter
-    def variable(self, assign: "str|None"):
+    def variable(self, assign: "str | None"):
         warnings.warn(
             "'TryBranch.variable' is deprecated and will be removed in "
             "Robot Framework 8.0. Use 'TryBranch.assign' instead."
@@ -408,7 +408,7 @@ class TryBranch(BodyItem):
         self.assign = assign
 
     @setter
-    def body(self, body: "Sequence[BodyItem|DataDict]") -> Body:
+    def body(self, body: "Sequence[BodyItem | DataDict]") -> Body:
         return self.body_class(self, body)
 
     @property
@@ -462,7 +462,7 @@ class Try(BodyItem):
         self.body = ()
 
     @setter
-    def body(self, branches: "Sequence[TryBranch|DataDict]") -> branches_class:
+    def body(self, branches: "Sequence[TryBranch | DataDict]") -> branches_class:
         return self.branches_class(self.branch_class, self, branches)
 
     @property
@@ -480,14 +480,14 @@ class Try(BodyItem):
         ]
 
     @property
-    def else_branch(self) -> "TryBranch|None":
+    def else_branch(self) -> "TryBranch | None":
         for branch in self.body:
             if branch.type == BodyItem.ELSE:
                 return cast(TryBranch, branch)
         return None
 
     @property
-    def finally_branch(self) -> "TryBranch|None":
+    def finally_branch(self) -> "TryBranch | None":
         if self.body and self.body[-1].type == BodyItem.FINALLY:
             return cast(TryBranch, self.body[-1])
         return None
@@ -515,9 +515,9 @@ class Var(BodyItem):
     def __init__(
         self,
         name: str = "",
-        value: "str|Sequence[str]" = (),
-        scope: "str|None" = None,
-        separator: "str|None" = None,
+        value: "str | Sequence[str]" = (),
+        scope: "str | None" = None,
+        separator: "str | None" = None,
         parent: BodyItemParent = None,
     ):
         self.name = name

@@ -42,11 +42,11 @@ class TestLibrary:
 
     def __init__(
         self,
-        code: "type|ModuleType",
+        code: "type | ModuleType",
         init: LibraryInit,
-        name: "str|None" = None,
-        real_name: "str|None" = None,
-        source: "Path|None" = None,
+        name: "str | None" = None,
+        real_name: "str | None" = None,
+        source: "Path | None" = None,
         logger=LOGGER,
     ):
         self.code = code
@@ -98,7 +98,7 @@ class TestLibrary:
         return getattr(instance, "ROBOT_LIBRARY_LISTENER", None) is not None
 
     @property
-    def converters(self) -> "CustomArgumentConverters|None":
+    def converters(self) -> "CustomArgumentConverters | None":
         converters = getattr(self.code, "ROBOT_LIBRARY_CONVERTERS", None)
         if not converters:
             return None
@@ -128,7 +128,7 @@ class TestLibrary:
         return Scope.TEST
 
     @setter
-    def source(self, source: "Path|str|None") -> "Path|None":
+    def source(self, source: "Path | str | None") -> "Path | None":
         return Path(source) if source else None
 
     @property
@@ -149,8 +149,8 @@ class TestLibrary:
     def from_name(
         cls,
         name: str,
-        real_name: "str|None" = None,
-        args: "Sequence[str]|None" = None,
+        real_name: "str | None" = None,
+        args: "Sequence[str] | None" = None,
         variables=None,
         create_keywords: bool = True,
         logger=LOGGER,
@@ -173,11 +173,11 @@ class TestLibrary:
     @classmethod
     def from_code(
         cls,
-        code: "type|ModuleType",
-        name: "str|None" = None,
-        real_name: "str|None" = None,
-        source: "Path|None" = None,
-        args: "Sequence[str]|None" = None,
+        code: "type | ModuleType",
+        name: "str | None" = None,
+        real_name: "str | None" = None,
+        source: "Path | None" = None,
+        args: "Sequence[str] | None" = None,
         variables=None,
         create_keywords: bool = True,
         logger=LOGGER,
@@ -199,9 +199,9 @@ class TestLibrary:
     def from_module(
         cls,
         module: ModuleType,
-        name: "str|None" = None,
-        real_name: "str|None" = None,
-        source: "Path|None" = None,
+        name: "str | None" = None,
+        real_name: "str | None" = None,
+        source: "Path | None" = None,
         create_keywords: bool = True,
         logger=LOGGER,
     ) -> "TestLibrary":
@@ -213,9 +213,9 @@ class TestLibrary:
     def from_class(
         cls,
         klass: type,
-        name: "str|None" = None,
-        real_name: "str|None" = None,
-        source: "Path|None" = None,
+        name: "str | None" = None,
+        real_name: "str | None" = None,
+        source: "Path | None" = None,
         args: Sequence[str] = (),
         variables=None,
         create_keywords: bool = True,
@@ -245,14 +245,14 @@ class TestLibrary:
     def find_keywords(
         self,
         name: str,
-        count: "int|None" = None,
+        count: "int | None" = None,
     ) -> "list[LibraryKeyword]": ...
 
     def find_keywords(
         self,
         name: str,
-        count: "int|None" = None,
-    ) -> "list[LibraryKeyword]|LibraryKeyword":
+        count: "int | None" = None,
+    ) -> "list[LibraryKeyword] | LibraryKeyword":
         return self.keyword_finder.find(name, count)
 
     def copy(self: Self, name: str) -> Self:
@@ -271,7 +271,7 @@ class TestLibrary:
     def report_error(
         self,
         message: str,
-        details: "str|None" = None,
+        details: "str | None" = None,
         level: str = "ERROR",
         details_level: str = "INFO",
     ):
@@ -291,9 +291,9 @@ class ModuleLibrary(TestLibrary):
     def from_module(
         cls,
         module: ModuleType,
-        name: "str|None" = None,
-        real_name: "str|None" = None,
-        source: "Path|None" = None,
+        name: "str | None" = None,
+        real_name: "str | None" = None,
+        source: "Path | None" = None,
         create_keywords: bool = True,
         logger=LOGGER,
     ) -> "ModuleLibrary":
@@ -358,9 +358,9 @@ class ClassLibrary(TestLibrary):
     def from_class(
         cls,
         klass: type,
-        name: "str|None" = None,
-        real_name: "str|None" = None,
-        source: "Path|None" = None,
+        name: "str | None" = None,
+        real_name: "str | None" = None,
+        source: "Path | None" = None,
         args: Sequence[str] = (),
         variables=None,
         create_keywords: bool = True,
@@ -412,7 +412,7 @@ class KeywordCreator:
     def get_keyword_names(self) -> "list[str]":
         raise NotImplementedError
 
-    def create_keywords(self, names: "list[str]|None" = None):
+    def create_keywords(self, names: "list[str] | None" = None):
         library = self.library
         library.keyword_finder.invalidate_cache()
         instance = library.instance
@@ -441,7 +441,7 @@ class KeywordCreator:
                     keywords.append(kw)
                     library._logger.debug(f"Created keyword '{kw.name}'.")
 
-    def _create_keyword(self, instance, name) -> "LibraryKeyword|None":
+    def _create_keyword(self, instance, name) -> "LibraryKeyword | None":
         raise NotImplementedError
 
     def _handle_duplicates(self, kw: LibraryKeyword, seen: NormalizedDict):
@@ -539,7 +539,7 @@ class StaticKeywordCreator(KeywordCreator):
         except Exception:
             return False
 
-    def _create_keyword(self, instance, name) -> "StaticKeyword|None":
+    def _create_keyword(self, instance, name) -> "StaticKeyword | None":
         if self.avoid_properties:
             self._pre_validate_method(instance, name)
         try:
@@ -574,7 +574,7 @@ class StaticKeywordCreator(KeywordCreator):
 class DynamicKeywordCreator(KeywordCreator):
     library: DynamicLibrary
 
-    def __init__(self, library: "DynamicLibrary|HybridLibrary"):
+    def __init__(self, library: "DynamicLibrary | HybridLibrary"):
         super().__init__(library, getting_method_failed_level="ERROR")
 
     def get_keyword_names(self) -> "list[str]":

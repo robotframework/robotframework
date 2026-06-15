@@ -40,6 +40,7 @@ if __name__ == "__main__" and "robot" not in sys.modules:
 
 from robot.conf import RobotSettings
 from robot.htmldata import HtmlFileWriter, JsonWriter, ModelWriter, TESTDOC
+from robot.output import LOGGER
 from robot.running import TestSuiteBuilder
 from robot.utils import (
     abspath, Application, file_writer, get_link_path, html_escape, html_format,
@@ -57,8 +58,9 @@ test data. Generated documentation includes name, documentation and other
 metadata of each test suite and test case, as well as the top-level keywords
 and their arguments.
 
-NOTE: Testdoc is deprecated and will be removed in Robot Framework 8.0.
-      Use https://github.com/MarvKler/robotframework-testdoc instead.
+WARNING: Testdoc is deprecated and will be removed in Robot Framework 8.0.
+         Use the external Testdoc tool instead:
+         https://marvkler.github.io/robotframework-testdoc
 
 Options
 =======
@@ -123,6 +125,11 @@ class TestDoc(Application):
         outfile = abspath(datasources.pop())
         suite = TestSuiteFactory(datasources, **options)
         self._write_test_doc(suite, outfile, title)
+        LOGGER.warn(
+            "The built-in Testdoc tool has been deprecated in favor of the new and "
+            "enhanced external Testdoc tool. Learn more about the new tool at "
+            "https://marvkler.github.io/robotframework-testdoc/."
+        )
         self.console(outfile)
 
     def _write_test_doc(self, suite, outfile, title):

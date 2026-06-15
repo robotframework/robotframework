@@ -3,22 +3,19 @@
 .doc > h2,
 .section > h1,
 .section > h2 {
-  margin-top: 4rem;
-  margin-bottom: 1rem;
-}
-
-.doc > h3,
-.section > h3 {
-  margin-top: 3rem;
-  margin-bottom: 1rem;
-}
-
-.doc > h4,
-.section > h4 {
   margin-top: 2rem;
   margin-bottom: 1rem;
 }
-
+.doc > h3,
+.section > h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+.doc > h4,
+.section > h4 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
 .doc > p,
 .section > p {
   margin-top: 1rem;
@@ -35,6 +32,7 @@
   font-size: 0.9em;
   overflow-y: auto;
   display: block;
+  margin-bottom: 1em;
 }
 .doc table th,
 .doc table td {
@@ -56,6 +54,10 @@
   border-radius: 3px;
 }
 
+.doc div:not(.admonition) > *:last-child {
+  margin-bottom: 0;
+}
+
 .doc code,
 .docutils.literal {
   font-size: 1.1em;
@@ -64,8 +66,7 @@
   padding: 1px;
   border-radius: 3px;
 }
-.doc ul li {
-  list-style-position: inside;
+.doc ul > li {
   list-style-type: square;
 }
 .doc img {
@@ -75,4 +76,35 @@
   background: #ccc;
   height: 1px;
   border: 0;
+}
+.doc .admonition {
+  border: 0.075em solid #448aff;
+  border-radius: 0.25em;
+  margin: 1.5em 0;
+}
+.doc .admonition p {
+  padding: 1em;
+  margin: 0;
+}
+.admonition .admonition-title {
+  font-weight: bold;
+  background-color: #448aff1a;
+}
+.doc .admonition.tip {
+  border-color: #00bfa5;
+}
+.admonition.tip .admonition-title {
+  background-color: #00bfa51a;
+}
+.doc .admonition.warning {
+  border-color: #ff9100;
+}
+.admonition.warning .admonition-title {
+  background-color: #ff91001a;
+}
+.doc .admonition.danger {
+  border-color: #ff1744;
+}
+.admonition.danger .admonition-title {
+  background-color: #ff17441a;
 }

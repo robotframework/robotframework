@@ -63,7 +63,7 @@ class TestETSource(unittest.TestCase):
             "latin-1",
         )
 
-    def _test_string(self, xml: "str|bytes", encoding="UTF-8"):
+    def _test_string(self, xml: "str | bytes", encoding="UTF-8"):
         source = ETSource(xml)
         with source as src:
             content = src.read()

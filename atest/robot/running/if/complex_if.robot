@@ -19,9 +19,6 @@ Setting after if
 For loop inside if
     Check Test Case    ${TESTNAME}
 
-For loop inside for loop
-    Check Test Case    ${TESTNAME}
-
 Direct Boolean condition
     ${tc} =    Check Test Case    ${TESTNAME}
     Should Be Equal    ${tc[0].status}          PASS
@@ -43,9 +40,6 @@ Recursive If
     Should Be Equal    ${tc[0, 0, 0, 0].status}    PASS
 
 If creating variable
-    Check Test Case    ${TESTNAME}
-
-If inside if
     Check Test Case    ${TESTNAME}
 
 For loop if else early exit

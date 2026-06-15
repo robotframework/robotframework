@@ -66,7 +66,7 @@
 .. include:: ExecutingTestCases/TaskExecution.rst
 .. include:: ExecutingTestCases/PostProcessing.rst
 .. include:: ExecutingTestCases/ConfiguringExecution.rst
-.. include:: ExecutingTestCases/OutputFiles.rst
+.. include:: ExecutingTestCases/ExecutionArtifacts.rst
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Extending Robot Framework
@@ -77,6 +77,7 @@
    :local:
 
 .. include:: ExtendingRobotFramework/CreatingTestLibraries.rst
+.. include:: ExtendingRobotFramework/DynamicLibraryAPI.rst
 .. include:: ExtendingRobotFramework/RemoteLibrary.rst
 .. include:: ExtendingRobotFramework/ListenerInterface.rst
 .. include:: ExtendingRobotFramework/ParserInterface.rst
@@ -107,7 +108,6 @@
 .. include:: Appendices/Translations.rst
 .. include:: Appendices/DocumentationFormatting.rst
 .. include:: Appendices/TimeFormat.rst
-.. include:: Appendices/BooleanArguments.rst
 .. include:: Appendices/EvaluatingExpressions.rst
 .. include:: Appendices/Registrations.rst
 
@@ -175,10 +175,9 @@
 .. _execution errors: `Errors and warnings during execution`_
 .. _test execution errors: `execution errors`_
 .. _simple pattern: `Simple patterns`_
+.. _output files: `Output file`_
 .. _output: `Output file`_
-.. _outputs: `output`_
-.. _output files: `output`_
-.. _XML output files: `output`_
+.. _XML output files: `output files`_
 .. _log: `Log file`_
 .. _logs: log_
 .. _log files: log_
@@ -244,3 +243,5 @@
 .. _XML-RPC: http://www.xmlrpc.com/
 .. _RIDE: https://github.com/robotframework/RIDE
 .. _Slack: http://slack.robotframework.org
+.. _Markdown: https://en.wikipedia.org/wiki/Markdown
+.. _CommonMark: https://spec.commonmark.org

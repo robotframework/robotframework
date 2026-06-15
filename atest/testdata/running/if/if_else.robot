@@ -66,6 +66,18 @@ If failing in else keyword
     [Documentation]    FAIL expected
     Failing else keyword
 
+Mutable condition
+    VAR    @{condition}    bar    baz
+    IF    $condition
+        Call Method    ${condition}    clear
+        Log    Should be executed!
+    ELSE
+        Fail    Should not be executed!
+    END
+    IF    $condition
+        Fail    Should not be executed!
+    END
+
 Expression evaluation time is included in elapsed time
     IF    ${{time.sleep(0.1)}}
         Fail    Not run

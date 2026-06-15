@@ -33,7 +33,7 @@ class Parser(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def parse(self, statement: Statement) -> "Parser|None":
+    def parse(self, statement: Statement) -> "Parser | None":
         raise NotImplementedError
 
 
@@ -43,7 +43,7 @@ class BlockParser(Parser, ABC):
 
     def __init__(self, model: Block):
         super().__init__(model)
-        self.parsers: "dict[str, type[NestedBlockParser]]" = {
+        self.parsers: dict[str, type[NestedBlockParser]] = {
             Token.FOR: ForParser,
             Token.WHILE: WhileParser,
             Token.IF: IfParser,
@@ -55,7 +55,7 @@ class BlockParser(Parser, ABC):
     def handles(self, statement: Statement) -> bool:
         return statement.type not in self.unhandled_tokens
 
-    def parse(self, statement: Statement) -> "BlockParser|None":
+    def parse(self, statement: Statement) -> "BlockParser | None":
         parser_class = self.parsers.get(statement.type)
         if parser_class:
             model_class = parser_class.__annotations__["model"]
@@ -88,7 +88,7 @@ class NestedBlockParser(BlockParser, ABC):
             return self.handle_end
         return super().handles(statement)
 
-    def parse(self, statement: Statement) -> "BlockParser|None":
+    def parse(self, statement: Statement) -> "BlockParser | None":
         if isinstance(statement, End):
             self.model.end = statement
             return None
@@ -110,7 +110,7 @@ class GroupParser(NestedBlockParser):
 class IfParser(NestedBlockParser):
     model: If
 
-    def parse(self, statement: Statement) -> "BlockParser|None":
+    def parse(self, statement: Statement) -> "BlockParser | None":
         if statement.type in (Token.ELSE_IF, Token.ELSE):
             parser = IfParser(If(statement), handle_end=False)
             self.model.orelse = parser.model
@@ -121,7 +121,7 @@ class IfParser(NestedBlockParser):
 class TryParser(NestedBlockParser):
     model: Try
 
-    def parse(self, statement) -> "BlockParser|None":
+    def parse(self, statement) -> "BlockParser | None":
         if statement.type in (Token.EXCEPT, Token.ELSE, Token.FINALLY):
             parser = TryParser(Try(statement), handle_end=False)
             self.model.next = parser.model

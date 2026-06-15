@@ -27,8 +27,8 @@ class TagSetter(SuiteVisitor):
 
     def __init__(
         self,
-        add: "Sequence[str]|str" = (),
-        remove: "Sequence[str]|str" = (),
+        add: "Sequence[str] | str" = (),
+        remove: "Sequence[str] | str" = (),
     ):
         self.add = add
         self.remove = remove

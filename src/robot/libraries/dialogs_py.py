@@ -87,7 +87,7 @@ class TkDialog(tk.Toplevel):
         message: str,
         value: "str | Sequence[str] | None",
         **config,
-    ) -> "tk.Entry|tk.Listbox|None":
+    ) -> "tk.Entry | tk.Listbox | None":
         frame = tk.Frame(self, background=self.background)
         max_width = self.winfo_screenwidth() // 2
         label = tk.Label(

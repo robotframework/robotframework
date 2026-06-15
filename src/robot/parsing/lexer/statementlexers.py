@@ -61,7 +61,7 @@ class StatementLexer(Lexer, ABC):
     def lex(self):
         raise NotImplementedError
 
-    def _lex_options(self, *names: str, end_index: "int|None" = None):
+    def _lex_options(self, *names: str, end_index: "int | None" = None):
         seen = set()
         for token in reversed(self.statement[:end_index]):
             if "=" in token.value:
@@ -135,20 +135,25 @@ class ImplicitCommentLexer(CommentLexer):
 
     def input(self, statement: StatementTokens):
         super().input(statement)
-        if statement[0].value.lower().startswith("language:"):
-            value = " ".join(token.value for token in statement)
-            lang = value.split(":", 1)[1].strip()
-            try:
-                self.ctx.add_language(lang)
-            except DataError:
-                for token in statement:
-                    token.set_error(
-                        f"Invalid language configuration: Language '{lang}' "
-                        f"not found nor importable as a language module."
-                    )
-            else:
-                for token in statement:
-                    token.type = Token.CONFIG
+        if ":" in statement[0].value:
+            config, value = " ".join(token.value for token in statement).split(":", 1)
+            config = config.lower()
+            value = value.strip()
+            if config == "language":
+                self._handle_language(statement, value)
+
+    def _handle_language(self, statement: StatementTokens, language: str):
+        try:
+            self.ctx.add_language(language)
+        except DataError:
+            for token in statement:
+                token.set_error(
+                    f"Invalid language configuration: Language '{language}' "
+                    f"not found nor importable as a language module."
+                )
+        else:
+            for token in statement:
+                token.type = Token.CONFIG
 
     def lex(self):
         for token in self.statement:
@@ -196,7 +201,7 @@ class VariableLexer(TypeAndArguments):
 
 
 class KeywordCallLexer(StatementLexer):
-    ctx: "TestCaseContext|KeywordContext"
+    ctx: "TestCaseContext | KeywordContext"
 
     def lex(self):
         if self.ctx.template_set:
@@ -306,7 +311,7 @@ class ExceptHeaderLexer(StatementLexer):
 
     def lex(self):
         self.statement[0].type = Token.EXCEPT
-        as_index: "int|None" = None
+        as_index: int | None = None
         for index, token in enumerate(self.statement[1:], start=1):
             if token.value == "AS":
                 token.type = Token.AS

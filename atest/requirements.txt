@@ -1,6 +1,7 @@
 # Dependencies required by acceptance tests.
 # See atest/README.rst for more information.
 
+markdown
 pygments
 pyyaml
 lxml

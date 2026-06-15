@@ -37,7 +37,7 @@ class LibraryKeywordRunner:
     def __init__(
         self,
         keyword: "LibraryKeyword",
-        name: "str|None" = None,
+        name: "str | None" = None,
         languages=None,
     ):
         self.keyword = keyword

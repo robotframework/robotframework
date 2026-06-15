@@ -7,6 +7,8 @@ Resource         resource.rst
 Resource         resource.reST
 Resource         resource.rsrc
 Resource         resource.json
+Resource         resource.md
+Resource         resource.markdown
 Resource         resource.invalid
 
 *** Test Cases ***
@@ -45,6 +47,14 @@ Resource with '*.rsrc' extension
 Resource with '*.json' extension
     Keyword in resource.json
     Should Be Equal    ${JSON}    resource.json
+
+Resource with '*.md' extension
+    Keyword in resource.md
+    Should Be Equal    ${MD}    resource.md
+
+Resource with '*.markdown' extension
+    Keyword in resource.markdown
+    Should Be Equal    ${MARKDOWN}    resource.markdown
 
 Resource with invalid extension
     [Documentation]    FAIL    No keyword with name 'Keyword in resource.invalid' found.

@@ -113,9 +113,9 @@ class TypeInfo(metaclass=SetterAwareType):
 
     def __init__(
         self,
-        name: "str|None" = None,
+        name: "str | None" = None,
         type: Any = NOT_SET,
-        nested: "Sequence[TypeInfo]|None" = None,
+        nested: "Sequence[TypeInfo] | None" = None,
     ):
         if type is NOT_SET:
             type = TYPE_NAMES.get(name.lower()) if name else None
@@ -124,7 +124,7 @@ class TypeInfo(metaclass=SetterAwareType):
         self.nested = nested
 
     @setter
-    def nested(self, nested: "Sequence[TypeInfo]") -> "tuple[TypeInfo, ...]|None":
+    def nested(self, nested: "Sequence[TypeInfo]") -> "tuple[TypeInfo, ...] | None":
         """Nested types as a tuple of ``TypeInfo`` objects.
 
         Used with parameterized types and unions.
@@ -319,7 +319,7 @@ class TypeInfo(metaclass=SetterAwareType):
     @classmethod
     def from_variable(
         cls,
-        variable: "str|VariableMatch",
+        variable: "str | VariableMatch",
         handle_list_and_dict: bool = True,
     ) -> "TypeInfo":
         """Construct a ``TypeInfo`` based on a variable.
@@ -367,8 +367,8 @@ class TypeInfo(metaclass=SetterAwareType):
     def convert(
         self,
         value: Any,
-        name: "str|None" = None,
-        custom_converters: "CustomArgumentConverters|dict|None" = None,
+        name: "str | None" = None,
+        custom_converters: "CustomArgumentConverters | dict | None" = None,
         languages: "LanguagesLike" = None,
         kind: str = "Argument",
         allow_unknown: bool = False,
@@ -395,7 +395,7 @@ class TypeInfo(metaclass=SetterAwareType):
 
     def get_converter(
         self,
-        custom_converters: "CustomArgumentConverters|dict|None" = None,
+        custom_converters: "CustomArgumentConverters | dict | None" = None,
         languages: "LanguagesLike" = None,
         allow_unknown: bool = False,
     ) -> TypeConverter:

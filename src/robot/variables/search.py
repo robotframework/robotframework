@@ -96,9 +96,9 @@ class VariableMatch:
     def __init__(
         self,
         string: str,
-        identifier: "str|None" = None,
-        base: "str|None" = None,
-        type: "str|None" = None,
+        identifier: "str | None" = None,
+        base: "str | None" = None,
+        type: "str | None" = None,
         items: "tuple[str, ...]" = (),
         start: int = -1,
         end: int = -1,
@@ -121,7 +121,7 @@ class VariableMatch:
             )
 
     @property
-    def name(self) -> "str|None":
+    def name(self) -> "str | None":
         return f"{self.identifier}{{{self.base}}}" if self.identifier else None
 
     @property
@@ -129,7 +129,7 @@ class VariableMatch:
         return self.string[: self.start] if self.identifier else self.string
 
     @property
-    def match(self) -> "str|None":
+    def match(self) -> "str | None":
         return self.string[self.start : self.end] if self.identifier else None
 
     @property

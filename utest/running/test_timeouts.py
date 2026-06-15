@@ -7,7 +7,7 @@ from thread_resources import failing, MyException, passing, returning, sleeping
 from robot.errors import DataError, TimeoutExceeded
 from robot.running.timeouts import KeywordTimeout, TestTimeout
 from robot.utils.asserts import (
-    assert_equal, assert_false, assert_raises, assert_raises_with_msg, assert_true
+    assert_equal, assert_false, assert_raises, assert_raises_with_msg, assert_true, fail
 )
 from robot.variables import Variables
 
@@ -143,6 +143,14 @@ class TestRun(unittest.TestCase):
             sleeping,
         )
         assert_equal(os.environ["ROBOT_THREAD_TESTING"], "initial value")
+
+    def test_timeout_exceeded_not_catchable_as_exception(self):
+        try:
+            TestTimeout(0.01, start=True).run(sleeping)
+        except Exception:
+            fail("TimeoutExceeded should not be catchable as Exception")
+        except TimeoutExceeded as err:
+            assert_equal(str(err), "Test timeout 10 milliseconds exceeded.")
 
     def test_zero_and_negative_timeout(self):
         for tout in [0, 0.0, -0.01, -1, -1000]:

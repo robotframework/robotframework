@@ -103,11 +103,11 @@ class Message(BaseMessage):
 
     def __init__(
         self,
-        message: "str|None|Callable[[], str|None]" = "",
-        level: "MessageLevel|PseudoLevel" = "INFO",
+        message: "str | None | Callable[[], str | None]" = "",
+        level: "MessageLevel | PseudoLevel" = "INFO",
         html: bool = False,
-        timestamp: "datetime|str|None" = None,
-        console: "bool|None" = None,
+        timestamp: "datetime | str | None" = None,
+        console: "bool | None" = None,
     ):
         level, html, console = self._get_level_html_console(level, html, console)
         super().__init__(message, level, html, timestamp or datetime.now())
@@ -131,12 +131,12 @@ class Message(BaseMessage):
         raise ValueError(f"Invalid log level '{level}'.")
 
     @property
-    def message(self) -> "str|None":
+    def message(self) -> "str | None":
         self.resolve_delayed_message()
         return self._message
 
     @message.setter
-    def message(self, message: "str|None|Callable[[], str|None]"):
+    def message(self, message: "str | None | Callable[[], str | None]"):
         if isinstance(message, str) and "\r\n" in message:
             message = message.replace("\r\n", "\n")
         self._message = message

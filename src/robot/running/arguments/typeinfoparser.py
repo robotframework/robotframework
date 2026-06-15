@@ -16,7 +16,7 @@
 from ast import literal_eval
 from dataclasses import dataclass
 from enum import auto, Enum
-from typing import Literal
+from typing import Literal, NoReturn
 
 from .typeinfo import LITERAL_TYPES, TypeInfo
 
@@ -49,7 +49,7 @@ class TypeInfoTokenizer:
 
     def __init__(self, source: str):
         self.source = source
-        self.tokens: "list[Token]" = []
+        self.tokens: list[Token] = []
         self.start = 0
         self.current = 0
 
@@ -72,7 +72,7 @@ class TypeInfoTokenizer:
         self.current += 1
         return char
 
-    def peek(self) -> "str|None":
+    def peek(self) -> "str | None":
         try:
             return self.source[self.current]
         except IndexError:
@@ -106,7 +106,7 @@ class TypeInfoParser:
 
     def __init__(self, source: str):
         self.source = source
-        self.tokens: "list[Token]" = []
+        self.tokens: list[Token] = []
         self.current = 0
 
     @property
@@ -153,6 +153,8 @@ class TypeInfoParser:
                 self.advance()
                 param = TypeInfo()
                 param.nested = self.params()
+            else:
+                self.error("Type name missing.")
             if literal:
                 param = self._literal_param(param)
             params.append(param)
@@ -199,19 +201,19 @@ class TypeInfoParser:
         peeked = self.peek()
         return peeked and peeked.type == expected
 
-    def advance(self) -> "Token|None":
+    def advance(self) -> "Token | None":
         token = self.peek()
         if token:
             self.current += 1
         return token
 
-    def peek(self) -> "Token|None":
+    def peek(self) -> "Token | None":
         try:
             return self.tokens[self.current]
         except IndexError:
             return None
 
-    def error(self, message: str, token: "Token|None" = None):
+    def error(self, message: str, token: "Token | None" = None) -> NoReturn:
         if not token:
             token = self.peek()
         position = f"index {token.position}" if token else "end"

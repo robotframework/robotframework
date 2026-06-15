@@ -32,7 +32,7 @@ class ArgumentResolver:
         self,
         spec: "ArgumentSpec",
         resolve_named: bool = True,
-        resolve_args_until: "int|None" = None,
+        resolve_args_until: "int | None" = None,
         dict_to_kwargs: bool = False,
     ):
         self.named_resolver = (
@@ -130,7 +130,7 @@ class DictToKwargs:
 
 class VariableReplacer:
 
-    def __init__(self, spec: "ArgumentSpec", resolve_until: "int|None" = None):
+    def __init__(self, spec: "ArgumentSpec", resolve_until: "int | None" = None):
         self.spec = spec
         self.resolve_until = resolve_until
 

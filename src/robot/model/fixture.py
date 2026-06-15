@@ -26,8 +26,8 @@ T = TypeVar("T", bound="Keyword")
 
 def create_fixture(
     fixture_class: Type[T],
-    fixture: "T|DataDict|None",
-    parent: "TestCase|TestSuite|Keyword|UserKeyword",
+    fixture: "T | DataDict | None",
+    parent: "TestCase | TestSuite | Keyword | UserKeyword",
     fixture_type: str,
 ) -> T:
     """Create or configure a `fixture_class` instance."""

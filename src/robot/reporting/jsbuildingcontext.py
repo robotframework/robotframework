@@ -74,7 +74,7 @@ class JsBuildingContext:
             rel_source = ""
         return self.string(rel_source)
 
-    def timestamp(self, ts: "datetime|None") -> "int|None":
+    def timestamp(self, ts: "datetime | None") -> "int | None":
         if not ts:
             return None
         millis = round(ts.timestamp() * 1000)

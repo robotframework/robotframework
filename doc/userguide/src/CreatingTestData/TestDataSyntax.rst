@@ -118,6 +118,11 @@ the :file:`.robot.rst` extension are parsed by default. If you would
 rather use just :file:`.rst` or :file:`.rest` extension, that needs to be
 configured separately.
 
+Robot Framework supports also Markdown_ files so that normal Robot Framework
+data is `embedded into code blocks`__. Only files with the :file:`.robot.md`
+extension are parsed by default. If you would rather use just :file:`.md` or
+:file:`.markdown` extension, that needs to be configured separately.
+
 Robot Framework data can also be created in the `JSON format`_ that is targeted
 more for tool developers than normal Robot Framework users. Only JSON files
 with the custom :file:`.rbt` extension are parsed by default.
@@ -133,6 +138,7 @@ format at all.
 
 __ `Selecting files to parse`_
 __ `reStructuredText format`_
+__ `Markdown format`_
 
 .. _space separated plain text format:
 .. _plain text format:
@@ -314,6 +320,73 @@ when processing files using reStructuredText tooling normally.
 
 .. note:: Parsing :file:`.robot.rst` files automatically is new in
           Robot Framework 6.1.
+
+Markdown format
+~~~~~~~~~~~~~~~
+
+Markdown_ is a lightweight plain text markup syntax that is widely used for
+documentation, README files, and technical content across the software
+development industry. Because of its natural fit for narrative documentation,
+using Markdown with Robot Framework allows you to create test data in a format
+that is easy to read, write and preview using standard editors and tools.
+
+When Robot Framework parses Markdown files, it searches for code blocks
+starting with fences of at least three backticks :codesc:`\`\`\`` or tildes
+`~~~` and the ``robotframework`` or ``robot`` language tag.
+All content outside such blocks is ignored. The parser follows the CommonMark_
+specification for fenced code blocks, which means that the opening and closing
+fences must match and the closing fence must be at least as long as the
+opening one. If a code block is not closed properly, the rest of the file
+will be considered as part of the code block itself.
+
+.. sourcecode:: markdown
+
+    # Markdown example
+
+    This text is outside code blocks and thus ignored.
+
+    ```robotframework
+    *** Settings ***
+    Documentation    Example using the Markdown format.
+    Library          OperatingSystem
+
+    *** Variables ***
+    ${MESSAGE}       Hello, world!
+
+    *** Test Cases ***
+    My Test
+        [Documentation]    Example test.
+        Log    ${MESSAGE}
+        My Keyword    ${CURDIR}
+
+    *** Keywords ***
+    My Keyword
+        [Arguments]    ${path}
+        Directory Should Exist    ${path}
+    ```
+
+    More free text here. There could be additional code blocks with more
+    Robot Framework data as well.
+
+    ```python
+    # This code block is ignored.
+    def example():
+        print('Hello, world!')
+    ```
+
+Robot Framework supports Markdown files using :file:`.robot.md`,
+:file:`.md` and :file:`.markdown` extensions. To avoid parsing unrelated
+Markdown files, only files with the :file:`.robot.md` extension
+are parsed by default when executing a directory. Parsing files with
+the :file:`.md` or :file:`.markdown` extension `can be enabled`__ by using
+either :option:`--parseinclude` or :option:`--extension` option.
+
+__ `Selecting files to parse`_
+
+.. note:: Using Markdown_ files with Robot Framework does not require any
+          external Python module to be installed.
+
+.. note:: Markdown support is new in Robot Framework 7.5.
 
 JSON format
 ~~~~~~~~~~~

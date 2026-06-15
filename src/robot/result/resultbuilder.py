@@ -32,7 +32,7 @@ def ExecutionResult(
     merge: bool = False,
     include_keywords: bool = True,
     flattened_keywords: Sequence[str] = (),
-    rpa: "bool|None" = None,
+    rpa: "bool | None" = None,
 ):
     """Factory method to constructs :class:`~.executionresult.Result` objects.
 

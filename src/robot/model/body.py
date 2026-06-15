@@ -55,8 +55,8 @@ C = TypeVar("C", bound="Continue")
 B = TypeVar("B", bound="Break")
 M = TypeVar("M", bound="Message")
 E = TypeVar("E", bound="Error")
-IT = TypeVar("IT", bound="IfBranch|TryBranch")
-FW = TypeVar("FW", bound="ForIteration|WhileIteration")
+IT = TypeVar("IT", bound="IfBranch | TryBranch")
+FW = TypeVar("FW", bound="ForIteration | WhileIteration")
 
 
 class BodyItem(ModelObject):
@@ -64,7 +64,7 @@ class BodyItem(ModelObject):
     __slots__ = ("parent",)
 
     @property
-    def id(self) -> "str|None":
+    def id(self) -> "str | None":
         """Item id in format like ``s1-t3-k1``.
 
         See :attr:`TestSuite.id <robot.model.testsuite.TestSuite.id>` for
@@ -79,7 +79,7 @@ class BodyItem(ModelObject):
         """
         return self._get_id(self.parent)
 
-    def _get_id(self, parent: "BodyItemParent|ResourceFile") -> str:
+    def _get_id(self, parent: "BodyItemParent | ResourceFile") -> str:
         if not parent:
             return "k1"
         # This algorithm must match the id creation algorithm in the JavaScript side
@@ -120,7 +120,7 @@ class BaseBody(ItemList[BodyItem], Generic[KW, F, W, G, I, T, V, R, C, B, M, E])
     def __init__(
         self,
         parent: BodyItemParent = None,
-        items: "Iterable[BodyItem|DataDict]" = (),
+        items: "Iterable[BodyItem | DataDict]" = (),
     ):
         super().__init__(BodyItem, {"parent": parent}, items)
 
@@ -214,9 +214,9 @@ class BaseBody(ItemList[BodyItem], Generic[KW, F, W, G, I, T, V, R, C, B, M, E])
 
     def filter(
         self,
-        keywords: "bool|None" = None,
-        messages: "bool|None" = None,
-        predicate: "Callable[[T], bool]|None" = None,
+        keywords: "bool | None" = None,
+        messages: "bool | None" = None,
+        predicate: "Callable[[T], bool] | None" = None,
     ) -> "list[BodyItem]":
         """Filter body items based on type and/or custom predicate.
 
@@ -302,7 +302,7 @@ class BaseBranches(BaseBody[KW, F, W, G, I, T, V, R, C, B, M, E], BranchType[IT]
         self,
         branch_class: Type[IT],
         parent: BodyItemParent = None,
-        items: "Iterable[IT|DataDict]" = (),
+        items: "Iterable[IT | DataDict]" = (),
     ):
         self.branch_class = branch_class
         super().__init__(parent, items)
@@ -331,7 +331,7 @@ class BaseIterations(BaseBody[KW, F, W, G, I, T, V, R, C, B, M, E], IterationTyp
         self,
         iteration_class: Type[FW],
         parent: BodyItemParent = None,
-        items: "Iterable[FW|DataDict]" = (),
+        items: "Iterable[FW | DataDict]" = (),
     ):
         self.iteration_class = iteration_class
         super().__init__(parent, items)

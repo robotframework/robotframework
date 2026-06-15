@@ -35,7 +35,7 @@ class Keyword(BodyItem):
 
     def __init__(
         self,
-        name: "str|None" = "",
+        name: "str | None" = "",
         args: Sequence[str] = (),
         assign: Sequence[str] = (),
         type: str = BodyItem.KEYWORD,
@@ -48,7 +48,7 @@ class Keyword(BodyItem):
         self.parent = parent
 
     @property
-    def id(self) -> "str|None":
+    def id(self) -> "str | None":
         if not self:
             return None
         return super().id

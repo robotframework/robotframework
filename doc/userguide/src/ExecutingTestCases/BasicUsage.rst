@@ -198,52 +198,55 @@ Tag patterns
 ~~~~~~~~~~~~
 
 Most tag related options accept arguments as *tag patterns*. They support same
-wildcards as `simple patterns`_ (e.g. `examp??`, `ex*le`), but they also support `AND`,
-`OR` and `NOT` operators explained below. These operators can be
-used for combining two or more individual tags or patterns together.
+wildcards as `simple patterns`_ (e.g. `examp??`, `ex*le`), but they also support
+Boolean operators `AND`, `OR` and `NOT` (case-sensitive) that can be used for
+combining two or more individual tags or patterns together.
 
-`AND` or `&`
-   The whole pattern matches if all individual patterns match. `AND` and
-   `&` are equivalent::
+To avoid ambiguity with tags containing `AND`, `OR` or `NOT`, tags used in patterns
+should be given in lower case like `port OR handover`. Because matching tags is
+case-insensitive, this works even if tags themselves would be upper case like `PORT`.
+
+`AND`
+   The whole pattern matches if all individual patterns match::
 
       --include fooANDbar     # Matches tests containing tags 'foo' and 'bar'.
-      --exclude xx&yy&zz      # Matches tests containing tags 'xx', 'yy', and 'zz'.
+      --exclude xANDyANDz     # Matches tests containing tags 'x', 'y', and 'z'.
 
 `OR`
    The whole pattern matches if any individual pattern matches::
 
       --include fooORbar      # Matches tests containing either tag 'foo' or tag 'bar'.
-      --exclude xxORyyORzz    # Matches tests containing any of tags 'xx', 'yy', or 'zz'.
+      --exclude xORyORz       # Matches tests containing any of tags 'x', 'y', or 'z'.
 
 `NOT`
-   The whole pattern matches if the pattern on the left side matches but
-   the one on the right side does not. If used multiple times, none of
-   the patterns after the first `NOT` must not match::
+   The whole pattern matches if the pattern on the left side of `NOT` matches,
+   but the pattern on the right side does not. If used multiple times, none of
+   the patterns after the first `NOT` can match::
 
       --include fooNOTbar     # Matches tests containing tag 'foo' but not tag 'bar'.
-      --exclude xxNOTyyNOTzz  # Matches tests containing tag 'xx' but not tag 'yy' or tag 'zz'.
+      --exclude xNOTyNOTz     # Matches tests containing tag 'x' but not tag 'y' or tag 'z'.
 
-   The pattern can also start with `NOT`
-   in which case the pattern matches if the pattern after `NOT` does not match::
+   The pattern can also start with `NOT`. In that case the pattern matches
+   if the pattern after `NOT` does not match::
 
-      --include NOTfoo        # Matches tests not containing tag 'foo'
-      --include NOTfooANDbar  # Matches tests not containing tags 'foo' and 'bar'
+      --include NOTfoo        # Matches tests not containing tag 'foo'.
+      --include NOTxANDy      # Matches tests not containing tags 'x' and 'y'.
 
 The above operators can also be used together. The operator precedence,
 from highest to lowest, is `AND`, `OR` and `NOT`::
 
-    --include xANDyORz      # Matches tests containing either tags 'x' and 'y', or tag 'z'.
-    --include xORyNOTz      # Matches tests containing either tag 'x' or 'y', but not tag 'z'.
-    --include xNOTyANDz     # Matches tests containing tag 'x', but not tags 'y' and 'z'.
+    --include xANDyORz        # Matches tests containing either tags 'x' and 'y', or tag 'z'.
+    --include xORyNOTz        # Matches tests containing either tag 'x' or 'y', but not tag 'z'.
+    --include xNOTyANDz       # Matches tests containing tag 'x', but not tags 'y' and 'z'.
 
-Although tag matching itself is case-insensitive, all operators are
-case-sensitive and must be written with upper case letters. If tags themselves
-happen to contain upper case `AND`, `OR` or `NOT`, they need to specified
-using lower case letters to avoid accidental operator usage::
+.. note:: Starting from Robot Framework 8.0, operators need to be separated from
+          tags with spaces like `X OR Y` or tags must be used in lower case like
+          `xORy`. Using patterns like `XORY` still works with Robot Framework 7.5,
+          but such usages are deprecated.
 
-    --include port          # Matches tests containing tag 'port', case-insensitively
-    --include PORT          # Matches tests containing tag 'P' or 'T', case-insensitively
-    --exclude handoverORportNOTnotification
+.. note:: Older Robot Framework versions support `&` operator as an alias for `AND`.
+          This was deprecated in Robot Framework 7.5 and the support will be removed
+          in Robot Framework 8.0.
 
 ``ROBOT_OPTIONS`` and ``REBOT_OPTIONS`` environment variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -297,16 +300,16 @@ a keyword passes and a red F if it fails. These markers are written to the end
 of line and they are overwritten by the test status when the test itself ends.
 Writing the markers is disabled if console output is redirected to a file.
 
-Generated output files
+Generated result files
 ~~~~~~~~~~~~~~~~~~~~~~
 
-The command line output is very limited, and separate output files are
-normally needed for investigating the test results. As the example
-above shows, three output files are generated by default. The first
-one is in XML format and contains all the information about test
-execution. The second is a higher-level report and the third is a more
-detailed log file. These files and other possible output files are
-discussed in more detail in the section `Different output files`_.
+The command line output is very limited, and separate `result files`_ are
+normally needed for investigating results further. As the example
+above shows, three result files are generated by default. The first
+one is in XML format and contains all the information about execution in
+machine readable format. The second is a higher-level report and the third
+is a more detailed log file. These files and other possible result files are
+discussed in more detail in the `Execution artifacts`_ section.
 
 Return codes
 ~~~~~~~~~~~~

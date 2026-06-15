@@ -39,8 +39,8 @@ class Message(BodyItem):
         message: str = "",
         level: MessageLevel = "INFO",
         html: bool = False,
-        timestamp: "datetime|str|None" = None,
-        parent: "BodyItem|None" = None,
+        timestamp: "datetime | str | None" = None,
+        parent: "BodyItem | None" = None,
     ):
         self.message = message
         self.level = level
@@ -49,7 +49,7 @@ class Message(BodyItem):
         self.parent = parent
 
     @setter
-    def timestamp(self, timestamp: "datetime|str|None") -> "datetime|None":
+    def timestamp(self, timestamp: "datetime | str | None") -> "datetime | None":
         if isinstance(timestamp, str):
             return datetime.fromisoformat(timestamp)
         return timestamp

@@ -1,9 +1,21 @@
 import unittest
+from pathlib import Path
 
+from robot.errors import DataError
 from robot.output.console.verbose import VerboseOutput
 from robot.output.logger import Logger
 from robot.output.loggerapi import LoggerApi
-from robot.utils.asserts import assert_equal, assert_true
+from robot.utils.asserts import assert_equal, assert_raises, assert_true
+
+CUSTOM_CONSOLE = str(
+    Path(__file__).resolve().parent
+    / ".."
+    / ".."
+    / "atest"
+    / "testresources"
+    / "consoles"
+    / "CustomConsole.py"
+)
 
 
 class MessageMock:
@@ -96,9 +108,9 @@ class TestLogger(unittest.TestCase):
         logger = LoggerMock()
         self.logger.register_logger(logger)
         self.logger.output_file("out.xml")
-        assert_equal(logger.result_file_args, ("Output", "out.xml"))
+        assert_equal(logger.result_file_args, ("OUTPUT", "out.xml"))
         self.logger.log_file("log.html")
-        assert_equal(logger.result_file_args, ("Log", "log.html"))
+        assert_equal(logger.result_file_args, ("LOG", "log.html"))
 
     def test_close(self):
         logger = LoggerMock()
@@ -180,8 +192,7 @@ class TestLogger(unittest.TestCase):
 
     def test_verbose_console_output_is_automatically_registered(self):
         logger = Logger()
-        start_suite = logger._console.start_suite
-        assert_true(start_suite.__self__.__class__ is VerboseOutput)
+        assert_true(logger._console.listener.__class__ is VerboseOutput)
 
     def test_automatic_console_logger_can_be_disabled(self):
         logger = Logger()
@@ -212,7 +223,7 @@ class TestLogger(unittest.TestCase):
         logger = Logger()
         logger.register_console_logger(width=42)
         self._number_of_registered_loggers_should_be(1, logger)
-        assert_equal(logger._console.start_suite.__self__.writer.width, 42)
+        assert_equal(logger._console.listener.writer.width, 42)
 
     def test_unregister_logger(self):
         logger1, logger2, logger3 = LoggerMock(), LoggerMock(), LoggerMock()
@@ -247,6 +258,31 @@ class TestLogger(unittest.TestCase):
             [listener, lib_listener, console, output, other],
         )
         assert_equal(list(logger), list(logger.end_loggers))
+
+    def test_custom_console_logger_by_object(self):
+        class MyConsole:
+            def start_suite(self, data, result):
+                pass
+
+        console = MyConsole()
+        self.logger.register_console_logger(console=console)
+        assert_true(self.logger._console is not None)
+        assert_true(self.logger._console.listener is console)
+
+    def test_custom_console_logger_by_path(self):
+        self.logger.register_console_logger(console=CUSTOM_CONSOLE)
+        assert_equal(self.logger._console.listener.__class__.__name__, "CustomConsole")
+        assert_equal(self.logger._console.listener.name, "DEFAULT")
+
+    def test_custom_console_logger_by_path_with_args(self):
+        self.logger.register_console_logger(console=CUSTOM_CONSOLE + ":MYARG")
+        assert_equal(self.logger._console.listener.__class__.__name__, "CustomConsole")
+        assert_equal(self.logger._console.listener.name, "MYARG")
+
+    def test_custom_console_logger_bad_import(self):
+        assert_raises(
+            DataError, self.logger.register_console_logger, console="NonExistentModule"
+        )
 
     def _number_of_registered_loggers_should_be(self, number, logger=None):
         logger = logger or self.logger

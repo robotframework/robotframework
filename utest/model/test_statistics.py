@@ -146,7 +146,7 @@ class TestStatisticsNotSoSimple(unittest.TestCase):
             suite_stat_level=2,
             tag_stat_include=["t*", "smoke"],
             tag_stat_exclude=["t3"],
-            tag_stat_combine=[("t? & smoke", ""), ("none NOT t1", "a title")],
+            tag_stat_combine=[("t? AND smoke", ""), ("none NOT t1", "a title")],
             tag_doc=[("smoke", "something is burning")],
             tag_stat_link=[("t2", "uri", "title"), ("t?", "http://uri/%1", "title %1")],
         )
@@ -171,7 +171,7 @@ class TestStatisticsNotSoSimple(unittest.TestCase):
         verify_stat(tags.tags["t1"], "t1", 3, 2, 1, links=[("http://uri/1", "title 1")])
         verify_stat(tags.tags["t2"], "t2", 2, 1, 0,
                     links=[("uri", "title"), ("http://uri/2", "title 2")])  # fmt: skip
-        verify_stat(tags.combined[0], "t? & smoke", 2, 2, 0, "t? & smoke")
+        verify_stat(tags.combined[0], "t? AND smoke", 2, 2, 0, "t? AND smoke")
         verify_stat(tags.combined[1], "a title", 0, 0, 0, "none NOT t1")
 
     def test_to_dict(self):
@@ -218,9 +218,9 @@ class TestStatisticsNotSoSimple(unittest.TestCase):
                         "pass": 2,
                         "fail": 2,
                         "skip": 0,
-                        "label": "t? & smoke",
+                        "label": "t? AND smoke",
                         "info": "combined",
-                        "combined": "t? & smoke",
+                        "combined": "t? AND smoke",
                     },
                     {
                         "pass": 2,

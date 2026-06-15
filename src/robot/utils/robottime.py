@@ -161,7 +161,7 @@ def _normalize_timestr(timestr):
     return timestr
 
 
-def secs_to_timestr(secs: "int|float|timedelta", compact=False) -> str:
+def secs_to_timestr(secs: "int | float | timedelta", compact=False) -> str:
     """Converts time in seconds to a string representation.
 
     Returned string is in format like
@@ -289,7 +289,7 @@ def get_time(
     return parts
 
 
-def parse_timestamp(timestamp: "str|datetime") -> datetime:
+def parse_timestamp(timestamp: "str | datetime") -> datetime:
     """Parse timestamp in ISO 8601-like formats into a ``datetime``.
 
     Months, days, hours, minutes and seconds must use two digits and
@@ -487,7 +487,7 @@ def get_elapsed_time(start_time, end_time):
 
 
 def elapsed_time_to_string(
-    elapsed: "int|float|timedelta",
+    elapsed: "int | float | timedelta",
     include_millis: bool = True,
     seconds: bool = False,
 ):

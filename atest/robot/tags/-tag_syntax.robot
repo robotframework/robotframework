@@ -4,10 +4,22 @@ Resource          atest_resource.robot
 
 *** Test Cases ***
 Remove from test
-    Check Test Tags   ${TEST NAME}    tag1    tag3    tag4
+    Check Test Tags    ${TEST NAME}    tag1    tag3    tag4
 
 Remove from test using pattern
-    Check Test Tags   ${TEST NAME}    -in-settings    tag    tag3
+    Check Test Tags    ${TEST NAME}    -in-settings    tag    tag3
+
+Remove from test using operator
+    Check Test Tags    ${TEST NAME}    tag1    tag3
+
+Deprecated operator usage in test
+    Check Test Tags    ${TEST NAME}    tag1    tag3
+    VAR    ${error}
+    ...    Problems when removing tags using '-tag' syntax:
+    ...    The behavior of tag pattern 'NOTTAG1ORT*3' will change in Robot Framework 8.0:
+    ...    'NOT' is currently considered to be a Boolean operator, but in the future
+    ...    operators must be surrounded with spaces or tag names must be lower case.
+    Check Log Message    ${ERRORS[1]}    ${error}    WARN
 
 Remove from keyword
     ${tc} =    Check Test Case    Remove from test
@@ -20,6 +32,20 @@ Remove from keyword using documentation
 Remove from keyword using pattern
     ${tc} =    Check Test Case    Remove from test using pattern
     Check Keyword Data    ${tc[0]}    -tag_syntax.${TEST NAME}    tags=r1, r5, r6
+
+Remove from keyword using operator
+    ${tc} =    Check Test Case    Remove from test using operator
+    Check Keyword Data    ${tc[0]}    -tag_syntax.${TEST NAME}    tags=r1
+
+Deprecated operator usage in keyword
+    ${tc} =    Check Test Case    Deprecated operator usage in test
+    Check Keyword Data    ${tc[0]}    -tag_syntax.${TEST NAME}    tags=r1
+    VAR    ${error}
+    ...    Problems when removing tags using '-tag' syntax:
+    ...    The behavior of tag pattern 'NOTR1ORnonex' will change in Robot Framework 8.0:
+    ...    'NOT' is currently considered to be a Boolean operator, but in the future
+    ...    operators must be surrounded with spaces or tag names must be lower case.
+    Check Log Message    ${ERRORS[2]}    ${error}    WARN
 
 Escaped
     Check Test Tags    ${TESTNAME}    -escaped    -escaped-in-settings    -in-settings    tag    tag1    tag2    tag3

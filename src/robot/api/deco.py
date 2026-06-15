@@ -24,7 +24,7 @@ KeywordDecorator = Callable[[K], K]
 LibraryDecorator = Callable[[L], L]
 Scope = Literal["GLOBAL", "SUITE", "TEST", "TASK"]
 Converter = Union[Callable[[Any], Any], Callable[[Any, Any], Any]]
-DocFormat = Literal["ROBOT", "HTML", "TEXT", "REST"]
+DocFormat = Literal["ROBOT", "MARKDOWN", "HTML", "TEXT", "REST"]
 
 
 def not_keyword(func: F) -> F:
@@ -58,18 +58,18 @@ def keyword(func: K, /) -> K: ...
 
 @overload
 def keyword(
-    name: "str|None" = None,
+    name: "str | None" = None,
     tags: Sequence[str] = (),
-    types: "TypeHints|None" = (),
+    types: "TypeHints | None" = (),
 ) -> KeywordDecorator: ...
 
 
 @not_keyword
 def keyword(
-    name: "K|str|None" = None,
+    name: "K | str | None" = None,
     tags: Sequence[str] = (),
-    types: "TypeHints|None" = (),
-) -> "K|KeywordDecorator":
+    types: "TypeHints | None" = (),
+) -> "K | KeywordDecorator":
     """Decorator to set custom name, tags and argument types to keywords.
 
     This decorator creates ``robot_name``, ``robot_tags`` and ``robot_types``
@@ -129,24 +129,24 @@ def library(cls: L, /) -> L: ...
 
 @overload
 def library(
-    scope: "Scope|None" = None,
-    version: "str|None" = None,
-    converters: "dict[type, Converter]|None" = None,
-    doc_format: "DocFormat|None" = None,
-    listener: "Any|None" = None,
+    scope: "Scope | None" = None,
+    version: "str | None" = None,
+    converters: "dict[type, Converter] | None" = None,
+    doc_format: "DocFormat | None" = None,
+    listener: "Any | None" = None,
     auto_keywords: bool = False,
 ) -> LibraryDecorator: ...
 
 
 @not_keyword
 def library(
-    scope: "L|Scope|None" = None,
-    version: "str|None" = None,
-    converters: "dict[type, Converter]|None" = None,
-    doc_format: "DocFormat|None" = None,
-    listener: "Any|None" = None,
+    scope: "L | Scope | None" = None,
+    version: "str | None" = None,
+    converters: "dict[type, Converter] | None" = None,
+    doc_format: "DocFormat | None" = None,
+    listener: "Any | None" = None,
     auto_keywords: bool = False,
-) -> "L|LibraryDecorator":
+) -> "L | LibraryDecorator":
     """Class decorator to control keyword discovery and other library settings.
 
     Disables automatic keyword detection by setting class attribute

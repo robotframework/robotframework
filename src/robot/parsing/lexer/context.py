@@ -38,7 +38,7 @@ class FileContext(LexingContext):
 
     def __init__(self, lang: LanguagesLike = None):
         languages = lang if isinstance(lang, Languages) else Languages(lang)
-        settings_class: "type[FileSettings]" = type(self).__annotations__["settings"]
+        settings_class: type[FileSettings] = type(self).__annotations__["settings"]
         settings = settings_class(languages)
         super().__init__(settings, languages)
 

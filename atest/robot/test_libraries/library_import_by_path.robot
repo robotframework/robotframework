@@ -53,8 +53,13 @@ Importing Non Existing Py File
     Error in file    4    test_libraries/library_import_by_path.robot    13
     ...    Library 'this_does_not_exist.py' does not exist.
 
+Module name cannot contain dots
+    ${path} =    Normalize path    ${DATADIR}/test_libraries/dir_for_libs/dots.are.not.allowed.py
+    Error in file    5    test_libraries/library_import_by_path.robot    14
+    ...    Importing library '${path}' failed: Module name cannot contain dots when importing by path.
+
 Import failure when path contains non-ASCII characters is handled correctly
     ${path} =    Normalize path    ${DATADIR}/test_libraries/nön_äscii_dïr/invalid.py
-    Error in file    -1    test_libraries/library_import_by_path.robot    15
+    Error in file    -1    test_libraries/library_import_by_path.robot    16
     ...    Importing library '${path}' failed: Ööööps!
     ...    traceback=File "${path}", line 1, in <module>\n*raise RuntimeError("Ööööps!")
