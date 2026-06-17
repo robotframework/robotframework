@@ -36,6 +36,8 @@ class BaseConsole:
     by extending classes. Anything private (i.e. starting with an underscore)
     may change between releases.
 
+    Supports all the same hook methods that the listener API supports.
+
     New in Robot Framework 7.5.
     """
 

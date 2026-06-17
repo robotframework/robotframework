@@ -780,18 +780,18 @@ disabled, for example, as follows::
 Controlling console output
 --------------------------
 
-There are various command line options to control how test execution is
-reported on the console.
+There are various command line options to control how execution is reported
+on the console.
 
-Console output type
-~~~~~~~~~~~~~~~~~~~
+Built-in console loggers
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-The overall console output type is set with the :option:`--console` option.
-It supports the following case-insensitive values:
+Robot Framework has several built-in console loggers that provide output on
+different verbosity levels. The logger to use can selected with the
+:option:`--console` option that supports the following case-insensitive values:
 
 `verbose`
-    Every test suite and test case is reported individually. This is
-    the default.
+    Every suite and test is reported individually. This is the default.
 
 `dotted`
     Only show `.` for passed test, `F` for failed tests, `s` for skipped
@@ -804,8 +804,7 @@ It supports the following case-insensitive values:
     No output except for `errors and warnings`_.
 
 `none`
-    No output whatsoever. Useful when creating a custom output using,
-    for example, listeners_.
+    No output whatsoever.
 
 __ `Stopping test execution gracefully`_
 
@@ -837,6 +836,11 @@ are silently ignored. This means a minimal console only needs to implement the
 hooks it is interested in.
 
 __ `Listener interface`_
+
+.. note:: Support for custom console loggers is new in Robot Framework 7.5.
+
+Example
+'''''''
 
 The following example shows a custom console that provides a compact progress
 view with elapsed time and a running pass/fail counter — useful in CI pipelines
@@ -887,21 +891,54 @@ context:
                 f"{self.skipped} skipped"
             )
 
+Programmatic usage
+''''''''''''''''''
+
 When using the `programmatic API`__, the ``console`` option also accepts
-a pre-instantiated Python object::
+a pre-instantiated Python object:
+
+.. sourcecode:: python
 
     from robot import run
+
     run('tests.robot', console=ProgressConsole())
 
-__ https://robot-framework.readthedocs.io
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.html#module-robot.run
 
-.. note:: Support for custom console loggers is new in Robot Framework 7.5.
+Extending built-in console loggers
+''''''''''''''''''''''''''''''''''
+
+Custom console loggers can be implemented so that they extend the `built-in console
+loggers`_. The built-in loggers are exposed via the `robot.api.console`__ module
+and their API docs provide more information.
+
+Here is a very simple example of custom console logger that extends the
+`DottedConsole` and disables writing result file paths to the console:
+
+.. sourcecode:: python
+
+    from robot.api.console import DottedConsole
+
+
+    class DottedWithoutPaths(DottedConsole):
+
+        def result_file(self, kind, path):
+            pass
+
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.api.html#module-robot.api.console
+
+Configuring custom console loggers
+''''''''''''''''''''''''''''''''''
+
+Custom console loggers must handle their configuration on their own. Options like
+:option:`--consolewidth` discussed in the subsequent sections only affect the
+built-in console loggers.
 
 Console width
 ~~~~~~~~~~~~~
 
-The width of the test execution output in the console can be set using
-the option :option:`--consolewidth (-W)`. The default width is 78 characters.
+The width of console output can be set using the option :option:`--consolewidth (-W)`.
+The default width is 78 characters.
 
 .. tip:: On many UNIX-like machines you can use handy `$COLUMNS`
          environment variable like `--consolewidth $COLUMNS`.
@@ -978,7 +1015,7 @@ case-insensitive values:
 `off`
     Markers are disabled.
 
-__ `Console output type`_
+__ `Built-in console loggers`_
 
 Setting listeners
 -----------------

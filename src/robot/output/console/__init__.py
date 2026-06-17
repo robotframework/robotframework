@@ -15,8 +15,9 @@
 
 from io import TextIOBase
 
-from .dotted import DottedConsole
-from .quiet import NoneConsole, QuietConsole
+from .base import BaseConsole as BaseConsole
+from .dotted import DottedConsole as DottedConsole
+from .quiet import NoneConsole as NoneConsole, QuietConsole as QuietConsole
 from .types import BuiltInConsole, ConsoleColors, ConsoleLinks, ConsoleMarkers
 from .verbose import VerboseConsole
 

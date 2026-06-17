@@ -27,7 +27,7 @@ order-by-type = false
 # module/package API are excluded. For details about multiline modes see:
 # https://pycqa.github.io/isort/docs/configuration/multi_line_output_modes.html
 multi_line_output = 5
-extend_skip = ["__init__.py", "src/robot/api/parsing.py"]
+extend_skip = ["__init__.py", "src/robot/api/console.py", "src/robot/api/parsing.py"]
 combine_as_imports = true
 order_by_type = false
 line_length = 88
