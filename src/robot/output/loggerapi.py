@@ -20,6 +20,9 @@ if TYPE_CHECKING:
     from robot import model, result, running
 
 
+ResultFile = Literal["OUTPUT", "REPORT", "LOG", "XUNIT", "DEBUG"]
+
+
 class LoggerApi:
 
     def start_suite(self, data: "running.TestSuite", result: "result.TestSuite"):
@@ -235,11 +238,7 @@ class LoggerApi:
         """
         self.result_file("DEBUG", path)
 
-    def result_file(
-        self,
-        kind: Literal["OUTPUT", "REPORT", "LOG", "XUNIT", "DEBUG"],
-        path: Path,
-    ):
+    def result_file(self, kind: ResultFile, path: Path):
         """Called when any result file is closed by default.
 
         ``kind`` specifies the file type. This method is not called if a result

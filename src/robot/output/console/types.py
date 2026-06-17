@@ -13,15 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""Package for internal logging and other output.
+from typing import Literal
 
-Not part of the public API, and also subject to change in the future when
-test execution is refactored.
-"""
-
-from .logger import LOGGER as LOGGER
-from .loggerapi import ResultFile as ResultFile
-from .loggerhelper import LEVELS as LEVELS, Message as Message
-from .loglevel import LogLevel as LogLevel, SettableLevel as SettableLevel
-from .output import Output as Output
-from .xmllogger import XmlLogger as XmlLogger
+BuiltInConsole = Literal["VERBOSE", "DOTTED", "QUIET", "NONE"]
+ConsoleColors = Literal["AUTO", "ON", "OFF", "ANSI"]
+ConsoleLinks = Literal["AUTO", "OFF"]
+ConsoleMarkers = Literal["AUTO", "ON", "OFF"]
+ResultFile = Literal["OUTPUT", "REPORT", "LOG", "XUNIT", "DEBUG"]
+Status = Literal["PASS", "FAIL", "SKIP", "ERROR", "WARN"]

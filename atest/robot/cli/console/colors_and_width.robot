@@ -50,7 +50,7 @@ Console links off
 
 Invalid link config
     Run Tests Without Processing Output    --ConsoleLinks InVaLid    misc/pass_and_fail.robot
-    Stderr Should Be Equal To    [ ERROR ] Invalid console link value 'InVaLid. Available 'AUTO' and 'OFF'.${USAGE TIP}\n
+    Stderr Should Be Equal To    [ ERROR ] Invalid console link value 'InVaLid'. Available 'AUTO' and 'OFF'.${USAGE TIP}\n
 
 *** Keywords ***
 Run Tests With Warnings

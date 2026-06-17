@@ -2,7 +2,7 @@ import unittest
 from pathlib import Path
 
 from robot.errors import DataError
-from robot.output.console.verbose import VerboseOutput
+from robot.output.console.verbose import VerboseConsole
 from robot.output.logger import Logger
 from robot.output.loggerapi import LoggerApi
 from robot.utils.asserts import assert_equal, assert_raises, assert_true
@@ -192,7 +192,7 @@ class TestLogger(unittest.TestCase):
 
     def test_verbose_console_output_is_automatically_registered(self):
         logger = Logger()
-        assert_true(logger._console.listener.__class__ is VerboseOutput)
+        assert_true(logger._console.listener.__class__ is VerboseConsole)
 
     def test_automatic_console_logger_can_be_disabled(self):
         logger = Logger()
@@ -223,7 +223,7 @@ class TestLogger(unittest.TestCase):
         logger = Logger()
         logger.register_console_logger(width=42)
         self._number_of_registered_loggers_should_be(1, logger)
-        assert_equal(logger._console.listener.writer.width, 42)
+        assert_equal(logger._console.listener.width, 42)
 
     def test_unregister_logger(self):
         logger1, logger2, logger3 = LoggerMock(), LoggerMock(), LoggerMock()

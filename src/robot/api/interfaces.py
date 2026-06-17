@@ -46,7 +46,7 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 import sys
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Literal, Mapping, Sequence, TypedDict, Union
+from typing import Any, Mapping, Sequence, TypedDict, Union
 
 if sys.version_info >= (3, 10):
     from types import UnionType
@@ -54,6 +54,7 @@ else:
     UnionType = type
 
 from robot import result, running
+from robot.output import ResultFile as ResultFile
 from robot.running import TestDefaults as TestDefaults, TestSuite
 
 # Type aliases used by DynamicLibrary and HybridLibrary.
@@ -80,8 +81,6 @@ TypeHints = Union[
 ]  # fmt: skip
 Tags = Sequence[str]
 Source = str
-# Type aliases used by ListenerV3
-ResultFileKind = Literal["OUTPUT", "REPORT", "LOG", "XUNIT", "DEBUG"]
 
 
 class DynamicLibrary(ABC):
@@ -991,7 +990,7 @@ class ListenerV3:
         the imported variable file.
         """
 
-    def result_file(self, kind: ResultFileKind, path: Path):
+    def result_file(self, kind: ResultFile, path: Path):
         """Called, by default, when a result file like output or log is ready.
 
         :param kind: The result file type.

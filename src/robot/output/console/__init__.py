@@ -13,30 +13,33 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .dotted import DottedOutput
-from .quiet import NoOutput, QuietOutput
-from .verbose import VerboseOutput
+from io import TextIOBase
+
+from .dotted import DottedConsole
+from .quiet import NoneConsole, QuietConsole
+from .types import BuiltInConsole, ConsoleColors, ConsoleLinks, ConsoleMarkers
+from .verbose import VerboseConsole
 
 
 def ConsoleOutput(
-    console="verbose",
-    width=78,
-    colors="AUTO",
-    links="AUTO",
-    markers="AUTO",
-    stdout=None,
-    stderr=None,
+    console: "BuiltInConsole | object" = "VERBOSE",
+    width: int = 78,
+    colors: ConsoleColors = "AUTO",
+    links: ConsoleLinks = "AUTO",
+    markers: ConsoleMarkers = "AUTO",
+    stdout: "TextIOBase | None" = None,
+    stderr: "TextIOBase | None" = None,
 ):
     from ..listeners import ListenerFacade
 
     if isinstance(console, str):
         upper = console.upper()
         if upper == "VERBOSE":
-            console = VerboseOutput(width, colors, links, markers, stdout, stderr)
+            console = VerboseConsole(width, colors, links, markers, stdout, stderr)
         elif upper == "DOTTED":
-            console = DottedOutput(width, colors, links, stdout, stderr)
+            console = DottedConsole(width, colors, links, stdout, stderr)
         elif upper == "QUIET":
-            console = QuietOutput(colors, stderr)
+            console = QuietConsole(colors, stderr)
         elif upper == "NONE":
-            console = NoOutput()
+            console = NoneConsole()
     return ListenerFacade.create(console, kind="console logger")

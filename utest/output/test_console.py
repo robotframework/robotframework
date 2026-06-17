@@ -1,6 +1,6 @@
 import unittest
 
-from robot.output.console.verbose import VerboseOutput
+from robot.output.console.verbose import VerboseConsole
 from robot.utils.asserts import assert_equal
 
 
@@ -8,9 +8,9 @@ class TestKeywordNotification(unittest.TestCase):
 
     def setUp(self, markers="AUTO", isatty=True):
         self.stream = StreamStub(isatty)
-        self.console = VerboseOutput(
+        self.console = VerboseConsole(
             width=16,
-            colors="off",
+            colors="OFF",
             markers=markers,
             stdout=self.stream,
             stderr=self.stream,
@@ -45,7 +45,7 @@ class TestKeywordNotification(unittest.TestCase):
     def test_clear_markers_when_test_status_is_written(self):
         self._write_marker(count=5)
         self.console.end_test(Stub(), Stub())
-        self._verify(f"| PASS |\n{'-' * self.console.writer.width}\n")
+        self._verify(f"| PASS |\n{'-' * self.console.width}\n")
 
     def test_clear_markers_when_there_are_warnings(self):
         self._write_marker(count=5)

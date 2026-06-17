@@ -20,7 +20,11 @@
 import errno
 import os
 import sys
+from abc import ABC
 from contextlib import contextmanager
+from io import TextIOBase
+from pathlib import Path
+from typing import Literal
 
 try:
     from ctypes import windll
@@ -41,54 +45,39 @@ else:
 
 
 from robot.errors import DataError
-from robot.utils import console_encode, isatty, WINDOWS
+from robot.utils import console_encode, isatty, validate_literal, WINDOWS
+
+from .types import ConsoleColors, ConsoleLinks, Status
 
 
 class HighlightingStream:
 
-    def __init__(self, stream, colors="AUTO", links="AUTO"):
+    def __init__(
+        self,
+        stream: "TextIOBase | None",
+        colors: ConsoleColors = "AUTO",
+        links: ConsoleLinks = "AUTO",
+    ):
         self.stream = stream or NullStream()
-        self._highlighter = self._get_highlighter(stream, colors, links)
+        self.highlighter = Highlighter.from_config(stream, colors, links)
 
-    def _get_highlighter(self, stream, colors, links):
-        if not stream:
-            return NoHighlighting()
-        options = {
-            "AUTO": Highlighter if isatty(stream) else NoHighlighting,
-            "ON": Highlighter,
-            "OFF": NoHighlighting,
-            "ANSI": AnsiHighlighter,
-        }
-        try:
-            highlighter = options[colors.upper()]
-        except KeyError:
-            raise DataError(
-                f"Invalid console color value '{colors}'. "
-                f"Available 'AUTO', 'ON', 'OFF' and 'ANSI'."
-            )
-        if links.upper() not in ("AUTO", "OFF"):
-            raise DataError(
-                f"Invalid console link value '{links}. Available 'AUTO' and 'OFF'."
-            )
-        return highlighter(stream, links.upper() == "AUTO")
-
-    def write(self, text, flush=True):
+    def write(self, text: str, flush: bool = True):
         self._write(console_encode(text, stream=self.stream))
         if flush:
             self.flush()
 
-    def _write(self, text, retry=5):
-        # Workaround for Windows 10 console bug:
-        # https://github.com/robotframework/robotframework/issues/2709
+    def _write(self, text: str, retry: int = 5):
         try:
-            with self._suppress_broken_pipe_error:
+            with self._suppress_broken_pipe_error():
                 self.stream.write(text)
         except IOError as err:
-            if not (WINDOWS and err.errno == 0 and retry > 0):
+            # Workaround for Windows 10 console bug:
+            # https://github.com/robotframework/robotframework/issues/2709
+            if WINDOWS and err.errno == 0 and retry > 0:
+                self._write(text, retry - 1)
+            else:
                 raise
-            self._write(text, retry - 1)
 
-    @property
     @contextmanager
     def _suppress_broken_pipe_error(self):
         try:
@@ -98,46 +87,38 @@ class HighlightingStream:
                 raise
 
     def flush(self):
-        with self._suppress_broken_pipe_error:
+        with self._suppress_broken_pipe_error():
             self.stream.flush()
 
-    def highlight(self, text, status=None, flush=True):
+    def highlight(self, status: Status, text: "str | None" = None, flush: bool = True):
+        highlighter = self.highlighter
         # Must flush before and after highlighting when using Windows APIs to make
         # sure colors only affects the actual highlighted text.
-        if isinstance(self._highlighter, DosHighlighter):
+        if isinstance(highlighter, DosHighlighter):
             self.flush()
             flush = True
-        with self._highlighting(status or text):
-            self.write(text, flush)
+        {
+            "PASS": highlighter.green,
+            "FAIL": highlighter.red,
+            "SKIP": highlighter.yellow,
+            "ERROR": highlighter.red,
+            "WARN": highlighter.yellow,
+        }[status]()
+        try:
+            self.write(text or status, flush)
+        finally:
+            highlighter.reset()
 
-    def error(self, message, level):
+    def error(self, message: str, level: Literal["ERROR", "WARN"]):
         self.write("[ ", flush=False)
         self.highlight(level, flush=False)
         self.write(f" ] {message}\n")
 
-    @contextmanager
-    def _highlighting(self, status):
-        highlighter = self._highlighter
-        start = {
-            "PASS": highlighter.green,
-            "FAIL": highlighter.red,
-            "ERROR": highlighter.red,
-            "WARN": highlighter.yellow,
-            "SKIP": highlighter.yellow,
-        }[status]
-        start()
-        try:
-            yield
-        finally:
-            highlighter.reset()
-
-    def result_file(self, kind, path):
-        kind = kind.title() if kind != "XUNIT" else "XUnit"
-        path = self._highlighter.link(path) if path else "NONE"
-        self.write(f"{kind + ':':8} {path}\n")
+    def link(self, path: "Path | None"):
+        self.write(self.highlighter.link(path) if path else "NONE")
 
 
-class NullStream:
+class NullStream(TextIOBase):
 
     def write(self, text):
         pass
@@ -146,25 +127,57 @@ class NullStream:
         pass
 
 
-def Highlighter(stream, links=True):
-    if os.sep == "/":
-        return AnsiHighlighter(stream, links)
-    if not windll:
-        return NoHighlighting(stream)
-    if virtual_terminal_enabled(stream):
-        return AnsiHighlighter(stream, links)
-    return DosHighlighter(stream)
+class Highlighter(ABC):
+
+    @classmethod
+    def from_config(
+        cls,
+        stream: "TextIOBase | None",
+        colors: ConsoleColors = "AUTO",
+        links: ConsoleLinks = "AUTO",
+    ) -> "Highlighter":
+        try:
+            colors = validate_literal(colors, ConsoleColors, "console color")
+            links = validate_literal(links, ConsoleLinks, "console link")
+        except ValueError as err:
+            raise DataError(str(err))
+        if colors == "AUTO":
+            colors = "ON" if isatty(stream) else "OFF"
+        if colors == "OFF" or not stream:
+            return NoHighlighting()
+        if os.sep == "/" or colors == "ANSI" or virtual_terminal_enabled(stream):
+            return AnsiHighlighter(stream, links == "AUTO")
+        return DosHighlighter(stream)
+
+    def green(self):
+        pass
+
+    def red(self):
+        pass
+
+    def yellow(self):
+        pass
+
+    def reset(self):
+        pass
+
+    def link(self, path: Path) -> str:
+        return str(path)
 
 
-class AnsiHighlighter:
+class NoHighlighting(Highlighter):
+    pass
+
+
+class AnsiHighlighter(Highlighter):
     GREEN = "\033[32m"
     RED = "\033[31m"
     YELLOW = "\033[33m"
     RESET = "\033[0m"
 
-    def __init__(self, stream, links=True):
-        self._stream = stream
-        self._links = links
+    def __init__(self, stream: TextIOBase, links: bool = True):
+        self.stream = stream
+        self.links = links
 
     def green(self):
         self._set_color(self.GREEN)
@@ -178,34 +191,22 @@ class AnsiHighlighter:
     def reset(self):
         self._set_color(self.RESET)
 
-    def link(self, path):
-        if not self._links:
-            return path
+    def link(self, path: Path) -> str:
+        if not self.links:
+            return str(path)
         try:
             uri = path.as_uri()
         except ValueError:
-            return path
+            return str(path)
         # Terminal hyperlink syntax is documented here:
         # https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
         return f"\033]8;;{uri}\033\\{path}\033]8;;\033\\"
 
     def _set_color(self, color):
-        self._stream.write(color)
+        self.stream.write(color)
 
 
-class NoHighlighting(AnsiHighlighter):
-
-    def __init__(self, stream=None, links=True):
-        super().__init__(stream, links)
-
-    def link(self, path):
-        return path
-
-    def _set_color(self, color):
-        pass
-
-
-class DosHighlighter:
+class DosHighlighter(Highlighter):
     FOREGROUND_GREEN = 0x2
     FOREGROUND_RED = 0x4
     FOREGROUND_YELLOW = 0x6
@@ -213,10 +214,10 @@ class DosHighlighter:
     FOREGROUND_INTENSITY = 0x8
     BACKGROUND_MASK = 0xF0
 
-    def __init__(self, stream):
-        self._handle = get_std_handle(stream)
-        self._orig_colors = self._get_colors()
-        self._background = self._orig_colors & self.BACKGROUND_MASK
+    def __init__(self, stream: TextIOBase):
+        self.handle = get_std_handle(stream)
+        self.orig_colors = self._get_colors()
+        self.background = self.orig_colors & self.BACKGROUND_MASK
 
     def green(self):
         self._set_foreground_colors(self.FOREGROUND_GREEN)
@@ -228,31 +229,30 @@ class DosHighlighter:
         self._set_foreground_colors(self.FOREGROUND_YELLOW)
 
     def reset(self):
-        self._set_colors(self._orig_colors)
-
-    def link(self, path):
-        return path
+        self._set_colors(self.orig_colors)
 
     def _get_colors(self):
         info = ConsoleScreenBufferInfo()
-        ok = windll.kernel32.GetConsoleScreenBufferInfo(self._handle, byref(info))
+        ok = windll.kernel32.GetConsoleScreenBufferInfo(self.handle, byref(info))
         if not ok:  # Call failed, return default console colors (gray on black)
             return self.FOREGROUND_GREY
         return info.wAttributes
 
     def _set_foreground_colors(self, colors):
-        self._set_colors(colors | self.FOREGROUND_INTENSITY | self._background)
+        self._set_colors(colors | self.FOREGROUND_INTENSITY | self.background)
 
     def _set_colors(self, colors):
-        windll.kernel32.SetConsoleTextAttribute(self._handle, colors)
+        windll.kernel32.SetConsoleTextAttribute(self.handle, colors)
 
 
-def get_std_handle(stream):
+def get_std_handle(stream: TextIOBase):
     handle = -11 if stream is sys.__stdout__ else -12
     return windll.kernel32.GetStdHandle(handle)
 
 
 def virtual_terminal_enabled(stream):
+    if not windll:
+        return False
     handle = get_std_handle(stream)
     enable_vt = 0x0004
     mode = DWORD()
