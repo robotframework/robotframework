@@ -1,8 +1,10 @@
 import re
 import unittest
+from typing import Literal
 
 from robot.utils import (
-    classproperty, parse_re_flags, plural_or_not, printable_name, seq2str, test_or_task
+    classproperty, parse_re_flags, plural_or_not, printable_name, seq2str, test_or_task,
+    validate_literal
 )
 from robot.utils.asserts import assert_equal, assert_raises, assert_raises_with_msg
 
@@ -168,6 +170,41 @@ class TestParseReFlags(unittest.TestCase):
             ("compile", "Unknown regexp flag: compile"),
         ]:
             assert_raises_with_msg(ValueError, exp_msg, parse_re_flags, inp)
+
+
+class TestValidateLiteral(unittest.TestCase):
+    literal = Literal["abc", "XYZ", 1, False]
+
+    def test_valid(self):
+        for value in self.literal.__args__:
+            assert_equal(validate_literal(value, self.literal), value)
+
+    def test_normalize_strings(self):
+        assert_equal(validate_literal("ABC", self.literal), "abc")
+        assert_equal(validate_literal("xYz", self.literal), "XYZ")
+
+    def test_normalize_numbers_and_booleans(self):
+        for value, expected in [(1.0, 1), (True, 1), (0, False), (0.0, False)]:
+            validated = validate_literal(value, self.literal)
+            assert_equal(validated, expected)
+            assert type(validated) is type(expected)
+
+    def test_no_match(self):
+        assert_raises_with_msg(
+            ValueError,
+            "Invalid value 'bad'. Available 'abc', 'XYZ', '1' and 'False'.",
+            validate_literal,
+            "bad",
+            self.literal,
+        )
+        assert_raises_with_msg(
+            ValueError,
+            "Invalid example value '666'. Available 'abc', 'XYZ', '1' and 'False'.",
+            validate_literal,
+            666,
+            self.literal,
+            "example",
+        )
 
 
 class TestClassProperty(unittest.TestCase):

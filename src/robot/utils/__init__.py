@@ -88,6 +88,7 @@ from .misc import (
     seq2str as seq2str,
     seq2str2 as seq2str2,
     test_or_task as test_or_task,
+    validate_literal as validate_literal,
 )
 from .normalizing import (
     normalize as normalize,
