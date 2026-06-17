@@ -25,6 +25,14 @@ robot.running.builder.parsers module
    :show-inheritance:
    :undoc-members:
 
+robot.running.builder.restreader module
+---------------------------------------
+
+.. automodule:: robot.running.builder.restreader
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 robot.running.builder.settings module
 -------------------------------------
 

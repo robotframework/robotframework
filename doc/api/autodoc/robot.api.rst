@@ -9,6 +9,14 @@ robot.api package
 Submodules
 ----------
 
+robot.api.console module
+------------------------
+
+.. automodule:: robot.api.console
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 robot.api.deco module
 ---------------------
 

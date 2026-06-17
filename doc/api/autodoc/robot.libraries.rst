@@ -112,3 +112,11 @@ robot.libraries.dialogs\_py module
    :members:
    :show-inheritance:
    :undoc-members:
+
+robot.libraries.normalizer module
+---------------------------------
+
+.. automodule:: robot.libraries.normalizer
+   :members:
+   :show-inheritance:
+   :undoc-members:
