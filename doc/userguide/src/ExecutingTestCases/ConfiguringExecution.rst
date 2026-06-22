@@ -837,7 +837,12 @@ hooks it is interested in.
 
 __ `Listener interface`_
 
-.. note:: Support for custom console loggers is new in Robot Framework 7.5.
+.. note:: Console loggers should treat the ``data`` and ``result`` objects passed
+   to their methods as read-only. Currently live objects are passed so modifications
+   would take effect, but this behaviour may change without notice. Use the
+   `Listener interface`_ if you need to legitimately modify them.
+
+   Support for custom console loggers is new in Robot Framework 7.5.
 
 Example
 '''''''
