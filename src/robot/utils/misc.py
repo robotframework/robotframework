@@ -144,10 +144,11 @@ def parse_re_flags(flags: "str | None" = None) -> int:
     return result
 
 
-def validate_literal(value: Any, literal: "type[Literal]", kind: str = "") -> Any:
+def validate_literal(value: Any, literal: "type[Literal]", kind: str = "value") -> Any:
     upper = value.upper() if isinstance(value, str) else None
+    available = literal.__args__
     matches = []
-    for item in literal.__args__:
+    for item in available:
         if item == value:
             if type(item) is type(value):
                 return item
@@ -156,8 +157,7 @@ def validate_literal(value: Any, literal: "type[Literal]", kind: str = "") -> An
             matches.append(item)
     if len(matches) == 1:
         return matches[0]
-    prefix = f"Invalid {kind} value" if kind else "Invalid value"
-    raise ValueError(f"{prefix} '{value}'. Available {seq2str(literal.__args__)}.")
+    raise ValueError(f"Invalid {kind} '{value}'. Available: {seq2str(available)}.")
 
 
 class classproperty(property):

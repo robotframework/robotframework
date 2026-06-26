@@ -34,7 +34,7 @@ Invalid doc format
     --docformat inv BuiltIn ${OUT HTML}    Doc format must be 'ROBOT', 'MARKDOWN', 'TEXT', 'HTML' or 'REST', got 'INV'.
 
 Invalid doc format in library
-    ${TESTDATADIR}/DocFormatInvalid.py ${OUT HTML}   Invalid documentation format 'INVALID'.
+    ${TESTDATADIR}/DocFormatInvalid.py ${OUT HTML}   Invalid documentation format 'INVALID'. Available: 'ROBOT', 'MARKDOWN', 'HTML', 'TEXT' and 'REST'.
 
 Invalid theme
     --theme bad String ${OUT XML}                    Theme must be 'DARK', 'LIGHT' or 'NONE', got 'BAD'.

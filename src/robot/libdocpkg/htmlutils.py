@@ -19,7 +19,7 @@ from urllib.parse import quote
 
 from robot.api.deco import DocFormat
 from robot.errors import DataError
-from robot.utils import html_escape, html_format, NormalizedDict
+from robot.utils import html_escape, html_format, NormalizedDict, validate_literal
 from robot.utils.htmlformatters import HeaderFormatter
 
 try:
@@ -49,6 +49,10 @@ class DocFormatter:
         introduction,
         doc_format: DocFormat = "ROBOT",
     ):
+        try:
+            doc_format = validate_literal(doc_format, DocFormat, "documentation format")
+        except ValueError as err:
+            raise DataError(str(err))
         targets = self._get_targets(
             keywords,
             type_info,
@@ -108,25 +112,22 @@ class DocFormatter:
 class DocToHtml:
 
     def __init__(self, doc_format: DocFormat, targets=None):
-        self._formatter = self._get_formatter(doc_format)
+        self.formatter = self._get_formatter(doc_format)
         if doc_format == "MARKDOWN":
             targets = {k: (targets[k], None) for k in targets}
-        self._targets = NormalizedDict(targets)
+        self.targets = NormalizedDict(targets)
 
     def _get_formatter(self, doc_format: DocFormat) -> Callable[[str], str]:
-        try:
-            return {
+        return {
                 "ROBOT": self._format_robot,
                 "TEXT": self._format_text,
                 "HTML": self._format_html,
                 "REST": self._format_rest,
                 "MARKDOWN": self._format_markdown,
-            }[doc_format]
-        except KeyError:
-            raise DataError(f"Invalid documentation format '{doc_format}'.")
+        }[doc_format]
 
     def __call__(self, doc: str) -> str:
-        return self._formatter(doc)
+        return self.formatter(doc)
 
     def _format_robot(self, doc: str) -> str:
         doc = html_format(doc)
@@ -164,7 +165,8 @@ class DocToHtml:
             },
             output_format="html",
         )
-        md.references = self._targets.copy()
+        # Initialize references _and_ make lookup case-insensitive w/ NormalizedDict.
+        md.references = self.targets.copy()
         return md.convert(doc)
 
     def _handle_backtick_links(self, doc):
@@ -172,7 +174,7 @@ class DocToHtml:
 
     def _handle_names(self, match):
         name = match.group(1)
-        target = self._targets.get(name)
+        target = self.targets.get(name)
         if target:
             return f'<a href="{target}" class="name">{name}</a>'
         return f'<span class="name">{name}</span>'

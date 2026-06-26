@@ -192,14 +192,14 @@ class TestValidateLiteral(unittest.TestCase):
     def test_no_match(self):
         assert_raises_with_msg(
             ValueError,
-            "Invalid value 'bad'. Available 'abc', 'XYZ', '1' and 'False'.",
+            "Invalid value 'bad'. Available: 'abc', 'XYZ', '1' and 'False'.",
             validate_literal,
             "bad",
             self.literal,
         )
         assert_raises_with_msg(
             ValueError,
-            "Invalid example value '666'. Available 'abc', 'XYZ', '1' and 'False'.",
+            "Invalid example '666'. Available: 'abc', 'XYZ', '1' and 'False'.",
             validate_literal,
             666,
             self.literal,

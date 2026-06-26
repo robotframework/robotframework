@@ -22,7 +22,7 @@ Console Colors ANSI
 
 Invalid Console Colors
     Run Tests Without Processing Output    -C InVaLid    misc/pass_and_fail.robot
-    Stderr Should Be Equal To    [ ERROR ] Invalid console color value 'InVaLid'. Available 'AUTO', 'ON', 'OFF' and 'ANSI'.${USAGE TIP}\n
+    Stderr Should Be Equal To    [ ERROR ] Invalid console color 'InVaLid'. Available: 'AUTO', 'ON', 'OFF' and 'ANSI'.${USAGE TIP}\n
 
 Console Width
     ${name} =    Evaluate    'Start-' + '0123456789' * 9 + '-end'
@@ -50,7 +50,7 @@ Console links off
 
 Invalid link config
     Run Tests Without Processing Output    --ConsoleLinks InVaLid    misc/pass_and_fail.robot
-    Stderr Should Be Equal To    [ ERROR ] Invalid console link value 'InVaLid'. Available 'AUTO' and 'OFF'.${USAGE TIP}\n
+    Stderr Should Be Equal To    [ ERROR ] Invalid console link 'InVaLid'. Available: 'AUTO' and 'OFF'.${USAGE TIP}\n
 
 *** Keywords ***
 Run Tests With Warnings
