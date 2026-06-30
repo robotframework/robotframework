@@ -14,8 +14,8 @@ Normal Markdown [inline](http://example.com) and [reference] links are supported
 
 [reference]: http://example.com "An "example"!"
 
-URLs like http://example.com are not automatically linkified, but surrounding
-them with angle brackets like <http://example.com> does the trick.
+URLs like http://example.com are automatically linkified as a custom feature.
+Surrounding URLs with angle brackets like <http://example.com> works too.
 
 ## Automatic reference targets
 

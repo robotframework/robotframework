@@ -9,7 +9,8 @@ Basic formatting
 
 Linking
     Normal Markdown <a href="http://example.com">inline</a> and <a href="http://example.com" title="An &quot;example&quot;!">reference</a> links are supported.
-    URLs like http://example.com are not automatically linkified, but surrounding\nthem with angle brackets like <a href="http://example.com">http://example.com</a> does the trick.
+    URLs like <a href="http://example.com">http://example.com</a> are automatically linkified as a custom feature.
+    ...    Surrounding URLs with angle brackets like <a href="http://example.com">http://example.com</a> works too.
 
 Automatic reference targets
     Keywords like <a href="#References" title="References keyword">References</a> and <a href="#Admonitions" title="Admonitions keyword">admonitions</a>.

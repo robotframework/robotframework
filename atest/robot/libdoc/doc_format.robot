@@ -21,7 +21,7 @@ HTML format
 Markdown format
     [Template]    NONE
     [Tags]    require-markdown
-    Test Format in HTML    <p><em>bold</em> or <b>bold</b> http://example.com</p>
+    Test Format in HTML    <p><em>bold</em> or <b>bold</b> <a href="http://example.com">http://example.com</a></p>
     ...    --docformat markdown
     ...    doc2=<p>Link to <code>Keyword</code> or not?</p>
     Should Contain    ${MODEL}[keywords][2][doc]

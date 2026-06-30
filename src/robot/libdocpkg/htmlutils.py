@@ -24,24 +24,19 @@ from robot.utils import (
     validate_literal
 )
 from robot.utils.htmlformatters import HeaderFormatter
+from robot.utils.markdown import LinkifyExtension, Markdown
 
 if TYPE_CHECKING:
     from .model import KeywordDoc
 
-# fmt: off
 try:
     from docutils.core import publish_parts
 except ImportError:
+
     def publish_parts(*args, **kwargs):
         raise DataError(
             "reStructuredText format requires 'docutils' module to be installed."
         )
-try:
-    from markdown import Markdown
-except ImportError:
-    def Markdown(*args, **kwargs):
-        raise DataError("Markdown format requires 'markdown' module to be installed.")
-# fmt: on
 
 
 Targets = Dict[str, "tuple[str, str]"]
@@ -120,6 +115,7 @@ class DocToHtml:
     def __init__(self, doc_format: DocFormat, targets: "Targets | None" = None):
         self.formatter = self._get_formatter(doc_format)
         self.targets = NormalizedDict(targets)
+        self._md = None
 
     def _get_formatter(self, doc_format: DocFormat) -> Callable[[str], str]:
         try:
@@ -158,21 +154,25 @@ class DocToHtml:
         return self._handle_backtick_links(parts["html_body"])
 
     def _format_markdown(self, doc: str) -> str:
-        md = Markdown(
-            extensions=[
-                "admonition",
-                "codehilite",
-                "fenced_code",
-                "sane_lists",
-                "tables",
-                "toc",
-            ],
-            extension_configs={
-                "codehilite": {"css_class": "code", "linenums": False},
-                "toc": {"baselevel": 2, "marker": "%TOC%"},
-            },
-            output_format="html",
-        )
+        if self._md is None:
+            self._md = md = Markdown(
+                extensions=[
+                    "admonition",
+                    "codehilite",
+                    "fenced_code",
+                    "sane_lists",
+                    "tables",
+                    "toc",
+                    LinkifyExtension(),
+                ],
+                extension_configs={
+                    "codehilite": {"css_class": "code", "linenums": False},
+                    "toc": {"baselevel": 2, "marker": "%TOC%"},
+                },
+                output_format="html",
+            )
+        else:
+            md = self._md.reset()
         # Initialize references and use NormalizedDict to make lookup case-insensitive.
         md.references = self.targets.copy()
         return md.convert(doc)

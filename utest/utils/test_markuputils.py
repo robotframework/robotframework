@@ -93,7 +93,7 @@ class TestUrlsToLinks(unittest.TestCase):
         ]:
             exp = f'<a href="{link}">{link}</a>'
             assert_escape_and_format(link, exp)
-            for end in [",", ".", ";", ":", "!", "?", "...", "!?!", " hello"]:
+            for end in [",", ".", ";", ":", "!", "?", "...", "!?!", " hello", "\n2"]:
                 assert_escape_and_format(link + end, exp + end)
                 assert_escape_and_format("xxx " + link + end, "xxx " + exp + end)
             for start, end in [("(", ")"), ("[", "]"), ('"', '"'), ("'", "'")]:
