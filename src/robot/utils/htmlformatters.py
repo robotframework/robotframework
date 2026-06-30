@@ -81,7 +81,7 @@ class LineFormatter:
           ["'(]* _?                # opt. any char "'( and opt. start of italics
         )                          #
         \*                         # start of bold
-        ([^\ ].*?)                 # no space and then anything (group 3)
+        ([^ ].*?)                  # no space and then anything (group 3)
         \*                         # end of bold
         (?=                        # start of postfix (non-capturing group)
           _? ["').,!?:;]*          # optional end of italic and any char "').,!?:;
@@ -92,21 +92,21 @@ class LineFormatter:
     )
     _italic = re.compile(
         r"""
-        ( (^|\ ) ["'(]* )          # begin of line or space and opt. any char "'(
+        ((^|\ ) ["'(]*)            # begin of line or space and opt. any char "'(
         _                          # start of italics
-        ([^\ _].*?)                # no space or underline and then anything
+        ([^ _].*?)                 # no space or underscore and then anything
         _                          # end of italics
-        (?= ["').,!?:;]* ($|\ ) )  # opt. any char "').,!?:; and end of line or space
+        (?= ["').,!?:;]* ($|\ ))   # opt. any char "').,!?:; and end of line or space
         """,
         re.VERBOSE,
     )
     _code = re.compile(
         r"""
-        ( (^|\ ) ["'(]* )          # same as above with _ changed to ``
+        ((^|\ ) ["'(]*)            # same as above with _ changed to ``
         ``
-        ([^\ `].*?)
+        ([^ `].*?)
         ``
-        (?= ["').,!?:;]* ($|\ ) )
+        (?= ["').,!?:;]* ($|\ ))
         """,
         re.VERBOSE,
     )
@@ -129,19 +129,19 @@ class LineFormatter:
         return line
 
     def _format_bold(self, line):
-        return self._bold.sub("\\1<b>\\3</b>", line)
+        return self._bold.sub(r"\1<b>\3</b>", line)
 
     def _format_italic(self, line):
-        return self._italic.sub("\\1<i>\\3</i>", line)
+        return self._italic.sub(r"\1<i>\3</i>", line)
 
     def _format_code(self, line):
-        return self._code.sub("\\1<code>\\3</code>", line)
+        return self._code.sub(r"\1<code>\3</code>", line)
 
 
 class HtmlFormatter:
 
     def __init__(self):
-        self._formatters = [
+        self._formatters: list[_Formatter] = [
             TableFormatter(),
             PreformattedFormatter(),
             ListFormatter(),
@@ -149,7 +149,7 @@ class HtmlFormatter:
             RulerFormatter(),
         ]
         self._formatters.append(ParagraphFormatter(self._formatters[:]))
-        self._current = None
+        self._current: _Formatter | None = None
 
     def format(self, text):
         results = []
@@ -177,6 +177,7 @@ class HtmlFormatter:
         for formatter in self._formatters:
             if formatter.handles(line):
                 return formatter
+        return None
 
 
 class _Formatter:
