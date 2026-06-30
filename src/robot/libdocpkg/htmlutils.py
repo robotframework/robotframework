@@ -20,8 +20,7 @@ from urllib.parse import quote
 from robot.api.deco import DocFormat
 from robot.errors import DataError
 from robot.utils import (
-    attribute_escape as attribute, html_escape, html_format, NormalizedDict,
-    validate_literal
+    attribute_escape, html_escape, html_format, NormalizedDict, validate_literal
 )
 from robot.utils.htmlformatters import HeaderFormatter
 from robot.utils.markdown import LinkifyExtension, Markdown
@@ -57,7 +56,7 @@ class DocFormatter:
         doc_format: DocFormat = "ROBOT",
     ):
         targets: Targets = {
-            html_escape(name, linkify=False): (target, title)
+            html_escape(name, linkify=False): (target, attribute_escape(title))
             for name, target, title in (
                 *self._get_default_targets(),
                 *self._get_keyword_targets(keywords),
@@ -68,19 +67,19 @@ class DocFormatter:
 
     def _get_default_targets(self) -> TargetTriplet:
         return [
-            ("introduction", "#Introduction", "Introduction section"),
-            ("library introduction", "#Introduction", "Introduction section"),
-            ("importing", "#Importing", "Importing section"),
-            ("library importing", "#Importing", "Importing section"),
-            ("keywords", "#Keywords", "Keywords section"),
+            ("introduction", "#Introduction", '"Introduction" section'),
+            ("library introduction", "#Introduction", '"Introduction" section'),
+            ("importing", "#Importing", '"Importing" section'),
+            ("library importing", "#Importing", '"Importing" section'),
+            ("keywords", "#Keywords", '"Keywords" section'),
         ]
 
     def _get_keyword_targets(self, keywords: "list[KeywordDoc]") -> TargetTriplet:
         for kw in keywords:
-            yield kw.name, fragment(kw.name), attribute(f"{kw.name} keyword")
+            yield kw.name, fragment(kw.name), f'"{kw.name}" keyword'
             for type_doc in kw.type_docs.values():
                 for typ, target in type_doc.items():
-                    yield typ, fragment(f"type-{target}"), attribute(f"{target} type")
+                    yield typ, fragment(f"type-{target}"), f'"{target}" type'
 
     def _get_intro_targets(self, intro: str, doc_format: DocFormat) -> TargetTriplet:
         if doc_format == "ROBOT":
@@ -89,7 +88,7 @@ class DocFormatter:
                 match = headers.match(line.strip())
                 if match:
                     header = match.group(2)
-                    yield header, fragment(header), attribute(f"{header} section")
+                    yield header, fragment(header), f'"{header}" section'
         if doc_format == "MARKDOWN":
             md = Markdown(
                 extensions=["toc"],
@@ -99,7 +98,7 @@ class DocFormatter:
             for reference, (target, title) in md.references.items():
                 yield reference, target, title
             for header, target in self._get_markdown_toc_tokens(md.toc_tokens):
-                yield header, "#" + target, attribute(f"{header} section")
+                yield header, f"#{target}", f'"{header}" section'
 
     def _get_markdown_toc_tokens(self, toc_tokens) -> "Iterable[tuple[str, str]]":
         for token in toc_tokens:

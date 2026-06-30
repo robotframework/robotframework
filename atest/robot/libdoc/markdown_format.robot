@@ -13,13 +13,13 @@ Linking
     ...    Surrounding URLs with angle brackets like <a href="http://example.com">http://example.com</a> works too.
 
 Automatic reference targets
-    Keywords like <a href="#References" title="References keyword">References</a> and <a href="#Admonitions" title="Admonitions keyword">admonitions</a>.
-    Headers in the library introduction like <a href="#linking" title="Linking section">linking</a>, <a href="#basics" title="Basics section">Basics</a>
-    ...    \ \ and <a href="#reference-w-special-chars" title="Reference w/ :special: &quot;chars&quot;? section">Reference w/ :special: "chars"?</a>.
-    Predefined targets like <a href="#Introduction" title="Introduction section">Introduction</a> and <a href="#Keywords" title="Keywords section">keywords</a>.
-    We can link to predefined targets like <a href="#Introduction" title="Introduction section">introduction</a>, to intro headers
-    ...    like <a href="#linking" title="Linking section">linking</a>, to keywords like <a href="#Admonitions" title="Admonitions keyword">Admonitions</a> and to types like <a href="#type-integer" title="integer type">int</a>
-    ...    and <a href="#type-list" title="list type">list</a>.
+    Keywords like <a href="#References" title="&quot;References&quot; keyword">References</a> and <a href="#Admonitions" title="&quot;Admonitions&quot; keyword">admonitions</a>.
+    Headers in the library introduction like <a href="#linking" title="&quot;Linking&quot; section">linking</a>, <a href="#basics" title="&quot;Basics&quot; section">Basics</a>
+    ...    \ \ and <a href="#reference-w-special-chars" title="&quot;Reference w/ :special: &quot;chars&quot;?&quot; section">Reference w/ :special: "chars"?</a>.
+    Predefined targets like <a href="#Introduction" title="&quot;Introduction&quot; section">Introduction</a> and <a href="#Keywords" title="&quot;Keywords&quot; section">keywords</a>.
+    We can link to predefined targets like <a href="#Introduction" title="&quot;Introduction&quot; section">introduction</a>, to intro headers
+    ...    like <a href="#linking" title="&quot;Linking&quot; section">linking</a>, to keywords like <a href="#Admonitions" title="&quot;Admonitions&quot; keyword">Admonitions</a> and to types like <a href="#type-integer" title="&quot;integer&quot; type">int</a>
+    ...    and <a href="#type-list" title="&quot;list&quot; type">list</a>.
     ...    model=${MODEL}[keywords][2]
 
 Custom references defined in introduction work also with keywords
