@@ -12,7 +12,10 @@ Basic Markdown formatting such as **bold**, *italics* and `code` works as expect
 
 Normal Markdown [inline](http://example.com) and [reference] links are supported.
 
-[reference]: http://example.com "An example"
+[reference]: http://example.com "An "example"!"
+
+URLs like http://example.com are not automatically linkified, but surrounding
+them with angle brackets like <http://example.com> does the trick.
 
 ## Automatic reference targets
 
@@ -20,13 +23,18 @@ Three kind of reference link targets are generated automatically to make interna
 linking easy:
 
 - Keywords like [References] and [admonitions].
-- Headers in the library introduction like [linking] and [Basics].
+- Headers in the library introduction like [linking], [Basics]
+  and [Reference w/ :special: "chars"?].
 - Predefined targets like [Introduction] and [keywords].
 
 Link targets are case and space insensitive. The concept and automatically
 available targets are the same as when using the Robot format, but the difference
 is that only the Markdown link syntax works. Using backticks like `introduction`
 does create a link, not even when escaped like \\`introduction\\`.
+
+## Reference w/ :special: "chars"?
+
+Yes, special characters are supported.
 
 # Advanced syntax
 
@@ -67,12 +75,13 @@ keyword for an example.
 ROBOT_LIBRARY_DOC_FORMAT = "MARKDOWN"
 
 
-def references():
+def references(a: int, b: "str | list[str]"):
     """
     We can link to predefined targets like [introduction], to intro headers
-    like [linking] and to keywords like [Admonitions].
+    like [linking], to keywords like [Admonitions] and to types like [int]
+    and [list].
 
-    Custom references defined elsewhere like [reference] do not work.
+    Custom references defined in introduction like [reference] work too!
     """
 
 

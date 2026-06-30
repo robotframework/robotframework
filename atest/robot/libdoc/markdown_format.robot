@@ -8,18 +8,21 @@ Basic formatting
     Basic Markdown formatting such as <strong>bold</strong>, <em>italics</em> and <code>code</code> works as expected.
 
 Linking
-    Normal Markdown <a href="http://example.com">inline</a> and <a href="http://example.com" title="An example">reference</a> links are supported.
+    Normal Markdown <a href="http://example.com">inline</a> and <a href="http://example.com" title="An &quot;example&quot;!">reference</a> links are supported.
+    URLs like http://example.com are not automatically linkified, but surrounding\nthem with angle brackets like <a href="http://example.com">http://example.com</a> does the trick.
 
 Automatic reference targets
-    Keywords like <a href="#References">References</a> and <a href="#Admonitions">admonitions</a>.
-    Headers in the library introduction like <a href="#linking">linking</a> and <a href="#basics">Basics</a>.
-    Predefined targets like <a href="#Introduction">Introduction</a> and <a href="#Keywords">keywords</a>.
-    We can link to predefined targets like <a href="#Introduction">introduction</a>, to intro headers
-    ...    like <a href="#linking">linking</a> and to keywords like <a href="#Admonitions">Admonitions</a>.
+    Keywords like <a href="#References" title="References keyword">References</a> and <a href="#Admonitions" title="Admonitions keyword">admonitions</a>.
+    Headers in the library introduction like <a href="#linking" title="Linking section">linking</a>, <a href="#basics" title="Basics section">Basics</a>
+    ...    \ \ and <a href="#reference-w-special-chars" title="Reference w/ :special: &quot;chars&quot;? section">Reference w/ :special: "chars"?</a>.
+    Predefined targets like <a href="#Introduction" title="Introduction section">Introduction</a> and <a href="#Keywords" title="Keywords section">keywords</a>.
+    We can link to predefined targets like <a href="#Introduction" title="Introduction section">introduction</a>, to intro headers
+    ...    like <a href="#linking" title="Linking section">linking</a>, to keywords like <a href="#Admonitions" title="Admonitions keyword">Admonitions</a> and to types like <a href="#type-integer" title="integer type">int</a>
+    ...    and <a href="#type-list" title="list type">list</a>.
     ...    model=${MODEL}[keywords][2]
 
-Custom references work only in current context
-    Custom references defined elsewhere like [reference] do not work.
+Custom references defined in introduction work also with keywords
+    Custom references defined in introduction like <a href="http://example.com" title="An &quot;example&quot;!">reference</a> work too!
     ...    model=${MODEL}[keywords][2]
 
 Unordered lists
@@ -132,6 +135,7 @@ Table of contents
     ...    <li><a href="#linking">Linking</a><ul>
     ...    <li><a href="#link-syntax">Link syntax</a></li>
     ...    <li><a href="#automatic-reference-targets">Automatic reference targets</a></li>
+    ...    <li><a href="#reference-w-special-chars">Reference w/ :special: "chars"?</a></li>
     ...    </ul>
     ...    </li>
     ...    <li><a href="#advanced-syntax">Advanced syntax</a></li>

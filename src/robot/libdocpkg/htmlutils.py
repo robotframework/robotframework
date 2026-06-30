@@ -14,116 +14,124 @@
 #  limitations under the License.
 
 import re
-from typing import Callable
+from typing import Callable, Dict, Iterable, TYPE_CHECKING
 from urllib.parse import quote
 
 from robot.api.deco import DocFormat
 from robot.errors import DataError
-from robot.utils import html_escape, html_format, NormalizedDict, validate_literal
+from robot.utils import (
+    attribute_escape as attribute, html_escape, html_format, NormalizedDict,
+    validate_literal
+)
 from robot.utils.htmlformatters import HeaderFormatter
 
+if TYPE_CHECKING:
+    from .model import KeywordDoc
+
+# fmt: off
 try:
     from docutils.core import publish_parts
 except ImportError:
-
     def publish_parts(*args, **kwargs):
         raise DataError(
             "reStructuredText format requires 'docutils' module to be installed."
         )
-
-
 try:
     from markdown import Markdown
 except ImportError:
-
     def Markdown(*args, **kwargs):
         raise DataError("Markdown format requires 'markdown' module to be installed.")
+# fmt: on
+
+
+Targets = Dict[str, "tuple[str, str]"]
+TargetTriplet = Iterable["tuple[str, str, str]"]
+
+
+def fragment(value):
+    # Emulates encodeURIComponent JavaScript function
+    return "#" + quote(value.encode("UTF-8"), safe="-_.!~*'()")
 
 
 class DocFormatter:
 
     def __init__(
         self,
-        keywords,
-        type_info,
-        introduction,
+        keywords: "list[KeywordDoc]",
+        introduction: str,
         doc_format: DocFormat = "ROBOT",
     ):
-        try:
-            doc_format = validate_literal(doc_format, DocFormat, "documentation format")
-        except ValueError as err:
-            raise DataError(str(err))
-        targets = self._get_targets(
-            keywords,
-            type_info,
-            introduction,
-            doc_format,
-        )
+        targets: Targets = {
+            html_escape(name, linkify=False): (target, title)
+            for name, target, title in (
+                *self._get_default_targets(),
+                *self._get_keyword_targets(keywords),
+                *self._get_intro_targets(introduction, doc_format),
+            )
+        }
         self._doc_to_html = DocToHtml(doc_format, targets)
 
-    def _get_targets(self, keywords, type_info, introduction, doc_format):
-        targets = {
-            "introduction": "Introduction",
-            "library introduction": "Introduction",
-            "importing": "Importing",
-            "library importing": "Importing",
-            "keywords": "Keywords",
-        }
-        for info in type_info:
-            targets[info.name] = "type-" + info.name
-        for header, target in self._yield_header_targets(introduction, doc_format):
-            targets[header] = target
-        for kw in keywords:
-            targets[kw.name] = kw.name
-        return {
-            html_escape(key): "#" + self._encode_uri_component(value)
-            for key, value in targets.items()
-        }
+    def _get_default_targets(self) -> TargetTriplet:
+        return [
+            ("introduction", "#Introduction", "Introduction section"),
+            ("library introduction", "#Introduction", "Introduction section"),
+            ("importing", "#Importing", "Importing section"),
+            ("library importing", "#Importing", "Importing section"),
+            ("keywords", "#Keywords", "Keywords section"),
+        ]
 
-    def _yield_header_targets(self, introduction, doc_format):
+    def _get_keyword_targets(self, keywords: "list[KeywordDoc]") -> TargetTriplet:
+        for kw in keywords:
+            yield kw.name, fragment(kw.name), attribute(f"{kw.name} keyword")
+            for type_doc in kw.type_docs.values():
+                for typ, target in type_doc.items():
+                    yield typ, fragment(f"type-{target}"), attribute(f"{target} type")
+
+    def _get_intro_targets(self, intro: str, doc_format: DocFormat) -> TargetTriplet:
         if doc_format == "ROBOT":
             headers = HeaderFormatter()
-            for line in introduction.splitlines():
+            for line in intro.splitlines():
                 match = headers.match(line.strip())
                 if match:
-                    yield match.group(2), match.group(2)
+                    header = match.group(2)
+                    yield header, fragment(header), attribute(f"{header} section")
         if doc_format == "MARKDOWN":
             md = Markdown(
                 extensions=["toc"],
                 extension_configs={"toc": {"marker": ""}},
             )
-            md.convert(introduction)
+            md.convert(intro)
+            for reference, (target, title) in md.references.items():
+                yield reference, target, title
             for header, target in self._get_markdown_toc_tokens(md.toc_tokens):
-                yield header, target
+                yield header, "#" + target, attribute(f"{header} section")
 
-    def _get_markdown_toc_tokens(self, toc_tokens):
+    def _get_markdown_toc_tokens(self, toc_tokens) -> "Iterable[tuple[str, str]]":
         for token in toc_tokens:
             yield token["name"], token["id"]
             yield from self._get_markdown_toc_tokens(token["children"])
 
-    def _encode_uri_component(self, value):
-        # Emulates encodeURIComponent javascript function
-        return quote(value.encode("UTF-8"), safe="-_.!~*'()")
-
-    def html(self, doc):
+    def html(self, doc: str) -> str:
         return self._doc_to_html(doc)
 
 
 class DocToHtml:
 
-    def __init__(self, doc_format: DocFormat, targets=None):
+    def __init__(self, doc_format: DocFormat, targets: "Targets | None" = None):
         self.formatter = self._get_formatter(doc_format)
-        if doc_format == "MARKDOWN":
-            targets = {k: (targets[k], None) for k in targets}
         self.targets = NormalizedDict(targets)
 
     def _get_formatter(self, doc_format: DocFormat) -> Callable[[str], str]:
+        try:
+            doc_format = validate_literal(doc_format, DocFormat, "documentation format")
+        except ValueError as err:
+            raise DataError(str(err))
         return {
-                "ROBOT": self._format_robot,
-                "TEXT": self._format_text,
-                "HTML": self._format_html,
-                "REST": self._format_rest,
-                "MARKDOWN": self._format_markdown,
+            "ROBOT": self._format_robot,
+            "TEXT": self._format_text,
+            "HTML": self._format_html,
+            "REST": self._format_rest,
+            "MARKDOWN": self._format_markdown,
         }[doc_format]
 
     def __call__(self, doc: str) -> str:
@@ -165,18 +173,18 @@ class DocToHtml:
             },
             output_format="html",
         )
-        # Initialize references _and_ make lookup case-insensitive w/ NormalizedDict.
+        # Initialize references and use NormalizedDict to make lookup case-insensitive.
         md.references = self.targets.copy()
         return md.convert(doc)
 
-    def _handle_backtick_links(self, doc):
+    def _handle_backtick_links(self, doc: str) -> str:
         return re.sub("`(.+?)`", self._handle_names, doc)
 
-    def _handle_names(self, match):
+    def _handle_names(self, match: "re.Match[str]") -> str:
         name = match.group(1)
-        target = self.targets.get(name)
-        if target:
-            return f'<a href="{target}" class="name">{name}</a>'
+        if name in self.targets:
+            target, title = self.targets[name]
+            return f'<a href="{target}" title="{title}" class="name">{name}</a>'
         return f'<span class="name">{name}</span>'
 
 

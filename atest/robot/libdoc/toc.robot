@@ -66,11 +66,11 @@ TOC in generated HTML
    ...    <h2 id="First entry">First entry</h2>
    ...    <p>TOC in somewhat strange place.</p>
    ...    <ul>
-   ...    <li><a href="#First%20entry" class="name">First entry</a></li>
-   ...    <li><a href="#Second" class="name">Second</a></li>
-   ...    <li><a href="#3" class="name">3</a></li>
-   ...    <li><a href="#Importing" class="name">Importing</a></li>
-   ...    <li><a href="#Keywords" class="name">Keywords</a></li>
+   ...    <li><a href="#First%20entry" title="First entry section" class="name">First entry</a></li>
+   ...    <li><a href="#Second" title="Second section" class="name">Second</a></li>
+   ...    <li><a href="#3" title="3 section" class="name">3</a></li>
+   ...    <li><a href="#Importing" title="Importing section" class="name">Importing</a></li>
+   ...    <li><a href="#Keywords" title="Keywords section" class="name">Keywords</a></li>
    ...    </ul>
    ...    <h2 id="Second">Second</h2>
    ...    <h2 id="3">3</h2>

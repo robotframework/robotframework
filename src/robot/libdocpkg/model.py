@@ -114,7 +114,6 @@ class LibraryDoc:
     def convert_docs_to_html(self):
         formatter = DocFormatter(
             self.keywords,
-            self.type_docs,
             self.doc,
             self.doc_format,
         )

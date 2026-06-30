@@ -5,8 +5,7 @@
 
 It has some in ``__init__`` and others in the `Keywords`.
 
-The DataTypes are the following that should be linked.
-`HttpCredentials` , `GeoLocation` , `Small` and `AssertionOperator`.</doc>
+Custom data types include `GeoLocation` and `Small`.</doc>
 <tags>
 </tags>
 <inits>
