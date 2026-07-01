@@ -2440,8 +2440,6 @@ exception type as a prefix to failure message also with non generic exceptions.
 This is done by adding a special `ROBOT_SUPPRESS_NAME` attribute with
 value `True` to your exception.
 
-Python:
-
 .. sourcecode:: python
 
     class MyError(RuntimeError):

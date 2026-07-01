@@ -101,10 +101,10 @@ Supported file formats
 ----------------------
 
 The most common approach to create Robot Framework data is using the
-`space separated format`_ where pieces of the data, such as keywords
+`space separated data format`_ where pieces of the data, such as keywords
 and their arguments, are separated from each others with two or more spaces.
-An alternative is using the `pipe separated format`_ where the separator is
-the pipe character surrounded with spaces (:codesc:`\ |\ `).
+An alternative is using the `pipe separated data format`_ where the separator
+is the pipe character surrounded with spaces (:codesc:`\ |\ `).
 
 Suite files typically use the :file:`.robot` extension, but what files are
 parsed `can be configured`__. `Resource files`_ can use the :file:`.robot`
@@ -123,7 +123,7 @@ data is `embedded into code blocks`__. Only files with the :file:`.robot.md`
 extension are parsed by default. If you would rather use just :file:`.md` or
 :file:`.markdown` extension, that needs to be configured separately.
 
-Robot Framework data can also be created in the `JSON format`_ that is targeted
+Robot Framework supports also `JSON data format`_ that is targeted
 more for tool developers than normal Robot Framework users. Only JSON files
 with the custom :file:`.rbt` extension are parsed by default.
 
@@ -137,14 +137,15 @@ with Robot Framework 3.1 because newer versions do not understand the HTML
 format at all.
 
 __ `Selecting files to parse`_
-__ `reStructuredText format`_
-__ `Markdown format`_
+__ `reStructuredText data format`_
+__ `Markdown data format`_
 
+.. _space separated format:
 .. _space separated plain text format:
-.. _plain text format:
+.. _plain text data format:
 
-Space separated format
-~~~~~~~~~~~~~~~~~~~~~~
+Space separated data format
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When Robot Framework parses data, it first splits the data to lines and then
 lines to tokens such as keywords and arguments. When using the space
@@ -191,8 +192,10 @@ in the actual data. It is possible to use special escape syntax like
           were converted to ASCII spaces during parsing. Nowadays all data
           is preserved as-is.
 
-Pipe separated format
-~~~~~~~~~~~~~~~~~~~~~
+.. _pipe separated format:
+
+Pipe separated data format
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The biggest problem of the space delimited format is that visually
 separating keywords from arguments can be tricky. This is a problem
@@ -243,8 +246,8 @@ __ Escaping_
           in Robot Framework 3.2. Prior to it non-ASCII spaces used in
           the data were also converted to ASCII spaces.
 
-reStructuredText format
-~~~~~~~~~~~~~~~~~~~~~~~
+reStructuredText data format
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 reStructuredText_ (reST) is an easy-to-read plain text markup syntax that
 is commonly used for documentation of Python projects, including Python itself
@@ -321,8 +324,8 @@ when processing files using reStructuredText tooling normally.
 .. note:: Parsing :file:`.robot.rst` files automatically is new in
           Robot Framework 6.1.
 
-Markdown format
-~~~~~~~~~~~~~~~
+Markdown data format
+~~~~~~~~~~~~~~~~~~~~
 
 Markdown_ is a lightweight plain text markup syntax that is widely used for
 documentation, README files, and technical content across the software
@@ -388,8 +391,8 @@ __ `Selecting files to parse`_
 
 .. note:: Markdown support is new in Robot Framework 7.5.
 
-JSON format
-~~~~~~~~~~~
+JSON data format
+~~~~~~~~~~~~~~~~
 
 Robot Framework supports data also in the JSON_ format. This format is designed
 more for tool developers than for regular Robot Framework users and it is not

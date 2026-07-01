@@ -10,16 +10,16 @@ Suite file extensions
 `Suite files`_ with the following extensions are parsed automatically:
 
 :file:`.robot`
-    Suite file using the `plain text format`_.
+    Suite file using the `plain text data format`_.
 
 :file:`.robot.rst`
-    Suite file using the `reStructuredText format`_.
+    Suite file using the `reStructuredText data format`_.
 
 :file:`.robot.md`
-    Suite file using the `Markdown format`_.
+    Suite file using the `Markdown data format`_.
 
 :file:`.rbt`
-    Suite file using the `JSON format`_.
+    Suite file using the `JSON data format`_.
 
 Using other extensions is possible, but it requires `separate configuration`__.
 
@@ -46,7 +46,7 @@ Resource file extensions
 :file:`.rsrc` and :file:`.json`
     Resource file using the `JSON format`__.
 
-__ `Resource files using reStructured text format`_
+__ `Resource files using reStructuredText format`_
 __ `Resource files using Markdown format`_
 __ `Resource files using JSON format`_
 

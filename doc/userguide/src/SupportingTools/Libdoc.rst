@@ -447,7 +447,7 @@ line.
 
     """Example library in Robot Framework format.
 
-    - Formatting with *bold* and _italic_.
+    - Formatting with *bold* and _italics_.
     - URLs like http://example.com are turned to links.
     - Custom links like [http://robotframework.org|Robot Framework] are supported.
     - Linking to `My Keyword` works.
@@ -456,17 +456,16 @@ line.
     def my_keyword():
         """Nothing more to see here."""
 
-Creating table of contents automatically
-''''''''''''''''''''''''''''''''''''''''
+Creating table of contents
+''''''''''''''''''''''''''
 
 With bigger libraries it is often useful to add a table of contents to
 the library introduction. When using the Robot Framework documentation format,
 this can be done automatically by adding a special `%TOC%` marker into a line
 on its own. The table of contents is created based on the top-level
-`section titles`_ (e.g. `= Section =`) used in the introduction. In addition
+`section headers`_ (e.g. `= Section =`) used in the introduction. In addition
 to them, the TOC also gets links to the `automatically created sections`__
-for shortcuts and keywords as well as for importing and tags sections when
-applicable.
+for keywords and importing.
 
 .. sourcecode:: python
 
@@ -479,21 +478,19 @@ applicable.
 
     %TOC%
 
-    = Section title =
+    = Section header =
 
-    The top-level section titles are automatically added to the TOC.
+    The top-level section headers are automatically added to the TOC.
 
     = Second section =
 
     == Sub section ==
 
-    Sub section titles are not added to the TOC.
+    Sub section headers are not added to the TOC.
     """
 
     def my_keyword():
         """Nothing more to see here."""
-
-.. note:: Automatic TOC generation is a new feature in Robot Framework 3.2.
 
 __ `Linking to automatic sections`_
 
@@ -513,7 +510,7 @@ on the command line like `--docformat HTML`.
 
 .. sourcecode:: python
 
-    """Example library in HTML format.
+    """Example library using HTML format.
 
     <ul>
       <li>Formatting with <b>bold</b> and <i>italic</i>.
@@ -538,7 +535,7 @@ like :codesc:`\`My Keyword\``.
 
 .. sourcecode:: python
 
-    """Example library in plain text format.
+    """Example library using plain text format.
 
     - Formatting is not supported.
     - URLs like http://example.com are turned to links.
@@ -567,12 +564,12 @@ languages that Pygments supports.
 
 .. sourcecode:: python
 
-    """Example library in reStructuredText format.
+    """Example library using reStructuredText format.
 
-    - Formatting with **bold** and *italic*.
+    - Formatting with **bold** and *italics*.
     - URLs like http://example.com are turned to links.
     - Custom links like reStructuredText__ are supported.
-    - Linking to \`My Keyword\` works but requires backtics to be escaped.
+    - Linking to \`My Keyword\` works but requires backticks to be escaped.
 
     __ http://docutils.sourceforge.net
 
@@ -602,7 +599,7 @@ There is no error or warning if a link target is not found, but instead Libdoc
 just formats the text in italics. Earlier this formatting was recommended to
 be used when referring to keyword arguments, but that was problematic because
 it could accidentally create internal links. Nowadays it is recommended to
-use `inline code style <inline styles_>`__ with double backticks like
+use `inline code style <Robot inline styles_>`__ with double backticks like
 :codesc:`\`\`argument\`\`` instead. The old formatting of single backticks
 may even be removed in the future in favor of giving an error when a link
 target is not found.
@@ -674,11 +671,10 @@ __ `Keyword tags`_
 Linking to custom sections
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Robot Framework's `documentation syntax`_
-supports custom `section titles`_, and the titles used in the
-library or resource file introduction automatically create link
-targets. The example below illustrates linking both to automatic and
-custom sections:
+Robot Framework's `documentation syntax`_ supports custom `section headers`_,
+and the headers used in the library or resource file introduction automatically
+create link targets. The example below illustrates linking both to automatic
+and custom sections:
 
 .. sourcecode:: python
 
@@ -729,7 +725,7 @@ __ kwargs-library_
 __ `Keyword arguments`_
 
 When referring to arguments in keyword documentation, it is recommended to
-use `inline code style <inline styles_>`__ like :codesc:`\`\`argument\`\``.
+use `inline code style <Robot inline styles_>`__ like :codesc:`\`\`argument\`\``.
 
 Automatically listing type documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

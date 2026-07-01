@@ -477,8 +477,8 @@ use special `continuable failures`__ if stopping test execution is not desired.
 
 __ `Continue on failure`_
 
-Error messages
-~~~~~~~~~~~~~~
+Error message
+~~~~~~~~~~~~~
 
 The error message assigned to a failed test case is got directly from the
 failed keyword. Often the error message is created by the keyword itself, but

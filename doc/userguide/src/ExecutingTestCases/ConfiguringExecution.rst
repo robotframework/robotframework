@@ -36,9 +36,9 @@ Examples::
     robot x.robot y.rst    # Parse both files using an appropriate parser.
 
 __ `Supported file formats`_
-__ `reStructuredText format`_
-__ `Markdown format`_
-__ `JSON format`_
+__ `reStructuredText data format`_
+__ `Markdown data format`_
+__ `JSON data format`_
 __ `Using custom parsers`_
 
 Included and excluded files
@@ -60,9 +60,9 @@ the following rules:
 
 __ `Suite directories`_
 __ `Supported file formats`_
-__ `reStructuredText format`_
-__ `Markdown format`_
-__ `JSON format`_
+__ `reStructuredText data format`_
+__ `Markdown data format`_
+__ `JSON data format`_
 __ `Using custom parsers`_
 
 Selecting files by name or path
@@ -114,9 +114,9 @@ it is the file name, not the original pattern. In such cases you need
 to quote or escape the pattern like `'*.robot'` or `\*.robot`.
 
 __ `Included and excluded files`_
-__ `reStructuredText format`_
-__ `Markdown format`_
-__ `JSON format`_
+__ `reStructuredText data format`_
+__ `Markdown data format`_
+__ `JSON data format`_
 __ `Supported file formats`_
 
 .. note:: :option:`--parseinclude` is new in Robot Framework 6.1.
