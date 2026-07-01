@@ -166,7 +166,7 @@ class DocToHtml:
                 ],
                 extension_configs={
                     "codehilite": {"css_class": "code", "linenums": False},
-                    "toc": {"baselevel": 2, "marker": "%TOC%"},
+                    "toc": {"baselevel": 2, "toc_depth": 3, "marker": "%TOC%"},
                 },
                 output_format="html",
             )

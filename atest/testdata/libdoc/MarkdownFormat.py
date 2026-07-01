@@ -46,15 +46,25 @@ Python Markdown plugins that are separately activated. This includes [lists],
 
 ## Basics
 
-Table of contents is generated automatically based on the headers using Python
-Markdown's `toc` plugin. The plugin uses the `[TOC]` marker by default, but we
-use `%TOC%` that is used also with the Robot format.
+Table of contents is generated automatically based on the section headers using
+the `toc` plugin. The plugin uses the `[TOC]` marker by default, but we use
+`%TOC%` that is used also with the Robot format.
+
+The hash character in a code block, indented or fenced, doesn't create a header.
 
     # This is not a header!
 
 ```python
 # This is not a header either!
 ```
+
+## Included header levels
+
+Only two highest levels are included.
+
+### This is not included
+
+#### This is not included either.
 
 ## Differences to Robot format
 
@@ -65,6 +75,9 @@ Markdown, we could enhance HTML outputs so that both sections are always easily
 accessible, though. Keywords already are, so this would require only making the
 Importing section somehow directly accessible, and then we wouldn't need these
 sections in the TOC with either format.
+
+In the Robot format only the top level section headers are included, but
+with Markdown we include two highest levels.
 
 Another small difference is that with Markdown TOC works everywhere, but with
 the Robot format TOC works only in the Introduction. Enhancing the Robot format
@@ -93,7 +106,8 @@ def admonitions():
         We need to make sure to add custom styles to make them render nicely.
 
     !!! tip
-        There are four supported admonition types: note, tip, warning, and danger
+
+        There are four supported admonition types: note, tip, warning, and danger.
 
     !!! warning "Interoperability risk!"
         Admonitions are not standard Markdown. Don't use them if you want good
@@ -101,13 +115,17 @@ def admonitions():
 
     !!! danger
         Just kidding, this library is safe.
+
+    !!! unrecognized
+        Unrecognized types are treated the same as "note".
     """
 
 
 def syntax_highlighting():
     """
     The first examples use fenced code blocks provided by the `fenced_code`
-    plugin. Actual syntax highlighting is provided by `codehilite`.
+    plugin. Actual syntax highlighting is provided by the `codehilite` plugin
+    that internally uses Pygments.
 
     ```robotframework
     *** Test Cases ***
@@ -120,7 +138,7 @@ def syntax_highlighting():
         # This is comment in code, not a Markdown header!
     ~~~
 
-    Python Markdown also supports indented code blocks:
+    Indented code blocks are a standard Markdown feature:
 
         #!python
         print("Fenced blocks are more commonly used.")
@@ -154,6 +172,22 @@ def lists():
     - Second item.
         1. Nested ordered item.
         2. Another nested item.
+
+    # Multiline items
+
+    - First item is somewhat long and has multiple lines.
+    It's a bit odd that no indentation is needed.
+
+    - Second item has multiple paragraphs.
+
+        It's somewhat annoying that four space indentation is needed.
+
+    - Third item has a table!
+
+        H1 | H2 | H3 | H4
+        -- | -- | -- | --
+        a  | b  | c  | d
+        1  | 2  |    | 4
     """
 
 

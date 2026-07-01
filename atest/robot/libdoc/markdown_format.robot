@@ -142,6 +142,7 @@ Table of contents
     ...    <li><a href="#advanced-syntax">Advanced syntax</a></li>
     ...    <li><a href="#table-of-contents">Table of contents</a><ul>
     ...    <li><a href="#basics">Basics</a></li>
+    ...    <li><a href="#included-header-levels">Included header levels</a></li>
     ...    <li><a href="#differences-to-robot-format">Differences to Robot format</a></li>
     ...    </ul>
     ...    </li>
