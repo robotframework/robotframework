@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+"""Module containing Markdown related utilities."""
+
 import re
 from xml.etree import ElementTree as ET
 
@@ -32,20 +34,16 @@ except ImportError:
 __all__ = ["LinkifyExtension", "Markdown"]
 
 
-class LinkifyInlineProcessor(InlineProcessor):
-
-    def getCompiledRegExp(self):
-        return re.compile(self.pattern, re.DOTALL | re.IGNORECASE | re.VERBOSE)
-
-    def handleMatch(self, match, data):
-        url, tail = match.groups()
-        el = ET.Element("a", href=url)
-        el.text = url
-        el.tail = tail
-        return el, match.start(0), match.end(0)
-
-
 class LinkifyExtension(Extension):
+    """Python-Markdown extension for automatically linkifying URLs.
+
+    Supports only "normal" URLs like `http://example.com`, not mailto URLs like
+    `mailto:info@example.com`. If mailto URLs are needed, or if URL detection
+    does not work properly otherwise, URLs can be surrounded with angle brackets
+    like `<http://example.com>`. That is standard Markdown syntax and handled
+    natively by Python-Markdown.
+    """
+
     pattern = r"""
         (                   # URL group.
           [a-z][\w+-.]*     # Protocol. Supports also protocols like 'git+ssh'.
@@ -61,3 +59,16 @@ class LinkifyExtension(Extension):
     def extendMarkdown(self, md):
         processor = LinkifyInlineProcessor(self.pattern, md)
         md.inlinePatterns.register(processor, "linkify", 10)
+
+
+class LinkifyInlineProcessor(InlineProcessor):
+
+    def getCompiledRegExp(self):
+        return re.compile(self.pattern, re.DOTALL | re.IGNORECASE | re.VERBOSE)
+
+    def handleMatch(self, match, data):
+        url, tail = match.groups()
+        el = ET.Element("a", href=url)
+        el.text = url
+        el.tail = tail
+        return el, match.start(0), match.end(0)
