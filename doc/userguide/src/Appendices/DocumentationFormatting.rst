@@ -1,5 +1,3 @@
-.. _Documentation syntax:
-
 Documentation formatting
 ========================
 
@@ -435,14 +433,14 @@ the following extensions are enabled and provide some more functionality:
   for automatically generating table of contents.
 - `Tables <https://python-markdown.github.io/extensions/tables/>`__
   for table support.
-- A `custom plugin <https://github.com/robotframework/robotframework/blob/master/src/robot/utils/markdown.py>`__
+- A `custom extension <https://github.com/robotframework/robotframework/blob/master/src/robot/utils/markdown.py>`__
   for linkifying URLs.
 
-In this documentation we cover the most important Markdown features and note when
-syntax is not common across tools. For details about the supported syntax it is
-best to refer to the `original Markdown specification`__ that Python-Markdown
-closely follows. The specification covers also various features not mentioned
-here at all.
+This appendix covers the most important Markdown features and also explains when
+the syntax varies between implementations. For details about the supported syntax,
+it is best to refer to the `original Markdown specification`__ that Python-Markdown
+closely follows. The specification covers also various useful Markdown features
+that are not documented here.
 
 __ https://daringfireball.net/projects/markdown
 __ https://en.wikipedia.org/wiki/Markdown#Rise_and_divergence
@@ -519,9 +517,11 @@ Example:
     [robot]: http://robotframework.org
     [foundation]: http://robotframework.org/foundation "Join us!"
 
-If the reference name matches the link text, it is possible to shorten
-the syntax to just `[reference]`. Reference matching is case-insensitive
-in general and in with Robot Framework also spaces and underscores are ignored.
+If the link text matches the reference name, it is possible to omit the refence
+name like `[reference][]`. The empty reference part can also be dropped altogether
+like `[reference]`, but this syntax is not supported by all Markdown flavors.
+Reference matching is case-insensitive in general and in with Robot Framework
+also spaces and underscores are ignored.
 
 Example:
 

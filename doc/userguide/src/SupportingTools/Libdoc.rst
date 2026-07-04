@@ -416,32 +416,31 @@ __ `Newlines`_
 Documentation syntax
 --------------------
 
-Libdoc supports documentation in Robot Framework's own `documentation
-syntax`_, HTML, plain text, and reStructuredText_. The format to use can be
-specified in `library source code`__ using `ROBOT_LIBRARY_DOC_FORMAT`
-attribute or given from the command line using :option:`--docformat (-F)` option.
-In both cases the possible case-insensitive values are `ROBOT` (default),
-`HTML`, `TEXT` and `reST`.
+Libdoc supports documentation in `Robot Framework's own documentation syntax`__,
+Markdown__,  reStructuredText__, HTML__ and `plain text`__. The format to use can
+be specified in `library source code`__ using the `ROBOT_LIBRARY_DOC_FORMAT`
+attribute or the `@library` decorator, or given from the command line using
+the :option:`--docformat (-F)` option. In all cases the possible case-insensitive
+values are `ROBOT` (default), `MARKDOWN`, `reST`, `HTML` and `TEXT`.
 
-Robot Framework's own documentation format is the default and generally
-recommended format. Other formats are especially useful when using existing
-code with existing documentation in test libraries.
-
+__ `Robot Framework documentation syntax`_
+__ `reStructuredText documentation syntax`_
+__ `Markdown documentation syntax`_
+__ `HTML documentation syntax`_
+__ `Plain text documentation syntax`_
 __ `Documentation format`_
 
 Robot Framework documentation syntax
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Most important features in Robot Framework's `documentation syntax`_ are
-formatting using `*bold*` and `_italic_`, custom links and
+Robot Framework's own documentation syntax is thoroughly documented in the
+`Robot Framework format`_ appendix. Its most important features are
+formatting using `*bold*` and `_italics_`, custom links and
 automatic conversion of URLs to links, and the possibility to create tables and
-pre-formatted text blocks (useful for examples) simply with pipe character.
-If documentation gets longer, support for section titles can also be handy.
+pre-formatted text blocks (useful for examples). If documentation gets longer,
+support for section titles can be handy as well.
 
-Some of the most important formatting features are illustrated in the example
-below. Notice that since this is the default format, there is no need to use
-`ROBOT_LIBRARY_DOC_FORMAT` attribute nor give the format from the command
-line.
+Some of the most important formatting features are illustrated in this example:
 
 .. sourcecode:: python
 
@@ -455,6 +454,12 @@ line.
 
     def my_keyword():
         """Nothing more to see here."""
+
+Notice that because this is the default documentation format, there is no need
+to use the `ROBOT_LIBRARY_DOC_FORMAT` attribute nor give the format from
+the command line. It is possible that the default format is changed to Markdown
+in the future, though, so explicitly specifying the format may be a good idea
+also in this case.
 
 Creating table of contents
 ''''''''''''''''''''''''''
@@ -492,7 +497,98 @@ for keywords and importing.
     def my_keyword():
         """Nothing more to see here."""
 
+.. note:: Generating table of contents is a special feature in Libdoc.
+          It is not supported in other places where the Robot Framework
+          documentation format can be used.
+
 __ `Linking to automatic sections`_
+
+Markdown documentation syntax
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Markdown_ is a lightweight plain text markup syntax that is widely used for
+documentation, README files, and technical content across the software
+development industry. There are various slightly different Markdown flavors,
+but the basic syntax works the same way across all tools. The following
+example illustrates the most important features, and details about the
+supported syntax can be from the `Markdown format`_ appendix.
+
+.. sourcecode:: python
+
+    """Example library using Markdown format.
+
+    - Formatting with **bold** and *italics*.
+    - URLs like http://example.com are turned to links.
+    - Normal Markdown [inline](http://example.com) and [reference] links are supported.
+    - Keywords like [My Keyword] are linkable reference targets automatically.
+    - Code blocks with syntax highlighting are supported.
+
+    [reference]: http://example.com "An example"
+
+    ```robotframework
+    *** Test Cases ***
+    Example
+        My Keyword    # How cool is this!!?!!?!1!!
+    ```
+    """
+    ROBOT_LIBRARY_DOC_FORMAT = 'Markdown'
+
+    def my_keyword():
+        """Nothing more to see here."""
+
+Robot Framework uses the Python-Markdown_ module as its underling Markdown
+engine and it needs to be installed separately. If syntax highlighting is
+needed, the Pygments_ module must be installed as well.
+
+All other documentation formats supported by Libdoc support `internal linking`_
+using backticks like :codesc:`Linking to \`My Keyword\` works`. This kind
+of linking is very convenient and it works also with Markdown, but standard
+Markdown `reference links`_ like `Linking to [My Keyword] works` are used
+instead.
+
+When using Markdown, it is possible to generate table of contents using
+the same `%TOC%` marker that is supported when `creating table of contents`_
+using Robot Framework format.
+
+.. note:: Markdown support is new in Robot Framework 7.5.
+
+reStructuredText documentation syntax
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+reStructuredText_ is simple yet powerful markup syntax used widely in Python
+projects (including this User Guide) and elsewhere. The main limitation
+is that you need to have the docutils_ module installed to be able to generate
+documentation using it. Because backtick characters have special meaning in
+reStructuredText, `linking to keywords`_ requires them to be escaped like
+:codesc:`\\\`My Keyword\\\``.
+
+One of the nice features that reStructured supports is the ability to mark code
+blocks that can be syntax highlighted.
+Syntax highlight requires additional Pygments_ module and supports all the
+languages that Pygments supports.
+
+.. sourcecode:: python
+
+    """Example library using reStructuredText format.
+
+    - Formatting with **bold** and *italics*.
+    - URLs like http://example.com are turned to links.
+    - Custom links like reStructuredText__ are supported.
+    - Linking to \`My Keyword\` works but requires backticks to be escaped.
+
+    __ http://docutils.sourceforge.net
+
+    .. code:: robotframework
+
+        *** Test Cases ***
+        Example
+            My Keyword    # How cool is this!!?!!?!1!!
+    """
+    ROBOT_LIBRARY_DOC_FORMAT = 'reST'
+
+    def my_keyword():
+        """Nothing more to see here."""
+
 
 HTML documentation syntax
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -513,7 +609,7 @@ on the command line like `--docformat HTML`.
     """Example library using HTML format.
 
     <ul>
-      <li>Formatting with <b>bold</b> and <i>italic</i>.
+      <li>Formatting with <b>bold</b> and <i>italics</i>.
       <li>URLs are not turned to links automatically.
       <li>Custom links like <a href="http://www.w3.org/html">HTML</a> are supported.
       <li>Linking to `My Keyword` works.
@@ -547,66 +643,30 @@ like :codesc:`\`My Keyword\``.
     def my_keyword():
         """Nothing more to see here."""
 
-reStructuredText documentation syntax
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-reStructuredText_ is simple yet powerful markup syntax used widely in Python
-projects (including this User Guide) and elsewhere. The main limitation
-is that you need to have the docutils_ module installed to be able to generate
-documentation using it. Because backtick characters have special meaning in
-reStructuredText, `linking to keywords`_ requires them to be escaped like
-:codesc:`\\\`My Keyword\\\``.
-
-One of the nice features that reStructured supports is the ability to mark code
-blocks that can be syntax highlighted.
-Syntax highlight requires additional Pygments_ module and supports all the
-languages that Pygments supports.
-
-.. sourcecode:: python
-
-    """Example library using reStructuredText format.
-
-    - Formatting with **bold** and *italics*.
-    - URLs like http://example.com are turned to links.
-    - Custom links like reStructuredText__ are supported.
-    - Linking to \`My Keyword\` works but requires backticks to be escaped.
-
-    __ http://docutils.sourceforge.net
-
-    .. code:: robotframework
-
-        *** Test Cases ***
-        Example
-            My keyword    # How cool is this!!?!!?!1!!
-    """
-    ROBOT_LIBRARY_DOC_FORMAT = 'reST'
-
-    def my_keyword():
-        """Nothing more to see here."""
-
 .. _internal linking:
 
 Internal linking
 ----------------
 
-Libdoc supports internal linking to keywords and different
-sections in the documentation. Linking is done by surrounding the
-target name with backtick characters like :codesc:`\`target\``. Target
-names are case-insensitive and possible targets are explained in the
-subsequent sections.
+Libdoc supports internal linking to keywords, to used types and to different
+sections in the documentation.
 
-There is no error or warning if a link target is not found, but instead Libdoc
-just formats the text in italics. Earlier this formatting was recommended to
-be used when referring to keyword arguments, but that was problematic because
-it could accidentally create internal links. Nowadays it is recommended to
-use `inline code style <Robot inline styles_>`__ with double backticks like
-:codesc:`\`\`argument\`\`` instead. The old formatting of single backticks
-may even be removed in the future in favor of giving an error when a link
-target is not found.
+The link syntax varies depending on the documentation format that is used.
+With Markdown linking is done using normal Markdown `reference links`_ like
+`Linking to [target]` and with all others the target needs to be surrounded
+with backtick characters like :codesc:`Linking to \`target\``. The actual
+targets are the same regardless the documentation format, though.
+Target matching is also always case, space and underscore insensitive.
 
 In addition to the examples in the following sections, internal linking
 and argument formatting is shown also in the `longer example`__ at the
 end of this chapter.
+
+.. note:: Most of the examples in this section use the backtick linking style
+          like :codesc:`\`target\``. Examples can be converted to Markdown
+          simply by changing links to `[target]`.
+
+.. note:: There is no error or warning if a link target is not found.
 
 __ `Libdoc example`_
 
@@ -644,8 +704,7 @@ Linking to automatic sections
 The documentation generated by Libdoc always contains sections
 for overall library introduction and for
 keywords.  If a library itself takes arguments, there is also
-separate `importing section`_. If any of the keywords has tags__,
-a separate selector for them is also shown in the overview.
+separate `importing section`_.
 
 All the sections act as targets that can be linked, and the possible
 target names are listed in the table below. Using these targets is
@@ -654,27 +713,21 @@ shown in the example of the next section.
 .. table:: Automatic section link targets
    :class: tabular
 
-   ================  ===========================================================
-        Section                               Target
-   ================  ===========================================================
-   Introduction      :codesc:`\`introduction\`` and :codesc:`\`library introduction\``
-   Importing         :codesc:`\`importing\`` and :codesc:`\`library importing\``
-   Keywords          :codesc:`\`keywords\``
-   ================  ===========================================================
-
-.. note:: Before Robot Framework 4.0 there were also sections for tags and shortcuts.
-          In Robot Framework 4.0 these have been removed in favor of the overview menu. This means
-          that prior linking to shortcuts or tags sections does not work.
-
-__ `Keyword tags`_
+   ================  =========================================
+        Section                    Target Name
+   ================  =========================================
+   Introduction      `introduction` and `library introduction`
+   Importing         `importing` and `library importing`
+   Keywords          `keywords`
+   ================  =========================================
 
 Linking to custom sections
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Robot Framework's `documentation syntax`_ supports custom `section headers`_,
-and the headers used in the library or resource file introduction automatically
-create link targets. The example below illustrates linking both to automatic
-and custom sections:
+Robot Framework's `own documentation format`__ and `Markdown format`_ both support
+section headers, and headers used in the library or resource file introduction
+automatically create link targets. The example below illustrates linking both to
+automatic and custom sections:
 
 .. sourcecode:: python
 
@@ -682,7 +735,7 @@ and custom sections:
 
    This library does not do anything useful.
 
-   = My section  =
+   = My section =
 
    We do have a custom section in the documentation, though.
    """
@@ -695,8 +748,48 @@ and custom sections:
        """
        pass
 
-.. note:: Linking to custom sections works only when using `Robot Framework
-          documentation syntax`_.
+__ `Robot Framework format`_
+
+Linking to types
+~~~~~~~~~~~~~~~~
+
+Types that have been used with arguments or return values can be linked as well.
+This works with all types, but with custom types it is especially convenient
+to link to the types that may have useful documentation themselves.
+
+.. sourcecode:: python
+
+    def keyword(a: int, b: float):
+        """This keyword gets `int` and `float` as arguments."""
+        return a + b
+
+.. note:: Prior to Robot Framework 7.5, the target name to use with some of
+          the standard types was a generic name like `integer` and not
+          the actually used type name.
+
+Linking to custom references
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+With Markdown it is possible to create custom reference targets in library or
+resource file introduction and link to them in keywords.
+
+.. sourcecode:: python
+
+   """Library for Libdoc demonstration purposes.
+
+   This is an [example] link to a custom reference target.
+
+   [example]: http://example.com
+   """
+   ROBOT_LIBRARY_DOC_FORMAT = "Markdown"
+
+   def keyword():
+       """Does nothing.
+
+       As this [example] demonstrates, linking to custom targets defined in
+       the introduction works also in keyword documentation.
+       """
+       pass
 
 Representing arguments
 ----------------------
