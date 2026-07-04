@@ -255,9 +255,15 @@ class TestJson(unittest.TestCase):
         data = json.loads(lib.to_json())
         with open(json_path, encoding="locale" if PY_VERSION >= (3, 10) else None) as f:
             orig_data = json.load(f)
-        data["generated"] = orig_data["generated"] = None
         self.maxDiff = None
-        self.assertDictEqual(data, orig_data)
+        self.assertDictEqual(self._sanitize(data), self._sanitize(orig_data))
+
+    def _sanitize(self, data):
+        data["generated"] = None
+        data["source"] = str(Path(data["source"]).name)
+        for kw in data["keywords"] + data["inits"]:
+            kw["source"] = str(Path(data["source"]).name)
+        return data
 
 
 class TestXmlSpec(unittest.TestCase):
