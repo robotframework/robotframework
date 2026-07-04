@@ -237,14 +237,23 @@ class TestJson(unittest.TestCase):
     def test_roundtrip(self):
         self._test("DynamicLibrary.json")
 
+    def test_roundtrip_from_python(self):
+        # If this fails, DynamicLibrary.json typically needs to be regenerated.
+        self._test("DynamicLibrary.py::required")
+
     def test_roundtrip_with_datatypes(self):
         self._test("DataTypesLibrary.json")
 
-    def _test(self, lib):
-        path = DATADIR / lib
-        spec = LibraryDocumentation(path).to_json()
-        data = json.loads(spec)
-        with open(path, encoding="locale" if PY_VERSION >= (3, 10) else None) as f:
+    def _test(self, lib_path):
+        lib_path = DATADIR / lib_path
+        lib = LibraryDocumentation(lib_path)
+        if lib_path.suffix != ".json":
+            lib.convert_docs_to_html()
+            json_path = lib_path.with_suffix(".json")
+        else:
+            json_path = lib_path
+        data = json.loads(lib.to_json())
+        with open(json_path, encoding="locale" if PY_VERSION >= (3, 10) else None) as f:
             orig_data = json.load(f)
         data["generated"] = orig_data["generated"] = None
         self.maxDiff = None

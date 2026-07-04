@@ -15,7 +15,9 @@
 
 import json
 import re
+from collections.abc import Sequence
 from itertools import chain
+from pathlib import Path
 
 from robot.api.deco import DocFormat
 from robot.model import Tags
@@ -32,14 +34,14 @@ class LibraryDoc:
 
     def __init__(
         self,
-        name="",
-        doc="",
-        version="",
-        type="LIBRARY",
-        scope="TEST",
+        name: str = "",
+        doc: str = "",
+        version: str = "",
+        type: str = "LIBRARY",
+        scope: str = "TEST",
         doc_format: DocFormat = "ROBOT",
-        source=None,
-        lineno=-1,
+        source: "str | Path | None" = None,
+        lineno: "int | None" = None,
     ):
         self.name = name
         self._doc = doc
@@ -47,7 +49,7 @@ class LibraryDoc:
         self.type = type
         self.scope = scope
         self.doc_format = doc_format
-        self.source = source
+        self.source = str(source) if isinstance(source, Path) else source
         self.lineno = lineno
         self.inits = ()
         self.keywords = ()
@@ -170,16 +172,16 @@ class KeywordDoc(Sortable):
 
     def __init__(
         self,
-        name="",
-        args=None,
-        doc="",
-        short_doc="",
-        tags=(),
-        private=False,
-        deprecated=False,
-        source=None,
-        lineno=-1,
-        parent=None,
+        name: str = "",
+        args: "ArgumentSpec | None" = None,
+        doc: str = "",
+        short_doc: str = "",
+        tags: "Sequence[str]" = (),
+        private: bool = False,
+        deprecated: bool = False,
+        source: "str | None" = None,
+        lineno: "int | None" = None,
+        parent: "LibraryDoc | None" = None,
     ):
         self.name = name
         self.args = args if args is not None else ArgumentSpec()

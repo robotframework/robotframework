@@ -38,7 +38,7 @@ class JsonDocBuilder:
             scope=spec["scope"],
             doc_format=spec["docFormat"],
             source=spec["source"],
-            lineno=int(spec.get("lineno", -1)),
+            lineno=self._get_lineno(spec),
         )
         libdoc.inits = [self._create_keyword(kw) for kw in spec["inits"]]
         libdoc.keywords = [self._create_keyword(kw) for kw in spec["keywords"]]
@@ -48,6 +48,10 @@ class JsonDocBuilder:
         elif "dataTypes" in spec:
             libdoc.type_docs = self._parse_data_types(spec["dataTypes"])
         return libdoc
+
+    def _get_lineno(self, data):
+        lineno = data.get("lineno")  # can null or omitted altogether
+        return int(lineno) if lineno else None
 
     def _parse_spec_json(self, path):
         if not os.path.isfile(path):
@@ -64,7 +68,7 @@ class JsonDocBuilder:
             private=data.get("private", False),
             deprecated=data.get("deprecated", False),
             source=data["source"],
-            lineno=int(data.get("lineno", -1)),
+            lineno=self._get_lineno(data),
         )
         self._create_arguments(data["args"], kw)
         self._add_return_type(data.get("returnType"), kw)

@@ -29,14 +29,14 @@ class XmlDocBuilder:
     def build(self, path):
         spec = self._parse_spec(path)
         libdoc = LibraryDoc(
-            name=spec.get("name"),
+            name=spec.get("name", ""),
             type=spec.get("type").upper(),
             version=spec.find("version").text or "",
             doc=spec.find("doc").text or "",
-            scope=spec.get("scope"),
+            scope=spec.get("scope", "TEST"),
             doc_format=spec.get("format") or "ROBOT",
             source=spec.get("source"),
-            lineno=int(spec.get("lineno")) or -1,
+            lineno=self._get_lineno(spec),
         )
         libdoc.inits = self._create_keywords(spec, "inits/init", libdoc.source)
         libdoc.keywords = self._create_keywords(spec, "keywords/kw", libdoc.source)
@@ -46,6 +46,10 @@ class XmlDocBuilder:
         else:
             libdoc.type_docs = self._parse_data_types(spec)
         return libdoc
+
+    def _get_lineno(self, elem):
+        lineno = elem.get("lineno")
+        return int(lineno) if lineno else None
 
     def _parse_spec(self, path):
         if not os.path.isfile(path):
@@ -74,7 +78,7 @@ class XmlDocBuilder:
             private=elem.get("private", "false") == "true",
             deprecated=elem.get("deprecated", "false") == "true",
             source=elem.get("source") or lib_source,
-            lineno=int(elem.get("lineno", -1)),
+            lineno=self._get_lineno(elem),
         )
         self._create_arguments(elem, kw)
         self._add_return_type(elem.find("returntype"), kw)
