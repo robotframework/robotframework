@@ -210,9 +210,6 @@ class TestLibdocJsonWriter(unittest.TestCase):
     def test_toc(self):
         run_libdoc_and_validate_json("toc.py")
 
-    def test_TOCWithInitsAndKeywords(self):
-        run_libdoc_and_validate_json("TOCWithInitsAndKeywords.py")
-
     def test_TypesViaKeywordDeco(self):
         run_libdoc_and_validate_json("TypesViaKeywordDeco.py")
 

@@ -44,7 +44,7 @@ class LibraryDoc:
         lineno: "int | None" = None,
     ):
         self.name = name
-        self._doc = doc
+        self.doc = doc
         self.version = version
         self.type = type
         self.scope = scope
@@ -54,26 +54,6 @@ class LibraryDoc:
         self.inits = ()
         self.keywords = ()
         self.type_docs = ()
-
-    @property
-    def doc(self):
-        if self.doc_format == "ROBOT" and "%TOC%" in self._doc:
-            return self._add_toc(self._doc)
-        return self._doc
-
-    def _add_toc(self, doc):
-        toc = self._create_toc(doc)
-        return "\n".join(
-            line if line.strip() != "%TOC%" else toc for line in doc.splitlines()
-        )
-
-    def _create_toc(self, doc):
-        entries = re.findall(r"^\s*=\s+(.+?)\s+=\s*$", doc, flags=re.MULTILINE)
-        if self.inits:
-            entries.append("Importing")
-        if self.keywords:
-            entries.append("Keywords")
-        return "\n".join(f"- `{entry}`" for entry in entries)
 
     @setter
     def doc_format(self, format):
@@ -119,7 +99,7 @@ class LibraryDoc:
             self.doc,
             self.doc_format,
         )
-        self._doc = formatter.html(self.doc)
+        self.doc = formatter.html(self.doc)
         for item in self.inits + self.keywords:
             # If 'short_doc' is not set, it is generated automatically based on 'doc'
             # when accessed. Generate and set it to avoid HTML format affecting it.

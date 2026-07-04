@@ -466,18 +466,17 @@ Creating table of contents
 
 With bigger libraries it is often useful to add a table of contents to
 the library introduction. When using the Robot Framework documentation format,
-this can be done automatically by adding a special `%TOC%` marker into a line
-on its own. The table of contents is created based on the top-level
-`section headers`_ (e.g. `= Section =`) used in the introduction. In addition
-to them, the TOC also gets links to the `automatically created sections`__
-for keywords and importing.
+this can be done automatically by adding a special `%TOC%` marker into its own
+line so that it forms its own paragraph. The table of contents is created based
+on the first and second level `section headers`_ (e.g. `= Section =`,
+`== Level 2 ==`) used in the introduction.
 
 .. sourcecode:: python
 
     """Example library demonstrating TOC generation.
 
-    The %TOC% marker only creates the actual table of contents and possible
-    header or other explanation needs to be added separately like done below.
+    The %TOC% marker only creates the actual table of contents. If it needs
+    its own header or other explanation, that needs to be added separately.
 
     == Table of contents ==
 
@@ -485,13 +484,19 @@ for keywords and importing.
 
     = Section header =
 
-    The top-level section headers are automatically added to the TOC.
+    This header is included in TOC:
 
     = Second section =
 
-    == Sub section ==
+    Also this header is included.
 
-    Sub section headers are not added to the TOC.
+    == Second level ==
+
+    Second level headers are included as well
+
+    === Third level ===
+
+    Third level headers are not included.
     """
 
     def my_keyword():
@@ -501,7 +506,12 @@ for keywords and importing.
           It is not supported in other places where the Robot Framework
           documentation format can be used.
 
-__ `Linking to automatic sections`_
+.. note:: Including first and second level headers in the table of contents
+          is new in Robot Framework 7.5. With earlier versions only the top
+          level headers were included.
+
+.. note:: Prior to Robot Framework 7.5, the table of contents included links
+          to the Keywords and Importing sections automatically.
 
 Markdown documentation syntax
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

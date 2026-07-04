@@ -133,9 +133,34 @@ class DocToHtml:
         return self.formatter(doc)
 
     def _format_robot(self, doc: str) -> str:
+        toc = self._get_toc(doc) if "%TOC%" in doc else None
         doc = html_format(doc)
+        if toc:
+            doc = doc.replace("<p>%TOC%</p>", toc)
         doc = re.sub(r"<h([234])>(.+?)</h\1>", r'<h\1 id="\2">\2</h\1>', doc)
         return self._handle_backtick_links(doc)
+
+    def _get_toc(self, doc):
+        tokens = []
+        nested = []
+        entries = re.findall(r"^\s*(={1,2})\s+(.+?)\s+\1\s*$", doc, flags=re.MULTILINE)
+        for level, header in entries:
+            if level == "=":
+                if nested:
+                    tokens.extend(self._toc_block(nested))
+                    nested = []
+                tokens.append(self._toc_item(header))
+            elif tokens:
+                nested.append(self._toc_item(header))
+        if nested:
+            tokens.extend(self._toc_block(nested))
+        return "\n".join(self._toc_block(tokens))
+
+    def _toc_item(self, header):
+        return f'<li><a href="{fragment(header)}">{header}</a></li>'
+
+    def _toc_block(self, items):
+        return ["<ul>", *items, "</ul>"]
 
     def _format_text(self, doc: str) -> str:
         doc = self._handle_backtick_links(html_escape(doc))
