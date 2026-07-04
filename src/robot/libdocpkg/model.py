@@ -145,7 +145,7 @@ class LibraryDoc:
             "type": self.type,
             "scope": self.scope,
             "docFormat": self.doc_format,
-            "source": str(self.source) if self.source else None,
+            "source": self.source,
             "lineno": self.lineno,
             "tags": list(self._get_tags(include_private)),
             "inits": [init.to_dictionary() for init in self.inits],
@@ -179,7 +179,7 @@ class KeywordDoc(Sortable):
         tags: "Sequence[str]" = (),
         private: bool = False,
         deprecated: bool = False,
-        source: "str | None" = None,
+        source: "str | Path | None" = None,
         lineno: "int | None" = None,
         parent: "LibraryDoc | None" = None,
     ):
@@ -190,7 +190,7 @@ class KeywordDoc(Sortable):
         self.tags = Tags(tags)
         self.private = private
         self.deprecated = deprecated
-        self.source = source
+        self.source = str(source) if isinstance(source, Path) else source
         self.lineno = lineno
         self.parent = parent
         # Map argument types to type documentations.
@@ -223,7 +223,7 @@ class KeywordDoc(Sortable):
             "doc": self.doc,
             "shortdoc": self.short_doc,
             "tags": list(self.tags),
-            "source": str(self.source) if self.source else None,
+            "source": self.source,
             "lineno": self.lineno,
         }
         if self.private:
