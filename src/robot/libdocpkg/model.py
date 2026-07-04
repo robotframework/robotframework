@@ -105,6 +105,9 @@ class LibraryDoc:
             # when accessed. Generate and set it to avoid HTML format affecting it.
             item.short_doc = item.short_doc
             item.doc = formatter.html(item.doc)
+            for arg in item.args:
+                item.args.docs[arg.name] = formatter.html(arg.doc)
+            item.args.return_doc = formatter.html(item.args.return_doc)
         for type_doc in self.type_docs:
             # Standard docs are always in ROBOT format ...
             if type_doc.type == type_doc.STANDARD:
@@ -198,10 +201,14 @@ class KeywordDoc(Sortable):
     def to_dictionary(self):
         data = {
             "name": self.name,
-            "args": [self._arg_to_dict(arg) for arg in self.args],
-            "returnType": self._return_to_dict(self.args.return_type),
             "doc": self.doc,
             "shortdoc": self.short_doc,
+            "args": [self._arg_to_dict(arg) for arg in self.args],
+            "returnType": self._type_to_dict(
+                self.args.return_type,
+                self.type_docs.get("return", {}),
+            ),
+            "returnDoc": self.args.return_doc,
             "tags": list(self.tags),
             "source": self.source,
             "lineno": self.lineno,
@@ -216,16 +223,13 @@ class KeywordDoc(Sortable):
         type_docs = self.type_docs.get(arg.name, {})
         return {
             "name": arg.name,
+            "doc": arg.doc,
             "type": self._type_to_dict(arg.type, type_docs),
             "defaultValue": arg.default_repr,
             "kind": arg.kind,
             "required": arg.required,
             "repr": str(arg),
         }
-
-    def _return_to_dict(self, return_type):
-        type_docs = self.type_docs.get("return", {})
-        return self._type_to_dict(return_type, type_docs)
 
     def _type_to_dict(self, type: "TypeInfo | None", type_docs: dict):
         if not type:

@@ -16,7 +16,9 @@
 from pathlib import Path
 from typing import Any, Final, Literal, Mapping, Sequence, TYPE_CHECKING
 
+from robot.errors import DataError
 from robot.model import ModelObject, Tags
+from robot.running.docstringparser import parse_docstring
 from robot.utils import eq, getshortdoc, setter
 
 from .arguments import ArgInfo, ArgumentSpec, EmbeddedArguments
@@ -135,6 +137,15 @@ class KeywordImplementation(ModelObject):
     @property
     def source(self) -> "Path | None":
         return self.owner.source if self.owner is not None else None
+
+    def update_docs(self):
+        result = parse_docstring(self.doc)
+        self.doc = result.doc
+        self.args.return_doc = result.returns
+        try:
+            self.args.docs = result.args
+        except DataError as err:
+            self.error = str(err)
 
     def matches(self, name: str) -> bool:
         """Returns true if ``name`` matches the keyword name.

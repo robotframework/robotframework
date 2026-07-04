@@ -81,11 +81,10 @@ class XmlDocBuilder:
             lineno=self._get_lineno(elem),
         )
         self._create_arguments(elem, kw)
-        self._add_return_type(elem.find("returntype"), kw)
+        self._add_return_info(elem, kw)
         return kw
 
     def _create_arguments(self, elem, kw: KeywordDoc):
-        spec = kw.args
         spec = kw.args
         positional_only = []
         positional_or_named = []
@@ -106,6 +105,9 @@ class XmlDocBuilder:
                 named_only.append(name)
             elif kind == ArgInfo.VAR_NAMED:
                 spec.var_named = name
+            doc_elem = arg.find("doc")
+            if doc_elem is not None:
+                spec.docs[name] = doc_elem.text or ""
             default_elem = arg.find("default")
             if default_elem is not None:
                 spec.defaults[name] = default_elem.text or ""
@@ -143,11 +145,15 @@ class XmlDocBuilder:
                 type_docs[name] = elem.get("typedoc")
         return TypeInfo.from_sequence(types) if types else None
 
-    def _add_return_type(self, elem, kw):
-        if elem is not None:
+    def _add_return_info(self, elem, kw):
+        type_elem = elem.find("returntype")
+        if type_elem is not None:
             type_docs = {}
-            kw.args.return_type = self._parse_type_info(elem, type_docs)
+            kw.args.return_type = self._parse_type_info(type_elem, type_docs)
             kw.type_docs["return"] = type_docs
+        doc_elem = elem.find("returndoc")
+        if doc_elem is not None:
+            kw.args.return_doc = doc_elem.text or ""
 
     def _parse_type_docs(self, spec):
         for elem in spec.findall("typedocs/type"):

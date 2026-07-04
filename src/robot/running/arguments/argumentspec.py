@@ -23,7 +23,7 @@ from .argumentconverter import ArgumentConverter
 from .argumentmapper import ArgumentMapper
 from .argumentresolver import ArgumentResolver
 from .typeinfo import TypeInfo
-from .typevalidator import TypeValidator
+from .validators import DocValidator, TypeValidator
 
 
 class ArgumentSpec(metaclass=SetterAwareType):
@@ -37,6 +37,7 @@ class ArgumentSpec(metaclass=SetterAwareType):
         "var_named",
         "embedded",
         "defaults",
+        "return_doc",
     )
 
     def __init__(
@@ -52,6 +53,8 @@ class ArgumentSpec(metaclass=SetterAwareType):
         embedded: Sequence[str] = (),
         types: "Mapping | Sequence | None" = None,
         return_type: "TypeInfo | None" = None,
+        docs: "Mapping[str, str] | None" = None,
+        return_doc: str = "",
     ):
         self.name = name
         self.type = type
@@ -64,6 +67,8 @@ class ArgumentSpec(metaclass=SetterAwareType):
         self.defaults = defaults or {}
         self.types = types
         self.return_type = return_type
+        self.docs = docs or {}
+        self.return_doc = return_doc
 
     @property
     def name(self) -> "str | None":
@@ -84,6 +89,10 @@ class ArgumentSpec(metaclass=SetterAwareType):
         if isinstance(hint, TypeInfo):
             return hint
         return TypeInfo.from_type_hint(hint, sequence_is_union=True)
+
+    @setter
+    def docs(self, docs: "Mapping[str, str] | None") -> "dict[str, str]":
+        return DocValidator(self).validate(docs)
 
     @property
     def positional(self) -> "tuple[str, ...]":
@@ -175,10 +184,13 @@ class ArgumentSpec(metaclass=SetterAwareType):
             self.embedded,
             types,
             self.return_type,
+            self.docs,
+            self.return_doc,
         )
 
     def __iter__(self) -> Iterator["ArgInfo"]:
         get_type = (self.types or {}).get
+        get_doc = (self.docs or {}).get
         get_default = self.defaults.get
         for arg in self.positional_only:
             yield ArgInfo(
@@ -186,6 +198,7 @@ class ArgumentSpec(metaclass=SetterAwareType):
                 arg,
                 get_type(arg),
                 get_default(arg, NOT_SET),
+                get_doc(arg, ""),
             )
         if self.positional_only:
             yield ArgInfo(ArgInfo.POSITIONAL_ONLY_MARKER)
@@ -195,12 +208,14 @@ class ArgumentSpec(metaclass=SetterAwareType):
                 arg,
                 get_type(arg),
                 get_default(arg, NOT_SET),
+                get_doc(arg, ""),
             )
         if self.var_positional:
             yield ArgInfo(
                 ArgInfo.VAR_POSITIONAL,
                 self.var_positional,
                 get_type(self.var_positional),
+                doc=get_doc(self.var_positional, ""),
             )
         elif self.named_only:
             yield ArgInfo(ArgInfo.NAMED_ONLY_MARKER)
@@ -210,12 +225,14 @@ class ArgumentSpec(metaclass=SetterAwareType):
                 arg,
                 get_type(arg),
                 get_default(arg, NOT_SET),
+                get_doc(arg, ""),
             )
         if self.var_named:
             yield ArgInfo(
                 ArgInfo.VAR_NAMED,
                 self.var_named,
                 get_type(self.var_named),
+                doc=get_doc(self.var_named, ""),
             )
 
     def __bool__(self):
@@ -242,11 +259,13 @@ class ArgInfo:
         name: str = "",
         type: "TypeInfo | None" = None,
         default: Any = NOT_SET,
+        doc: str = "",
     ):
         self.kind = kind
         self.name = name
         self.type = type or TypeInfo()
         self.default = default
+        self.doc = doc
 
     @property
     def required(self) -> bool:

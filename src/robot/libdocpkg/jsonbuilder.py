@@ -71,7 +71,7 @@ class JsonDocBuilder:
             lineno=self._get_lineno(data),
         )
         self._create_arguments(data["args"], kw)
-        self._add_return_type(data.get("returnType"), kw)
+        self._add_return_info(data, kw)
         return kw
 
     def _create_arguments(self, arguments, kw: KeywordDoc):
@@ -92,6 +92,7 @@ class JsonDocBuilder:
                 named_only.append(name)
             elif kind == ArgInfo.VAR_NAMED:
                 spec.var_named = name
+            spec.docs[name] = arg.get("doc", "")
             default = arg.get("defaultValue")
             if default is not None:
                 spec.defaults[name] = default
@@ -121,11 +122,13 @@ class JsonDocBuilder:
     def _parse_legacy_type_info(self, types):
         return TypeInfo.from_sequence(types) if types else None
 
-    def _add_return_type(self, data, kw: KeywordDoc):
-        if data:
+    def _add_return_info(self, data, kw: KeywordDoc):
+        type_data = data.get("returnType")
+        if type_data:
             type_docs = {}
-            kw.args.return_type = self._parse_type_info(data, type_docs)
+            kw.args.return_type = self._parse_type_info(type_data, type_docs)
             kw.type_docs["return"] = type_docs
+        kw.args.return_doc = data.get("returnDoc", "")
 
     def _parse_type_docs(self, type_docs):
         for data in type_docs:

@@ -165,7 +165,8 @@ class KeywordDocBuilder:
         return [self.build_keyword(kw) for kw in owner.keywords]
 
     def build_keyword(self, kw):
-        doc, tags = self._get_doc_and_tags(kw)
+        kw.update_docs()
+        doc, tags = self._get_doc_and_tags(kw)  # TODO: Move this update_docs().
         if kw.error:
             doc = f"*Creating keyword failed:* {kw.error}"
         if not self._resource:

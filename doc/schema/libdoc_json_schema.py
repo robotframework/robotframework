@@ -90,6 +90,7 @@ class TypeInfo(BaseModel):
 class Argument(BaseModel):
     """Keyword argument."""
     name: str
+    doc: str
     type: Union[TypeInfo, None]
     defaultValue: Union[str, None] = Field(description="Possible default value or 'null'.")
     kind: ArgumentKind
@@ -99,10 +100,11 @@ class Argument(BaseModel):
 
 class Keyword(BaseModel):
     name: str
-    args: List[Argument]
-    returnType: Optional[TypeInfo]
     doc: str
     shortdoc: str
+    args: List[Argument]
+    returnType: Optional[TypeInfo]
+    returnDoc: Optional[str]
     tags: List[str]
     private: Optional[bool]
     deprecated: Optional[bool]

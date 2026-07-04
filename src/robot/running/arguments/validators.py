@@ -69,3 +69,21 @@ class TypeValidator:
                 f"but keyword has only {len(names)} argument{s(names)}."
             )
         return {name: value for name, value in zip(names, types) if value}
+
+
+class DocValidator:
+
+    def __init__(self, spec: "ArgumentSpec"):
+        self.spec = spec
+
+    def validate(self, docs: "Mapping[str, str] | None") -> "dict[str, str]":
+        if not docs:
+            return {}
+        names = set(self.spec.argument_names)
+        extra = [d for d in docs if d not in names]
+        if extra:
+            raise DataError(
+                f"Documentation given to non-existing "
+                f"argument{s(extra)} {seq2str(sorted(extra))}."
+            )
+        return dict(docs)

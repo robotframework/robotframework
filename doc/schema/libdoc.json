@@ -192,6 +192,10 @@
           "title": "Name",
           "type": "string"
         },
+        "doc": {
+          "title": "Doc",
+          "type": "string"
+        },
         "type": {
           "title": "TypeInfo",
           "anyOf": [
@@ -229,6 +233,7 @@
       },
       "required": [
         "name",
+        "doc",
         "kind",
         "required",
         "repr"
@@ -241,6 +246,14 @@
       "properties": {
         "name": {
           "title": "Name",
+          "type": "string"
+        },
+        "doc": {
+          "title": "Doc",
+          "type": "string"
+        },
+        "shortdoc": {
+          "title": "Shortdoc",
           "type": "string"
         },
         "args": {
@@ -261,13 +274,16 @@
             }
           ]
         },
-        "doc": {
-          "title": "Doc",
-          "type": "string"
-        },
-        "shortdoc": {
-          "title": "Shortdoc",
-          "type": "string"
+        "returnDoc": {
+          "title": "Returndoc",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "tags": {
           "title": "Tags",
@@ -317,9 +333,9 @@
       },
       "required": [
         "name",
-        "args",
         "doc",
         "shortdoc",
+        "args",
         "tags",
         "source"
       ],
