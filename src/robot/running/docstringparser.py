@@ -15,9 +15,8 @@
 
 import re
 import textwrap
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field
-from enum import auto, Enum
 
 __all__ = ["parse_docstring", "DocInfo"]
 
@@ -56,101 +55,106 @@ def parse_docstring(doc: str) -> DocInfo:
     return DocStringParser().parse(doc)
 
 
-class SectionKind(Enum):
-    ARGS = auto()
-    RETURNS = auto()
-    NONE = auto()
+class Block:
+    """Represents a block of text with an optional name.
 
+    Used for representing documentation sections and arguments.
+    """
 
-class Section:
-    args = ("args", "arguments", "parameters")
-    returns = ("returns", "return", "yields")
+    def __init__(self, name: "str | None" = None, body: "Sequence[str]" = ()):
+        """
+        :param name: Name of the block.
+        :param body: Block body.
 
-    def __init__(self, header: "str | None", body: "list[str]"):
-        self.header = header
-        self.body = body
+        If block has a name, body *must* contain the text on the same line as
+        the name. It can be an empty string.
+        """
+        assert body or not name
+        self.name = name
+        self._body = list(body)
 
     @property
-    def kind(self) -> SectionKind:
-        if self.header is None:
-            return SectionKind.NONE
-        header = self.header.lower()
-        if header in self.args:
-            return SectionKind.ARGS
-        if header in self.returns:
-            return SectionKind.RETURNS
-        return SectionKind.NONE
+    def content(self) -> str:
+        """Return block content. With named block content is dedent."""
+        if self.name:
+            content = self._dedent(self._body)
+        else:
+            content = "\n".join(self._body)
+        return content.rstrip()
 
-    def dedent(self):
-        self.body = textwrap.dedent("\n".join(self.body)).splitlines()
+    def _dedent(self, body) -> str:
+        # In ths case the block has a name and the first line of the body is
+        # the text on the same line as the name. This line does not affect
+        # indentation and must be ignored if it is empty.
+        inline, *body = body
+        body = textwrap.dedent("\n".join(body))
+        return f"{inline}\n{body}" if inline else body
 
     def accepts(self, line: str) -> bool:
-        if not self.header:
+        if not self.name:
             return True
-        if not line or line[:2].isspace():
-            return True
-        return False
+        return not line or line[:2].isspace()
+
+    def add(self, line: str):
+        self._body.append(line)
 
 
 class DocStringParser:
+    args_headers = ("args", "arguments", "parameters")
+    returns_headers = ("returns", "return", "yields")
     header_re = re.compile(
-        rf"({'|'.join(Section.args + Section.returns)}):(.*)?",
+        rf"({'|'.join(args_headers + returns_headers)}):(\s+(.*))?",
         re.IGNORECASE,
     )
-    arg_re = re.compile(r"\s?(\S.*?):(\s.*)?")
+    arg_re = re.compile(r"\s?(\S.*?):(\s+(.*))?")
 
     def parse(self, doc: str) -> DocInfo:
         info = DocInfo()
         for section in self._parse_sections(doc):
-            if section.header:
-                section.dedent()
-            if section.kind is SectionKind.ARGS:
-                info.args.update(self._parse_args(section.body))
-            elif section.kind is SectionKind.RETURNS:
-                info.returns = self._parse_returns(section.body)
+            name = section.name.lower() if section.name else section.name
+            if name in self.args_headers:
+                info.args.update(self._parse_args(section.content))
+            elif name in self.returns_headers:
+                info.returns = section.content
             else:
-                info.doc += "\n".join(section.body) + "\n"
+                info.doc += section.content + "\n\n"
         info.doc = info.doc.strip()
         return info
 
-    def _parse_sections(self, doc: str) -> "Iterable[Section]":
-        section = None
+    def _parse_sections(self, doc: str) -> "Iterable[Block]":
+        section = Block()
         can_start = True
         for line in doc.splitlines():
             match = self.header_re.fullmatch(line) if can_start else None
             if match:
-                if section:
-                    yield section
-                header, inline_text = match.groups()
-                body = [inline_text.strip() if inline_text else ""]
-                section = Section(header, body)
-            elif section:
-                if section.accepts(line):
-                    section.body.append(line)
-                else:
-                    yield section
-                    section = Section(None, [line])
+                yield section
+                header, _, inline_text = match.groups()
+                section = Block(header, [inline_text or ""])
+            elif section.accepts(line):
+                section.add(line)
             else:
-                section = Section(None, [line])
+                yield section
+                section = Block(body=[line])
             can_start = not line.strip()
-        if section:
-            yield section
+        yield section
 
-    def _parse_args(self, lines: "list[str]") -> "Iterable[tuple[str, str]]":
-        name, desc = "", []
-        for line in lines:
+    def _parse_args(self, data: str) -> "Iterable[tuple[str, str]]":
+        arg = Block()
+        for line in data.splitlines():
             match = self.arg_re.fullmatch(line)
             if match:
-                yield from self._yield_arg(name, desc)
-                name, inline_text = match.groups()
-                desc = [inline_text.strip() if inline_text else ""]
+                yield from self._yield_arg(arg)
+                name, _, inline_text = match.groups()
+                arg = Block(name, [inline_text or ""])
             else:
-                desc.append(line)
-        yield from self._yield_arg(name, desc)
+                arg.add(line)
+        yield from self._yield_arg(arg)
 
-    def _yield_arg(self, name: str, desc: "list[str]") -> "Iterable[tuple[str, str]]":
-        if (name or any(line.strip() for line in desc)) and name != "*":
-            yield self._normalize_name(name), self._format(desc)
+    def _yield_arg(self, arg: Block) -> "Iterable[tuple[str, str]]":
+        name = arg.name or ""
+        description = arg.content
+        if (name or description) and name != "*":
+            yield self._normalize_name(name), description
 
     def _normalize_name(self, name: str) -> str:
         name = name.split("(")[0].strip()
@@ -159,19 +163,3 @@ class DocStringParser:
         elif name.startswith(("${", "@{", "&{")) and name.endswith("}"):
             name = name[2:-1].strip()
         return name or "<no-name>"
-
-    def _format(self, lines: "list[str]") -> str:
-        if not lines:
-            return ""
-        inline = lines[0]
-        body = textwrap.dedent("\n".join(lines[1:]))
-        if inline and body:
-            result = inline + "\n" + body
-        elif inline:
-            result = inline
-        else:
-            result = body
-        return result.rstrip()
-
-    def _parse_returns(self, lines: "list[str]") -> str:
-        return self._format(lines)

@@ -307,6 +307,14 @@ args:
     name2: Documentation 2
     name3: Documentation 3
 
+## Argument on the header line
+Args:  name1: Documentation 1
+       name2: Documentation 2
+- - -
+args:
+    name1: Documentation 1
+    name2: Documentation 2
+
 ## Invalid indentation
 Args:
     name: Not found
