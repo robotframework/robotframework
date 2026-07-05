@@ -33,7 +33,8 @@ Spec version
 
 Init Documentation
     Init Doc Should Start With       0
-    ...    Telnet library can be imported with optional configuration parameters.\n\n
+    ...    Telnet library can be imported with optional configuration parameters.
+    ...
     ...    Configuration parameters are used as default values when new\nconnections are
 
 Init Arguments

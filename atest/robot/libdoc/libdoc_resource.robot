@@ -43,7 +43,7 @@ Run Libdoc And Parse Model From HTML
 Run Libdoc And Parse Model From JSON
     [Arguments]    ${args}
     Run Libdoc    ${args} ${OUTJSON}
-    Validate JSON spec    ${OUTJSON}
+    Validate JSON Spec    ${OUTJSON}
     ${model_string}=    Get File    ${OUTJSON}
     ${MODEL} =    Evaluate    json.loads($model_string)
     Set Suite Variable    ${MODEL}
@@ -57,14 +57,14 @@ Format Should Be
     Element Attribute Should Be    ${LIBDOC}    format    ${format}
 
 Doc Should Start With
-    [Arguments]    @{doc}
-    ${doc}=    Catenate     SEPARATOR=\n    @{doc}
-    Element Text Should Match    ${LIBDOC}    ${doc}*    doc
+    [Arguments]    @{expected}
+    VAR    ${expected}    @{expected}    separator=\n
+    Element Text Should Match    ${LIBDOC}    ${expected}*    doc
 
 Doc Should Be
-    [Arguments]    @{doc}
-    ${doc}=    Catenate     SEPARATOR=\n    @{doc}
-    Element Text Should Be    ${LIBDOC}    ${doc}    doc
+    [Arguments]    @{expected}
+    VAR    ${expected}    @{expected}    separator=\n
+    Element Text Should Be    ${LIBDOC}    ${expected}    doc
 
 Version Should Match
     [Arguments]    ${version}
@@ -108,17 +108,17 @@ Should Have No Init
     Should Be Empty    ${inits}
 
 Init Doc Should Start With
-    [Arguments]    ${index}    @{doc}
+    [Arguments]    ${index}    @{expected}
+    VAR    ${expected}    @{expected}    separator=\n
     ${inits}=   Get Elements    ${LIBDOC}   xpath=inits/init
-    ${doc}=    Catenate     SEPARATOR=    @{doc}
     ${text} =    Get Element Text    ${inits}[${index}]    xpath=doc
-    Should Start With    ${text}    ${doc}
+    Should Start With    ${text}    ${expected}
 
 Init Doc Should Be
-    [Arguments]    ${index}    @{doc}
+    [Arguments]    ${index}    @{expected}
+    VAR    ${expected}    @{expected}    separator=\n
     ${kws}=   Get Elements    ${LIBDOC}    xpath=inits/init
-    ${doc}=    Catenate     SEPARATOR=    @{doc}
-    Element Text Should Be    ${kws}[${index}]    ${doc}    xpath=doc
+    Element Text Should Be    ${kws}[${index}]    ${expected}    xpath=doc
 
 Init Arguments Should Be
     [Arguments]    ${index}   @{expected}
@@ -126,8 +126,8 @@ Init Arguments Should Be
 
 Keyword Name Should Be
     [Arguments]    ${index}   ${name}
-    ${elements}=   Get Elements    ${LIBDOC}    xpath=keywords/kw
-    Element Attribute Should Be    ${elements}[${index}]    name    ${name}
+    ${kws}=   Get Elements    ${LIBDOC}    xpath=keywords/kw
+    Element Attribute Should Be    ${kws}[${index}]    name    ${name}
 
 Keyword Arguments Should Be
     [Arguments]    ${index}    @{expected}
@@ -185,10 +185,10 @@ Get Type
     END
     ${type} =    Get Element Attribute    ${elem}    name
     IF    $elem.get('union') == 'true'
-        ${type} =    Catenate    SEPARATOR=${SPACE}|${SPACE}    @{nested}
+        VAR    ${type}    @{nested}    separator=${SPACE}|${SPACE}
     ELSE IF    $nested
-        ${args} =    Catenate    SEPARATOR=,${SPACE}    @{nested}
-        ${type} =    Set Variable    ${type}\[${args}]
+        VAR    ${args}    @{nested}    separator=,${SPACE}
+        VAR    ${type}    ${type}\[${args}]
     END
     RETURN    ${type}
 
@@ -209,23 +209,23 @@ Verify Argument Model
     Should Be Equal As Strings    ${arg_model}[repr]    ${expected_repr}
 
 Keyword Doc Should Start With
-    [Arguments]    ${index}    @{doc}
+    [Arguments]    ${index}    @{expected}
+    VAR    ${expected}    @{expected}    separator=\n
     ${kws}=   Get Elements    ${LIBDOC}   xpath=keywords/kw
-    ${doc}=    Catenate     SEPARATOR=\n    @{doc}
     ${text}=    Get Element Text    ${kws}[${index}]    xpath=doc
-    Should Start With    ${text}    ${doc}
+    Should Start With    ${text}    ${expected}
 
 Keyword Doc Should Be
-    [Arguments]    ${index}    @{doc}
+    [Arguments]    ${index}    @{expected}
+    VAR    ${expected}    @{expected}    separator=\n
     ${kws}=   Get Elements    ${LIBDOC}    xpath=keywords/kw
-    ${doc}=    Catenate     SEPARATOR=\n    @{doc}
-    Element Text Should Be    ${kws}[${index}]    ${doc}    xpath=doc
+    Element Text Should Be    ${kws}[${index}]    ${expected}    xpath=doc
 
 Keyword Shortdoc Should Be
-    [Arguments]    ${index}    @{doc}
+    [Arguments]    ${index}    @{expected}
+    VAR    ${expected}    @{expected}    separator=\n
     ${kws}=   Get Elements    ${LIBDOC}    xpath=keywords/kw
-    ${doc}=    Catenate     SEPARATOR=\n    @{doc}
-    Element Text Should Be    ${kws}[${index}]    ${doc}    xpath=shortdoc
+    Element Text Should Be    ${kws}[${index}]    ${expected}    xpath=shortdoc
 
 Keyword Tags Should Be
     [Arguments]    ${index}    @{expected}
@@ -289,7 +289,7 @@ Remove Output Files
 
 Should Be Equal Multiline
     [Arguments]    ${actual}    @{expected}    ${start}=False
-    ${expected} =    Catenate    SEPARATOR=\n    @{expected}
+    VAR    ${expected}    @{expected}    separator=\n
     IF    not ${start}
         Should Be Equal As Strings    ${actual}    ${expected}
     ELSE
