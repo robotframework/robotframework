@@ -1,35 +1,42 @@
-def keyword(arg, *, kwonly, **kwargs) -> str:
-    """Keyword with different argument and docstring.
+ROBOT_LIBRARY_DOC_FORMAT = "Markdown"
 
-    This is second paragraph.
+
+def arg_docs(own_line, multiline, *next_line, empty_doc, no_doc) -> str:
+    """Example with *everything*!
+
+    This is the second paragraph. We also have an indented
+    example:
+
+        keyword(1, 2, kwonly=3, extra=4)
 
     Args:
-        arg: Documentation at same line
-        kwonly: With a long description that
-            spans multiple lines
+        own_line: Documentation on same line.
+        multiline (ignored): Longer documentation that
+            spans multiple lines.
 
-            def keyword(arg, *, kwonly, **kwargs) -> str:
-                pass
-        kwargs:
-            Documentation at next line
+                Indentation is preserved.
 
-    Here is more text in the docstring after the argument.
+        next_line:
+            Documentation on next line.
+        empty_doc:
 
     Returns:
-        This documentation for the return value
+        Something useless.
 
-    This ends the docstring.
+        On multiple lines
+                with indentation.
+
+    The end.
     """
+    return ""
 
-    return "This is a return value."
 
-
-def keyword_doc_not_existing_args(no_doc, other):
-    """Doc
-
-    Args:
-        no_doc:
-        other: Documentation for argument that does exist
-        does_not_exist: Documentation for argument that does not exist
+def doc_for_not_existing_arg(not_set) -> int:
     """
-    return "This is a return value."
+    Arguments:
+        not_set: Not set due to an error.
+        non_existing: This causes that error.
+
+    RETURNS: Zero
+    """
+    return 0

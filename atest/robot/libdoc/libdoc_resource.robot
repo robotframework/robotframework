@@ -133,6 +133,19 @@ Keyword Arguments Should Be
     [Arguments]    ${index}    @{expected}
     Verify Arguments Structure    ${index}    keywords/kw    ${expected}
 
+Argument Doc Should Be
+    [Arguments]    ${kw_index}   ${arg_index}    ${name}    @{expected}
+    VAR    ${expected}    @{expected}    separator=\n
+    ${kws}=   Get Elements    ${LIBDOC}    xpath=keywords/kw
+    ${args}=    Get Elements    ${kws}[${kw_index}]    xpath=arguments/arg
+    VAR    ${arg}    ${args}[${arg_index}]
+    Element Text Should Be    ${arg}    ${name}    xpath=name
+    IF    $expected
+        Element Text Should Be    ${arg}    ${expected}    xpath=doc
+    ELSE
+        Element Should Not Exist    ${arg}    xpath=doc
+    END
+
 Verify Arguments Structure
     [Arguments]    ${index}   ${xpath}    ${expected}
     ${kws}=    Get Elements    ${LIBDOC}    xpath=${xpath}
@@ -160,6 +173,12 @@ Verify Arguments Structure
         Verify Argument Model    ${arg_model}    ${exp_repr}
         Should Be Equal    ${repr}    ${exp_repr}
     END
+
+Return Doc Should Be
+    [Arguments]    ${index}    @{expected}
+    VAR    ${expected}    @{expected}    separator=\n
+    ${kws}=   Get Elements    ${LIBDOC}    xpath=keywords/kw
+    Element Text Should Be    ${kws}[${index}]    ${expected}    xpath=returndoc
 
 Return Type Should Be
     [Arguments]    ${index}    ${name}    @{nested}
