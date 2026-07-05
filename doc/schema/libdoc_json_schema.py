@@ -62,11 +62,12 @@ class LibraryScope(str, Enum):
 
 
 class DocumentationFormat(str, Enum):
-    """Documentation format, typically HTML."""
+    """Documentation source format."""
     ROBOT = "ROBOT"
+    MARKDOWN = "MARKDOWN"
+    REST = "REST"
     HTML = "HTML"
     TEXT = "TEXT"
-    REST = "REST"
 
 
 class ArgumentKind(str, Enum):

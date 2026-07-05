@@ -153,9 +153,10 @@
     <xs:simpleType name="DocumentationFormat">
         <xs:restriction base="xs:string">
             <xs:enumeration value="ROBOT" />
+            <xs:enumeration value="MARKDOWN" />
+            <xs:enumeration value="REST" />
             <xs:enumeration value="HTML" />
             <xs:enumeration value="TEXT" />
-            <xs:enumeration value="REST" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="LibraryType">

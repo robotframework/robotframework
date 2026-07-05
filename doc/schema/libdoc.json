@@ -121,12 +121,13 @@
     },
     "DocumentationFormat": {
       "title": "DocumentationFormat",
-      "description": "Documentation format, typically HTML.",
+      "description": "Documentation source format.",
       "enum": [
         "ROBOT",
+        "MARKDOWN",
+        "REST",
         "HTML",
-        "TEXT",
-        "REST"
+        "TEXT"
       ],
       "type": "string"
     },
