@@ -13,9 +13,12 @@
   "inits": [
     {
       "name": "__init__",
+      "doc": "<p>This is the init Docs.</p>\n<p>It links to <a href=\"#Set%20Location\" title=\"&quot;Set Location&quot; keyword\" class=\"name\">Set Location</a> keyword and to <a href=\"#type-GeoLocation\" title=\"&quot;GeoLocation&quot; type\" class=\"name\">GeoLocation</a> data type.</p>",
+      "shortdoc": "This is the init Docs.",
       "args": [
         {
           "name": "credentials",
+          "doc": "",
           "type": {
             "name": "Small",
             "typedoc": "Small",
@@ -29,8 +32,7 @@
         }
       ],
       "returnType": null,
-      "doc": "<p>This is the init Docs.</p>\n<p>It links to <a href=\"#Set%20Location\" title=\"&quot;Set Location&quot; keyword\" class=\"name\">Set Location</a> keyword and to <a href=\"#type-GeoLocation\" title=\"&quot;GeoLocation&quot; type\" class=\"name\">GeoLocation</a> data type.</p>",
-      "shortdoc": "This is the init Docs.",
+      "returnDoc": "",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
       "lineno": 99
@@ -39,9 +41,12 @@
   "keywords": [
     {
       "name": "Assert Something",
+      "doc": "<p>This links to <a href=\"#type-AssertionOperator\" title=\"&quot;AssertionOperator&quot; type\" class=\"name\">AssertionOperator</a> .</p>\n<p>This is the next Line that links to <a href=\"#Set%20Location\" title=\"&quot;Set Location&quot; keyword\" class=\"name\">Set Location</a> .</p>",
+      "shortdoc": "This links to `AssertionOperator` .",
       "args": [
         {
           "name": "value",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -50,6 +55,7 @@
         },
         {
           "name": "operator",
+          "doc": "",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -76,6 +82,7 @@
         },
         {
           "name": "exp",
+          "doc": "",
           "type": {
             "name": "str",
             "typedoc": "string",
@@ -89,17 +96,19 @@
         }
       ],
       "returnType": null,
-      "doc": "<p>This links to <a href=\"#type-AssertionOperator\" title=\"&quot;AssertionOperator&quot; type\" class=\"name\">AssertionOperator</a> .</p>\n<p>This is the next Line that links to <a href=\"#Set%20Location\" title=\"&quot;Set Location&quot; keyword\" class=\"name\">Set Location</a> .</p>",
-      "shortdoc": "This links to `AssertionOperator` .",
+      "returnDoc": "",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
       "lineno": 109
     },
     {
       "name": "Custom",
+      "doc": "",
+      "shortdoc": "",
       "args": [
         {
           "name": "arg",
+          "doc": "",
           "type": {
             "name": "CustomType",
             "typedoc": "CustomType",
@@ -113,6 +122,7 @@
         },
         {
           "name": "arg2",
+          "doc": "",
           "type": {
             "name": "CustomType2",
             "typedoc": "CustomType2",
@@ -126,6 +136,7 @@
         },
         {
           "name": "arg3",
+          "doc": "",
           "type": {
             "name": "CustomType",
             "typedoc": "CustomType",
@@ -139,6 +150,7 @@
         },
         {
           "name": "arg4",
+          "doc": "",
           "type": {
             "name": "Unknown",
             "typedoc": null,
@@ -152,17 +164,19 @@
         }
       ],
       "returnType": null,
-      "doc": "",
-      "shortdoc": "",
+      "returnDoc": "",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
       "lineno": 142
     },
     {
       "name": "Funny Unions",
+      "doc": "",
+      "shortdoc": "",
       "args": [
         {
           "name": "funny",
+          "doc": "",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -250,17 +264,19 @@
         ],
         "union": true
       },
-      "doc": "",
-      "shortdoc": "",
+      "returnDoc": "",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
       "lineno": 121
     },
     {
       "name": "Set Location",
+      "doc": "",
+      "shortdoc": "",
       "args": [
         {
           "name": "location",
+          "doc": "",
           "type": {
             "name": "GeoLocation",
             "typedoc": "GeoLocation",
@@ -279,17 +295,19 @@
         "nested": [],
         "union": false
       },
-      "doc": "",
-      "shortdoc": "",
+      "returnDoc": "",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
       "lineno": 106
     },
     {
       "name": "Typing Types",
+      "doc": "",
+      "shortdoc": "",
       "args": [
         {
           "name": "list_of_str",
+          "doc": "",
           "type": {
             "name": "List",
             "typedoc": "list",
@@ -310,6 +328,7 @@
         },
         {
           "name": "dict_str_int",
+          "doc": "",
           "type": {
             "name": "Dict",
             "typedoc": "dictionary",
@@ -336,6 +355,7 @@
         },
         {
           "name": "whatever",
+          "doc": "",
           "type": {
             "name": "Any",
             "typedoc": "Any",
@@ -349,6 +369,7 @@
         },
         {
           "name": "args",
+          "doc": "",
           "type": {
             "name": "List",
             "typedoc": "list",
@@ -369,17 +390,19 @@
         }
       ],
       "returnType": null,
-      "doc": "",
-      "shortdoc": "",
+      "returnDoc": "",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
       "lineno": 130
     },
     {
       "name": "X Literal",
+      "doc": "",
+      "shortdoc": "",
       "args": [
         {
           "name": "arg",
+          "doc": "",
           "type": {
             "name": "Literal",
             "typedoc": "Literal",
@@ -430,8 +453,7 @@
         }
       ],
       "returnType": null,
-      "doc": "",
-      "shortdoc": "",
+      "returnDoc": "",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
       "lineno": 139

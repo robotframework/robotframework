@@ -18,9 +18,12 @@
   "inits": [
     {
       "name": "__init__",
+      "doc": "<p>Dummy documentation for <span class=\"name\">__init__</span>.</p>",
+      "shortdoc": "Dummy documentation for `__init__`.",
       "args": [
         {
           "name": "arg1",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -29,6 +32,7 @@
         },
         {
           "name": "arg2",
+          "doc": "",
           "type": null,
           "defaultValue": "These args are shown in docs",
           "kind": "POSITIONAL_OR_NAMED",
@@ -37,8 +41,7 @@
         }
       ],
       "returnType": null,
-      "doc": "<p>Dummy documentation for <span class=\"name\">__init__</span>.</p>",
-      "shortdoc": "Dummy documentation for `__init__`.",
+      "returnDoc": "",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": 10
@@ -47,19 +50,23 @@
   "keywords": [
     {
       "name": "0",
-      "args": [],
-      "returnType": null,
       "doc": "<p>Dummy documentation for <a href=\"#0\" title=\"&quot;0&quot; keyword\" class=\"name\">0</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
       "shortdoc": "Dummy documentation for `0`.",
+      "args": [],
+      "returnType": null,
+      "returnDoc": "",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": null
     },
     {
       "name": "Defaults",
+      "doc": "<p>Dummy documentation for <a href=\"#Defaults\" title=\"&quot;Defaults&quot; keyword\" class=\"name\">Defaults</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
+      "shortdoc": "Dummy documentation for `Defaults`.",
       "args": [
         {
           "name": "old",
+          "doc": "",
           "type": null,
           "defaultValue": "style",
           "kind": "POSITIONAL_OR_NAMED",
@@ -68,6 +75,7 @@
         },
         {
           "name": "new",
+          "doc": "",
           "type": null,
           "defaultValue": "style",
           "kind": "POSITIONAL_OR_NAMED",
@@ -76,6 +84,7 @@
         },
         {
           "name": "cool",
+          "doc": "",
           "type": null,
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
@@ -84,37 +93,41 @@
         }
       ],
       "returnType": null,
-      "doc": "<p>Dummy documentation for <a href=\"#Defaults\" title=\"&quot;Defaults&quot; keyword\" class=\"name\">Defaults</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
-      "shortdoc": "Dummy documentation for `Defaults`.",
+      "returnDoc": "",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": null
     },
     {
       "name": "Em${bed}ed ${args} 2",
-      "args": [],
-      "returnType": null,
       "doc": "<p>Dummy documentation for <a href=\"#Em%24%7Bbed%7Ded%20%24%7Bargs%7D%202\" title=\"&quot;Em${bed}ed ${args} 2&quot; keyword\" class=\"name\">Em${bed}ed ${args} 2</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
       "shortdoc": "Dummy documentation for `Em${bed}ed ${args} 2`.",
+      "args": [],
+      "returnType": null,
+      "returnDoc": "",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": null
     },
     {
       "name": "Embedded ${args} 1",
-      "args": [],
-      "returnType": null,
       "doc": "<p>Dummy documentation for <a href=\"#Embedded%20%24%7Bargs%7D%201\" title=\"&quot;Embedded ${args} 1&quot; keyword\" class=\"name\">Embedded ${args} 1</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
       "shortdoc": "Dummy documentation for `Embedded ${args} 1`.",
+      "args": [],
+      "returnType": null,
+      "returnDoc": "",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": null
     },
     {
       "name": "Invalid Source Info",
+      "doc": "<p>Dummy documentation for <a href=\"#Invalid%20Source%20Info\" title=\"&quot;Invalid Source Info&quot; keyword\" class=\"name\">Invalid source info</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
+      "shortdoc": "Dummy documentation for `Invalid source info`.",
       "args": [
         {
           "name": "varargs",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
@@ -123,6 +136,7 @@
         },
         {
           "name": "kwargs",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "VAR_NAMED",
@@ -131,17 +145,19 @@
         }
       ],
       "returnType": null,
-      "doc": "<p>Dummy documentation for <a href=\"#Invalid%20Source%20Info\" title=\"&quot;Invalid Source Info&quot; keyword\" class=\"name\">Invalid source info</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
-      "shortdoc": "Dummy documentation for `Invalid source info`.",
+      "returnDoc": "",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": null
     },
     {
       "name": "Keyword 1",
+      "doc": "<p>Dummy documentation for <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
+      "shortdoc": "Dummy documentation for `Keyword 1`.",
       "args": [
         {
           "name": "arg1",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -150,17 +166,19 @@
         }
       ],
       "returnType": null,
-      "doc": "<p>Dummy documentation for <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
-      "shortdoc": "Dummy documentation for `Keyword 1`.",
+      "returnDoc": "",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": null
     },
     {
       "name": "Keyword-only Args",
+      "doc": "<p>Dummy documentation for <a href=\"#Keyword-only%20Args\" title=\"&quot;Keyword-only Args&quot; keyword\" class=\"name\">Keyword-only args</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
+      "shortdoc": "Dummy documentation for `Keyword-only args`.",
       "args": [
         {
           "name": "",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "NAMED_ONLY_MARKER",
@@ -169,6 +187,7 @@
         },
         {
           "name": "kwo",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "NAMED_ONLY",
@@ -177,6 +196,7 @@
         },
         {
           "name": "another",
+          "doc": "",
           "type": null,
           "defaultValue": "default",
           "kind": "NAMED_ONLY",
@@ -185,17 +205,19 @@
         }
       ],
       "returnType": null,
-      "doc": "<p>Dummy documentation for <a href=\"#Keyword-only%20Args\" title=\"&quot;Keyword-only Args&quot; keyword\" class=\"name\">Keyword-only args</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
-      "shortdoc": "Dummy documentation for `Keyword-only args`.",
+      "returnDoc": "",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": null
     },
     {
       "name": "KW 2",
+      "doc": "<p>Dummy documentation for <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW2</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
+      "shortdoc": "Dummy documentation for `KW2`.",
       "args": [
         {
           "name": "arg1",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -204,6 +226,7 @@
         },
         {
           "name": "arg2",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -212,17 +235,19 @@
         }
       ],
       "returnType": null,
-      "doc": "<p>Dummy documentation for <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW2</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
-      "shortdoc": "Dummy documentation for `KW2`.",
+      "returnDoc": "",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": null
     },
     {
       "name": "KWO W/ Varargs",
+      "doc": "<p>Dummy documentation for <a href=\"#KWO%20W%2F%20Varargs\" title=\"&quot;KWO W/ Varargs&quot; keyword\" class=\"name\">KWO w/ varargs</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
+      "shortdoc": "Dummy documentation for `KWO w/ varargs`.",
       "args": [
         {
           "name": "varargs",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
@@ -231,6 +256,7 @@
         },
         {
           "name": "a",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "NAMED_ONLY",
@@ -239,6 +265,7 @@
         },
         {
           "name": "b",
+          "doc": "",
           "type": null,
           "defaultValue": "2",
           "kind": "NAMED_ONLY",
@@ -247,6 +274,7 @@
         },
         {
           "name": "c",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "NAMED_ONLY",
@@ -255,6 +283,7 @@
         },
         {
           "name": "kws",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "VAR_NAMED",
@@ -263,17 +292,19 @@
         }
       ],
       "returnType": null,
-      "doc": "<p>Dummy documentation for <a href=\"#KWO%20W%2F%20Varargs\" title=\"&quot;KWO W/ Varargs&quot; keyword\" class=\"name\">KWO w/ varargs</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
-      "shortdoc": "Dummy documentation for `KWO w/ varargs`.",
+      "returnDoc": "",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": null
     },
     {
       "name": "No Arg Spec",
+      "doc": "<p>Dummy documentation for <a href=\"#No%20Arg%20Spec\" title=\"&quot;No Arg Spec&quot; keyword\" class=\"name\">no arg spec</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
+      "shortdoc": "Dummy documentation for `no arg spec`.",
       "args": [
         {
           "name": "varargs",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
@@ -282,6 +313,7 @@
         },
         {
           "name": "kwargs",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "VAR_NAMED",
@@ -290,17 +322,19 @@
         }
       ],
       "returnType": null,
-      "doc": "<p>Dummy documentation for <a href=\"#No%20Arg%20Spec\" title=\"&quot;No Arg Spec&quot; keyword\" class=\"name\">no arg spec</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
-      "shortdoc": "Dummy documentation for `no arg spec`.",
+      "returnDoc": "",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": null
     },
     {
       "name": "Non-existing Source Path And Lineno",
+      "doc": "<p>Dummy documentation for <a href=\"#Non-existing%20Source%20Path%20And%20Lineno\" title=\"&quot;Non-existing Source Path And Lineno&quot; keyword\" class=\"name\">Non-existing source path and lineno</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
+      "shortdoc": "Dummy documentation for `Non-existing source path and lineno`.",
       "args": [
         {
           "name": "varargs",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
@@ -309,6 +343,7 @@
         },
         {
           "name": "kwargs",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "VAR_NAMED",
@@ -317,17 +352,19 @@
         }
       ],
       "returnType": null,
-      "doc": "<p>Dummy documentation for <a href=\"#Non-existing%20Source%20Path%20And%20Lineno\" title=\"&quot;Non-existing Source Path And Lineno&quot; keyword\" class=\"name\">Non-existing source path and lineno</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
-      "shortdoc": "Dummy documentation for `Non-existing source path and lineno`.",
+      "returnDoc": "",
       "tags": [],
       "source": "whatever:xxx",
       "lineno": null
     },
     {
       "name": "Non-existing Source Path With Lineno",
+      "doc": "<p>Dummy documentation for <a href=\"#Non-existing%20Source%20Path%20With%20Lineno\" title=\"&quot;Non-existing Source Path With Lineno&quot; keyword\" class=\"name\">Non-existing source path with lineno</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
+      "shortdoc": "Dummy documentation for `Non-existing source path with lineno`.",
       "args": [
         {
           "name": "varargs",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
@@ -336,6 +373,7 @@
         },
         {
           "name": "kwargs",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "VAR_NAMED",
@@ -344,17 +382,19 @@
         }
       ],
       "returnType": null,
-      "doc": "<p>Dummy documentation for <a href=\"#Non-existing%20Source%20Path%20With%20Lineno\" title=\"&quot;Non-existing Source Path With Lineno&quot; keyword\" class=\"name\">Non-existing source path with lineno</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
-      "shortdoc": "Dummy documentation for `Non-existing source path with lineno`.",
+      "returnDoc": "",
       "tags": [],
       "source": "everwhat",
       "lineno": 42
     },
     {
       "name": "N\u00f6n-\u00e4scii \u00dcnic\u00f6de",
+      "doc": "<p>Hyv\u00e4\u00e4 y\u00f6t\u00e4.</p>\n<p>\u0421\u043f\u0430\u0441\u0438\u0431\u043e! (Unicode)</p>",
+      "shortdoc": "Hyv\u00e4\u00e4 y\u00f6t\u00e4.",
       "args": [
         {
           "name": "varargs",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
@@ -363,6 +403,7 @@
         },
         {
           "name": "kwargs",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "VAR_NAMED",
@@ -371,8 +412,7 @@
         }
       ],
       "returnType": null,
-      "doc": "<p>Hyv\u00e4\u00e4 y\u00f6t\u00e4.</p>\n<p>\u0421\u043f\u0430\u0441\u0438\u0431\u043e! (Unicode)</p>",
-      "shortdoc": "Hyv\u00e4\u00e4 y\u00f6t\u00e4.",
+      "returnDoc": "",
       "tags": [
         "hyv\u00e4\u00e4",
         "y\u00f6t\u00e4"
@@ -382,9 +422,12 @@
     },
     {
       "name": "N\u00f6n-\u00e4scii \u00dcTF-8",
+      "doc": "<p>Hyv\u00e4\u00e4 y\u00f6t\u00e4.</p>\n<p>\u0421\u043f\u0430\u0441\u0438\u0431\u043e! (UTF-8)</p>",
+      "shortdoc": "Hyv\u00e4\u00e4 y\u00f6t\u00e4.",
       "args": [
         {
           "name": "arg1",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -393,6 +436,7 @@
         },
         {
           "name": "arg2",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -401,6 +445,7 @@
         },
         {
           "name": "arg3",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -409,6 +454,7 @@
         },
         {
           "name": "arg4",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -417,6 +463,7 @@
         },
         {
           "name": "arg5",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -425,6 +472,7 @@
         },
         {
           "name": "arg6",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -433,6 +481,7 @@
         },
         {
           "name": "arg7",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -441,6 +490,7 @@
         },
         {
           "name": "arg8",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -449,8 +499,7 @@
         }
       ],
       "returnType": null,
-      "doc": "<p>Hyv\u00e4\u00e4 y\u00f6t\u00e4.</p>\n<p>\u0421\u043f\u0430\u0441\u0438\u0431\u043e! (UTF-8)</p>",
-      "shortdoc": "Hyv\u00e4\u00e4 y\u00f6t\u00e4.",
+      "returnDoc": "",
       "tags": [
         "hyv\u00e4\u00e4",
         "y\u00f6t\u00e4"
@@ -460,9 +509,12 @@
     },
     {
       "name": "Source Info",
+      "doc": "<p>Dummy documentation for <a href=\"#Source%20Info\" title=\"&quot;Source Info&quot; keyword\" class=\"name\">Source info</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
+      "shortdoc": "Dummy documentation for `Source info`.",
       "args": [
         {
           "name": "varargs",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
@@ -471,6 +523,7 @@
         },
         {
           "name": "kwargs",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "VAR_NAMED",
@@ -479,17 +532,19 @@
         }
       ],
       "returnType": null,
-      "doc": "<p>Dummy documentation for <a href=\"#Source%20Info\" title=\"&quot;Source Info&quot; keyword\" class=\"name\">Source info</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
-      "shortdoc": "Dummy documentation for `Source info`.",
+      "returnDoc": "",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": 90
     },
     {
       "name": "Source Lineno Only",
+      "doc": "<p>Dummy documentation for <a href=\"#Source%20Lineno%20Only\" title=\"&quot;Source Lineno Only&quot; keyword\" class=\"name\">Source lineno only</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
+      "shortdoc": "Dummy documentation for `Source lineno only`.",
       "args": [
         {
           "name": "varargs",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
@@ -498,6 +553,7 @@
         },
         {
           "name": "kwargs",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "VAR_NAMED",
@@ -506,17 +562,19 @@
         }
       ],
       "returnType": null,
-      "doc": "<p>Dummy documentation for <a href=\"#Source%20Lineno%20Only\" title=\"&quot;Source Lineno Only&quot; keyword\" class=\"name\">Source lineno only</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
-      "shortdoc": "Dummy documentation for `Source lineno only`.",
+      "returnDoc": "",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": 12345
     },
     {
       "name": "Source Path Only",
+      "doc": "<p>Dummy documentation for <a href=\"#Source%20Path%20Only\" title=\"&quot;Source Path Only&quot; keyword\" class=\"name\">Source path only</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
+      "shortdoc": "Dummy documentation for `Source path only`.",
       "args": [
         {
           "name": "varargs",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
@@ -525,6 +583,7 @@
         },
         {
           "name": "kwargs",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "VAR_NAMED",
@@ -533,17 +592,19 @@
         }
       ],
       "returnType": null,
-      "doc": "<p>Dummy documentation for <a href=\"#Source%20Path%20Only\" title=\"&quot;Source Path Only&quot; keyword\" class=\"name\">Source path only</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
-      "shortdoc": "Dummy documentation for `Source path only`.",
+      "returnDoc": "",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/Annotations.py",
       "lineno": null
     },
     {
       "name": "Tags",
+      "doc": "<p>Dummy documentation for <a href=\"#Tags\" title=\"&quot;Tags&quot; keyword\" class=\"name\">Tags</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
+      "shortdoc": "Dummy documentation for `Tags`.",
       "args": [
         {
           "name": "varargs",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
@@ -552,6 +613,7 @@
         },
         {
           "name": "kwargs",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "VAR_NAMED",
@@ -560,8 +622,7 @@
         }
       ],
       "returnType": null,
-      "doc": "<p>Dummy documentation for <a href=\"#Tags\" title=\"&quot;Tags&quot; keyword\" class=\"name\">Tags</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
-      "shortdoc": "Dummy documentation for `Tags`.",
+      "returnDoc": "",
       "tags": [
         "my",
         "t\u00e4gs"
@@ -571,9 +632,12 @@
     },
     {
       "name": "Types",
+      "doc": "<p>Dummy documentation for <a href=\"#Types\" title=\"&quot;Types&quot; keyword\" class=\"name\">Types</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
+      "shortdoc": "Dummy documentation for `Types`.",
       "args": [
         {
           "name": "integer",
+          "doc": "",
           "type": {
             "name": "int",
             "typedoc": "integer",
@@ -587,6 +651,7 @@
         },
         {
           "name": "no type",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -595,6 +660,7 @@
         },
         {
           "name": "boolean",
+          "doc": "",
           "type": {
             "name": "bool",
             "typedoc": "boolean",
@@ -613,8 +679,7 @@
         "nested": [],
         "union": false
       },
-      "doc": "<p>Dummy documentation for <a href=\"#Types\" title=\"&quot;Types&quot; keyword\" class=\"name\">Types</a>.</p>\n<p>Neither <a href=\"#Keyword%201\" title=\"&quot;Keyword 1&quot; keyword\" class=\"name\">Keyword 1</a> or <a href=\"#KW%202\" title=\"&quot;KW 2&quot; keyword\" class=\"name\">KW 2</a> do anything really interesting. They do, however, accept some <span class=\"name\">arguments</span>. Neither <a href=\"#Introduction\" title=\"&quot;Introduction&quot; section\" class=\"name\">introduction</a> nor <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> contain any more information.</p>\n<p>Examples:</p>\n<table border=\"1\">\n<tr>\n<td>Keyword 1</td>\n<td>arg</td>\n<td></td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 2</td>\n</tr>\n<tr>\n<td>KW 2</td>\n<td>arg</td>\n<td>arg 3</td>\n</tr>\n</table>\n<hr>\n<p><a href=\"http://robotframework.org\">http://robotframework.org</a></p>",
-      "shortdoc": "Dummy documentation for `Types`.",
+      "returnDoc": "",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": null
