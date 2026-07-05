@@ -69,5 +69,36 @@ Tags: in spec these wont become tags</doc>
 Спасибо!</doc>
 <shortdoc>Hyvää yötä.</shortdoc>
 </kw>
+<kw name="All kinds of arguments" lineno="13">
+<arguments repr="a, /, b, c=d, *e, f, g=h, **i">
+<arg kind="POSITIONAL_ONLY" required="true" repr="a">
+<name>a</name>
+</arg>
+<arg kind="POSITIONAL_ONLY_MARKER" required="false" repr="/">
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="b">
+<name>b</name>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="c=d">
+<name>c</name>
+<default>d</default>
+</arg>
+<arg kind="VAR_POSITIONAL" required="false" repr="*e">
+<name>e</name>
+</arg>
+<arg kind="NAMED_ONLY" required="true" repr="f">
+<name>f</name>
+</arg>
+<arg kind="NAMED_ONLY" required="false" repr="g=h">
+<name>g</name>
+<default>h</default>
+</arg>
+<arg kind="VAR_NAMED" required="false" repr="**i">
+<name>i</name>
+</arg>
+</arguments>
+<doc/>
+<shortdoc/>
+</kw>
 </keywords>
 </keywordspec>

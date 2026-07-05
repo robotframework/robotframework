@@ -51,17 +51,21 @@ Init Source Info
     Keyword Should Not Have Lineno    1    xpath=inits/init
 
 Keyword Names
-    Keyword Name Should Be         0    Keyword
-    Keyword Name Should Be         1    My Keyword
-    Keyword Name Should Be         2    Non Ascii Doc
+    Keyword Name Should Be         0    All kinds of arguments
+    Keyword Name Should Be         1    Keyword
+    Keyword Name Should Be         2    My Keyword
+    Keyword Name Should Be         3    Non Ascii Doc
 
 Keyword Arguments
-    Keyword Arguments Should Be    0    arg
-    Keyword Arguments Should Be    1
+    Keyword Arguments Should Be    0    a    /    b    c=d    *e    f    g=h    **i
+    Keyword Arguments Should Be    1    arg
     Keyword Arguments Should Be    2
+    Keyword Arguments Should Be    3
 
 Keyword Documentation
     Keyword Doc Should Be          0
+    Keyword Short Doc Should be    0
+    Keyword Doc Should Be          1
     ...    Takes one `arg` and *does nothing* with it.
     ...
     ...    Example:
@@ -69,39 +73,42 @@ Keyword Documentation
     ...    | Your Keyword | yyy |
     ...
     ...    See `My Keyword` for no more information.
-    Keyword Short Doc Should be    0    Takes one `arg` and *does nothing* with it.
-    Keyword Doc Should Be          1
+    Keyword Short Doc Should be    1    Takes one `arg` and *does nothing* with it.
+    Keyword Doc Should Be          2
     ...    Does nothing & <doc> has "stuff" to 'escape'!! and ignored indentation
     ...    Tags: in spec these wont become tags
-    Keyword Short Doc Should be    1
+    Keyword Short Doc Should be    2
     ...    Does nothing & <doc> has "stuff" to 'escape'!! and ignored indentation Tags: in spec these wont become tags
-
-Non ASCII
-    Keyword Doc Should Be          2    Hyvää yötä.\n\nСпасибо!
-    Keyword Shortdoc Should Be     2    Hyvää yötä.
+    Keyword Doc Should Be          3    Hyvää yötä.\n\nСпасибо!
+    Keyword Shortdoc Should Be     3    Hyvää yötä.
 
 Keyword Tags
-    Keyword Tags Should Be         0    tag1    tag2
-    Keyword Tags Should Be         1
+    Keyword Tags Should Be         0
+    Keyword Tags Should Be         1    tag1    tag2
     Keyword Tags Should Be         2
+    Keyword Tags Should Be         3
 
 Private Keywords
     Keyword Should Not Be Private       0
-    Keyword Should Be Private           1
-    Keyword Should Not Be Private       2
+    Keyword Should Not Be Private       1
+    Keyword Should Be Private           2
+    Keyword Should Not Be Private       3
 
 Keyword Deprecation
     Keyword Should Not Be Deprecated    0
-    Keyword Should Be Deprecated        1
-    Keyword Should Not Be Deprecated    2
+    Keyword Should Not Be Deprecated    1
+    Keyword Should Be Deprecated        2
+    Keyword Should Not Be Deprecated    3
 
 Keyword Source Info
     Keyword Should Not Have Source    0
-    Keyword Should Not Have Lineno    0
+    Keyword Lineno Should Be          0    13
     Keyword Should Not Have Source    1
-    Keyword Lineno Should Be          1    42
-    Keyword Source Should Be          2    Different!
-    Keyword Lineno Should Be          2    666
+    Keyword Should Not Have Lineno    1
+    Keyword Should Not Have Source    2
+    Keyword Lineno Should Be          2    42
+    Keyword Source Should Be          3    Different!
+    Keyword Lineno Should Be          3    666
 
 '*.libspec' extension
     Copy File    ${TESTDATADIR}/ExampleSpec.xml    %{TEMPDIR}/Example.libspec
@@ -135,27 +142,35 @@ Test Everything
     Keyword Lineno Should Be          0    12      xpath=inits/init
     Keyword Should Not Have Source    1    xpath=inits/init
     Keyword Should Not Have Lineno    1    xpath=inits/init
-    Keyword Name Should Be            0    Keyword
-    Keyword Name Should Be            1    My Keyword
-    Keyword Name Should Be            2    Non Ascii Doc
-    Keyword Arguments Should Be       0    arg
-    Keyword Arguments Should Be       1
+    Keyword Name Should Be            0    All kinds of arguments
+    Keyword Name Should Be            1    Keyword
+    Keyword Name Should Be            2    My Keyword
+    Keyword Name Should Be            3    Non Ascii Doc
+    Keyword Arguments Should Be       0    a    /    b    c=d    *e    f    g=h    **i
+    Keyword Arguments Should Be       1    arg
     Keyword Arguments Should Be       2
-    Keyword Doc Should Start With     0    Takes one `arg` and *does nothing* with it.
-    Keyword Doc Should Start With     1    Does nothing & <doc> has "stuff" to 'escape'!! and ignored indentation
-    Keyword Doc Should Be             2    Hyvää yötä.\n\nСпасибо!
-    Keyword Tags Should Be            0    tag1    tag2
-    Keyword Tags Should Be            1
+    Keyword Arguments Should Be       3
+    Keyword Doc Should Be             0
+    Keyword Doc Should Start With     1    Takes one `arg` and *does nothing* with it.
+    Keyword Doc Should Start With     2    Does nothing & <doc> has "stuff" to 'escape'!! and ignored indentation
+    Keyword Doc Should Be             3    Hyvää yötä.\n\nСпасибо!
+    Keyword Tags Should Be            0
+    Keyword Tags Should Be            1    tag1    tag2
     Keyword Tags Should Be            2
+    Keyword Tags Should Be            3
     Keyword Should Not Be Private     0
-    Keyword Should Be Private         1
-    Keyword Should Not Be Private     2
+    Keyword Should Not Be Private     1
+    Keyword Should Be Private         2
+    Keyword Should Not Be Private     3
     Keyword Should Not Be Deprecated  0
-    Keyword Should Be Deprecated      1
-    Keyword Should Not Be Deprecated  2
+    Keyword Should Not Be Deprecated  1
+    Keyword Should Be Deprecated      2
+    Keyword Should Not Be Deprecated  3
     Keyword Should Not Have Source    0
-    Keyword Should Not Have Lineno    0
+    Keyword Lineno Should Be          0    13
     Keyword Should Not Have Source    1
-    Keyword Lineno Should Be          1    42
-    Keyword Source Should Be          2    Different!
-    Keyword Lineno Should Be          2    666
+    Keyword Should Not Have Lineno    1
+    Keyword Should Not Have Source    2
+    Keyword Lineno Should Be          2    42
+    Keyword Source Should Be          3    Different!
+    Keyword Lineno Should Be          3    666
