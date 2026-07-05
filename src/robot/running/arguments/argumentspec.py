@@ -285,6 +285,10 @@ class ArgInfo:
             return self.default.name
         return safe_str(self.default)
 
+    @property
+    def is_marker(self):
+        return self.kind in (self.POSITIONAL_ONLY_MARKER, self.NAMED_ONLY_MARKER)
+
     def __str__(self):
         if self.kind == self.POSITIONAL_ONLY_MARKER:
             return "/"

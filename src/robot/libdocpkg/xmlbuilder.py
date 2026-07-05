@@ -92,7 +92,7 @@ class XmlDocBuilder:
         for arg in elem.findall("arguments/arg"):
             name_elem = arg.find("name")
             if name_elem is None:
-                continue
+                continue  # POSITIONAL_ONLY_MARKER or NAMED_ONLY_MARKER
             name = name_elem.text
             kind = arg.get("kind")
             if kind == ArgInfo.POSITIONAL_ONLY:

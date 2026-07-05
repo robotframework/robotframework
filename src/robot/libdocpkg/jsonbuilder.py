@@ -92,6 +92,8 @@ class JsonDocBuilder:
                 named_only.append(name)
             elif kind == ArgInfo.VAR_NAMED:
                 spec.var_named = name
+            else:
+                continue  # POSITIONAL_ONLY_MARKER or NAMED_ONLY_MARKER
             spec.docs[name] = arg.get("doc", "")
             default = arg.get("defaultValue")
             if default is not None:

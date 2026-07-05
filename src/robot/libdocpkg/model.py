@@ -177,7 +177,7 @@ class KeywordDoc(Sortable):
         self.lineno = lineno
         self.parent = parent
         # Map argument types to type documentations.
-        self.type_docs = {arg.name: {} for arg in self.args}
+        self.type_docs = {arg.name: {} for arg in self.args if not arg.is_marker}
 
     @property
     def short_doc(self):

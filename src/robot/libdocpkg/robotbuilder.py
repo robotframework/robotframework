@@ -89,8 +89,9 @@ class TypeDocBuilder:
 
     def _yield_names_and_infos(self, args: ArgumentSpec):
         for arg in args:
-            for type_info in self._yield_infos(arg.type):
-                yield arg.name, type_info
+            if not arg.is_marker:
+                for type_info in self._yield_infos(arg.type):
+                    yield arg.name, type_info
         if args.return_type:
             for type_info in self._yield_infos(args.return_type):
                 yield "return", type_info

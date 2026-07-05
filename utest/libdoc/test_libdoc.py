@@ -49,9 +49,20 @@ def verify_keyword_short_doc(doc_format, doc_input, expected):
 def run_libdoc_and_validate_json(filename):
     if not VALIDATOR:
         raise unittest.SkipTest("jsonschema module is not available")
-    library = DATADIR / filename
-    json_spec = LibraryDocumentation(library).to_json()
-    VALIDATOR.validate(instance=json.loads(json_spec))
+    lib = LibraryDocumentation(DATADIR / filename)
+    VALIDATOR.validate(instance=json.loads(lib.to_json()))
+    _validate_argument_parsing(lib)
+
+
+def _validate_argument_parsing(lib):
+    # Most importantly, validates that POSITIONAL_ONLY_MARKER and NAMED_ONLY_MARKER
+    # are handled properly (i.e. ignored) in parsing. This is not really about
+    # JSON validation, but there was good place where to test this elsewhere.
+    for kw in lib.keywords:
+        expected = [a.name for a in kw.args if not a.is_marker]
+        if kw.args.return_type:
+            expected.append("return")
+        assert_equal(list(kw.type_docs), expected, "Type docs mismatch")
 
 
 class TestHtmlToDoc(unittest.TestCase):
