@@ -647,12 +647,29 @@ h4 {
 
 .args .arguments-table {
   width: 100%;
+  table-layout: fixed;
   border-collapse: separate;
   border-spacing: 0;
   border: 1px solid var(--border-color);
   border-radius: 6px;
   overflow: hidden;
   margin-bottom: 1.33rem;
+}
+
+.args .arguments-table .arg-col-name {
+  width: min(24ch, 26%);
+}
+
+.args .arguments-table .arg-col-default {
+  width: min(14ch, 16%);
+}
+
+.args .arguments-table .arg-col-type {
+  width: min(28ch, 30%);
+}
+
+.args .arguments-table .arg-col-doc {
+  width: auto;
 }
 
 .args .arguments-table th,
@@ -683,6 +700,30 @@ h4 {
 
 .args .arguments-table td:nth-child(4) {
   width: 100%;
+}
+
+.args .arguments-table td .doc {
+  font-size: 0.95em;
+}
+
+.args .arguments-table td .doc > p {
+  margin: 0 0 0.35rem;
+}
+
+.args .arguments-table td .doc > p:last-child {
+  margin-bottom: 0;
+}
+
+.args .arguments-table td .doc > ul,
+.args .arguments-table td .doc > ol,
+.args .arguments-table td .doc > pre {
+  margin-top: 0.25rem;
+  margin-bottom: 0.4rem;
+}
+
+.args .arguments-table td .doc code,
+.args .arguments-table td .doc .docutils.literal {
+  font-size: 1em;
 }
 
 @media only screen and (max-width: 899px) {
