@@ -132,6 +132,19 @@ class TestTypeName(unittest.TestCase):
         with open(__file__, encoding="UTF-8") as f:
             assert_equal(type_name(f), "file")
 
+    def test_object_without_class_attribute(self):
+        # Objects from some vendor SDKs (e.g. Squish) don't expose dunder
+        # attributes such as `__class__`, but `isinstance` still works with
+        # them. `type_name` must not crash in such cases. See issue #5699.
+        class Meta(type):
+            def __instancecheck__(cls, instance):
+                raise AttributeError("__class__")
+
+        class NoClassAttr(metaclass=Meta):
+            pass
+
+        assert_equal(type_name(NoClassAttr()), "NoClassAttr")        
+
     def test_custom_objects(self):
         class CamelCase:
             pass
