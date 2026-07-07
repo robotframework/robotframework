@@ -5301,6 +5301,7 @@ const DATA: Libdoc = {
           kind: "POSITIONAL_OR_NAMED",
           required: true,
           repr: "selector: str",
+          doc: "Selector as text"
         },
         {
           name: "assertion_operator",
@@ -5327,6 +5328,7 @@ const DATA: Libdoc = {
           kind: "POSITIONAL_OR_NAMED",
           required: false,
           repr: "assertion_operator: AssertionOperator | None = None",
+          doc: "See Assertions for further details. Defaults to None."
         },
         {
           name: "assertion_expected",
@@ -5353,6 +5355,7 @@ const DATA: Libdoc = {
           kind: "POSITIONAL_OR_NAMED",
           required: false,
           repr: "assertion_expected: Any | None = None",
+          doc: "Expected value for the state"
         },
         {
           name: "message",
@@ -5379,6 +5382,7 @@ const DATA: Libdoc = {
           kind: "POSITIONAL_OR_NAMED",
           required: false,
           repr: "message: str | None = None",
+          doc: "Overrides the default error message for assertion."
         },
       ],
       returnType: {
@@ -5390,6 +5394,7 @@ const DATA: Libdoc = {
       doc: '<p>Returns text attribute of the element found by <code>selector</code>.</p>\n<p>Keyword can also return <span class="name">input</span> or <span class="name">textarea</span> value property text. See the <a href="#Finding%20elements" class="name">Finding elements</a> section for details about the selectors.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href="#Assertions" class="name">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the state</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>Optionally asserts that the text matches the specified assertion. See <a href="#Assertions" class="name">Assertions</a> for further details for the assertion arguments. By default, assertion is not done.</p>\n<p>Example:</p>\n<pre>\n${text} =    <a href="#Get%20Text" class="name">Get Text</a>    id=important                            # Returns element text without assertion.\n${text} =    <a href="#Get%20Text" class="name">Get Text</a>    id=important    ==    Important text    # Returns element text with assertion.\n${text} =    <a href="#Get%20Text" class="name">Get Text</a>    //input         ==    root              # Returns input element text with assertion.\n</pre>\n<p><a href="https://forum.robotframework.org/t//4285">Comment &gt;&gt;</a></p>',
       shortdoc: "Returns text attribute of the element found by ``selector``.",
       tags: ["Assertion", "Getter", "PageContent"],
+      returnDoc: "Returns the text of the element found by selector.",
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 160,

@@ -263,13 +263,21 @@
               {{#if args.length}}
                 <div class="args">
                   <h4>{{t "arguments"}}</h4>
-                  <div class="arguments-list-container">
-                    <div class="arguments-list">
-                    {{#each args}}
-                      {{> arg this}}
-                    {{/each}}
-                    </div>
-                  </div>
+                  <table class="arguments-table">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Default</th>
+                        <th>Type</th>
+                        <th>Documentation</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {{#each args}}
+                        {{> arg this}}
+                      {{/each}}
+                    </tbody>
+                  </table>
                 </div>
               {{/if}}
               {{#if returnType}}
@@ -303,25 +311,36 @@
       </div>
     </script>
     <script type="text/x-handlebars-template" id="argument-template">
-          <span class="arg-name {{#if required}}arg-required{{else}}arg-optional{{/if}}" title="{{t 'argName'}}">
-          {{#ifEquals kind "VAR_POSITIONAL"}}<span class="arg-kind" title="{{t 'varArgs'}}">*</span>{{/ifEquals}}
-          {{#ifEquals kind "VAR_NAMED"}}<span class="arg-kind" title="{{t 'varNamedArgs'}}">**</span>{{/ifEquals}}
-          {{#ifEquals kind "NAMED_ONLY"}}<span class="arg-kind" title="{{t 'namedOnlyArg'}}">&#x1F3F7;</span>{{/ifEquals}}
-          {{#ifEquals kind "POSITIONAL_ONLY"}}<span class="arg-kind" title="{{t 'posOnlyArg'}}">&#x27F6;</span>{{/ifEquals}}
-          {{name}}
-          </span>
-        {{#ifNotNull defaultValue}}
-        <div class="arg-default-container">
-          <span class="arg-default-eq">=</span>
-          <span class="arg-default-value" title="{{t 'defaultTitle'}}">{{defaultValue}}</span>
-        </div>
-      {{/ifNotNull}}
-
-      {{#if type}}
-        <span class="arg-type">
-            {{{renderTypeInfo type false}}}
-        </span>
-      {{/if}}
+      {{#ifEquals kind "NAMED_ONLY_MARKER"}}
+      {{else}}
+      {{#ifEquals kind "POSITIONAL_ONLY_MARKER"}}
+      {{else}}
+          <tr>
+            <td>
+              <span class="arg-name {{#if required}}arg-required{{else}}arg-optional{{/if}}" title="{{t 'argName'}}">
+                {{#ifEquals kind "VAR_POSITIONAL"}}<span class="arg-kind" title="{{t 'varArgs'}}">*</span>{{/ifEquals}}
+                {{#ifEquals kind "VAR_NAMED"}}<span class="arg-kind" title="{{t 'varNamedArgs'}}">**</span>{{/ifEquals}}
+                {{#ifEquals kind "NAMED_ONLY"}}<span class="arg-kind" title="{{t 'namedOnlyArg'}}">&#x1F3F7;</span>{{/ifEquals}}
+                {{#ifEquals kind "POSITIONAL_ONLY"}}<span class="arg-kind" title="{{t 'posOnlyArg'}}">&#x27F6;</span>{{/ifEquals}}
+                {{name}}
+              </span>
+            </td>
+            <td>
+              {{#ifNotNull defaultValue}}
+                <span class="arg-default-value" title="{{t 'defaultTitle'}}">{{defaultValue}}</span>
+              {{/ifNotNull}}
+            </td>
+            <td>
+              {{#if type}}
+                {{{renderTypeInfo type false}}}
+              {{/if}}
+            </td>
+            <td>
+              <div class="doc">{{{doc}}}</div>
+            </td>
+          </tr>
+      {{/ifEquals}}
+      {{/ifEquals}}
     </script>
     <script type="text/x-handlebars-template" id="tags-shortcuts-template">
       <option value="" {{#ifEquals selectedTag ""}}selected{{/ifEquals}}>- Show all tags -</option>

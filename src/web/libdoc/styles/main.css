@@ -645,6 +645,53 @@ h4 {
   min-width: 200px;
 }
 
+.args .arguments-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 1.33rem;
+}
+
+.args .arguments-table th,
+.args .arguments-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.4rem 0.55rem;
+}
+
+.args .arguments-table thead th {
+  border-bottom: 2px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.args .arguments-table tbody td {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.args .arguments-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.args .arguments-table td:nth-child(1),
+.args .arguments-table td:nth-child(2),
+.args .arguments-table td:nth-child(3) {
+  white-space: nowrap;
+}
+
+.args .arguments-table td:nth-child(4) {
+  width: 100%;
+}
+
+@media only screen and (max-width: 899px) {
+  .args .arguments-table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
 .enum-type-members span,
 .args span,
 .return-type span,

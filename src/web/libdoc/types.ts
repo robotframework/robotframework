@@ -40,6 +40,7 @@ type Arg = {
     | "VAR_POSITIONAL";
   required: boolean;
   repr: string;
+  doc: string;
 };
 
 type ArgType = {
