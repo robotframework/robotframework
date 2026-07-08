@@ -322,7 +322,7 @@ thus be as describing as possible, but not too long.
 
 The simple example below illustrates how to write the documentation in
 general. How the HTML documentation generated based on this example looks
-like can be seen above__, and there is also a `bit longer example`__ at
+like can be seen above__, and there are also `bit longer examples`__ at
 the end of this chapter.
 
 .. sourcecode:: python
@@ -335,7 +335,7 @@ the end of this chapter.
 .. tip:: For more information on Python documentation strings, see `PEP-257`__.
 
 __ `Libdoc HTML documentation`_
-__ `Libdoc example`_
+__ `Libdoc examples`_
 __ `Detecting is Robot Framework running`_
 __ http://www.python.org/dev/peps/pep-0257
 
@@ -669,7 +669,7 @@ targets are the same regardless the documentation format, though.
 Target matching is also always case, space and underscore insensitive.
 
 In addition to the examples in the following sections, internal linking
-and argument formatting is shown also in the `longer example`__ at the
+and argument formatting is shown also in `longer examples`__ at the
 end of this chapter.
 
 .. note:: Most of the examples in this section use the backtick linking style
@@ -678,7 +678,7 @@ end of this chapter.
 
 .. note:: There is no error or warning if a link target is not found.
 
-__ `Libdoc example`_
+__ `Libdoc examples`_
 
 Linking to keywords
 ~~~~~~~~~~~~~~~~~~~
@@ -801,68 +801,185 @@ resource file introduction and link to them in keywords.
        """
        pass
 
-Representing arguments
-----------------------
+Argument and return value information
+-------------------------------------
 
-Libdoc shows information about keywords' arguments automatically.
+Libdoc shows some information about arguments and return values automatically.
+In addition to that, it is possible to add custom documentation for them.
 
-Included information
-~~~~~~~~~~~~~~~~~~~~
+Automatically included information
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The following information is shown for all keywords regardless are they implemented
-in libraries or in resource files:
+using Robot Framework syntax or Python:
 
-- Argument name. User keyword arguments are shown without the `${}` decoration
-  to make arguments look the same regardless where keywords originate from.
-- Marker telling is the argument `positional-only`__, `named-only`__,
-  `free positional`__, `free named`__, or `normal argument`__ that can be given
-  either by position or by name.
-- Possible default value. Shown like `= 42`.
-- Possible type. Shown like `<int>`. Can be a link to type documentation as explained
-  in the next section.
+- Argument names. User keyword arguments are shown without the `${}` decoration
+  to make arguments look the same regardless the keyword type.
+- Argument default values.
+- Argument types.
+- Return value types.
 
-__ `Positional-only arguments`_
-__ `Keyword-only arguments`_
-__ varargs-library_
-__ kwargs-library_
-__ `Keyword arguments`_
-
-When referring to arguments in keyword documentation, it is recommended to
-use `inline code style <Robot inline styles_>`__ like :codesc:`\`\`argument\`\``.
-
-Automatically listing type documentation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-As mentioned above, Libdoc automatically shows possible type information when
-listing arguments. If the type is a custom type based on Enum_ or TypedDict_,
-the type is `automatically converted`__, or the type has `custom converter`__,
-also the type itself is listed separately to show more information about it.
-When these types are used in arguments, the type name also becomes a link
-to the type information.
-
-All listed data types show possible type documentation as well as what argument
-types are supported. In addition to that, types based on `Enum` list available
-members and types based on `TypedDict` show the dictionary structure.
-
-.. note:: Automatically listing types based on `Enum` and `TypedDict` is new
-          in Robot Framework 4.0. Listing other types is new in Robot Framework 5.0.
+If a shown type is `automatically converted`__, has a `custom converter`__ or is
+based on Enum_ or TypedDict_, the type name becomes a link to further type
+documentation.
 
 __ `Supported conversions`_
 __ `Custom argument converters`_
 
-Libdoc example
---------------
+Argument and return value documentation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The following example illustrates how to use the most important
-`documentation formatting`_ possibilities, `internal linking`_, and so
-on. `Click here`__ to see how the generated documentation looks like.
+Robot Framework supports `Google style`_ argument and return value documentation:
+
+.. sourcecode:: python
+
+    def example(first: int, second: float, third: float) -> float:
+        """Example keyword.
+
+        Args:
+            first: Documentation of the first argument.
+            second: If documentation gets long, it can be split to multiple
+                lines. Wrapped lines should be indented consistently.
+            third:
+                Documentation can also start on the next line.
+
+                    Extra indentation like this is preserved and can
+                    be used for formatting.
+
+        Returns:
+            The sum of the given arguments.
+
+        Normal documentation continues.
+        """
+        return a + b
+
+.. _`Google style`: https://google.github.io/styleguide/pyguide.html#383-functions-and-methods
+
+Documenting arguments
+'''''''''''''''''''''
+
+As the example above demonstrates, arguments are documented under the `Args:` header
+that must be followed with an indented block. The `specification <Google style_>`__
+mandates that the indentation should be two or four spaces, but Robot Framework only
+requires that the indentation is at least two spaces and that it is consistent
+within a block.
+
+Documentation of each argument starts with the argument name followed with a colon
+like `name:`. If the documentation follows on the same line, there must be at
+least one space after the colon like `name: Documentation`. Alternatively,
+the documentation can start on the next line like with the argument `third`
+in the above example. As the example also demonstrates, long lines can be wrapped
+and extra indentation is preserved.
+
+The specification says that with `*varargs` and `**kwargs` the leading `*` and `**`
+should be included, but with Robot Framework both including and excluding them is
+fine. When documenting `user keyword arguments`_, it is possible to omit `${}`,
+`@{}` and `&{}` decoration.
+
+Possible argument types in the documentation like `name (int): Example` are
+totally ignored. If type information is important, it must be provided
+via type hints or by using the `@keyword` decorator so that it is available
+also during execution and can be used for `argument conversion`_.
+
+In addition to `Args:`, Robot Framework recognizes headers `Arguments:` and
+`Parameters:`. These may not be supported by other tools processing argument
+documentation, though.
+
+Documenting return value
+''''''''''''''''''''''''
+
+The return value is documented under the `Returns:` header so that there is just
+a block of test. The block must be indented the same way as arguments, it
+can span multiple lines and extra indentation is preserved.
+
+Robot Framework allows the documentation to start already on the header row
+as long as there is at least one space after the colon. This means that
+short return value documentation can be written like `Returns: Some value`.
+
+Robot Framework recognizes header `Return:` as an alias for `Returns:`.
+It also considers `Yields:` another alias instead of its own section type.
+
+Handling parsed information
+'''''''''''''''''''''''''''
+
+All recognized sections are parsed and information they contain is added to
+`Libdoc spec files`_ and shown in Libdoc HTML UI separately. Recognized sections
+are also removed from the actual keyword documentation.
+
+Possible unrecognized sections, including the `Raises:` section that may be
+supported later, are left to the documentation as-is.
+
+Supported formatting
+''''''''''''''''''''
+
+There are often needs to process keyword documentation also using other tools
+than Libdoc. If the whole documentation is to be rendered as Markdown or
+reStructuredText, an empty line should be added after a header like `Args:`
+to avoid the header and following block to be rendered as a single paragraph::
+
+    Args:
+
+        first: Documentation of the first argument.
+        second: If documentation gets long, it can be split to multiple
+            lines. Wrapped lines should be indented consistently.
+
+The above is enough to get arguments rendered as a `code block`__ in Markdown.
+This syntax still would not work too well with reStructuredText, but Robot Framework
+allows headers to end with two colons like `Args::` and that would turn the above
+into a `literal block`__-
+
+__ https://daringfireball.net/projects/markdown/syntax#precode
+__ https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#literal-blocks
+
+Robot Framework also supports formatting section headers using the asterisk (`*`)
+and underscore (`_`) characters that are typically used for bold and italics in
+different documentation formats. The colon can be either inside (e.g. `**Args:**`)
+or outside (e.g. `*Returns*:`) formatting.
+
+Argument names can be formatted using the backtick character (:codesc:`\``)
+that is typically used for inline code. In this case the colon must not be
+formatted, so only something like :codesc:`\`first\`: The doc of the first argument`
+is supported.
+
+Possible header and argument name formatting is totally ignored by Robot Framework
+and thus has an effect only if the documentation is processed using other tools.
+Actual argument and return value documentation can also contain formatting
+and that is handled the same way as `formatting elsewhere in the documentation`__.
+
+__ `Documentation syntax`_
+
+
+Libdoc examples
+---------------
+
+The following examples illustrates how to use the most important
+`documentation formatting`_ possibilities, `internal linking`_, and so on.
+
+Using Robot Framework format
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. sourcecode:: python
 
    src/SupportingTools/LoggingLibrary.py
 
+`Click here`__ to see how the generated documentation looks like.
+
+__ src/SupportingTools/LoggingLibrary.html
+
+Using Markdown
+~~~~~~~~~~~~~~
+
+.. sourcecode:: python
+
+   src/SupportingTools/LoggingLibraryMarkdown.py
+
+`Click here`__ to see how the generated documentation looks like.
+
+__ src/SupportingTools/LoggingLibraryMarkdown.html
+
+Standard library documentation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 All `standard libraries`_ have documentation generated by
 Libdoc and their documentation (and source code) act as a more
 realistic examples.
-
-__ src/SupportingTools/LoggingLibrary.html
