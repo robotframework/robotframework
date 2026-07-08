@@ -168,13 +168,27 @@
             {{#if this.args.length}}
                 <div class="args">
                   <h4>{{t "arguments"}}</h4>
-                  <div class="arguments-list-container">
-                    <div class="arguments-list">
+                  <table class="arguments-table">
+                    <colgroup>
+                      <col class="arg-col-name" />
+                      <col class="arg-col-default" />
+                      <col class="arg-col-type" />
+                      <col class="arg-col-doc" />
+                    </colgroup>
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Default</th>
+                        <th>Type</th>
+                        <th>Documentation</th>
+                      </tr>
+                    </thead>
+                    <tbody>
                     {{#each this.args}}
                       {{> arg }}
                     {{/each}}
-                    </div>
-                  </div>
+                    </tbody>
+                  </table>
                 </div>
             {{/if}}
             {{#if this.doc}}
@@ -286,12 +300,35 @@
                   </table>
                 </div>
               {{/if}}
-              {{#if returnType}}
-              <div class="return-type">
-                <h4>{{t "returnType"}}</h4>
-                <span class="arg-type">
-                {{{renderTypeInfo returnType true}}}
-                </span>
+              {{#if (or returnType returnDoc)}}
+              <div class="return-info">
+                <h4>{{t "returnInfo"}}</h4>
+                <table class="return-info-table">
+                  <colgroup>
+                    <col class="ret-col-type" />
+                    <col class="ret-col-doc" />
+                  </colgroup>
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Documentation</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        {{#if returnType}}
+                          <span class="arg-type">
+                          {{{renderTypeInfo returnType true}}}
+                          </span>
+                        {{/if}}
+                      </td>
+                      <td>
+                        <div class="doc">{{{returnDoc}}}</div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
               {{/if}}
             </div>

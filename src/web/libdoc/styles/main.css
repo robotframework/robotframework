@@ -376,13 +376,16 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3 {
   min-width: 150px;
 }
 
-.arguments-list .arg-type,
-.return-type .arg-type {
+.arguments-list .arg-type {
   margin-left: 2rem;
   -ms-grid-column: 3;
   grid-column: 3;
   background: var(--background-color);
   white-space: nowrap;
+  -webkit-text-size-adjust: none;
+}
+
+.return-info .arg-type {
   -webkit-text-size-adjust: none;
 }
 
@@ -657,19 +660,28 @@ h4 {
 }
 
 .args .arguments-table .arg-col-name {
-  width: min(24ch, 26%);
+  width: 20%;
 }
 
 .args .arguments-table .arg-col-default {
-  width: min(14ch, 16%);
+  width: 10%;
 }
 
 .args .arguments-table .arg-col-type {
-  width: min(28ch, 30%);
+  width: 24%;
 }
 
 .args .arguments-table .arg-col-doc {
   width: auto;
+}
+
+/* Importing section has longer argument names than keywords — widen Name, narrow Type */
+#importing-container .args .arguments-table .arg-col-name {
+  width: 30%;
+}
+
+#importing-container .args .arguments-table .arg-col-type {
+  width: 18%;
 }
 
 .args .arguments-table th,
@@ -733,9 +745,83 @@ h4 {
   }
 }
 
+.return-info {
+  min-width: 200px;
+}
+
+.return-info .return-info-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 1.33rem;
+}
+
+.return-info .return-info-table .ret-col-type {
+  width: 22%;
+}
+
+.return-info .return-info-table .ret-col-doc {
+  width: auto;
+}
+
+.return-info .return-info-table th,
+.return-info .return-info-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.4rem 0.55rem;
+}
+
+.return-info .return-info-table thead th {
+  border-bottom: 2px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.return-info .return-info-table tbody td {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.return-info .return-info-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.return-info .return-info-table td .doc {
+  font-size: 0.95em;
+}
+
+.return-info .return-info-table td .doc > p {
+  margin: 0 0 0.35rem;
+}
+
+.return-info .return-info-table td .doc > p:last-child {
+  margin-bottom: 0;
+}
+
+.return-info .return-info-table td .doc > ul,
+.return-info .return-info-table td .doc > ol,
+.return-info .return-info-table td .doc > pre {
+  margin-top: 0.25rem;
+  margin-bottom: 0.4rem;
+}
+
+.return-info .return-info-table td .doc code,
+.return-info .return-info-table td .doc .docutils.literal {
+  font-size: 1em;
+}
+
+@media only screen and (max-width: 899px) {
+  .return-info .return-info-table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
 .enum-type-members span,
 .args span,
-.return-type span,
+.return-info span,
 .args a {
   font-family: monospace;
   background: var(--light-background-color);
@@ -777,8 +863,7 @@ a.type {
   color: var(--highlighted-color);
 }
 
-.tags,
-.return-type {
+.tags {
   display: flex;
   align-items: baseline;
 }

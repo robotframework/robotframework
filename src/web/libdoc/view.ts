@@ -52,6 +52,9 @@ class View {
         ? options.fn(this)
         : options.inverse(this);
     });
+    Handlebars.registerHelper("or", function (a, b) {
+      return a || b;
+    });
     Handlebars.registerHelper(
       "renderTypeInfo",
       function (argType: ArgType, isReturnType: boolean) {

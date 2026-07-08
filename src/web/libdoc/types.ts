@@ -21,6 +21,7 @@ type Keyword = {
   name: string;
   args: Array<Arg>;
   returnType: ArgType | null;
+  returnDoc: string;
   doc: string;
   shortdoc: string;
   tags: Array<string>;
