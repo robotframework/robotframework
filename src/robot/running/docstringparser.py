@@ -61,7 +61,7 @@ class Block:
     Used for representing documentation sections and arguments.
     """
 
-    def __init__(self, name: "str | None" = None, body: "Sequence[str]" = ()):
+    def __init__(self, name: str = "", body: "Sequence[str]" = ()):
         """
         :param name: Name of the block.
         :param body: Block body.
@@ -70,25 +70,21 @@ class Block:
         the name. It can be an empty string.
         """
         assert body or not name
-        self.name = name
+        self.name = name.strip()
         self._body = list(body)
 
     @property
     def content(self) -> str:
-        """Return block content. With named block content is dedent."""
+        """Return block content. With named blocks content is dedent."""
         if self.name:
-            content = self._dedent(self._body)
+            # The first line of the body is the text on the same line as the name.
+            # It should not affect indentation and must be ignored if it is empty.
+            inline, *body = self._body
+            body = textwrap.dedent("\n".join(body))
+            content = f"{inline}\n{body}" if inline else body
         else:
             content = "\n".join(self._body)
         return content.rstrip()
-
-    def _dedent(self, body) -> str:
-        # In ths case the block has a name and the first line of the body is
-        # the text on the same line as the name. This line does not affect
-        # indentation and must be ignored if it is empty.
-        inline, *body = body
-        body = textwrap.dedent("\n".join(body))
-        return f"{inline}\n{body}" if inline else body
 
     def accepts(self, line: str) -> bool:
         if not self.name:
@@ -103,19 +99,26 @@ class DocStringParser:
     args_headers = ("args", "arguments", "parameters")
     returns_headers = ("returns", "return", "yields")
     header_re = re.compile(
-        rf"({'|'.join(args_headers + returns_headers)}):(\s+(.*))?",
-        re.IGNORECASE,
+        rf"""
+        [*_]*         # Start of optional bold/italics formatting
+        ({'|'.join(args_headers + returns_headers)})
+        [*_]*         # End of optional bold/italics formatting
+        ::?           # One or two colons
+        [*_]*         # Alternative end of optional bold/italics formatting
+        (\s+(.*))?    # Optional inline text
+        """,
+        re.IGNORECASE | re.VERBOSE,
     )
     arg_re = re.compile(r"\s?(\S.*?):(\s+(.*))?")
 
     def parse(self, doc: str) -> DocInfo:
         info = DocInfo()
         for section in self._parse_sections(doc):
-            name = section.name.lower() if section.name else section.name
+            name = section.name.lower()
             if name in self.args_headers:
                 info.args.update(self._parse_args(section.content))
             elif name in self.returns_headers:
-                info.returns = section.content
+                info.returns = section.content.strip()
             else:
                 info.doc += section.content + "\n\n"
         info.doc = info.doc.strip()
@@ -151,14 +154,18 @@ class DocStringParser:
         yield from self._yield_arg(arg)
 
     def _yield_arg(self, arg: Block) -> "Iterable[tuple[str, str]]":
-        name = arg.name or ""
-        description = arg.content
-        if (name or description) and name != "*":
-            yield self._normalize_name(name), description
+        name, doc = arg.name, arg.content
+        if name or doc:
+            name = self._normalize_name(name)
+            if name not in ("/", "*"):
+                yield name, doc
 
     def _normalize_name(self, name: str) -> str:
-        name = name.split("(")[0].strip()
-        if name.startswith("*"):
+        if name.startswith("`"):
+            name = name.strip("`").strip()
+        if "(" in name:
+            name = name.split("(")[0].rstrip()
+        if name.startswith("*") and name != "*":
             name = name.lstrip("*").strip()
         elif name.startswith(("${", "@{", "&{")) and name.endswith("}"):
             name = name[2:-1].strip()

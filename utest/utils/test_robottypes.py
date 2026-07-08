@@ -143,7 +143,7 @@ class TestTypeName(unittest.TestCase):
         class NoClassAttr(metaclass=Meta):
             pass
 
-        assert_equal(type_name(NoClassAttr()), "NoClassAttr")        
+        assert_equal(type_name(NoClassAttr()), "NoClassAttr")
 
     def test_custom_objects(self):
         class CamelCase:

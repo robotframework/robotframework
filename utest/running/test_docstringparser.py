@@ -167,13 +167,51 @@ Args:
     name: Documentation
 
 Raises:
-    ValueError: If bad.
+    ValueError: If `name` is not accepted.
 - - -
 doc: |
     Doc
 
     Raises:
-        ValueError: If bad.
+        ValueError: If `name` is not accepted.
+args:
+    name: Documentation
+
+## Allow header formatting
+*Args:*
+
+    a: 1
+
+**Args**:
+
+    b: 2
+
+_Args_:
+
+    c: 3
+
+__Args:__
+
+    d: 4
+
+_*Returns:*_
+
+    Something
+- - -
+args:
+    a: "1"
+    b: "2"
+    c: "3"
+    d: "4"
+returns:
+    Something
+
+## Support reStructuredText literal block marker (`::`)
+
+Args::
+
+    name: Documentation
+- - -
 args:
     name: Documentation
 """
@@ -218,7 +256,7 @@ doc: |
 
     The end
 
-## Leading whitespace stripped
+## Strip leading whitespace
 
     Doc
 - - -
@@ -232,15 +270,17 @@ doc:
             """
 ## Basics
 Args:
-    name: Documentation
-    name2: https://example.com
+    name: documentation
+    NAME: https://example.com
 
-    name3: Documentation 3
+    Name: Documentation
+    _name: _documentation
 - - -
 args:
-    name: Documentation
-    name2: https://example.com
-    name3: Documentation 3
+    name: documentation
+    NAME: https://example.com
+    Name: Documentation
+    _name: _documentation
 
 ## Indentation handling
 Args:
@@ -341,16 +381,27 @@ args:
     def test_normalize_name(self):
         self.verify(
             """
-## Remove types
+## Ignore spaces before and after colon
 Args:
-    name (str): The name
-    other (list[str]): Parameterized
-    union (int | str): The union argument
+    before      : Before
+    after:        After
+    both     :    Both
 - - -
 args:
-    name: The name
-    other: Parameterized
-    union: The union argument
+    before: Before
+    after: After
+    both: Both
+
+## Remove types
+Args:
+    simple (str)      : Simple
+    params (list[int]): Parameterized
+    union (bool | str): Union
+- - -
+args:
+    simple: Simple
+    params: Parameterized
+    union: Union
 
 ## Normalize varargs and kwargs
 Args:
@@ -364,23 +415,40 @@ args:
 ## Normalize Robot args
 Args:
     ${a  r  g}: argument
-    @{args}: varargs
-    &{kws}: kwargs
+    @{args}   : varargs
+    &{kws}    : kwargs
 - - -
 args:
     a  r  g: argument
     args: varargs
     kws: kwargs
 
-## Keyword-only marker is removed
+## Ignore positional-only marker and keyword-only marker
 Args:
-    arg: normal argument
-    *: kw only marker
-    kwo: kw only argument
+    po: Positional-only argument
+    /:  Positional-only marker
+    normal: Normal argument
+    *     : Keyword-only marker
+    kwo   : Keyword-only argument
 - - -
 args:
-    arg: normal argument
-    kwo: kw only argument
+    po: Positional-only argument
+    normal: Normal argument
+    kwo: Keyword-only argument
+
+## Ignore code-style formatting
+Args:
+    `first`     : Markdown and reStructuredText style
+    ``second``  : Robot and reStructuredText style
+    `/`         : Positional-only marker is handled
+    `*varargs`  : Varargs are normalized
+    `  spaces  `: Spaces are stripped
+- - -
+args:
+    first: Markdown and reStructuredText style
+    second: Robot and reStructuredText style
+    varargs: Varargs are normalized
+    spaces: Spaces are stripped
 
 ## Empty name after normalization
 Doc
@@ -442,6 +510,13 @@ returns: |
 
         Indentation is
           preserved.
+
+## Strip leading whitespace
+Returns:
+
+    The result value.
+- - -
+returns: The result value.
 """
         )
 

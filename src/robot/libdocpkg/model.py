@@ -14,7 +14,6 @@
 #  limitations under the License.
 
 import json
-import re
 from collections.abc import Sequence
 from itertools import chain
 from pathlib import Path
