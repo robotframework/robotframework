@@ -76,9 +76,9 @@ class DocValidator:
     def __init__(self, spec: "ArgumentSpec"):
         self.spec = spec
 
-    def validate(self, docs: "Mapping[str, str] | None") -> "dict[str, str]":
+    def validate(self, docs: "Mapping[str, str] | None") -> "dict[str, str] | None":
         if not docs:
-            return {}
+            return None if docs is None else {}
         names = set(self.spec.argument_names)
         extra = [d for d in docs if d not in names]
         if extra:
