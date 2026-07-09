@@ -17,7 +17,7 @@ class Translations {
 
   public translate(key: string): string {
     const translation = this.language[key];
-    if (translation) {
+    if (typeof translation === "string") {
       return translation;
     }
     return translations["en"][key];
