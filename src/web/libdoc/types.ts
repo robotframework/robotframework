@@ -21,6 +21,7 @@ type Keyword = {
   name: string;
   args: Array<Arg>;
   returnType: ArgType | null;
+  returnDoc: string;
   doc: string;
   shortdoc: string;
   tags: Array<string>;
@@ -36,10 +37,14 @@ type Arg = {
   kind:
     | "NAMED_ONLY"
     | "NAMED_ONLY_MARKER"
+    | "POSITIONAL_ONLY"
+    | "POSITIONAL_ONLY_MARKER"
     | "POSITIONAL_OR_NAMED"
+    | "VAR_NAMED"
     | "VAR_POSITIONAL";
   required: boolean;
   repr: string;
+  doc: string;
 };
 
 type ArgType = {

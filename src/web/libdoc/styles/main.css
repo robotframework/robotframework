@@ -324,65 +324,19 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3 {
   letter-spacing: 0.1em;
 }
 
-.arguments-list-container {
-  overflow-y: auto;
-  margin-bottom: 1.33rem;
-}
-
-.arguments-list {
-  display: -ms-inline-grid;
-  display: inline-grid;
-  -ms-grid-columns: 1fr 1fr 1fr;
-  grid-template-columns: auto auto auto;
-  row-gap: 3px;
-}
-
 .typed-dict-annotation > span,
-.enum-type-members span,
-.arguments-list .arg-name {
-  -ms-grid-column: 1;
-  grid-column: 1;
+.enum-type-members span {
   border-radius: 3px;
   white-space: nowrap;
   padding-left: 0.5rem;
   padding-right: 0.5rem;
-  justify-self: start;
-}
-
-.arguments-list .arg-default-container {
-  -ms-grid-column: 2;
-  grid-column: 2;
-  display: flex;
 }
 
 .optional-key {
   font-style: italic;
 }
 
-.arguments-list .arg-default-eq {
-  margin-left: 2rem;
-  margin-right: 0.5rem;
-  background: var(--background-color);
-}
-
-.arguments-list .arg-default-value {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-  border-radius: 3px;
-}
-
-.arguments-list .base-arg-data {
-  display: flex;
-  min-width: 150px;
-}
-
-.arguments-list .arg-type,
-.return-type .arg-type {
-  margin-left: 2rem;
-  -ms-grid-column: 3;
-  grid-column: 3;
-  background: var(--background-color);
-  white-space: nowrap;
+.return-info .arg-type {
   -webkit-text-size-adjust: none;
 }
 
@@ -399,7 +353,7 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3 {
   text-decoration: underline;
 }
 
-.arguments-list .arg-kind {
+.args .arg-kind {
   color: transparent;
   text-shadow: 0 0 0 var(--less-important-text-color);
   padding: 0;
@@ -645,9 +599,121 @@ h4 {
   min-width: 200px;
 }
 
+/* Shared styles for arguments and return-info tables */
+.kw-info-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 1.33rem;
+}
+
+.kw-info-table th,
+.kw-info-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.4rem 0.55rem;
+}
+
+.kw-info-table thead th {
+  border-bottom: 2px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.kw-info-table tbody td {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.kw-info-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.kw-info-table td .doc {
+  font-size: 0.95em;
+}
+
+.kw-info-table td .doc > p {
+  margin: 0 0 0.35rem;
+}
+
+.kw-info-table td .doc > p:last-child {
+  margin-bottom: 0;
+}
+
+.kw-info-table td .doc > ul,
+.kw-info-table td .doc > ol,
+.kw-info-table td .doc > pre {
+  margin-top: 0.25rem;
+  margin-bottom: 0.4rem;
+}
+
+.kw-info-table td .doc code,
+.kw-info-table td .doc .docutils.literal {
+  font-size: 1em;
+}
+
+@media only screen and (max-width: 899px) {
+  .kw-info-table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+/* Arguments table column widths */
+.args .arguments-table .arg-col-name {
+  width: 20%;
+}
+
+.args .arguments-table .arg-col-default {
+  width: 10%;
+}
+
+.args .arguments-table .arg-col-type {
+  width: 24%;
+}
+
+.args .arguments-table .arg-col-doc {
+  width: auto;
+}
+
+/* Importing section has longer argument names than keywords — widen Name, narrow Type */
+#importing-container .args .arguments-table .arg-col-name {
+  width: 30%;
+}
+
+#importing-container .args .arguments-table .arg-col-type {
+  width: 18%;
+}
+
+.args .arguments-table td:nth-child(1),
+.args .arguments-table td:nth-child(2),
+.args .arguments-table td:nth-child(3) {
+  white-space: nowrap;
+}
+
+.args .arguments-table td:nth-child(4) {
+  width: 100%;
+}
+
+/* Return info table column widths */
+.return-info {
+  min-width: 200px;
+}
+
+.return-info .return-info-table .ret-col-type {
+  width: 22%;
+}
+
+.return-info .return-info-table .ret-col-doc {
+  width: auto;
+}
+
 .enum-type-members span,
 .args span,
-.return-type span,
+.return-info span,
 .args a {
   font-family: monospace;
   background: var(--light-background-color);
@@ -689,8 +755,7 @@ a.type {
   color: var(--highlighted-color);
 }
 
-.tags,
-.return-type {
+.tags {
   display: flex;
   align-items: baseline;
 }
