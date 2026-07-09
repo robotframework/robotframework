@@ -146,6 +146,7 @@ class KeywordImplementation(ModelObject):
         try:
             self.args.docs = result.args
         except DataError as err:
+            self.args.docs = {}
             self.error = str(err)
 
     def matches(self, name: str) -> bool:

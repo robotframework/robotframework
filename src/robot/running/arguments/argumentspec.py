@@ -66,7 +66,7 @@ class ArgumentSpec(metaclass=SetterAwareType):
         self.named_only = tuple(named_only)
         self.var_named = var_named
         self.embedded = tuple(embedded)
-        self.defaults = defaults or {}
+        self.defaults = dict(defaults or {})
         self.types = types
         self.return_type = return_type
         # Following are only used by Libdoc.
@@ -95,7 +95,7 @@ class ArgumentSpec(metaclass=SetterAwareType):
         return TypeInfo.from_type_hint(hint, sequence_is_union=True)
 
     @setter
-    def docs(self, docs: "Mapping[str, str] | None") -> "dict[str, str]":
+    def docs(self, docs: "Mapping[str, str] | None") -> "dict[str, str] | None":
         return DocValidator(self).validate(docs)
 
     @property
@@ -190,6 +190,7 @@ class ArgumentSpec(metaclass=SetterAwareType):
             self.return_type,
             self.docs,
             self.return_doc,
+            self.raises,
         )
 
     def __iter__(self) -> Iterator["ArgInfo"]:

@@ -108,6 +108,8 @@ class XmlDocBuilder:
                 spec.var_named = name
             doc_elem = arg.find("doc")
             if doc_elem is not None:
+                if not spec.docs:
+                    spec.docs = {}
                 spec.docs[name] = doc_elem.text or ""
             default_elem = arg.find("default")
             if default_elem is not None:
