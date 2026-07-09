@@ -303,6 +303,16 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3 {
   padding-left: 0.5rem;
 }
 
+h4 a {
+  text-decoration: none;
+  color: var(--text-color);
+}
+
+h4 a:hover {
+  background: var(--light-background-color);
+}
+
+
 .enum-type-members,
 .dt-usages-list {
   list-style: none;
