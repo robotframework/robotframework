@@ -366,12 +366,19 @@
             {{#if tags.length}}
             <div class="tags">
               <h4>{{t "tags"}}</h4>
-              <span class="kw-tags">
-              {{#each tags}}
-                <span class="tag-link"
-                  title="Show keywords with this tag">{{this}}</span>{{#unless @last}},&nbsp;{{/unless}}
-              {{/each}}
-              </span>
+              <table class="kw-info-table">
+                <tbody>
+                    <tr>
+                      <td>
+                        {{#each tags}}
+                          <span class="tag-link"
+                                title="Show keywords with this tag"
+                          >{{this}}</span>{{#unless @last}},&nbsp;{{/unless}}
+                        {{/each}}
+                      </td>
+                    </tr>
+                </tbody>
+              </table>
             </div>
           {{/if}}
         </div>
