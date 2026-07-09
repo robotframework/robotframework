@@ -26,6 +26,10 @@ def arg_docs(own_line, multiline, *next_line, empty_doc, no_doc) -> str:
         On multiple lines
                 with indentation.
 
+    Raises:
+        ValueError: If something goes wrong.
+        TypeError: Should *not* happen.
+
     The end.
     """
     return ""

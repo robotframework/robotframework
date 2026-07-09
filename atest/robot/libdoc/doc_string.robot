@@ -64,6 +64,10 @@ Validate XML Spec With HTML Docs
     Argument Doc Should Be    1    0    not_set
     Return Doc Should Be      1
     ...    <p>Zero</p>
+    Raises Should Be          0
+    ...    ValueError=<p>If something goes wrong.</p>
+    ...    TypeError=<p>Should <em>not</em> happen.</p>
+    Raises Should Be          1
 
 Validate XML Spec With Raw Docs
     Keyword Doc Should Be     0
@@ -95,6 +99,10 @@ Validate XML Spec With Raw Docs
     Argument Doc Should Be    1    0    not_set
     Return Doc Should Be      1
     ...    Zero
+    Raises Should Be          0
+    ...    ValueError=If something goes wrong.
+    ...    TypeError=Should *not* happen.
+    Raises Should Be          1
 
 Validate JSON Spec With HTML Docs
     Should Be Equal Multiline    ${MODEL}[keywords][0][doc]
@@ -124,6 +132,12 @@ Validate JSON Spec With HTML Docs
     Should Be Equal Multiline   ${MODEL}[keywords][1][args][0][doc]
     Should Be Equal Multiline   ${MODEL}[keywords][1][returnDoc]
     ...    <p>Zero</p>
+    Length Should Be            ${MODEL}[keywords][0][raises]    2
+    Length Should Be            ${MODEL}[keywords][1][raises]    0
+    Should Be Equal Multiline   ${MODEL}[keywords][0][raises][ValueError]
+    ...    <p>If something goes wrong.</p>
+    Should Be Equal Multiline   ${MODEL}[keywords][0][raises][TypeError]
+    ...    <p>Should <em>not</em> happen.</p>
 
 Validate JSON Spec With Raw Docs
     Should Be Equal Multiline    ${MODEL}[keywords][0][doc]
@@ -155,3 +169,9 @@ Validate JSON Spec With Raw Docs
     Should Be Equal Multiline   ${MODEL}[keywords][1][args][0][doc]
     Should Be Equal Multiline   ${MODEL}[keywords][1][returnDoc]
     ...    Zero
+    Length Should Be            ${MODEL}[keywords][0][raises]    2
+    Length Should Be            ${MODEL}[keywords][1][raises]    0
+    Should Be Equal Multiline   ${MODEL}[keywords][0][raises][ValueError]
+    ...    If something goes wrong.
+    Should Be Equal Multiline   ${MODEL}[keywords][0][raises][TypeError]
+    ...    Should *not* happen.

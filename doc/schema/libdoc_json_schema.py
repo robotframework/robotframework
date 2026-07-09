@@ -11,7 +11,7 @@ Requires Pydantic 1.10. https://docs.pydantic.dev/1.10/
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from pydantic import BaseModel as PydanticBaseModel, Extra, Field, PositiveInt
 
@@ -44,7 +44,7 @@ class BaseModel(PydanticBaseModel):
 
 class SpecVersion(int, Enum):
     """Version of the spec."""
-    VERSION = 3
+    VERSION = 4
 
 
 class DocumentationType(str, Enum):
@@ -106,6 +106,7 @@ class Keyword(BaseModel):
     args: List[Argument]
     returnType: Optional[TypeInfo]
     returnDoc: Optional[str]
+    raises: Dict[str, str]
     tags: List[str]
     private: Optional[bool]
     deprecated: Optional[bool]

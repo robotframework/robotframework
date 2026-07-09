@@ -142,6 +142,7 @@ class KeywordImplementation(ModelObject):
         result = parse_docstring(self.doc)
         self.doc = result.doc
         self.args.return_doc = result.returns
+        self.args.raises = result.raises
         try:
             self.args.docs = result.args
         except DataError as err:

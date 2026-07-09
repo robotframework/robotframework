@@ -338,7 +338,31 @@
                 </table>
               </div>
               {{/if}}
-            </div>
+              {{#if (dictSize raises)}}
+              <div class="return-info">
+                <h4>{{t "raises"}}</h4>
+                <table class="return-info-table kw-info-table">
+                  <colgroup>
+                    <col class="ret-col-type" />
+                    <col class="ret-col-doc" />
+                  </colgroup>
+                  <thead>
+                    <tr>
+                      <th>{{t "type"}}</th>
+                      <th>{{t "doc"}}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {{#each raises}}
+                      <tr>
+                        <td><span class="arg-type">{{@key}}</span></td>
+                        <td><div class="doc">{{{this}}}</div></td>
+                      </tr>
+                    {{/each}}
+                  </tbody>
+                </table>
+              </div>
+              {{/if}}
             {{#if tags.length}}
             <div class="tags">
               <h4>{{t "tags"}}</h4>

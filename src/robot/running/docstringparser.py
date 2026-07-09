@@ -26,10 +26,11 @@ class DocInfo:
     doc: str = ""
     args: "dict[str, str]" = field(default_factory=dict)
     returns: str = ""
+    raises: "dict[str, str]" = field(default_factory=dict)
 
 
 def parse_docstring(doc: str) -> DocInfo:
-    """Parses a docstring into documentation, arguments and return value.
+    """Parses information from docstring.
 
     Parsing is done according to the Google Python Style Guide.
     https://google.github.io/styleguide/pyguide.html#s3.8-comments-and-docstrings
@@ -98,10 +99,11 @@ class Block:
 class DocStringParser:
     args_headers = ("args", "arguments", "parameters")
     returns_headers = ("returns", "return", "yields")
+    raises_headers = ("raises", "raise")
     header_re = re.compile(
         rf"""
         [*_]*         # Start of optional bold/italics formatting
-        ({'|'.join(args_headers + returns_headers)})
+        ({'|'.join(args_headers + returns_headers + raises_headers)})
         [*_]*         # End of optional bold/italics formatting
         ::?           # One or two colons
         [*_]*         # Alternative end of optional bold/italics formatting
@@ -109,16 +111,18 @@ class DocStringParser:
         """,
         re.IGNORECASE | re.VERBOSE,
     )
-    arg_re = re.compile(r"\s?(\S.*?):(\s+(.*))?")
+    named_doc_re = re.compile(r"\s?(\S.*?):(\s+(.*))?")
 
     def parse(self, doc: str) -> DocInfo:
         info = DocInfo()
         for section in self._parse_sections(doc):
             name = section.name.lower()
             if name in self.args_headers:
-                info.args.update(self._parse_args(section.content))
+                info.args.update(self._parse_named_docs(section.content))
             elif name in self.returns_headers:
                 info.returns = section.content.strip()
+            elif name in self.raises_headers:
+                info.raises.update(self._parse_named_docs(section.content))
             else:
                 info.doc += section.content + "\n\n"
         info.doc = info.doc.strip()
@@ -141,20 +145,20 @@ class DocStringParser:
             can_start = section.name or not line.strip()
         yield section
 
-    def _parse_args(self, data: str) -> "Iterable[tuple[str, str]]":
-        arg = Block()
+    def _parse_named_docs(self, data: str) -> "Iterable[tuple[str, str]]":
+        block = Block()
         for line in data.splitlines():
-            match = self.arg_re.fullmatch(line)
+            match = self.named_doc_re.fullmatch(line)
             if match:
-                yield from self._yield_arg(arg)
+                yield from self._yield_name_and_doc(block)
                 name, _, inline_text = match.groups()
-                arg = Block(name, [inline_text or ""])
+                block = Block(name, [inline_text or ""])
             else:
-                arg.add(line)
-        yield from self._yield_arg(arg)
+                block.add(line)
+        yield from self._yield_name_and_doc(block)
 
-    def _yield_arg(self, arg: Block) -> "Iterable[tuple[str, str]]":
-        name, doc = arg.name, arg.content
+    def _yield_name_and_doc(self, block: Block) -> "Iterable[tuple[str, str]]":
+        name, doc = block.name, block.content
         if name or doc:
             name = self._normalize_name(name)
             if name not in ("/", "*"):

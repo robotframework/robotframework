@@ -95,7 +95,7 @@
       "title": "SpecVersion",
       "description": "Version of the spec.",
       "enum": [
-        3
+        4
       ],
       "type": "integer"
     },
@@ -286,6 +286,13 @@
             }
           ]
         },
+        "raises": {
+          "title": "Raises",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
         "tags": {
           "title": "Tags",
           "type": "array",
@@ -337,6 +344,7 @@
         "doc",
         "shortdoc",
         "args",
+        "raises",
         "tags",
         "source"
       ],

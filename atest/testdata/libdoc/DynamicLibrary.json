@@ -1,9 +1,9 @@
 {
-  "specversion": 3,
+  "specversion": 4,
   "name": "DynamicLibrary",
   "doc": "<p>Dummy documentation for <span class=\"name\">__intro__</span>.</p>",
   "version": "0.1",
-  "generated": "2026-07-04T11:41:35+00:00",
+  "generated": "2026-07-09T14:50:19+00:00",
   "type": "LIBRARY",
   "scope": "TEST",
   "docFormat": "HTML",
@@ -42,6 +42,7 @@
       ],
       "returnType": null,
       "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": 10
@@ -55,6 +56,7 @@
       "args": [],
       "returnType": null,
       "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": null
@@ -94,6 +96,7 @@
       ],
       "returnType": null,
       "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": null
@@ -105,6 +108,7 @@
       "args": [],
       "returnType": null,
       "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": null
@@ -116,6 +120,7 @@
       "args": [],
       "returnType": null,
       "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": null
@@ -146,6 +151,7 @@
       ],
       "returnType": null,
       "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": null
@@ -167,6 +173,7 @@
       ],
       "returnType": null,
       "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": null
@@ -206,6 +213,7 @@
       ],
       "returnType": null,
       "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": null
@@ -236,6 +244,7 @@
       ],
       "returnType": null,
       "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": null
@@ -293,6 +302,7 @@
       ],
       "returnType": null,
       "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": null
@@ -323,6 +333,7 @@
       ],
       "returnType": null,
       "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": null
@@ -353,6 +364,7 @@
       ],
       "returnType": null,
       "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "whatever:xxx",
       "lineno": null
@@ -383,6 +395,7 @@
       ],
       "returnType": null,
       "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "everwhat",
       "lineno": 42
@@ -413,6 +426,7 @@
       ],
       "returnType": null,
       "returnDoc": "",
+      "raises": {},
       "tags": [
         "hyv\u00e4\u00e4",
         "y\u00f6t\u00e4"
@@ -500,6 +514,7 @@
       ],
       "returnType": null,
       "returnDoc": "",
+      "raises": {},
       "tags": [
         "hyv\u00e4\u00e4",
         "y\u00f6t\u00e4"
@@ -533,6 +548,7 @@
       ],
       "returnType": null,
       "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": 90
@@ -563,6 +579,7 @@
       ],
       "returnType": null,
       "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": 12345
@@ -593,6 +610,7 @@
       ],
       "returnType": null,
       "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/Annotations.py",
       "lineno": null
@@ -623,6 +641,7 @@
       ],
       "returnType": null,
       "returnDoc": "",
+      "raises": {},
       "tags": [
         "my",
         "t\u00e4gs"
@@ -680,6 +699,7 @@
         "union": false
       },
       "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
       "lineno": null

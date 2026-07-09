@@ -1,5 +1,5 @@
 {
-  "specversion": 3,
+  "specversion": 4,
   "name": "DataTypesLibrary",
   "doc": "<p>This Library has Data Types.</p>\n<p>It has some in <code>__init__</code> and others in the <a href=\"#Keywords\" title=\"&quot;Keywords&quot; section\" class=\"name\">Keywords</a>.</p>\n<p>Custom data types include <a href=\"#type-GeoLocation\" title=\"&quot;GeoLocation&quot; type\" class=\"name\">GeoLocation</a> and <a href=\"#type-Small\" title=\"&quot;Small&quot; type\" class=\"name\">Small</a>.</p>",
   "version": "",
@@ -33,6 +33,7 @@
       ],
       "returnType": null,
       "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
       "lineno": 99
@@ -97,6 +98,7 @@
       ],
       "returnType": null,
       "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
       "lineno": 109
@@ -165,6 +167,7 @@
       ],
       "returnType": null,
       "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
       "lineno": 142
@@ -265,6 +268,7 @@
         "union": true
       },
       "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
       "lineno": 121
@@ -296,6 +300,7 @@
         "union": false
       },
       "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
       "lineno": 106
@@ -391,6 +396,7 @@
       ],
       "returnType": null,
       "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
       "lineno": 130
@@ -454,6 +460,7 @@
       ],
       "returnType": null,
       "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
       "lineno": 139

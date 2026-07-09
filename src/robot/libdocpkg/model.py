@@ -107,6 +107,8 @@ class LibraryDoc:
             for arg in item.args:
                 item.args.docs[arg.name] = formatter.html(arg.doc)
             item.args.return_doc = formatter.html(item.args.return_doc)
+            for name, doc in item.args.raises.items():
+                item.args.raises[name] = formatter.html(doc)
         for type_doc in self.type_docs:
             # Standard docs are always in ROBOT format ...
             if type_doc.type == type_doc.STANDARD:
@@ -119,7 +121,7 @@ class LibraryDoc:
 
     def to_dictionary(self, include_private=False, theme=None, lang=None):
         data = {
-            "specversion": 3,
+            "specversion": 4,
             "name": self.name,
             "doc": self.doc,
             "version": self.version,
@@ -208,6 +210,7 @@ class KeywordDoc(Sortable):
                 self.type_docs.get("return", {}),
             ),
             "returnDoc": self.args.return_doc,
+            "raises": self.args.raises or {},
             "tags": list(self.tags),
             "source": self.source,
             "lineno": self.lineno,
