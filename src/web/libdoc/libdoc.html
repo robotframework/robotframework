@@ -177,9 +177,9 @@
                     </colgroup>
                     <thead>
                       <tr>
-                        <th>{{t "argColName"}}</th>
-                        <th>{{t "argColDefault"}}</th>
-                        <th>{{t "argColType"}}</th>
+                        <th>{{t "name"}}</th>
+                        <th>{{t "default"}}</th>
+                        <th>{{t "type"}}</th>
                         <th>{{t "doc"}}</th>
                       </tr>
                     </thead>
@@ -286,9 +286,9 @@
                     </colgroup>
                     <thead>
                       <tr>
-                        <th>{{t "argColName"}}</th>
-                        <th>{{t "argColDefault"}}</th>
-                        <th>{{t "argColType"}}</th>
+                        <th>{{t "name"}}</th>
+                        <th>{{t "default"}}</th>
+                        <th>{{t "type"}}</th>
                         <th>{{t "doc"}}</th>
                       </tr>
                     </thead>
@@ -302,7 +302,7 @@
               {{/if}}
               {{#if (or returnType returnDoc)}}
               <div class="return-info">
-                <h4>{{t "returnInfo"}}</h4>
+                <h4>{{t "returns"}}</h4>
                 <table class="return-info-table kw-info-table">
                   <colgroup>
                     <col class="ret-col-type" />
@@ -310,7 +310,7 @@
                   </colgroup>
                   <thead>
                     <tr>
-                      <th>{{t "argColType"}}</th>
+                      <th>{{t "type"}}</th>
                       <th>{{t "doc"}}</th>
                     </tr>
                   </thead>
@@ -360,7 +360,7 @@
       {{else}}
           <tr>
             <td>
-              <span class="arg-name {{#if required}}arg-required{{else}}arg-optional{{/if}}" title="{{t 'argName'}}">
+              <span class="arg-name {{#if required}}arg-required{{else}}arg-optional{{/if}}" title="{{t 'name'}}">
                 {{#ifEquals kind "VAR_POSITIONAL"}}<span class="arg-kind" title="{{t 'varArgs'}}">*</span>{{/ifEquals}}
                 {{#ifEquals kind "VAR_NAMED"}}<span class="arg-kind" title="{{t 'varNamedArgs'}}">**</span>{{/ifEquals}}
                 {{#ifEquals kind "NAMED_ONLY"}}<span class="arg-kind" title="{{t 'namedOnlyArg'}}">&#x1F3F7;</span>{{/ifEquals}}
