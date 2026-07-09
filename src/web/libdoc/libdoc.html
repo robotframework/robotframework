@@ -215,6 +215,13 @@
           <select id="tags-shortcuts-container">
           </select>
         {{/if}}
+        {{#if inits.length}}
+          <div class="keywords-overview-header-row">
+            <h4>
+              <a href="#Importing" class="match">{{t "importing"}}</a>
+            </h4>
+          </div>
+        {{/if}}
         <div class="keywords-overview-header-row">
           <h4>{{t "keywords"}}
             (<span id="keyword-statistics-header"></span>)
