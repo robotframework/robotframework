@@ -114,15 +114,34 @@ doc:
 args:
     name: Documentation
 
-## Section must be separated by blank line
+## Section must be separated from documentation by blank line
 Doc
 Args:
-    name: Part of Doc
+    bad: Part of Doc
+
+Args:
+    good: Args section
 - - -
 doc: |
     Doc
     Args:
-        name: Part of Doc
+        bad: Part of Doc
+args:
+    good: Args section
+
+## Named sections do not need empty line between
+Doc
+
+Args:
+    good: Args section
+Returns:
+    The result value.
+- - -
+doc: Doc
+args:
+    good: Args section
+returns:
+    The result value.
 
 ## Headers are case insensitive
 args:

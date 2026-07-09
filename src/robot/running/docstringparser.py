@@ -138,7 +138,7 @@ class DocStringParser:
             else:
                 yield section
                 section = Block(body=[line])
-            can_start = not line.strip()
+            can_start = section.name or not line.strip()
         yield section
 
     def _parse_args(self, data: str) -> "Iterable[tuple[str, str]]":
