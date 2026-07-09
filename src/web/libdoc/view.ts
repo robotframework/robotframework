@@ -55,6 +55,12 @@ class View {
     Handlebars.registerHelper("or", function (a, b) {
       return a || b;
     });
+    Handlebars.registerHelper("dictSize", function (context) {
+      if (context === null || context === undefined) {
+        return 0;
+      }
+      return Object.keys(context).length;
+    });
     Handlebars.registerHelper(
       "renderTypeInfo",
       function (argType: ArgType, isReturnType: boolean) {

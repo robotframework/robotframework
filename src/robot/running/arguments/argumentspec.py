@@ -38,6 +38,7 @@ class ArgumentSpec(metaclass=SetterAwareType):
         "embedded",
         "defaults",
         "return_doc",
+        "raises",
     )
 
     def __init__(
@@ -55,6 +56,7 @@ class ArgumentSpec(metaclass=SetterAwareType):
         return_type: "TypeInfo | None" = None,
         docs: "Mapping[str, str] | None" = None,
         return_doc: str = "",
+        raises: "Mapping[str, str] | None" = None,
     ):
         self.name = name
         self.type = type
@@ -67,8 +69,10 @@ class ArgumentSpec(metaclass=SetterAwareType):
         self.defaults = defaults or {}
         self.types = types
         self.return_type = return_type
-        self.docs = docs or {}
+        # Following are only used by Libdoc.
+        self.docs = docs
         self.return_doc = return_doc
+        self.raises = raises
 
     @property
     def name(self) -> "str | None":

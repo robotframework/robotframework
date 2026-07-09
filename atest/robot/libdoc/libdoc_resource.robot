@@ -101,7 +101,7 @@ Generated Should Be
     Element Attribute Should Be    ${LIBDOC}    generated    ${generated}
 
 Spec version should be correct
-    Element Attribute Should Be    ${LIBDOC}    specversion    6
+    Element Attribute Should Be    ${LIBDOC}    specversion    7
 
 Should Have No Init
     ${inits} =    Get Elements    ${LIBDOC}    xpath=inits/init
@@ -172,6 +172,15 @@ Verify Arguments Structure
         ...    repr=${repr}
         Verify Argument Model    ${arg_model}    ${exp_repr}
         Should Be Equal    ${repr}    ${exp_repr}
+    END
+
+Raises Should Be
+    [Arguments]    ${index}    &{expected}
+    ${kws}=   Get Elements    ${LIBDOC}    xpath=keywords/kw
+    ${types}=    Get Elements    ${kws}[${index}]    xpath=raises/type
+    FOR    ${elem}    ${name}    IN ZIP    ${types}    ${expected}    mode=strict
+        Element Attribute Should Be    ${elem}    name    ${name}
+        Element Text Should Be    ${elem}    ${expected}[${name}]
     END
 
 Return Doc Should Be

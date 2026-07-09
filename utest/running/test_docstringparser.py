@@ -11,7 +11,8 @@ from robot.utils.asserts import assert_equal
 class Expected:
     doc: str
     args: "dict[str, str]"
-    returns: str = ""
+    returns: str
+    raises: "dict[str, str]"
 
 
 class DocstringParsing(unittest.TestCase):
@@ -26,6 +27,11 @@ class DocstringParsing(unittest.TestCase):
                 assert_equal(list(parsed.args), list(expected.args))
                 for key in parsed.args:
                     assert_equal(parsed.args[key], expected.args[key], formatter=repr)
+                assert_equal(list(parsed.raises), list(expected.raises))
+                for key in parsed.raises:
+                    assert_equal(
+                        parsed.raises[key], expected.raises[key], formatter=repr
+                    )
             tests_run = True
         if not tests_run:
             raise ValueError("No tests found in data")
@@ -39,6 +45,7 @@ class DocstringParsing(unittest.TestCase):
                 expected.get("doc", "").rstrip(),
                 {k: v.rstrip() for k, v in expected.get("args", {}).items()},
                 expected.get("returns", "").rstrip(),
+                {k: v.rstrip() for k, v in expected.get("raises", {}).items()},
             )
             yield name, docstring, expected
 
@@ -71,6 +78,12 @@ Returns:
 - - -
 returns: The result value.
 
+## Raises only
+Raises:
+    ValueError: If `name` is not accepted.
+- - -
+raises:
+    ValueError: If `name` is not accepted.
 ## All sections
 Doc
 
@@ -81,6 +94,9 @@ Bit more documentation
 
 Returns:
     The result value.
+
+Raises:
+    ValueError: If `name` is not accepted.
 
 Even more documentation
 - - -
@@ -94,11 +110,14 @@ args:
     name: Documentation
 returns:
     The result value.
+raises:
+    ValueError: If `name` is not accepted.
 
 ## Empty sections
 Args:
 
 Returns:
+Raises:
 - - -
 
 ## Single space indentation ends section
@@ -134,6 +153,8 @@ Doc
 
 Args:
     good: Args section
+Raises:
+    ValueError: If `name` is not accepted.
 Returns:
     The result value.
 - - -
@@ -142,6 +163,8 @@ args:
     good: Args section
 returns:
     The result value.
+raises:
+    ValueError: If `name` is not accepted.
 
 ## Headers are case insensitive
 args:
@@ -179,20 +202,27 @@ Yields:
 - - -
 returns: The result value.
 
+## "Raise" header
+Raise:
+    ValueError: If `name` is not accepted.
+- - -
+raises:
+    ValueError: If `name` is not accepted.
+
 ## Unrecognized sections
 Doc
 
 Args:
     name: Documentation
 
-Raises:
-    ValueError: If `name` is not accepted.
+Unrecognized:
+    Some content.
 - - -
 doc: |
     Doc
 
-    Raises:
-        ValueError: If `name` is not accepted.
+    Unrecognized:
+        Some content.
 args:
     name: Documentation
 
@@ -536,6 +566,36 @@ Returns:
     The result value.
 - - -
 returns: The result value.
+"""
+        )
+
+    def test_raises(self):
+        self.verify(
+            """
+## Sanity (parsing named docs thoroughly tested already with arguments)
+Raises:
+    ValueError: If `name` is not accepted.
+    `TypeError`:
+        If `name` is not a string.
+
+            Indentation is preserved.
+- - -
+raises:
+    ValueError: If `name` is not accepted.
+    TypeError: |
+        If `name` is not a string.
+
+            Indentation is preserved.
+
+## Multiple raises sections
+Raises:
+    ValueError: If `name` is not accepted.
+Raises:
+    TypeError: If `name` is not a string.
+- - -
+raises:
+    ValueError: If `name` is not accepted.
+    TypeError: If `name` is not a string.
 """
         )
 

@@ -59,10 +59,10 @@ class XmlDocBuilder:
         if root.tag != "keywordspec":
             raise DataError(f"Invalid spec file '{path}'.")
         version = root.get("specversion")
-        if version not in ("3", "4", "5", "6"):
+        if version not in ("3", "4", "5", "6", "7"):
             raise DataError(
                 f"Invalid spec file version '{version}'. "
-                f"Supported versions are 3, 4, 5, and 6."
+                f"Supported versions are 3, 4, 5, 6 and 7."
             )
         return root
 
@@ -81,7 +81,8 @@ class XmlDocBuilder:
             lineno=self._get_lineno(elem),
         )
         self._create_arguments(elem, kw)
-        self._add_return_info(elem, kw)
+        self._add_return(elem, kw)
+        self._add_raises(elem, kw)
         return kw
 
     def _create_arguments(self, elem, kw: KeywordDoc):
@@ -145,7 +146,7 @@ class XmlDocBuilder:
                 type_docs[name] = elem.get("typedoc")
         return TypeInfo.from_sequence(types) if types else None
 
-    def _add_return_info(self, elem, kw):
+    def _add_return(self, elem, kw):
         type_elem = elem.find("returntype")
         if type_elem is not None:
             type_docs = {}
@@ -154,6 +155,11 @@ class XmlDocBuilder:
         doc_elem = elem.find("returndoc")
         if doc_elem is not None:
             kw.args.return_doc = doc_elem.text or ""
+
+    def _add_raises(self, elem, kw):
+        kw.args.raises = {}
+        for type_elem in elem.findall("raises/type"):
+            kw.args.raises[type_elem.get("name", "")] = type_elem.text or ""
 
     def _parse_type_docs(self, spec):
         for elem in spec.findall("typedocs/type"):
