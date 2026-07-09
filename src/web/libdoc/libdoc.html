@@ -168,7 +168,7 @@
             {{#if this.args.length}}
                 <div class="args">
                   <h4>{{t "arguments"}}</h4>
-                  <table class="arguments-table">
+                  <table class="arguments-table kw-info-table">
                     <colgroup>
                       <col class="arg-col-name" />
                       <col class="arg-col-default" />
@@ -177,10 +177,10 @@
                     </colgroup>
                     <thead>
                       <tr>
-                        <th>Name</th>
-                        <th>Default</th>
-                        <th>Type</th>
-                        <th>Documentation</th>
+                        <th>{{t "argColName"}}</th>
+                        <th>{{t "argColDefault"}}</th>
+                        <th>{{t "argColType"}}</th>
+                        <th>{{t "doc"}}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -277,7 +277,7 @@
               {{#if args.length}}
                 <div class="args">
                   <h4>{{t "arguments"}}</h4>
-                  <table class="arguments-table">
+                  <table class="arguments-table kw-info-table">
                     <colgroup>
                       <col class="arg-col-name" />
                       <col class="arg-col-default" />
@@ -286,10 +286,10 @@
                     </colgroup>
                     <thead>
                       <tr>
-                        <th>Name</th>
-                        <th>Default</th>
-                        <th>Type</th>
-                        <th>Documentation</th>
+                        <th>{{t "argColName"}}</th>
+                        <th>{{t "argColDefault"}}</th>
+                        <th>{{t "argColType"}}</th>
+                        <th>{{t "doc"}}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -303,15 +303,15 @@
               {{#if (or returnType returnDoc)}}
               <div class="return-info">
                 <h4>{{t "returnInfo"}}</h4>
-                <table class="return-info-table">
+                <table class="return-info-table kw-info-table">
                   <colgroup>
                     <col class="ret-col-type" />
                     <col class="ret-col-doc" />
                   </colgroup>
                   <thead>
                     <tr>
-                      <th>Type</th>
-                      <th>Documentation</th>
+                      <th>{{t "argColType"}}</th>
+                      <th>{{t "doc"}}</th>
                     </tr>
                   </thead>
                   <tbody>

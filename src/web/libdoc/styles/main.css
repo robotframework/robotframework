@@ -324,65 +324,16 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3 {
   letter-spacing: 0.1em;
 }
 
-.arguments-list-container {
-  overflow-y: auto;
-  margin-bottom: 1.33rem;
-}
-
-.arguments-list {
-  display: -ms-inline-grid;
-  display: inline-grid;
-  -ms-grid-columns: 1fr 1fr 1fr;
-  grid-template-columns: auto auto auto;
-  row-gap: 3px;
-}
-
 .typed-dict-annotation > span,
-.enum-type-members span,
-.arguments-list .arg-name {
-  -ms-grid-column: 1;
-  grid-column: 1;
+.enum-type-members span {
   border-radius: 3px;
   white-space: nowrap;
   padding-left: 0.5rem;
   padding-right: 0.5rem;
-  justify-self: start;
-}
-
-.arguments-list .arg-default-container {
-  -ms-grid-column: 2;
-  grid-column: 2;
-  display: flex;
 }
 
 .optional-key {
   font-style: italic;
-}
-
-.arguments-list .arg-default-eq {
-  margin-left: 2rem;
-  margin-right: 0.5rem;
-  background: var(--background-color);
-}
-
-.arguments-list .arg-default-value {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-  border-radius: 3px;
-}
-
-.arguments-list .base-arg-data {
-  display: flex;
-  min-width: 150px;
-}
-
-.arguments-list .arg-type {
-  margin-left: 2rem;
-  -ms-grid-column: 3;
-  grid-column: 3;
-  background: var(--background-color);
-  white-space: nowrap;
-  -webkit-text-size-adjust: none;
 }
 
 .return-info .arg-type {
@@ -402,7 +353,7 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3 {
   text-decoration: underline;
 }
 
-.arguments-list .arg-kind {
+.args .arg-kind {
   color: transparent;
   text-shadow: 0 0 0 var(--less-important-text-color);
   padding: 0;
@@ -648,7 +599,8 @@ h4 {
   min-width: 200px;
 }
 
-.args .arguments-table {
+/* Shared styles for arguments and return-info tables */
+.kw-info-table {
   width: 100%;
   table-layout: fixed;
   border-collapse: separate;
@@ -659,6 +611,58 @@ h4 {
   margin-bottom: 1.33rem;
 }
 
+.kw-info-table th,
+.kw-info-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.4rem 0.55rem;
+}
+
+.kw-info-table thead th {
+  border-bottom: 2px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.kw-info-table tbody td {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.kw-info-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.kw-info-table td .doc {
+  font-size: 0.95em;
+}
+
+.kw-info-table td .doc > p {
+  margin: 0 0 0.35rem;
+}
+
+.kw-info-table td .doc > p:last-child {
+  margin-bottom: 0;
+}
+
+.kw-info-table td .doc > ul,
+.kw-info-table td .doc > ol,
+.kw-info-table td .doc > pre {
+  margin-top: 0.25rem;
+  margin-bottom: 0.4rem;
+}
+
+.kw-info-table td .doc code,
+.kw-info-table td .doc .docutils.literal {
+  font-size: 1em;
+}
+
+@media only screen and (max-width: 899px) {
+  .kw-info-table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+/* Arguments table column widths */
 .args .arguments-table .arg-col-name {
   width: 20%;
 }
@@ -684,26 +688,6 @@ h4 {
   width: 18%;
 }
 
-.args .arguments-table th,
-.args .arguments-table td {
-  text-align: left;
-  vertical-align: top;
-  padding: 0.4rem 0.55rem;
-}
-
-.args .arguments-table thead th {
-  border-bottom: 2px solid var(--border-color);
-  white-space: nowrap;
-}
-
-.args .arguments-table tbody td {
-  border-bottom: 1px solid var(--border-color);
-}
-
-.args .arguments-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
 .args .arguments-table td:nth-child(1),
 .args .arguments-table td:nth-child(2),
 .args .arguments-table td:nth-child(3) {
@@ -714,50 +698,9 @@ h4 {
   width: 100%;
 }
 
-.args .arguments-table td .doc {
-  font-size: 0.95em;
-}
-
-.args .arguments-table td .doc > p {
-  margin: 0 0 0.35rem;
-}
-
-.args .arguments-table td .doc > p:last-child {
-  margin-bottom: 0;
-}
-
-.args .arguments-table td .doc > ul,
-.args .arguments-table td .doc > ol,
-.args .arguments-table td .doc > pre {
-  margin-top: 0.25rem;
-  margin-bottom: 0.4rem;
-}
-
-.args .arguments-table td .doc code,
-.args .arguments-table td .doc .docutils.literal {
-  font-size: 1em;
-}
-
-@media only screen and (max-width: 899px) {
-  .args .arguments-table {
-    display: block;
-    overflow-x: auto;
-  }
-}
-
+/* Return info table column widths */
 .return-info {
   min-width: 200px;
-}
-
-.return-info .return-info-table {
-  width: 100%;
-  table-layout: fixed;
-  border-collapse: separate;
-  border-spacing: 0;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  overflow: hidden;
-  margin-bottom: 1.33rem;
 }
 
 .return-info .return-info-table .ret-col-type {
@@ -766,57 +709,6 @@ h4 {
 
 .return-info .return-info-table .ret-col-doc {
   width: auto;
-}
-
-.return-info .return-info-table th,
-.return-info .return-info-table td {
-  text-align: left;
-  vertical-align: top;
-  padding: 0.4rem 0.55rem;
-}
-
-.return-info .return-info-table thead th {
-  border-bottom: 2px solid var(--border-color);
-  white-space: nowrap;
-}
-
-.return-info .return-info-table tbody td {
-  border-bottom: 1px solid var(--border-color);
-}
-
-.return-info .return-info-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.return-info .return-info-table td .doc {
-  font-size: 0.95em;
-}
-
-.return-info .return-info-table td .doc > p {
-  margin: 0 0 0.35rem;
-}
-
-.return-info .return-info-table td .doc > p:last-child {
-  margin-bottom: 0;
-}
-
-.return-info .return-info-table td .doc > ul,
-.return-info .return-info-table td .doc > ol,
-.return-info .return-info-table td .doc > pre {
-  margin-top: 0.25rem;
-  margin-bottom: 0.4rem;
-}
-
-.return-info .return-info-table td .doc code,
-.return-info .return-info-table td .doc .docutils.literal {
-  font-size: 1em;
-}
-
-@media only screen and (max-width: 899px) {
-  .return-info .return-info-table {
-    display: block;
-    overflow-x: auto;
-  }
 }
 
 .enum-type-members span,
