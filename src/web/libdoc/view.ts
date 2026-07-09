@@ -256,7 +256,7 @@ class View {
       libdoc = this.libdoc;
     }
     this.renderLibdocTemplate("keywords", libdoc);
-    document.querySelectorAll(".kw-tags span").forEach((elem) => {
+    document.querySelectorAll(".tag-link").forEach((elem) => {
       elem.addEventListener("click", (e) => {
         this.tagSearch((e.target! as HTMLSpanElement).innerText);
       });

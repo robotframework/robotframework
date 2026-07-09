@@ -349,11 +349,6 @@ h4 a:hover {
   -webkit-text-size-adjust: none;
 }
 
-.tags .kw-tags {
-  margin-left: 2rem;
-  display: flex;
-}
-
 .tag-link {
   cursor: pointer;
 }
@@ -764,10 +759,6 @@ a.type {
   color: var(--highlighted-color);
 }
 
-.tags {
-  display: flex;
-  align-items: baseline;
-}
 .tags a {
   color: inherit;
   text-decoration: none;
