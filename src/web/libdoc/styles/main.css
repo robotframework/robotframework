@@ -705,7 +705,7 @@ h4 {
 .args .arguments-table td:nth-child(1),
 .args .arguments-table td:nth-child(2),
 .args .arguments-table td:nth-child(3) {
-  white-space: nowrap;
+  overflow-wrap: break-word;
 }
 
 .args .arguments-table td:nth-child(4) {
@@ -723,6 +723,10 @@ h4 {
 
 .return-info .return-info-table .ret-col-doc {
   width: auto;
+}
+
+.return-info .return-info-table td {
+  overflow-wrap: break-word;
 }
 
 .enum-type-members span,
