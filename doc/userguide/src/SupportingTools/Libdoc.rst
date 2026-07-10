@@ -899,6 +899,18 @@ short return value documentation can be written like `Returns: Some value`.
 Robot Framework recognizes header `Return:` as an alias for `Returns:`.
 It also considers `Yields:` another alias instead of its own section type.
 
+Documenting raised exceptions
+'''''''''''''''''''''''''''''
+
+Also raised exceptions can be documented. This is done under the `Raises:` header
+using `ExceptionType: Documentation` syntax that works the same way as the
+`name: Documentation` syntax with arguments::
+
+    Raises:
+        ValueError: Input value could not be converted.
+        IOError: Output file could not be accessed. Either it does not
+            exist or the user does not have adequate permissions.
+
 Handling parsed information
 '''''''''''''''''''''''''''
 
@@ -906,8 +918,7 @@ All recognized sections are parsed and information they contain is added to
 `Libdoc spec files`_ and shown in Libdoc HTML UI separately. Recognized sections
 are also removed from the actual keyword documentation.
 
-Possible unrecognized sections, including the `Raises:` section that may be
-supported later, are left to the documentation as-is.
+Possible unrecognized sections are left to the documentation without modification.
 
 Supported formatting
 ''''''''''''''''''''
