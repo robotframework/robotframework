@@ -27,7 +27,7 @@ const DATA: Libdoc = {
   inits: [
     {
       name: "__init__",
-      doc: "<p>Browser library can be taken into use with optional arguments:</p>\n<table border=\"1\">\n<tr>\n<th>Argument</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>auto_closing_level</code></td>\n<td>Configure context and page automatic closing. Default is <code>TEST</code>, for more details, see <span class=\"name\">AutoClosingLevel</span></td>\n</tr>\n<tr>\n<td><code>auto_delete_passed_tracing</code></td>\n<td>If <code>auto_closing_level</code> is set to <code>SUITE</code> or <code>TEST</code> and <code>tracing</code> of <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a> active, traces of passed tests or suites, depending on the context scope, not be saved. Also temp files will all be deleted after the whole execution ends.</td>\n</tr>\n<tr>\n<td><code>enable_playwright_debug</code></td>\n<td>Enable low level debug information from the playwright to playwright-log.txt file. For more details, see <span class=\"name\">PlaywrightLogTypes</span>.</td>\n</tr>\n<tr>\n<td><code>enable_presenter_mode</code></td>\n<td>Automatic highlights the interacted components, slowMo and a small pause at the end. Can be enabled by giving True or can be customized by giving a dictionary: <span class=\"name\">{\"duration\": \"2 seconds\", \"width\": \"2px\", \"style\": \"dotted\", \"color\": \"blue\"}</span> Where <span class=\"name\">duration</span> is time format in Robot Framework format, defaults to 2 seconds. <span class=\"name\">width</span> is width of the marker in pixels, defaults the <span class=\"name\">2px</span>. <span class=\"name\">style</span> is the style of border, defaults to <span class=\"name\">dotted</span>. <span class=\"name\">color</span> is the color of the marker, defaults to <span class=\"name\">blue</span>. By default, the call banner keyword is also enabled unless explicitly disabled.</td>\n</tr>\n<tr>\n<td><code>external_browser_executable</code></td>\n<td>Dict mapping name of browser to path of executable of a browser. Will make opening new browsers of the given type use the set executablePath. Currently only configuring of <span class=\"name\">chromium</span> to a separate executable (chrome, chromium and Edge executables all work with recent versions) works.</td>\n</tr>\n<tr>\n<td><code>highlight_on_failure</code></td>\n<td>If set to <code>True</code>, will highlight the element in the screenshot when a keyword fails, by highlighting the selector used in the failed keyword. If set to <code>False</code>, will not highlight the element.</td>\n</tr>\n<tr>\n<td><code>jsextension</code></td>\n<td>Path to Javascript modules exposed as extra keywords. The modules must be in CommonJS. It can either be a single path, a comma-separated lists of path or a real list of strings</td>\n</tr>\n<tr>\n<td><code>language</code></td>\n<td>Defines language which is used to translate keyword names and documentation.</td>\n</tr>\n<tr>\n<td><code>playwright_process_host</code></td>\n<td>Hostname / Host address which should be used when spawning the Playwright process. Defaults to 127.0.0.1.</td>\n</tr>\n<tr>\n<td><code>playwright_process_port</code></td>\n<td>Experimental reusing of playwright process. <code>playwright_process_port</code> is preferred over environment variable <code>ROBOT_FRAMEWORK_BROWSER_NODE_PORT</code>. See <a href=\"#Experimental%3A%20Re-using%20same%20node%20process\" title=\"&quot;Experimental: Re-using same node process&quot; section\" class=\"name\">Experimental: Re-using same node process</a> for more details.</td>\n</tr>\n<tr>\n<td><code>plugins</code></td>\n<td>Allows extending the Browser library with external Python classes. Can either be a single class/module, a comma-separated list or a real list of strings</td>\n</tr>\n<tr>\n<td><code>retry_assertions_for</code></td>\n<td>Timeout for retrying assertions on keywords before failing the keywords. This timeout starts counting from the first failure. Global <code>timeout</code> will still be in effect. This allows stopping execution faster to assertion failure when element is found fast.</td>\n</tr>\n<tr>\n<td><code>run_on_failure</code></td>\n<td>Sets the keyword to execute in case of a failing Browser keyword. It can be the name of any keyword. If the keyword has arguments those must be separated with two spaces for example <code>My keyword \\ arg1 \\ arg2</code>. If no extra action should be done after a failure, set it to <code>None</code> or any other robot falsy value. Run on failure is not applied when library methods are executed directly from Python.</td>\n</tr>\n<tr>\n<td><code>selector_prefix</code></td>\n<td>Prefix for all selectors. This is useful when you need to use add an iframe selector before each selector.</td>\n</tr>\n<tr>\n<td><code>show_keyword_call_banner</code></td>\n<td>If set to <code>True</code>, will show a banner with the keyword name and arguments before the keyword is executed at the bottom of the page. If set to <code>False</code>, will not show the banner. If set to None, which is the default, will show the banner only if the presenter mode is enabled. <a href=\"#Get%20Page%20Source\" title=\"&quot;Get Page Source&quot; keyword\" class=\"name\">Get Page Source</a> and <a href=\"#Take%20Screenshot\" title=\"&quot;Take Screenshot&quot; keyword\" class=\"name\">Take Screenshot</a> will not show the banner, because that could negatively affect your test cases/tasks. This feature may be super helpful when you are debugging your tests and using tracing from <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a> or <span class=\"name\">Video recording</span> features.</td>\n</tr>\n<tr>\n<td><code>strict</code></td>\n<td>If keyword selector points multiple elements and keywords should interact with one element, keyword will fail if <code>strict</code> mode is true. Strict mode can be changed individually in keywords or by <code>Set Strict Mode</code> keyword.</td>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>Timeout for keywords that operate on elements. The keywords will wait for this time for the element to appear into the page. Defaults to \"10s\" =&gt; 10 seconds.</td>\n</tr>\n<tr>\n<td><code>tracing_group_mode</code></td>\n<td>Defines how Robot Framework keyword calls are logged in Playwright trace log. Default is <span class=\"name\">Full</span>. For more details, see <span class=\"name\">TracingGroupMode</span>.</td>\n</tr>\n</table>",
+      doc: "",
       shortdoc: "Browser library can be taken into use with optional arguments:",
       args: [
         {
@@ -41,7 +41,7 @@ const DATA: Libdoc = {
         },
         {
           name: "auto_closing_level",
-          doc: "",
+          doc: "<p>Configure context and page automatic closing. Default is <code>TEST</code>, for more details, see <span class=\"name\">AutoClosingLevel</span></p>",
           type: {
             name: "AutoClosingLevel",
             typedoc: "AutoClosingLevel",
@@ -55,7 +55,7 @@ const DATA: Libdoc = {
         },
         {
           name: "auto_delete_passed_tracing",
-          doc: "",
+          doc: "<p>If <code>auto_closing_level</code> is set to <code>SUITE</code> or <code>TEST</code> and <code>tracing</code> of <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a> active, traces of passed tests or suites, depending on the context scope, not be saved. Also temp files will all be deleted after the whole execution ends.</p>",
           type: {
             name: "bool",
             typedoc: "boolean",
@@ -69,7 +69,7 @@ const DATA: Libdoc = {
         },
         {
           name: "enable_playwright_debug",
-          doc: "",
+          doc: "<p>Enable low level debug information from the playwright to playwright-log.txt file. For more details, see <span class=\"name\">PlaywrightLogTypes</span>.</p>",
           type: {
             name: "Union",
             typedoc: null,
@@ -96,7 +96,7 @@ const DATA: Libdoc = {
         },
         {
           name: "enable_presenter_mode",
-          doc: "",
+          doc: "<p>Automatic highlights the interacted components, slowMo and a small pause at the end. Can be enabled by giving True or can be customized by giving a dictionary: <span class=\"name\">{\"duration\": \"2 seconds\", \"width\": \"2px\", \"style\": \"dotted\", \"color\": \"blue\"}</span> Where <span class=\"name\">duration</span> is time format in Robot Framework format, defaults to 2 seconds. <span class=\"name\">width</span> is width of the marker in pixels, defaults the <span class=\"name\">2px</span>. <span class=\"name\">style</span> is the style of border, defaults to <span class=\"name\">dotted</span>. <span class=\"name\">color</span> is the color of the marker, defaults to <span class=\"name\">blue</span>. By default, the call banner keyword is also enabled unless explicitly disabled.</p>",
           type: {
             name: "Union",
             typedoc: null,
@@ -123,7 +123,7 @@ const DATA: Libdoc = {
         },
         {
           name: "external_browser_executable",
-          doc: "",
+          doc: "<p>Dict mapping name of browser to path of executable of a browser. Will make opening new browsers of the given type use the set executablePath. Currently only configuring of <span class=\"name\">chromium</span> to a separate executable (chrome, chromium and Edge executables all work with recent versions) works.</p>",
           type: {
             name: "Union",
             typedoc: null,
@@ -163,7 +163,7 @@ const DATA: Libdoc = {
         },
         {
           name: "highlight_on_failure",
-          doc: "",
+          doc: "<p>If set to <code>True</code>, will highlight the element in the screenshot when a keyword fails, by highlighting the selector used in the failed keyword. If set to <code>False</code>, will not highlight the element.</p>",
           type: {
             name: "bool",
             typedoc: "boolean",
@@ -177,7 +177,7 @@ const DATA: Libdoc = {
         },
         {
           name: "jsextension",
-          doc: "",
+          doc: "<p>Path to Javascript modules exposed as extra keywords. The modules must be in CommonJS. It can either be a single path, a comma-separated lists of paths or a real list of strings</p>",
           type: {
             name: "Union",
             typedoc: null,
@@ -217,7 +217,7 @@ const DATA: Libdoc = {
         },
         {
           name: "language",
-          doc: "",
+          doc: "<p>Defines language which is used to translate keyword names and documentation.</p>",
           type: {
             name: "Union",
             typedoc: null,
@@ -244,7 +244,7 @@ const DATA: Libdoc = {
         },
         {
           name: "playwright_process_host",
-          doc: "",
+          doc: "<p>Hostname / Host address which should be used when spawning the Playwright process. Defaults to 127.0.0.1.</p>",
           type: {
             name: "Union",
             typedoc: null,
@@ -271,7 +271,7 @@ const DATA: Libdoc = {
         },
         {
           name: "playwright_process_port",
-          doc: "",
+          doc: "<p>Experimental reusing of playwright process. <code>playwright_process_port</code> is preferred over environment variable <code>ROBOT_FRAMEWORK_BROWSER_NODE_PORT</code>. See <a href=\"#Experimental%3A%20Re-using%20same%20node%20process\" title=\"&quot;Experimental: Re-using same node process&quot; section\" class=\"name\">Experimental: Re-using same node process</a> for more details.</p>",
           type: {
             name: "Union",
             typedoc: null,
@@ -298,7 +298,7 @@ const DATA: Libdoc = {
         },
         {
           name: "plugins",
-          doc: "",
+          doc: "<p>Allows extending the Browser library with external Python classes. Can either be a single class/module, a comma-separated list or a real list of strings</p>",
           type: {
             name: "Union",
             typedoc: null,
@@ -338,7 +338,7 @@ const DATA: Libdoc = {
         },
         {
           name: "retry_assertions_for",
-          doc: "",
+          doc: "<p>Timeout for retrying assertions on keywords before failing the keywords. This timeout starts counting from the first failure. Global <code>timeout</code> will still be in effect. This allows stopping execution faster to assertion failure when element is found fast.</p>",
           type: {
             name: "timedelta",
             typedoc: "timedelta",
@@ -352,7 +352,7 @@ const DATA: Libdoc = {
         },
         {
           name: "run_on_failure",
-          doc: "",
+          doc: "<p>Sets the keyword to execute in case of a failing Browser keyword. It can be the name of any keyword. If the keyword has arguments those must be separated with two spaces for example <code>My keyword \\ arg1 \\ arg2</code>. If no extra action should be done after a failure, set it to <code>None</code> or any other robot falsy value. Run on failure is not applied when library methods are executed directly from Python.</p>",
           type: {
             name: "str",
             typedoc: "string",
@@ -366,7 +366,7 @@ const DATA: Libdoc = {
         },
         {
           name: "selector_prefix",
-          doc: "",
+          doc: "<p>Prefix for all selectors. This is useful when you need to use add an iframe selector before each selector.</p>",
           type: {
             name: "Union",
             typedoc: null,
@@ -393,7 +393,7 @@ const DATA: Libdoc = {
         },
         {
           name: "show_keyword_call_banner",
-          doc: "",
+          doc: "<p>If set to <code>True</code>, will show a banner with the keyword name and arguments before the keyword is executed at the bottom of the page. If set to <code>False</code>, will not show the banner. If set to None, which is the default, will show the banner only if the presenter mode is enabled. <a href=\"#Get%20Page%20Source\" title=\"&quot;Get Page Source&quot; keyword\" class=\"name\">Get Page Source</a> and <a href=\"#Take%20Screenshot\" title=\"&quot;Take Screenshot&quot; keyword\" class=\"name\">Take Screenshot</a> will not show the banner, because that could negatively affect your test cases/tasks. This feature may be super helpful when you are debugging your tests and using tracing from <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a> or <span class=\"name\">Video recording</span> features.</p>",
           type: {
             name: "Union",
             typedoc: null,
@@ -420,7 +420,7 @@ const DATA: Libdoc = {
         },
         {
           name: "strict",
-          doc: "",
+          doc: "<p>If keyword selector points multiple elements and keywords should interact with one element, keyword will fail if <code>strict</code> mode is true. Strict mode can be changed individually in keywords or by <code>Set Strict Mode</code> keyword.</p>",
           type: {
             name: "bool",
             typedoc: "boolean",
@@ -434,7 +434,7 @@ const DATA: Libdoc = {
         },
         {
           name: "timeout",
-          doc: "",
+          doc: "<p>Timeout for keywords that operate on elements. The keywords will wait for this time for the element to appear into the page. Defaults to \"10s\" =&gt; 10 seconds.</p>",
           type: {
             name: "timedelta",
             typedoc: "timedelta",
@@ -448,7 +448,7 @@ const DATA: Libdoc = {
         },
         {
           name: "tracing_group_mode",
-          doc: "",
+          doc: "<p>Defines how Robot Framework keyword calls are logged in Playwright trace log. Default is <span class=\"name\">Full</span>. For more details, see <span class=\"name\">TracingGroupMode</span>.</p>",
           type: {
             name: "TracingGroupMode",
             typedoc: "TracingGroupMode",
@@ -1177,7 +1177,12 @@ const DATA: Libdoc = {
           repr: "button: MouseButton = left",
         },
       ],
-      returnType: null,
+      returnType: {
+        name: "None",
+        typedoc: "None",
+        nested: [],
+        union: false
+      },
       returnDoc: "",
       tags: [
         "PageContent",
@@ -1235,7 +1240,7 @@ const DATA: Libdoc = {
           repr: "*modifiers: KeyboardModifier",
         },
         {
-          name: "clickCount",
+          name: "clickCountIsReallyLongBNameWhichContainsNumbersAndIsReallyLongToTestTheParser",
           doc: "<p>Defaults to 1.</p>",
           type: {
             name: "int",
@@ -1243,7 +1248,7 @@ const DATA: Libdoc = {
             nested: [],
             union: false,
           },
-          defaultValue: "1",
+          defaultValue: "1128093498732498723498273498273492837423987432987324987234982734982374928734293847234987234 98 23987 23987 23987342 923847 234987 243",
           kind: "NAMED_ONLY",
           required: false,
           repr: "clickCount: int = 1",
@@ -1267,6 +1272,19 @@ const DATA: Libdoc = {
                 nested: [],
                 union: false,
               },
+              {
+                name: "int",
+                typedoc: "integer",
+                nested: [],
+                union: false,
+              },
+              {
+                name: "KeyboardModifier",
+                typedoc: "KeyboardModifier",
+                nested: [],
+                union: false,
+              },
+
             ],
             union: true,
           },
@@ -1313,6 +1331,12 @@ const DATA: Libdoc = {
               {
                 name: "float",
                 typedoc: "float",
+                nested: [],
+                union: false,
+              },
+              {
+                name: "None",
+                typedoc: "None",
                 nested: [],
                 union: false,
               },
@@ -1372,8 +1396,17 @@ const DATA: Libdoc = {
           repr: "trial: bool = False",
         },
       ],
-      returnType: null,
+      returnType: {
+        name: "None",
+        typedoc: "None",
+        nested: [],
+        union: false
+      },
       returnDoc: "<p>Nothing. Raises an exception if the click fails or element is not found.</p>",
+      raises: {
+        AssertionError: "<p>If the element is not found or click fails.</p>",
+        TypeErrorThisIsReallyLongErrorMessageWhichShouldBeWrappedAndNotTruncated: "<p>This should not happen.</p>",
+      },
       tags: [
         "PageContent",
         "Setter",
@@ -6922,8 +6955,8 @@ const DATA: Libdoc = {
         typedoc: null,
         nested: [
           {
-            name: "str",
-            typedoc: "string",
+            name: "strReallyLongValueWhichDoesNotFitInOneLineInTheTableAndShouldBeWrappedToNextLine",
+            typedoc: "strReallyLongValueWhichDoesNotFitInOneLineInTheTableAndShouldBeWrappedToNextLine",
             nested: [],
             union: false,
           },
