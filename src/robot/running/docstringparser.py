@@ -14,9 +14,9 @@
 #  limitations under the License.
 
 import re
-import textwrap
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field
+from inspect import cleandoc
 
 __all__ = ["parse_docstring", "DocInfo"]
 
@@ -67,8 +67,8 @@ class Block:
         :param name: Name of the block.
         :param body: Block body.
 
-        If block has a name, body *must* contain the text on the same line as
-        the name. It can be an empty string.
+        If a block has a name, body *must* contain the text on the same line as
+        the name to make sure `cleandoc` works properly. This text can be empty.
         """
         assert body or not name
         self.name = name.strip()
@@ -77,14 +77,9 @@ class Block:
     @property
     def content(self) -> str:
         """Return block content. With named blocks content is dedent."""
+        content = "\n".join(self._body)
         if self.name:
-            # The first line of the body is the text on the same line as the name.
-            # It should not affect indentation and must be ignored if it is empty.
-            inline, *body = self._body
-            body = textwrap.dedent("\n".join(body))
-            content = f"{inline}\n{body}" if inline else body
-        else:
-            content = "\n".join(self._body)
+            content = cleandoc(content)
         return content.rstrip()
 
     def accepts(self, line: str) -> bool:
