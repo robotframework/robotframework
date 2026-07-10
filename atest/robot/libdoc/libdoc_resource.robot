@@ -193,7 +193,7 @@ Return Type Should Be
     [Arguments]    ${index}    ${name}    @{nested}
     ${kws}=    Get Elements    ${LIBDOC}    xpath=keywords/kw
     VAR    ${kw}    ${kws}[${index}]
-    IF    $name.upper() == 'NONE'
+    IF    $name == 'NOT SET'
         Element Should Not Exist    ${kw}    returntype
         RETURN
     END

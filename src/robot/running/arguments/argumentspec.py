@@ -53,7 +53,7 @@ class ArgumentSpec(metaclass=SetterAwareType):
         defaults: "Mapping[str, Any] | None" = None,
         embedded: Sequence[str] = (),
         types: "Mapping | Sequence | None" = None,
-        return_type: "TypeInfo | None" = None,
+        return_type: "object | TypeInfo | type[NOT_SET]" = NOT_SET,
         docs: "Mapping[str, str] | None" = None,
         return_doc: str = "",
         raises: "Mapping[str, str] | None" = None,
@@ -87,10 +87,8 @@ class ArgumentSpec(metaclass=SetterAwareType):
         return TypeValidator(self).validate(types)
 
     @setter
-    def return_type(self, hint) -> "TypeInfo | None":
-        if hint in (None, type(None)):
-            return None
-        if isinstance(hint, TypeInfo):
+    def return_type(self, hint: object) -> "TypeInfo | type[NOT_SET]":
+        if isinstance(hint, TypeInfo) or type is NOT_SET:
             return hint
         return TypeInfo.from_type_hint(hint, sequence_is_union=True)
 
