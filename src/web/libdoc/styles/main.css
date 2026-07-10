@@ -261,6 +261,16 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3 {
   justify-content: space-between;
 }
 
+.keywords-overview-header-row h4 {
+  flex: 1;
+}
+
+.keywords-overview-header-row h4 a {
+  display: block;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
 .shortcuts {
   font-size: 0.9em;
   overflow: auto;
