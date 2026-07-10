@@ -307,7 +307,7 @@
                   </table>
                 </div>
               {{/if}}
-              {{#if (or returnType returnDoc)}}
+              {{#if (or (hasVisibleReturnType returnType) returnDoc)}}
               <div class="return-info">
                 <h4>{{t "returns"}}</h4>
                 <table class="return-info-table kw-info-table">
@@ -324,7 +324,7 @@
                   <tbody>
                     <tr>
                       <td>
-                        {{#if returnType}}
+                        {{#if (hasVisibleReturnType returnType)}}
                           <span class="arg-type">
                           {{{renderTypeInfo returnType true}}}
                           </span>
