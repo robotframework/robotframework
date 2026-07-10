@@ -311,15 +311,18 @@ class LibraryInit(LibraryKeyword):
         super().__init__(owner, name, args, doc, tags)
         self.positional = positional or []
         self.named = named or {}
+        self._dynamic_doc_set = False
 
     @property
     def doc(self) -> str:
-        from .testlibraries import DynamicLibrary
+        if not self._dynamic_doc_set:
+            from .testlibraries import DynamicLibrary
 
-        if isinstance(self.owner, DynamicLibrary):
-            doc = GetKeywordDocumentation(self.owner.instance)("__init__")
-            if doc:
-                return doc
+            if isinstance(self.owner, DynamicLibrary):
+                doc = GetKeywordDocumentation(self.owner.instance)("__init__")
+                if doc:
+                    self._doc = doc
+            self._dynamic_doc_set = True
         return self._doc
 
     @doc.setter

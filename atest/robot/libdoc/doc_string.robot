@@ -35,8 +35,16 @@ JSON as input
     Run Libdoc And Parse Model From JSON    ${INJSON}
     Validate JSON Spec With HTML Docs
 
+Dynamic library as input
+    Run Libdoc And Parse Output   ${TESTDATADIR}/DynamicLibrary.py::arg
+    Validate XML Spec From Dynamic Library
+
 *** Keywords ***
 Validate XML Spec With HTML Docs
+    Init Doc Should Be    0
+    ...    ${EMPTY}
+    Argument Doc Should Be    init    0    arg
+    ...    <p>Documentation for <code>__init__</code> argument <code>arg</code>.</p>
     Keyword Doc Should Be     0
     ...    <p>Example with <em>everything</em>!</p>
     ...    <p>This is the second paragraph. We also have an indented
@@ -70,6 +78,10 @@ Validate XML Spec With HTML Docs
     Raises Should Be          1
 
 Validate XML Spec With Raw Docs
+    Init Doc Should Be    0
+    ...    ${EMPTY}
+    Argument Doc Should Be    init    0    arg
+    ...    Documentation for `__init__` argument `arg`.
     Keyword Doc Should Be     0
     ...   Example with *everything*!
     ...
@@ -105,6 +117,9 @@ Validate XML Spec With Raw Docs
     Raises Should Be          1
 
 Validate JSON Spec With HTML Docs
+    Should Be Equal Multiline    ${MODEL}[inits][0][doc]
+    Should Be Equal Multiline    ${MODEL}[inits][0][args][0][doc]
+    ...    <p>Documentation for <code>__init__</code> argument <code>arg</code>.</p>
     Should Be Equal Multiline    ${MODEL}[keywords][0][doc]
     ...    <p>Example with <em>everything</em>!</p>
     ...    <p>This is the second paragraph. We also have an indented
@@ -140,8 +155,11 @@ Validate JSON Spec With HTML Docs
     ...    <p>Should <em>not</em> happen.</p>
 
 Validate JSON Spec With Raw Docs
+    Should Be Equal Multiline    ${MODEL}[inits][0][doc]
+    Should Be Equal Multiline    ${MODEL}[inits][0][args][0][doc]
+    ...    Documentation for `__init__` argument `arg`.
     Should Be Equal Multiline    ${MODEL}[keywords][0][doc]
-   ...   Example with *everything*!
+    ...   Example with *everything*!
     ...
     ...   This is the second paragraph. We also have an indented
     ...   example:
@@ -175,3 +193,20 @@ Validate JSON Spec With Raw Docs
     ...    If something goes wrong.
     Should Be Equal Multiline   ${MODEL}[keywords][0][raises][TypeError]
     ...    Should *not* happen.
+
+Validate XML Spec From Dynamic Library
+    Init Doc Should Be    0
+    ...    Dummy documentation for `__init__`.
+    Argument Doc Should Be    init    0    arg1
+    ...    Doc for `arg1`.
+    Argument Doc Should Be    init    1    arg2
+    ...    Doc for `arg2`.
+    Keyword Doc Should Start With    6
+    ...    Dummy documentation for `Keyword-only args`.
+    ...
+    ...    Neither `Keyword 1` or `KW 2` do anything really interesting.
+    Argument Doc Should Be    6    0    ${EMPTY}
+    Argument Doc Should Be    6    1    kwo
+    ...    Doc for `kwo`.
+    Argument Doc Should Be    6    2    another
+    ...    Doc for `another`.

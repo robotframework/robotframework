@@ -3,7 +3,7 @@
   "name": "DynamicLibrary",
   "doc": "<p>Dummy documentation for <span class=\"name\">__intro__</span>.</p>",
   "version": "0.1",
-  "generated": "2026-07-09T14:50:19+00:00",
+  "generated": "2026-07-10T16:53:53+00:00",
   "type": "LIBRARY",
   "scope": "TEST",
   "docFormat": "HTML",
@@ -23,7 +23,7 @@
       "args": [
         {
           "name": "arg1",
-          "doc": "",
+          "doc": "<p>Doc for <span class=\"name\">arg1</span>.</p>",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -32,7 +32,7 @@
         },
         {
           "name": "arg2",
-          "doc": "",
+          "doc": "<p>Doc for <span class=\"name\">arg2</span>.</p>",
           "type": null,
           "defaultValue": "These args are shown in docs",
           "kind": "POSITIONAL_OR_NAMED",
@@ -68,7 +68,7 @@
       "args": [
         {
           "name": "old",
-          "doc": "",
+          "doc": "<p>Doc for <span class=\"name\">old</span>.</p>",
           "type": null,
           "defaultValue": "style",
           "kind": "POSITIONAL_OR_NAMED",
@@ -77,7 +77,7 @@
         },
         {
           "name": "new",
-          "doc": "",
+          "doc": "<p>Doc for <span class=\"name\">new</span>.</p>",
           "type": null,
           "defaultValue": "style",
           "kind": "POSITIONAL_OR_NAMED",
@@ -86,7 +86,7 @@
         },
         {
           "name": "cool",
-          "doc": "",
+          "doc": "<p>Doc for <span class=\"name\">cool</span>.</p>",
           "type": null,
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
@@ -163,7 +163,7 @@
       "args": [
         {
           "name": "arg1",
-          "doc": "",
+          "doc": "<p>Doc for <span class=\"name\">arg1</span>.</p>",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -194,7 +194,7 @@
         },
         {
           "name": "kwo",
-          "doc": "",
+          "doc": "<p>Doc for <span class=\"name\">kwo</span>.</p>",
           "type": null,
           "defaultValue": null,
           "kind": "NAMED_ONLY",
@@ -203,7 +203,7 @@
         },
         {
           "name": "another",
-          "doc": "",
+          "doc": "<p>Doc for <span class=\"name\">another</span>.</p>",
           "type": null,
           "defaultValue": "default",
           "kind": "NAMED_ONLY",
@@ -225,7 +225,7 @@
       "args": [
         {
           "name": "arg1",
-          "doc": "",
+          "doc": "<p>Doc for <span class=\"name\">arg1</span>.</p>",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -234,7 +234,7 @@
         },
         {
           "name": "arg2",
-          "doc": "",
+          "doc": "<p>Doc for <span class=\"name\">arg2</span>.</p>",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -256,7 +256,7 @@
       "args": [
         {
           "name": "varargs",
-          "doc": "",
+          "doc": "<p>Doc for <span class=\"name\">*varargs</span>.</p>",
           "type": null,
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
@@ -265,7 +265,7 @@
         },
         {
           "name": "a",
-          "doc": "",
+          "doc": "<p>Doc for <span class=\"name\">a</span>.</p>",
           "type": null,
           "defaultValue": null,
           "kind": "NAMED_ONLY",
@@ -274,7 +274,7 @@
         },
         {
           "name": "b",
-          "doc": "",
+          "doc": "<p>Doc for <span class=\"name\">b</span>.</p>",
           "type": null,
           "defaultValue": "2",
           "kind": "NAMED_ONLY",
@@ -283,7 +283,7 @@
         },
         {
           "name": "c",
-          "doc": "",
+          "doc": "<p>Doc for <span class=\"name\">c</span>.</p>",
           "type": null,
           "defaultValue": null,
           "kind": "NAMED_ONLY",
@@ -292,7 +292,7 @@
         },
         {
           "name": "kws",
-          "doc": "",
+          "doc": "<p>Doc for <span class=\"name\">**kws</span>.</p>",
           "type": null,
           "defaultValue": null,
           "kind": "VAR_NAMED",
@@ -441,7 +441,7 @@
       "args": [
         {
           "name": "arg1",
-          "doc": "",
+          "doc": "<p>Doc for <span class=\"name\">arg1</span>.</p>",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -450,7 +450,7 @@
         },
         {
           "name": "arg2",
-          "doc": "",
+          "doc": "<p>Doc for <span class=\"name\">arg2</span>.</p>",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -459,7 +459,7 @@
         },
         {
           "name": "arg3",
-          "doc": "",
+          "doc": "<p>Doc for <span class=\"name\">arg3</span>.</p>",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -468,7 +468,7 @@
         },
         {
           "name": "arg4",
-          "doc": "",
+          "doc": "<p>Doc for <span class=\"name\">arg4</span>.</p>",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -477,7 +477,7 @@
         },
         {
           "name": "arg5",
-          "doc": "",
+          "doc": "<p>Doc for <span class=\"name\">arg5</span>.</p>",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -486,7 +486,7 @@
         },
         {
           "name": "arg6",
-          "doc": "",
+          "doc": "<p>Doc for <span class=\"name\">arg6</span>.</p>",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -495,7 +495,7 @@
         },
         {
           "name": "arg7",
-          "doc": "",
+          "doc": "<p>Doc for <span class=\"name\">arg7</span>.</p>",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -504,7 +504,7 @@
         },
         {
           "name": "arg8",
-          "doc": "",
+          "doc": "<p>Doc for <span class=\"name\">arg8</span>.</p>",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -551,7 +551,7 @@
       "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
-      "lineno": 90
+      "lineno": 104
     },
     {
       "name": "Source Lineno Only",
@@ -656,7 +656,7 @@
       "args": [
         {
           "name": "integer",
-          "doc": "",
+          "doc": "<p>Doc for <span class=\"name\">integer</span>.</p>",
           "type": {
             "name": "int",
             "typedoc": "integer",
@@ -670,7 +670,7 @@
         },
         {
           "name": "no type",
-          "doc": "",
+          "doc": "<p>Doc for <span class=\"name\">no type</span>.</p>",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -679,7 +679,7 @@
         },
         {
           "name": "boolean",
-          "doc": "",
+          "doc": "<p>Doc for <span class=\"name\">boolean</span>.</p>",
           "type": {
             "name": "bool",
             "typedoc": "boolean",

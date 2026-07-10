@@ -107,6 +107,8 @@ Should Have No Init
     ${inits} =    Get Elements    ${LIBDOC}    xpath=inits/init
     Should Be Empty    ${inits}
 
+# TODO: Remove "Init ..." keywords and make "Keyword ..." keywords generic
+# similarly as "Argument Doc Should Be".
 Init Doc Should Start With
     [Arguments]    ${index}    @{expected}
     VAR    ${expected}    @{expected}    separator=\n
@@ -136,10 +138,19 @@ Keyword Arguments Should Be
 Argument Doc Should Be
     [Arguments]    ${kw_index}   ${arg_index}    ${name}    @{expected}
     VAR    ${expected}    @{expected}    separator=\n
-    ${kws}=   Get Elements    ${LIBDOC}    xpath=keywords/kw
+    IF    $kw_index == "init"
+        VAR    ${kw_index}    0
+        ${kws}=   Get Elements    ${LIBDOC}    xpath=inits/init
+    ELSE
+        ${kws}=   Get Elements    ${LIBDOC}    xpath=keywords/kw
+    END
     ${args}=    Get Elements    ${kws}[${kw_index}]    xpath=arguments/arg
     VAR    ${arg}    ${args}[${arg_index}]
-    Element Text Should Be    ${arg}    ${name}    xpath=name
+    IF    $name
+        Element Text Should Be    ${arg}    ${name}    xpath=name
+    ELSE
+        Element Should Not Exist    ${arg}    xpath=name
+    END
     IF    $expected
         Element Text Should Be    ${arg}    ${expected}    xpath=doc
     ELSE
