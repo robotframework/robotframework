@@ -13,6 +13,7 @@ class Expected:
     args: "dict[str, str]"
     returns: str
     raises: "dict[str, str]"
+    tags: "list[str]"
 
 
 class DocstringParsing(unittest.TestCase):
@@ -32,6 +33,7 @@ class DocstringParsing(unittest.TestCase):
                     assert_equal(
                         parsed.raises[key], expected.raises[key], formatter=repr
                     )
+                assert_equal(parsed.tags, expected.tags)
             tests_run = True
         if not tests_run:
             raise ValueError("No tests found in data")
@@ -46,6 +48,7 @@ class DocstringParsing(unittest.TestCase):
                 {k: v.rstrip() for k, v in expected.get("args", {}).items()},
                 expected.get("returns", "").rstrip(),
                 {k: v.rstrip() for k, v in expected.get("raises", {}).items()},
+                expected.get("tags", []),
             )
             yield name, docstring, expected
 
@@ -84,6 +87,12 @@ Raises:
 - - -
 raises:
     ValueError: If `name` is not accepted.
+
+## Tags only
+Tags: a, b, c
+- - -
+tags: [a, b, c]
+
 ## All sections
 Doc
 
@@ -97,6 +106,9 @@ Returns:
 
 Raises:
     ValueError: If `name` is not accepted.
+
+Tags:
+    just one
 
 Even more documentation
 - - -
@@ -112,12 +124,14 @@ returns:
     The result value.
 raises:
     ValueError: If `name` is not accepted.
+tags: [just one]
 
 ## Empty sections
 Args:
 
 Returns:
 Raises:
+Tags:
 - - -
 
 ## Single space indentation ends section
@@ -596,6 +610,34 @@ Raises:
 raises:
     ValueError: If `name` is not accepted.
     TypeError: If `name` is not a string.
+"""
+        )
+
+    def test_tags(self):
+        self.verify(
+            """
+## On same line
+Tags: one, two
+- - -
+tags: [one, two]
+
+## On own line
+Tags:
+    JustOne
+- - -
+tags: [JustOne]
+
+## Multiple lines
+Tags: one, two, three,
+  two parts, three parts
+  here
+- - -
+tags: [one, two, three, two parts, three parts here]
+
+## Empty tags are ignored
+Tags: one,, , two,
+- - -
+tags: [one, two]
 """
         )
 

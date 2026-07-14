@@ -18,6 +18,8 @@ from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field
 from inspect import cleandoc
 
+from robot.output import LOGGER
+
 __all__ = ["parse_docstring", "DocInfo"]
 
 
@@ -27,10 +29,15 @@ class DocInfo:
     args: "dict[str, str]" = field(default_factory=dict)
     returns: str = ""
     raises: "dict[str, str]" = field(default_factory=dict)
+    tags: "list[str]" = field(default_factory=list)
 
 
-def parse_docstring(doc: str) -> DocInfo:
+def parse_docstring(doc: str, name: "str | None" = None) -> DocInfo:
     """Parses information from docstring.
+
+    :param doc: Docstring to parse.
+    :param name: Name of the keyword/function keyword. Used in possible error
+        and warning messages.
 
     Parsing is done according to the Google Python Style Guide.
     https://google.github.io/styleguide/pyguide.html#s3.8-comments-and-docstrings
@@ -50,10 +57,13 @@ def parse_docstring(doc: str) -> DocInfo:
             \"""
             return arg.upper()
 
+    Information is parsed from `Args`, `Returns` and `Raises` sections as well
+    as from Robot Framework's custom `Tags` section.
+
     It is assumed that the given `doc` is already normalized using `inspect.cleandoc`
     or otherwise.
     """
-    return DocStringParser().parse(doc)
+    return DocStringParser(name).parse(doc)
 
 
 class Block:
@@ -95,10 +105,11 @@ class DocStringParser:
     args_headers = ("args", "arguments", "parameters")
     returns_headers = ("returns", "return", "yields")
     raises_headers = ("raises", "raise")
+    tags_headers = ("tags",)
     header_re = re.compile(
         rf"""
         [*_]*         # Start of optional bold/italics formatting
-        ({'|'.join(args_headers + returns_headers + raises_headers)})
+        ({'|'.join(args_headers + returns_headers + raises_headers + tags_headers)})
         [*_]*         # End of optional bold/italics formatting
         ::?           # One or two colons
         [*_]*         # Alternative end of optional bold/italics formatting
@@ -107,6 +118,9 @@ class DocStringParser:
         re.IGNORECASE | re.VERBOSE,
     )
     named_doc_re = re.compile(r"\s?(\S.*?):(\s+(.*))?")
+
+    def __init__(self, name: "str | None" = None):
+        self.name = name
 
     def parse(self, doc: str) -> DocInfo:
         info = DocInfo()
@@ -118,6 +132,8 @@ class DocStringParser:
                 info.returns = section.content.strip()
             elif name in self.raises_headers:
                 info.raises.update(self._parse_named_docs(section.content))
+            elif name in self.tags_headers:
+                info.tags.extend(self._parse_tags(section.content))
             else:
                 info.doc += section.content + "\n\n"
         info.doc = info.doc.strip()
@@ -127,10 +143,9 @@ class DocStringParser:
         section = Block()
         can_start = True
         for line in doc.splitlines():
-            match = self.header_re.fullmatch(line) if can_start else None
-            if match:
+            header, inline_text = self._match_header(line, can_start)
+            if header:
                 yield section
-                header, _, inline_text = match.groups()
                 section = Block(header, [inline_text or ""])
             elif section.accepts(line):
                 section.add(line)
@@ -139,6 +154,24 @@ class DocStringParser:
                 section = Block(body=[line])
             can_start = section.name or not line.strip()
         yield section
+
+    def _match_header(self, line: str, can_start: bool) -> "tuple[str|None, str|None]":
+        # TODO: Require empty row also before Tags in RF 8 (or 9).
+        # After that regexp matching can be done only when `can_start` is true.
+        # Possibly this method can be inlined like it was earlier eas well.
+        match = self.header_re.fullmatch(line)
+        if not match:
+            return None, None
+        header, _, inline_text = match.groups()
+        if can_start:
+            return header, inline_text
+        if header.lower() in self.tags_headers:
+            LOGGER.warn(
+                f"Invalid documentation in '{self.name}': Not having "
+                f"an empty row before 'Tags:' is deprecated."
+            )
+            return header, inline_text
+        return None, None
 
     def _parse_named_docs(self, data: str) -> "Iterable[tuple[str, str]]":
         block = Block()
@@ -169,3 +202,7 @@ class DocStringParser:
         elif name.startswith(("${", "@{", "&{")) and name.endswith("}"):
             name = name[2:-1].strip()
         return name or "<no-name>"
+
+    def _parse_tags(self, doc: str) -> "list[str]":
+        doc = " ".join(doc.splitlines())
+        return [tag for tag in [tag.strip() for tag in doc.split(",")] if tag]

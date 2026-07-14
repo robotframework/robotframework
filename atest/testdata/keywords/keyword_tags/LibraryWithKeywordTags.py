@@ -16,9 +16,11 @@ def library_keyword_tags_with_decorator():
 def library_keyword_tags_with_documentation():
     """Summary line
 
-    Tags: are read only from the last line
+    Tags:
+        one, two words
 
-    Tags: one, two words"""
+    Tags not only on the last line is new in RF 7.5.
+    """
     pass
 
 

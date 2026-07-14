@@ -51,9 +51,10 @@ User keyword tags with setting containing variables
     No Operation
 
 User keyword tags with documentation
-    [Documentation]    Tags: On non-last line are ignored
-    ...    Tags: are ignored also here
+    [Documentation]
     ...    Tags: one, two words, ${3}
+    ...
+    ...    Tags not only on the last row is new in RF 7.5.
     No Operation
 
 User keyword tags with documentation and setting

@@ -13,13 +13,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import re
 from pathlib import Path
 from typing import Any, Final, Literal, Mapping, Sequence, TYPE_CHECKING
 
 from robot.errors import DataError
 from robot.model import ModelObject, Tags
 from robot.running.docstringparser import parse_docstring
-from robot.utils import eq, getshortdoc, setter
+from robot.utils import eq, getshortdoc, setter, unescape
 
 from .arguments import ArgInfo, ArgumentSpec, EmbeddedArguments
 from .model import BodyItemParent, Keyword
@@ -41,6 +42,7 @@ class KeywordImplementation(ModelObject):
     INVALID_KEYWORD: Final = "INVALID KEYWORD"
     type: Literal["USER KEYWORD", "LIBRARY KEYWORD", "INVALID KEYWORD"]
     repr_args = ("name", "args")
+    _tags_re = re.compile(r"^Tags:", re.MULTILINE | re.IGNORECASE)
     __slots__ = ("_name", "embedded", "_doc", "_lineno", "owner", "parent", "error")
 
     def __init__(
@@ -138,16 +140,51 @@ class KeywordImplementation(ModelObject):
     def source(self) -> "Path | None":
         return self.owner.source if self.owner is not None else None
 
-    def update_docs(self):
-        result = parse_docstring(self.doc)
+    def get_tags(self) -> Tags:
+        """Return tags taking possible tags in documentation into account.
+
+        The :attr:`tags` contains only tags specified using the `[Tags]` setting
+        (user keywords) or the `@keyword` decorator (library keyword) by default.
+        That changes if :meth:`update_docs` is called, though.
+        """
+        if self._tags_re.search(self.doc):
+            tags = Tags(self.tags)
+            info = parse_docstring(self.doc, self.name)
+            tags.add(info.tags, remove_negated=self.type == self.USER_KEYWORD)
+            return tags
+        return self.tags
+
+    def update_docs(self, unescape_user_keyword_docs: bool = False):
+        """Parse information from docstring and update it accordingly.
+
+        :param unescape_user_keyword_docs: When true, remove backslash
+            escapes from user keywords documentation.
+
+        Updates argument, return value and exception documentation as well
+        as tags. The information is defined in appropriate sections using
+        the Google Python Style Guide docstring conventions.
+
+        All this information is needed by Libdoc, but during execution we only
+        need tags, and they can be got also via :meth:`get_tags`.
+
+        New in Robot Framework 7.5.
+        """
+        if self.type == self.USER_KEYWORD:
+            doc = unescape(self.doc) if unescape_user_keyword_docs else self.doc
+            remove_negated_tags = True
+        else:
+            doc = self.doc
+            remove_negated_tags = False
+        result = parse_docstring(doc, self.name)
         self.doc = result.doc
-        self.args.return_doc = result.returns
-        self.args.raises = result.raises
         try:
             self.args.docs = result.args
         except DataError as err:
             self.args.docs = {}
             self.error = str(err)
+        self.args.return_doc = result.returns
+        self.args.raises = result.raises
+        self.tags.add(result.tags, remove_negated=remove_negated_tags)
 
     def matches(self, name: str) -> bool:
         """Returns true if ``name`` matches the keyword name.

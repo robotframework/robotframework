@@ -1,5 +1,6 @@
 import os
 import unittest
+import warnings
 from os.path import abspath
 
 from robot.utils import expand_variables
@@ -9,7 +10,7 @@ from robot.utils.asserts import (
 from robot.utils.text import (
     _ERROR_CUT_EXPLN, _get_virtual_line_length, _MAX_ERROR_LINE_LENGTH,
     cut_long_message, get_console_length, getdoc, getshortdoc, MAX_ERROR_LINES,
-    pad_console_length, split_args_from_name_or_path, split_tags_from_doc
+    pad_console_length, split_args_from_name_or_path
 )
 
 _HALF_ERROR_LINES = MAX_ERROR_LINES // 2
@@ -209,6 +210,8 @@ class TestDocSplitter(unittest.TestCase):
             self._assert_doc_and_tags(doc, doc.rstrip(), [])
 
     def _assert_doc_and_tags(self, original, expected_doc, expected_tags):
+        with warnings.catch_warnings(record=True):
+            from robot.utils import split_tags_from_doc
         doc, tags = split_tags_from_doc(original)
         assert_equal(doc, expected_doc)
         assert_equal(tags, expected_tags)

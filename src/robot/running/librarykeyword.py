@@ -20,9 +20,7 @@ from typing import Any, Callable, Generic, Mapping, Sequence, TYPE_CHECKING, Typ
 
 from robot.errors import DataError
 from robot.model import Tags
-from robot.utils import (
-    is_init, is_list_like, printable_name, split_tags_from_doc, type_name
-)
+from robot.utils import is_init, is_list_like, printable_name, type_name
 
 from .arguments import ArgumentSpec, DynamicArgumentParser, PythonArgumentParser
 from .dynamicmethods import (
@@ -375,14 +373,12 @@ class KeywordCreator(Generic[K]):
         return self.library.instance
 
     def create(self, **extra) -> K:
-        tags = self.get_tags()
-        doc, doc_tags = split_tags_from_doc(self.get_doc())
         kw = self.keyword_class(
             owner=self.library,
             name=self.get_name(),
             args=self.get_args(),
-            doc=doc,
-            tags=tags + doc_tags,
+            tags=self.get_tags(),
+            doc=self.get_doc(),
             **self.extra,
             **extra,
         )

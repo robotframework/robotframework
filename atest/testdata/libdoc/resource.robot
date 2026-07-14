@@ -32,30 +32,36 @@ kw 4  [Arguments]  ${positional}=default  @{varargs}  &{kwargs}
       [Tags]    kw4    Has    tags    -common    ?!?!??
       No Operation
 
-kw 5  [DocumeNtation]   foo bar `kw`.
-      ...
-      ...  FIRST `${a1}` alskdj alskdjlajd
-      ...  askf laskdjf asldkfj alsdkfj alsdkfjasldkfj END
-      ...
-      ...  SECOND askf laskdjf _asldkfj_ alsdkfj alsdkfjasldkfj
-      ...  askf *laskdjf* END
-      ...
-      ...  THIRD asldkfj `introduction` alsdkfj http://foo.bar END
-      ...  - aaa
-      ...  - bbb
-      ...
-      ...  -------------
-      ...
-      ...  | = first = | = second = |
-      ...  | foo       |    bar     |
-      ...
-      ...  tags: a, b, ${3}, -common
-  No Operation
+kw 5
+    [DocumeNtation]    foo bar `kw`.
+    ...
+    ...    FIRST `${a1}` alskdj alskdjlajd
+    ...    askf laskdjf asldkfj alsdkfj alsdkfjasldkfj END
+    ...
+    ...    SECOND askf laskdjf _asldkfj_ alsdkfj alsdkfjasldkfj
+    ...    askf *laskdjf* END
+    ...
+    ...    THIRD asldkfj `introduction` alsdkfj http://foo.bar END
+    ...    - aaa
+    ...    - bbb
+    ...
+    ...    -------------
+    ...
+    ...    | = first = | = second = |
+    ...    | foo       |    bar     |
+    ...
+    ...    Tags:
+    ...        a, b, ${3},
+    ...        -common
+    ...
+    ...    Tags not only on the last line is new in RF 7.5.
+    No Operation
 
 kw 6
     [Documentation]    Summary line
     ...
-    ...                Another line.
+    ...                Second doc paragraph. Not having an empty row
+    ...                before tags is deprecated since RF 7.5.
     ...                Tags: foo, bar
     [Tags]             foo    dar
     [Arguments]    ${a: int}    ${b: Literal["R", "F"]}    ${c: int | None}=None

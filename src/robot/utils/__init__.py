@@ -158,7 +158,6 @@ from .text import (
     getshortdoc as getshortdoc,
     pad_console_length as pad_console_length,
     split_args_from_name_or_path as split_args_from_name_or_path,
-    split_tags_from_doc as split_tags_from_doc,
 )
 from .typehints import (
     copy_signature as copy_signature,
@@ -217,6 +216,17 @@ def __getattr__(name):
 
         return read_rest_data(rstfile)
 
+    def split_tags_from_doc(doc):
+        doc = doc.rstrip()
+        tags = []
+        if not doc:
+            return doc, tags
+        lines = doc.splitlines()
+        if lines[-1].upper().strip().startswith("TAGS:"):
+            doc = "\n".join(lines[:-1]).rstrip()
+            tags = [tag.strip() for tag in lines[-1].split(":", 1)[1].split(",")]
+        return doc, tags
+
     deprecated = {
         "RERAISED_EXCEPTIONS": (KeyboardInterrupt, SystemExit, MemoryError),
         "FALSE_STRINGS": FALSE_STRINGS,
@@ -238,6 +248,7 @@ def __getattr__(name):
         "py2to3": py2to3,
         "py3to2": py3to2,
         "read_rest_data": read_rest_data,
+        "split_tags_from_doc": split_tags_from_doc,
     }
 
     if name in deprecated:

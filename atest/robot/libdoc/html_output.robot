@@ -114,6 +114,7 @@ User keyword documentation formatting
     ...    <td>bar</td>
     ...    </tr>
     ...    </table>
+    ...    <p>Tags not only on the last line is new in RF 7.5.</p>
 
 Private keyword should be excluded
     [Setup]    Run Libdoc And Parse Model From HTML    ${TESTDATADIR}/resource.robot

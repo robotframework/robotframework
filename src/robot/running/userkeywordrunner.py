@@ -19,9 +19,8 @@ from robot.errors import (
     DataError, ExecutionFailed, ExecutionPassed, ExecutionStatus, PassExecution,
     ReturnFromKeyword, UserKeywordExecutionFailed, VariableError
 )
-from robot.model import Tags
 from robot.result import Keyword as KeywordResult
-from robot.utils import DotDict, getshortdoc, prepr, split_tags_from_doc
+from robot.utils import DotDict, getshortdoc, prepr
 from robot.variables import is_list_variable, VariableAssignment
 
 from .arguments import ArgumentSpec, DefaultValue
@@ -67,16 +66,13 @@ class UserKeywordRunner:
         args = tuple(data.args)
         if data.named_args:
             args += tuple(f"{n}={v}" for n, v in data.named_args.items())
-        doc, doc_tags = split_tags_from_doc(kw.doc)
-        tags = Tags(kw.tags)
-        tags.add(doc_tags, remove_negated=True)
         result.config(
             name=self.name,
             owner=kw.owner.name,
-            doc=getshortdoc(variables.replace_string(doc, ignore_errors=True)),
+            doc=getshortdoc(variables.replace_string(kw.doc, ignore_errors=True)),
             args=args,
             assign=tuple(assignment),
-            tags=variables.replace_list(tags, ignore_errors=True),
+            tags=variables.replace_list(kw.get_tags(), ignore_errors=True),
             type=data.type,
         )
 
