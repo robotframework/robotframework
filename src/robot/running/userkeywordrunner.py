@@ -72,7 +72,7 @@ class UserKeywordRunner:
             doc=getshortdoc(variables.replace_string(kw.doc, ignore_errors=True)),
             args=args,
             assign=tuple(assignment),
-            tags=variables.replace_list(kw.get_tags(), ignore_errors=True),
+            tags=variables.replace_list(kw.all_tags, ignore_errors=True),
             type=data.type,
         )
 

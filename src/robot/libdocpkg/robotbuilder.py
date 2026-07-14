@@ -34,6 +34,7 @@ class LibraryDocBuilder:
     def build(self, library):
         name, args = self._split_library_name_and_args(library)
         lib = TestLibrary.from_name(name, args=args)
+        lib.update_docs()
         libdoc = LibraryDoc(
             name=lib.name,
             doc=self._get_doc(lib),
@@ -108,6 +109,7 @@ class ResourceDocBuilder:
     def build(self, path):
         path = self._find_resource_file(path)
         resource, name = self._import_resource(path)
+        resource.update_docs(unescape=True)
         libdoc = LibraryDoc(
             name=name,
             doc=self._get_doc(resource, name),
@@ -165,7 +167,6 @@ class KeywordDocBuilder:
         return [self.build_keyword(kw) for kw in owner.keywords]
 
     def build_keyword(self, kw):
-        kw.update_docs(unescape_user_keyword_docs=True)
         if kw.error:
             doc = f"*Creating keyword failed:* {kw.error}"
         else:

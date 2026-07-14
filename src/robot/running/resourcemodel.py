@@ -19,7 +19,7 @@ from typing import Any, Final, Iterable, Literal, overload, Sequence, TYPE_CHECK
 from robot import model
 from robot.model import BodyItem, create_fixture, DataDict, ModelObject, Tags
 from robot.output import LOGGER
-from robot.utils import NOT_SET, setter
+from robot.utils import NOT_SET, setter, unescape as unescape_util
 
 from .arguments import ArgInfo, ArgumentSpec, UserKeywordArgumentParser
 from .keywordfinder import KeywordFinder
@@ -152,6 +152,23 @@ class ResourceFile(ModelObject):
         count: "int | None" = None,
     ) -> "list[UserKeyword] | UserKeyword":
         return self.keyword_finder.find(name, count)
+
+    def update_docs(self, unescape: bool = False):
+        """Parse information from keyword docstring and update it accordingly.
+
+        :param unescape: When true, remove backslash escapes from resource file
+            and keyword documentation.
+
+        Updates argument, return value and exception documentation as well
+        as tags. The information is defined in appropriate sections using
+        the Google Python Style Guide docstring conventions.
+
+        New in Robot Framework 7.5.
+        """
+        if unescape:
+            self.doc = unescape_util(self.doc)
+        for kw in self.keywords:
+            kw.update_docs(unescape)
 
     def to_dict(self) -> DataDict:
         data = {}

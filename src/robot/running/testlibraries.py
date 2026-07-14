@@ -255,6 +255,19 @@ class TestLibrary:
     ) -> "list[LibraryKeyword] | LibraryKeyword":
         return self.keyword_finder.find(name, count)
 
+    def update_docs(self):
+        """Parse information from keyword docstring and update it accordingly.
+
+        Updates argument, return value and exception documentation as well
+        as tags. The information is defined in appropriate sections using
+        the Google Python Style Guide docstring conventions.
+
+        New in Robot Framework 7.5.
+        """
+        self.init.update_docs()
+        for kw in self.keywords:
+            kw.update_docs()
+
     def copy(self: Self, name: str) -> Self:
         lib = type(self)(
             self.code,
