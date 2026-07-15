@@ -142,7 +142,10 @@ class NormalizedDict(MutableMapping[str, V]):
         return f"{name}({params})"
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, Mapping):
+        try:
+            if not isinstance(other, Mapping):
+                return False
+        except AttributeError:
             return False
         if not isinstance(other, NormalizedDict):
             other = NormalizedDict(other)

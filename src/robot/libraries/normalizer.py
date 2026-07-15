@@ -17,6 +17,8 @@ import re
 from collections.abc import Mapping, Sequence
 from typing import Any, Literal, Union
 
+from robot.utils import is_dict_like, is_list_like
+
 IgnoreCase = Union[Literal["KEY", "KEYS", "VALUE", "VALUES"], bool]
 StripSpaces = Union[Literal["LEADING", "TRAILING"], bool]
 
@@ -58,11 +60,11 @@ class Normalizer:
             return self.normalize_string(value)
         if isinstance(value, (bytes, bytearray)):
             return self.normalize_bytes(value)
-        if isinstance(value, Mapping):
+        if is_dict_like(value):
             if mapping_to_list:
                 return self.normalize_list(list(value))
             return self.normalize_dict(value)
-        if isinstance(value, Sequence):
+        if is_list_like(value):
             return self.normalize_list(value)
         return value
 

@@ -45,13 +45,19 @@ if ExtTypedDict:
 
 
 def is_list_like(item):
-    if isinstance(item, (str, bytes, bytearray, UserString, IOBase)):
+    try:
+        if isinstance(item, (str, bytes, bytearray, UserString, IOBase)):
+            return False
+    except AttributeError:
         return False
     return isinstance(item, Iterable)
 
 
 def is_dict_like(item):
-    return isinstance(item, Mapping)
+    try:
+        return isinstance(item, Mapping)
+    except AttributeError:
+        return False
 
 
 def is_union(item):

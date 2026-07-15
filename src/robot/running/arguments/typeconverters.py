@@ -139,10 +139,13 @@ class TypeConverter:
     def no_conversion_needed(self, value: object) -> bool:
         try:
             return isinstance(value, self.type_info.type)
-        except TypeError:
-            # Used type wasn't a class. Compare to generic type instead.
+        except (TypeError, AttributeError):
+            # Used type wasn't a proper class. Compare to generic type instead.
             if self.type and self.type is not self.type_info.type:
-                return isinstance(value, self.type)
+                try:
+                    return isinstance(value, self.type)
+                except AttributeError:
+                    return False
             return False
 
     def validate(self):
@@ -155,7 +158,10 @@ class TypeConverter:
             converter.validate()
 
     def _handles_value(self, value):
-        return isinstance(value, self.value_types)
+        try:
+            return isinstance(value, self.value_types)
+        except AttributeError:
+            return False
 
     def _non_string_convert(self, value):
         return self._convert(value)
@@ -629,7 +635,10 @@ class TypedDictConverter(TypeConverter):
         return type_info.is_typed_dict
 
     def no_conversion_needed(self, value):
-        if not isinstance(value, Mapping):
+        try:
+            if not isinstance(value, Mapping):
+                return False
+        except AttributeError:
             return False
         for key in value:
             try:
