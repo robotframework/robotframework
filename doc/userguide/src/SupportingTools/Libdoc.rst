@@ -801,11 +801,18 @@ resource file introduction and link to them in keywords.
        """
        pass
 
-Argument and return value information
--------------------------------------
+Arguments, return values, exceptions and tags
+---------------------------------------------
 
-Libdoc shows some information about arguments and return values automatically.
-In addition to that, it is possible to add custom documentation for them.
+Libdoc shows some information about arguments and return values automatically
+based on the source code. They, as well as possible exceptions, can also be
+documented using `Google Style`_ documentation conventions. Also tags can be
+listed in documentation similarly.
+
+.. note:: Support to explicitly document arguments, return values and exceptions
+          using the `Google Style`_ is new in Robot Framework 7.5.
+
+.. _`Google style`: https://google.github.io/styleguide/pyguide.html#383-functions-and-methods
 
 Automatically included information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -826,10 +833,10 @@ documentation.
 __ `Supported conversions`_
 __ `Custom argument converters`_
 
-Argument and return value documentation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Documenting arguments
+~~~~~~~~~~~~~~~~~~~~~
 
-Robot Framework supports `Google style`_ argument and return value documentation:
+Robot Framework supports `Google style`_ argument documentation:
 
 .. sourcecode:: python
 
@@ -852,11 +859,6 @@ Robot Framework supports `Google style`_ argument and return value documentation
         Normal documentation continues.
         """
         return a + b
-
-.. _`Google style`: https://google.github.io/styleguide/pyguide.html#383-functions-and-methods
-
-Documenting arguments
-'''''''''''''''''''''
 
 As the example above demonstrates, arguments are documented under the `Args:` header
 that must be followed with an indented block. The `specification <Google style_>`__
@@ -881,26 +883,35 @@ totally ignored. If type information is important, it must be provided
 via type hints or by using the `@keyword` decorator so that it is available
 also during execution and can be used for `argument conversion`_.
 
-In addition to `Args:`, Robot Framework recognizes headers `Arguments:` and
-`Parameters:`. These may not be supported by other tools processing argument
-documentation, though.
+Robot Framework considers headers `Arguments:` and `Parameters:` to be aliases
+for `Args:`. They, similarly as aliases supported with other headers, may not be
+supported by other tools processing documentation, though.
 
-Documenting return value
-''''''''''''''''''''''''
+Documenting return values
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The return value is documented under the `Returns:` header so that there is just
-a block of test. The block must be indented the same way as arguments, it
-can span multiple lines and extra indentation is preserved.
+As the example in the previous section already demonstrated, return values can
+be documented under the `Returns:` header as an indented block. The block can
+span multiple lines and paragraphs and extra indentation is preserved::
+
+    Returns:
+        Data as a dictionary in the following format:
+
+            {"name": "Robot", "id": 42, "children": []}
+
+        `children` is a list of dictionaries in the same format.
+
 
 Robot Framework allows the documentation to start already on the header row
 as long as there is at least one space after the colon. This means that
-short return value documentation can be written like `Returns: Some value`.
+short return value documentation can be written on a single line like
+`Returns: Some value`.
 
 Robot Framework recognizes header `Return:` as an alias for `Returns:`.
-It also considers `Yields:` another alias instead of its own section type.
+It also considers `Yields:` as another alias instead of its own section type.
 
-Documenting raised exceptions
-'''''''''''''''''''''''''''''
+Documenting exceptions
+~~~~~~~~~~~~~~~~~~~~~~
 
 Also raised exceptions can be documented. This is done under the `Raises:` header
 using `ExceptionType: Documentation` syntax that works the same way as the
@@ -911,8 +922,28 @@ using `ExceptionType: Documentation` syntax that works the same way as the
         IOError: Output file could not be accessed. Either it does not
             exist or the user does not have adequate permissions.
 
+The `Raise:` header is considered an alias for `Raises:`.
+
+Listing tags
+~~~~~~~~~~~~
+
+User keywords support specifying tags using the `[Tags]` setting and library
+keywords support them via the `@keyword` decorator. With both kind of
+keywords it is also possible to list tags as part of the documentation.
+This is done under the `Tags:` header so that tags are separate with a comma::
+
+    Tags:
+        first, second
+
+The tags block must be indented similarly as other special documentation blocks.
+Listing tags on the same row as the header like `Tags: first, second` is also
+supported.
+
+.. note:: Prior to Robot Framework 7.5, tags were only supported on the last row
+          of the documentation.
+
 Handling parsed information
-'''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All recognized sections are parsed and information they contain is added to
 `Libdoc spec files`_ and shown in Libdoc HTML UI separately. Recognized sections
@@ -921,7 +952,7 @@ are also removed from the actual keyword documentation.
 Possible unrecognized sections are left to the documentation without modification.
 
 Supported formatting
-''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~
 
 There are often needs to process keyword documentation also using other tools
 than Libdoc. If the whole documentation is to be rendered as Markdown or
@@ -958,7 +989,6 @@ Actual argument and return value documentation can also contain formatting
 and that is handled the same way as `formatting elsewhere in the documentation`__.
 
 __ `Documentation syntax`_
-
 
 Libdoc examples
 ---------------
