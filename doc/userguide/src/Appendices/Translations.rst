@@ -931,7 +931,7 @@ Section headers
     * - Variables
       - Variables
     * - Test Cases
-      - Unités de test
+      - Cas de test
     * - Tasks
       - Tâches
     * - Keywords
@@ -1038,6 +1038,22 @@ Boolean strings
       - Vrai, Oui, Actif
     * - False
       - Faux, Non, Désactivé, Aucun
+
+Deprecations
+~~~~~~~~~~~~
+
+.. list-table::
+    :class: tabular
+    :width: 40em
+    :widths: 2 2 1
+    :header-rows: 1
+
+    * - Old term
+      - New term
+      - Deprecated
+    * - Unités de test
+      - Cas de test
+      - RF 7.5
 
 Hindi (hi)
 ----------

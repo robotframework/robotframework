@@ -621,7 +621,7 @@ class Fr(Language):
 
     settings_header = "Paramètres"
     variables_header = "Variables"
-    test_cases_header = "Unités de test"
+    test_cases_header = "Cas de test"
     tasks_header = "Tâches"
     keywords_header = "Mots-clés"
     comments_header = "Commentaires"
@@ -670,6 +670,7 @@ class Fr(Language):
     but_prefixes = ["Mais", "Mais que", "Mais qu'"]
     true_strings = ["Vrai", "Oui", "Actif"]
     false_strings = ["Faux", "Non", "Désactivé", "Aucun"]
+    deprecations = {"Unités de test": ("Cas de test", "7.5")}
 
 
 class De(Language):
