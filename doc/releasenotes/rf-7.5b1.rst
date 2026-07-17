@@ -6,8 +6,8 @@ Robot Framework 7.5 beta 1
 
 `Robot Framework`_ 7.5 is a new feature release with major enhancements
 to the library documentation tool Libdoc, enhanced console logging
-configuration and several other smaller enhancements. There are also various
-bigger and smaller bug fixes
+configuration and several other enhancements. There are also various
+bigger and smaller bug fixes.
 
 All issues targeted for Robot Framework 7.5 can be found from the
 `issue tracker milestone`_.
@@ -140,8 +140,8 @@ help would be appreciated and the task is especially suitable for new
 contributors!
 
 .. note:: We may may Markdown the default documentation format in the future.
-          If plan to keep using the Robot Framework format, explicitly specifying
-          in library source code that documentation format is `ROBOT` is a good idea.
+          If you plan to keep using the Robot Framework format, explicitly
+          specifying that documentation format is `ROBOT` is a good idea.
 
 __ https://github.com/robotframework/robotframework/blob/master/doc/userguide/src/Appendices/DocumentationFormatting.rst#markdown-format
 __ https://github.com/robotframework/robotframework/blob/master/doc/userguide/src/SupportingTools/Libdoc.rst#markdown-documentation-syntax
@@ -227,9 +227,9 @@ unlikely to affect normal users:
   the link target was a less technical name like `integer` or `string` instead
   of the actual used type name like `int` or `str`. This has been changed
   so that nowadays the link target is always the used type name. This should not
-  affect many users, because it is unlikely that there has been needs to
-  link to types like `integer`. In addition to that, this particular feature
-  was not documented at all, so most users have probably been unaware of it.
+  affect many users, because it is unlikely that there has been needs to link
+  to types like `integer`. In addition to that, this particular feature was
+  earlier not documented at all, so most users have probably been unaware of it.
 
 - Libdoc's automatic table of contents generation was changed in various ways
   (`#5696`_, `#5697`_):
