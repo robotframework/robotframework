@@ -44,41 +44,41 @@ class Screenshot:
     need to be installed separately. Taking screenshots also requires tests
     to be run with a physical or virtual display.
 
-    == Table of contents ==
+    ## Table of contents
 
     %TOC%
 
-    = Supported screenshot taking tools and modules =
+    ## Supported screenshot taking tools and modules
 
     How screenshots are taken depends on the operating system. On OSX
-    screenshots are taken using the built-in ``screencapture`` utility. On
+    screenshots are taken using the built-in `screencapture` utility. On
     other operating systems you need to have one of the following tools or
     Python modules installed. You can specify the tool/module to use when
-    `importing` the library. If no tool or module is specified, the first
+    [importing] the library. If no tool or module is specified, the first
     one found will be used.
 
-    - wxPython :: http://wxpython.org :: Generic Python GUI toolkit.
-    - PyGTK :: http://pygtk.org :: This module is available by default on most
+    - [wxPython](http://wxpython.org) — Generic Python GUI toolkit.
+    - [PyGTK](http://pygtk.org) — This module is available by default on most
       Linux distributions.
-    - Pillow :: http://python-pillow.github.io ::
+    - [Pillow](http://python-pillow.github.io) —
       Only works on Windows. Also the original PIL package is supported.
-    - Scrot :: http://en.wikipedia.org/wiki/Scrot :: Not used on Windows.
-      Install with ``apt-get install scrot`` or similar.
+    - [Scrot](http://en.wikipedia.org/wiki/Scrot) — Not used on Windows.
+      Install with `apt-get install scrot` or similar.
 
-    = Where screenshots are saved =
+    ## Where screenshots are saved
 
     By default screenshots are saved into the same directory where the Robot
     Framework log file is written. If no log is created, screenshots are saved
     into the directory where the XML output file is written.
 
     It is possible to specify a custom location for screenshots using
-    ``screenshot_directory`` argument when `importing` the library and
-    using `Set Screenshot Directory` keyword during execution. It is also
+    `screenshot_directory` argument when [importing] the library and
+    using [Set Screenshot Directory] keyword during execution. It is also
     possible to save screenshots using an absolute path.
 
-    = ScreenCapLibrary =
+    ## ScreenCapLibrary
 
-    [https://github.com/mihaiparvu/ScreenCapLibrary|ScreenCapLibrary] is an
+    [ScreenCapLibrary](https://github.com/mihaiparvu/ScreenCapLibrary) is an
     external Robot Framework library that can be used as an alternative,
     which additionally provides support for multiple formats, adjusting the
     quality, using GIFs and video capturing.
@@ -86,6 +86,7 @@ class Screenshot:
 
     ROBOT_LIBRARY_SCOPE = "TEST SUITE"
     ROBOT_LIBRARY_VERSION = get_version()
+    ROBOT_LIBRARY_DOC_FORMAT = "Markdown"
 
     def __init__(
         self,
@@ -94,20 +95,23 @@ class Screenshot:
     ):
         """Configure where screenshots are saved.
 
-        If ``screenshot_directory`` is not given, screenshots are saved into
-        same directory as the log file. The directory can also be set using
-        `Set Screenshot Directory` keyword.
-
-        ``screenshot_module`` specifies the module or tool to use when using
-        this library outside OSX. Possible values are ``wxPython``,
-        ``PyGTK``, ``PIL`` and ``scrot``, case-insensitively. If no value is
-        given, the first module/tool found is used in that order.
+        Args:
+            screenshot_directory: If not given, screenshots are saved into
+                same directory as the log file. The directory can also be set
+                using [Set Screenshot Directory] keyword.
+            screenshot_module: Specifies the module or tool to use when using
+                this library outside OSX. Possible values are `wxPython`,
+                `PyGTK`, `PIL` and `scrot`, case-insensitively. If no value is
+                given, the first module/tool found is used in that order.
 
         Examples:
-        | =Setting= |  =Value=   |  =Value=   |
-        | Library   | Screenshot |            |
-        | Library   | Screenshot | ${TEMPDIR} |
-        | Library   | Screenshot | screenshot_module=PyGTK |
+
+        ```robotframework
+        *** Settings ***
+        Library    Screenshot
+        Library    Screenshot    ${TEMPDIR}
+        Library    Screenshot    screenshot_module=PyGTK
+        ```
         """
         self._given_screenshot_dir = self._norm_path(screenshot_directory)
         self._screenshot_taker = ScreenshotTaker(screenshot_module)
@@ -130,10 +134,19 @@ class Screenshot:
     def set_screenshot_directory(self, path: Path) -> str:
         """Sets the directory where screenshots are saved.
 
-        It is possible to use ``/`` as a path separator in all operating
+        It is possible to use `/` as a path separator in all operating
         systems. Path to the old directory is returned.
 
-        The directory can also be set in `importing`.
+        The directory can also be set in [importing].
+
+        Args:
+            path: Directory where to save screenshots. Must already exist.
+
+        Returns:
+            Path to the previous screenshot directory.
+
+        Raises:
+            RuntimeError: If `path` does not exist or is not a directory.
         """
         path = self._norm_path(path)
         if not os.path.isdir(path):
@@ -146,26 +159,36 @@ class Screenshot:
         """Takes a screenshot in JPEG format and embeds it into the log file.
 
         Name of the file where the screenshot is stored is derived from the
-        given ``name``. If the ``name`` ends with extension ``.jpg`` or
-        ``.jpeg``, the screenshot will be stored with that exact name.
+        given `name`. If the `name` ends with extension `.jpg` or
+        `.jpeg`, the screenshot will be stored with that exact name.
         Otherwise a unique name is created by adding an underscore, a running
-        index and an extension to the ``name``.
+        index and an extension to the `name`.
 
         The name will be interpreted to be relative to the directory where
         the log file is written. It is also possible to use absolute paths.
-        Using ``/`` as a path separator works in all operating systems.
+        Using `/` as a path separator works in all operating systems.
 
-        ``width`` specifies the size of the screenshot in the log file.
+        `width` specifies the size of the screenshot in the log file.
+
+        Args:
+            name: Base name or path for the screenshot file.
+            width: Width of the embedded image in the log file.
+
+        Returns:
+            Path where the screenshot was saved.
 
         Examples: (LOGDIR is determined automatically by the library)
-        | Take Screenshot |                  |     | # LOGDIR/screenshot_1.jpg (index automatically incremented) |
-        | Take Screenshot | mypic            |     | # LOGDIR/mypic_1.jpg (index automatically incremented) |
-        | Take Screenshot | ${TEMPDIR}/mypic |     | # /tmp/mypic_1.jpg (index automatically incremented) |
-        | Take Screenshot | pic.jpg          |     | # LOGDIR/pic.jpg (always uses this file) |
-        | Take Screenshot | images/login.jpg | 80% | # Specify both name and width. |
-        | Take Screenshot | width=550px      |     | # Specify only width. |
 
-        The path where the screenshot is saved is returned.
+        ```robotframework
+        *** Test Cases ***
+        Take Screenshots
+            Take Screenshot    # LOGDIR/screenshot_1.jpg (index automatically incremented)
+            Take Screenshot    mypic            # LOGDIR/mypic_1.jpg
+            Take Screenshot    ${TEMPDIR}/mypic    # /tmp/mypic_1.jpg
+            Take Screenshot    pic.jpg          # LOGDIR/pic.jpg (always uses this file)
+            Take Screenshot    images/login.jpg    80%
+            Take Screenshot    width=550px
+        ```
         """
         path = self._save_screenshot(name)
         self._embed_screenshot(path, width)
@@ -174,9 +197,15 @@ class Screenshot:
     def take_screenshot_without_embedding(self, name: str = "screenshot") -> str:
         """Takes a screenshot and links it from the log file.
 
-        This keyword is otherwise identical to `Take Screenshot` but the saved
+        This keyword is otherwise identical to [Take Screenshot] but the saved
         screenshot is not embedded into the log file. The screenshot is linked
         so it is nevertheless easily available.
+
+        Args:
+            name: Base name or path for the screenshot file.
+
+        Returns:
+            Path where the screenshot was saved.
         """
         path = self._save_screenshot(name)
         self._link_screenshot(path)
