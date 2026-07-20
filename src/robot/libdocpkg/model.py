@@ -110,11 +110,11 @@ class LibraryDoc:
             for name, doc in item.args.raises.items():
                 item.args.raises[name] = formatter.html(doc)
         for type_doc in self.type_docs:
-            # Standard docs are always in ROBOT format ...
+            # Standard docs are always in MARKDOWN format ...
             if type_doc.type == type_doc.STANDARD:
                 # ... unless they have been converted to HTML already.
                 if not type_doc.doc.startswith("<p>"):
-                    type_doc.doc = DocToHtml("ROBOT")(type_doc.doc)
+                    type_doc.doc = DocToHtml("MARKDOWN")(type_doc.doc)
             else:
                 type_doc.doc = formatter.html(type_doc.doc)
         self.doc_format = "HTML"
