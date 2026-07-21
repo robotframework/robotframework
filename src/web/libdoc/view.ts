@@ -52,6 +52,21 @@ class View {
         ? options.fn(this)
         : options.inverse(this);
     });
+    Handlebars.registerHelper("or", function (a, b) {
+      return a || b;
+    });
+    Handlebars.registerHelper(
+      "hasVisibleReturnType",
+      function (returnType: ArgType | null | undefined) {
+        return returnType !== null && returnType !== undefined && returnType.name !== "None";
+      },
+    );
+    Handlebars.registerHelper("dictSize", function (context) {
+      if (context === null || context === undefined) {
+        return 0;
+      }
+      return Object.keys(context).length;
+    });
     Handlebars.registerHelper(
       "renderTypeInfo",
       function (argType: ArgType, isReturnType: boolean) {
@@ -247,7 +262,7 @@ class View {
       libdoc = this.libdoc;
     }
     this.renderLibdocTemplate("keywords", libdoc);
-    document.querySelectorAll(".kw-tags span").forEach((elem) => {
+    document.querySelectorAll(".tag-link").forEach((elem) => {
       elem.addEventListener("click", (e) => {
         this.tagSearch((e.target! as HTMLSpanElement).innerText);
       });

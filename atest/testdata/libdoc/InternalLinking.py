@@ -16,7 +16,8 @@ class InternalLinking:
 
     = Linking to type docs =
 
-    - `Integer`
+    - `str`
+    - `float`
 
     = Linking to headers =
 
@@ -52,15 +53,15 @@ class InternalLinking:
     def __init__(self, argument=None):
         """Importing. See `introduction`, `formatting` and `keyword` for details."""
 
-    def keyword(self):
+    def keyword(self, arg: str):
         """First keyword here. See also `Importing` and `Second Keyword`."""
 
-    def second_keyword(self, arg: int):
+    def second_keyword(self, arg: "int | float"):
         """We got `arg`. And have `no link`. Except to `Second LEVEL`.
 
         = Not linkable =
 
-        We are `linking to headers` and `shortcuts` but not to `not linkable`.
+        We are `linking to headers` but not to `not linkable`.
         """
 
     def escaping(self):

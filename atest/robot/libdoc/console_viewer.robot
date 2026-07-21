@@ -1,6 +1,9 @@
 *** Settings ***
 Resource          libdoc_resource.robot
 
+*** Variables ***
+${DEPRECATION}    [[] WARN ] Invalid documentation in 'kw 6': Not having an empty row before 'Tags:' is deprecated.
+
 *** Test Cases ***
 List all keywords
     Run Libdoc And Verify Output    ${TESTDATADIR}/module.py list
@@ -23,11 +26,13 @@ List all keywords
 
 List some keywords
     Run Libdoc And Verify Output    ${TESTDATADIR}/resource.robot list o
+    ...   ${DEPRECATION}
     ...   Deprecation
     ...   Keyword with some "stuff" to <escape>
     ...   non ascii doc
     ...   With embedded \${arg: int} and normal arg
     Run Libdoc And Verify Output    ${TESTDATADIR}/resource.robot LIST KW? C*R
+    ...   ${DEPRECATION}
     ...   curdir
     ...   kw 3
     ...   kw 4
@@ -72,8 +77,11 @@ Show intro and keywords
     # Actually all consoles cannot show `Hyvää yötä` either but we expect western config.
 
 Show version
-    Run Libdoc And Verify Output    ${TESTDATADIR}/module.py version    0.1-alpha
-    Run Libdoc And Verify Output    ${TESTDATADIR}/resource.robot version    N/A
+    Run Libdoc And Verify Output    ${TESTDATADIR}/module.py version
+    ...    0.1-alpha
+    Run Libdoc And Verify Output    ${TESTDATADIR}/resource.robot version
+    ...    ${DEPRECATION}
+    ...    N/A
 
 *** Keywords ***
 Should Contain Intro

@@ -50,17 +50,15 @@ class DynamicLibrary:
         return [f"arg{i + 1}" for i in range(int(name[-1]))]
 
     def get_keyword_documentation(self, name):
-        non_ascii = "Hyvää yötä.\n\nСпасибо! ({})\n\nTags: hyvää, yötä"
-        if name == "nön-äscii Ünicöde":
-            return non_ascii.format("Unicode")
-        if name == "nön-äscii ÜTF-8":
-            return non_ascii.format("UTF-8").encode("UTF-8")
-        short = f"Dummy documentation for `{name}`."
-        if name.startswith("__"):
-            return short
-        return (
-            short
-            + """
+        tags = ""
+        if name in ("nön-äscii Ünicöde", "nön-äscii ÜTF-8"):
+            kind = "Unicode" if name == "nön-äscii Ünicöde" else "UTF-8"
+            doc = f"Hyvää yötä.\n\nСпасибо! ({kind})"
+            tags = "\n\nTags: hyvää, yötä"
+        elif name.startswith("__"):
+            doc = f"Dummy documentation for `{name}`."
+        else:
+            doc = f"""Dummy documentation for `{name}`.
 
 Neither `Keyword 1` or `KW 2` do anything really interesting.
 They do, however, accept some `arguments`.
@@ -75,7 +73,23 @@ Examples:
 
 http://robotframework.org
 """
-        )
+        doc = self._add_arg_docs(doc, name) + tags
+        if name == "nön-äscii ÜTF-8":
+            doc = doc.encode("UTF-8")
+        return doc
+
+    def _add_arg_docs(self, doc, name):
+        if name == "__intro__":
+            return doc
+        doc += "\n\nArgs:\n"
+        if name == "__init__":
+            specs = ["arg1", "arg2=These args are shown in docs"]
+        else:
+            specs = self.get_keyword_arguments(name) or []
+        for spec in specs:
+            arg = spec.split("=")[0] if isinstance(spec, str) else spec[0]
+            doc += f"    {arg}: Doc for `{arg}`.\n"
+        return doc
 
     def get_keyword_tags(self, name):
         if name == "Tags":

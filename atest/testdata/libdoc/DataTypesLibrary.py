@@ -8,11 +8,6 @@ if sys.version_info < (3, 9):
 from robot.api.deco import library
 
 
-class HttpCredentials(TypedDict):
-    username: str
-    password: str
-
-
 class _GeoCoordinated(TypedDict):
     longitude: float
     latitude: float
@@ -98,8 +93,7 @@ class DataTypesLibrary:
 
     It has some in ``__init__`` and others in the `Keywords`.
 
-    The DataTypes are the following that should be linked.
-    `HttpCredentials` , `GeoLocation` , `Small` and `AssertionOperator`.
+    Custom data types include `GeoLocation` and `Small`.
     """
 
     def __init__(self, credentials: Small = Small.one):

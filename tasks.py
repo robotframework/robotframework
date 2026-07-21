@@ -73,7 +73,7 @@ Robot Framework {version} was released on {date}.
 
 
 @task
-def format(ctx, targets="src atest utest"):
+def format(ctx, targets="src atest utest doc/userguide/src"):
     """Format code.
 
     Args:

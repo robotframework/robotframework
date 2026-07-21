@@ -2,6 +2,7 @@ Language: Finnish
 
 *** Settings ***
 Library                       AnnotationsWithTyping.py
+Variables                     variables.py
 Resource                      conversion.resource
 
 *** Test Cases ***
@@ -31,7 +32,9 @@ Invalid list
     [Template]                Conversion Should Fail
     List                      [1, oops]                                                 error=Invalid expression.
     List                      {}                                                        error=Value is dictionary, not list.
+    List                      ${NO_CLASS}                                               arg_type=NoClass
     List with types           ooops                       type=List[int]                error=Invalid expression.
+    List with types           ${NO_CLASS}                 type=List[int]                arg_type=NoClass
 
 Tuple
     Tuple                     ()                          ()
@@ -74,6 +77,9 @@ Invalid tuple
     Tuple                     (1, oops)                                                 error=Invalid expression.
     Tuple with types          {}                          type=Tuple[bool, int]         error=Value is dictionary, not tuple.
     Homogenous tuple          ooops                       type=Tuple[int, ...]          error=Invalid expression.
+    Tuple                     ${NO_CLASS}                                               arg_type=NoClass
+    Tuple with types          ${NO_CLASS}                 type=Tuple[bool, int]         arg_type=NoClass
+    Homogenous tuple          ${NO_CLASS}                 type=Tuple[int, ...]          arg_type=NoClass
 
 Sequence
     Sequence                  []                          []
@@ -97,6 +103,9 @@ Invalid sequence
     Sequence                  [1, oops]                   type=Sequence                 error=Invalid expression.
     Mutable sequence          {}                          type=Sequence                 error=Value is dictionary, not Sequence.
     Sequence with types       ooops                       type=Sequence[int | float]    error=Invalid expression.
+    Sequence                  ${NO_CLASS}                 type=Sequence                 arg_type=NoClass
+    Mutable sequence          ${NO_CLASS}                 type=Sequence                 arg_type=NoClass
+    Sequence with types       ${NO_CLASS}                 type=Sequence[int | float]    arg_type=NoClass
 
 Dict
     Dict                      {}                          {}
@@ -123,6 +132,8 @@ Invalid dictionary
     Dict                      {1: ooops}                  type=dictionary               error=Invalid expression.
     Dict                      []                          type=dictionary               error=Value is list, not dict.
     Dict with types           ooops                       type=Dict[int, float]         error=Invalid expression.
+    Dict                      ${NO_CLASS}                 type=dictionary               arg_type=NoClass
+    Dict with types           ${NO_CLASS}                 type=Dict[int, float]         arg_type=NoClass
 
 Mapping
     Mapping                   {}                          {}
@@ -148,6 +159,9 @@ Invalid mapping
     Mapping                   {1: ooops}                  type=Mapping                  error=Invalid expression.
     Mutable mapping           []                          type=Mapping                  error=Value is list, not Mapping.
     Mapping with types        ooops                       type=Mapping[int, float]      error=Invalid expression.
+    Mapping                   ${NO_CLASS}                 type=Mapping                  arg_type=NoClass
+    Mutable mapping           ${NO_CLASS}                 type=Mapping                  arg_type=NoClass
+    Mapping with types        ${NO_CLASS}                 type=Mapping[int, float]      arg_type=NoClass
 
 TypedDict
     TypedDict                 {'x': 1, 'y': 2.0}          {'x': 1, 'y': 2}
@@ -193,6 +207,7 @@ Invalid TypedDict
     [Template]                Conversion Should Fail
     TypedDict                 {'x': oops}                 type=Point2D                  error=Invalid expression.
     TypedDict                 []                          type=Point2D                  error=Value is list, not dict.
+    TypedDict                 ${NO_CLASS}                 type=Point2D                  arg_type=NoClass
 
 Set
     Set                       set()                       set()
@@ -218,6 +233,7 @@ Invalid Set
     Set                       {1, ooops}                                                error=Invalid expression.
     Set                       {}                                                        error=Value is dictionary, not set.
     Set                       ooops                                                     error=Invalid expression.
+    Set                       ${NO_CLASS}                                               arg_type=NoClass
 
 Any
     Any                       hello                       'hello'

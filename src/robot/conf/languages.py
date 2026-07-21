@@ -252,8 +252,10 @@ class Language:
     in the ``deprecation`` dictionary can be set to ``None``. In that case deprecation
     warnings are emitted immediately.
 
-    Deprecation supports is new in Robot Framework 7.5. Possible deprecation
-    configuration is silently ignored with earlier versions.
+    Deprecation support is new in Robot Framework 7.5. In that version there are
+    no deprecation warnings, though, so both old and new terms work without warnings.
+    Support to actually emit deprecation warnings will be added in Robot Framework 7.6.
+    Possible deprecation configuration is silently ignored with earlier versions.
     """
 
     settings_header: "str | None" = None
@@ -619,7 +621,7 @@ class Fr(Language):
 
     settings_header = "Paramètres"
     variables_header = "Variables"
-    test_cases_header = "Unités de test"
+    test_cases_header = "Cas de test"
     tasks_header = "Tâches"
     keywords_header = "Mots-clés"
     comments_header = "Commentaires"
@@ -668,6 +670,7 @@ class Fr(Language):
     but_prefixes = ["Mais", "Mais que", "Mais qu'"]
     true_strings = ["Vrai", "Oui", "Actif"]
     false_strings = ["Faux", "Non", "Désactivé", "Aucun"]
+    deprecations = {"Unités de test": ("Cas de test", "7.5")}
 
 
 class De(Language):

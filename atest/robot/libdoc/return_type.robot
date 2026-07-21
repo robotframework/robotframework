@@ -5,7 +5,7 @@ Resource           libdoc_resource.robot
 
 *** Test Cases ***
 No return
-    0    None
+    0    NOT SET
 
 None return
     1    None

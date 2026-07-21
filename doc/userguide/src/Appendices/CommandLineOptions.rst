@@ -195,6 +195,7 @@ Command line options for post-processing outputs
 .. _Sets a listener: `Setting listeners`_
 .. _test suites are empty: `When no tests match selection`_
 .. _empty test suites: `test suites are empty`_
+.. _Console output type: `Built-in console loggers`_
 .. _Sets the width: `Console width`_
 .. _Specifies are colors: `Console colors`_
 .. _markers on the console: `Console markers`_

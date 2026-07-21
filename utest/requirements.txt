@@ -3,3 +3,5 @@
 docutils >= 0.10
 jsonschema
 typing_extensions >= 4.13
+markdown
+pyyaml

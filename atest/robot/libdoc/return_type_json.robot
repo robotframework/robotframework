@@ -9,7 +9,7 @@ No return
     0    None
 
 None return
-    1    None
+    1    {'name': 'None', 'typedoc': 'None', 'nested': [], 'union': False}
 
 Simple return
     2    {'name': 'int', 'typedoc': 'integer', 'nested': [], 'union': False}

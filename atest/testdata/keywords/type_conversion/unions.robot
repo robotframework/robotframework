@@ -1,5 +1,6 @@
 *** Settings ***
 Library           unions.py
+Variables         variables.py
 Resource          conversion.resource
 
 *** Test Cases ***
@@ -87,12 +88,16 @@ Union with item not liking isinstance
 Argument not matching union
     [Template]    Conversion Should Fail
     Union of int and float             not a number    type=integer or float
-    Union of int and float             ${NONE}         type=integer or float    arg_type=None
-    Union of int and float             ${CUSTOM}       type=integer or float    arg_type=Custom
+    Union of int and float             ${NONE}         type=integer or float                           arg_type=None
+    Union of int and float             ${CUSTOM}       type=integer or float                           arg_type=Custom
+    Union of int and float             ${NO_CLASS}     type=integer or float                           arg_type=NoClass
     Union with int and None            invalid         type=integer or None
-    Union with int and None            ${1.1}          type=integer or None     arg_type=float
+    Union with int and None            ${1.1}          type=integer or None                            arg_type=float
+    Union with int and None            ${NO_CLASS}     type=integer or None                            arg_type=NoClass
     Union with subscripted generics    invalid         type=List[int] or integer
+    Union with subscripted generics    ${NO_CLASS}     type=List[int] or integer                       arg_type=NoClass
     Union with multiple types          invalid         type=integer, float, None, date or timedelta
+    Union with multiple types          ${NO_CLASS}     type=integer, float, None, date or timedelta    arg_type=NoClass
 
 Union with unrecognized type
     ${myobject}=    Create my object

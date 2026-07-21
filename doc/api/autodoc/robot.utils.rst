@@ -209,14 +209,6 @@ robot.utils.recommendations module
    :show-inheritance:
    :undoc-members:
 
-robot.utils.restreader module
------------------------------
-
-.. automodule:: robot.utils.restreader
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
 robot.utils.robotenv module
 ---------------------------
 

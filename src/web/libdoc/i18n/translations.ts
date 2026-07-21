@@ -16,11 +16,11 @@ class Translations {
   }
 
   public translate(key: string): string {
-    if (key in this.language) {
-      return this.language[key];
+    const translation = this.language[key];
+    if (typeof translation === "string") {
+      return translation;
     }
-    console.log("Warning, missing translation for", key);
-    return "";
+    return translations["en"][key];
   }
 
   public setLanguage(lang: string) {

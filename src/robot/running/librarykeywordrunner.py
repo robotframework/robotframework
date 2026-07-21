@@ -73,7 +73,7 @@ class LibraryKeywordRunner:
             doc=kw.short_doc,
             args=args,
             assign=tuple(assignment),
-            tags=kw.tags,
+            tags=kw.all_tags,
             type=data.type,
         )
 

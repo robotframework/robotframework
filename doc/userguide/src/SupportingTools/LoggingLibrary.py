@@ -1,7 +1,7 @@
 class LoggingLibrary:
     """Library for logging messages.
 
-    = Table of contents =
+    This documentation is formatted using Robot Frameworks own documentation syntax.
 
     %TOC%
 
@@ -13,64 +13,79 @@ class LoggingLibrary:
 
     = Valid log levels =
 
-    Valid log levels are ``INFO``, ``DEBUG``, and ``TRACE``. The default log
+    Valid log levels are ``INFO``, ``DEBUG`` and ``TRACE``. The default log
     level can be set during `importing`.
 
-    = Examples =
+    = Example =
 
-    Notice how keywords are linked from examples.
+    | ***** *Settings* *****
+    | Library        LoggingLibrary
+    |
+    | ***** *Test Cases* *****
+    | Use default level
+    |     `Log Message`    My message
+    |
+    | Use custom level
+    |     `Log Message`    My message    level=DEBUG
+    |
+    | Log multiple messages
+    |     `Log Messages`    First message    Second message    Third message
 
-    | `Log Message`      | My message    |                |               |
-    | `Log Two Messages` | My message    | Second message | level=DEBUG   |
-    | `Log Messages`     | First message | Second message | Third message |
+    The strange header formatting is needed, because ``*`` is a marker in headers
+    as well as a bold text marker in Robot Framework documentation format.
+    The result is a header like ``*** Settings ***`` in bold.
+
+    Internal linking works also in this example and thus keyword names become
+    links.
     """
-    ROBOT_LIBRARY_VERSION = '0.1'
 
-    def __init__(self, default_level='INFO'):
-        """The default log level can be given at library import time.
+    ROBOT_LIBRARY_VERSION = "0.2"
 
-        See `Valid log levels` section for information about available log
-        levels.
+    def __init__(self, default_level: str = "INFO"):
+        """The default log level can be given at the library import time.
+
+        Args:
+
+            default_level: Default log level. See the `Valid log levels`
+                section for more information about available log levels.
 
         Examples:
 
-        | =Setting= |     =Value=    | =Value= |          =Comment=         |
-        | Library   | LoggingLibrary |         | # Use default level (INFO) |
-        | Library   | LoggingLibrary | DEBUG   | # Use the given level      |
+        | ***** *Settings* *****
+        | Library        LoggingLibrary             # Use the default level (INFO)
+        | Library        LoggingLibrary    DEBUG    # Use the given level
         """
         self.default_level = self._verify_level(default_level)
 
-    def _verify_level(self, level):
+    def _verify_level(self, level: str) -> str:
         level = level.upper()
-        if level not in ['INFO', 'DEBUG', 'TRACE']:
-            raise RuntimeError("Invalid log level'%s'. Valid levels are "
-                               "'INFO', 'DEBUG', and 'TRACE'")
+        if level not in ("INFO", "DEBUG", "TRACE"):
+            raise RuntimeError(
+                f"Level must be 'INFO', 'DEBUG' or 'TRACE', got '{level}'."
+            )
         return level
 
-    def log_message(self, message, level=None):
+    def log_message(self, message: str, level: str | None = None):
         """Writes given message to the log file using the specified log level.
 
-        The message to log and the log level to use are defined using
-        ``message`` and ``level`` arguments, respectively.
+        Args:
+            message: The message to log.
+            level: The log level to use. If not given, the default level given
+                during `library importing` is used.
 
-        If no log level is given, the default level given during `library
-        importing` is used.
+        Use the `Log Messages` keyword if you want to log multiple messages at
+        the same time.
         """
         level = self._verify_level(level) if level else self.default_level
-        print("*%s* %s" % (level, message))
-
-    def log_two_messages(self, message1, message2, level=None):
-        """Writes given messages to the log file using the specified log level.
-
-        See `Log Message` keyword for more information.
-        """
-        self.log_message(message1, level)
-        self.log_message(message2, level)
+        print(f"*{level}* {message}")
 
     def log_messages(self, *messages):
         """Logs given messages using the log level set during `importing`.
 
-        See also `Log Message` and `Log Two Messages`.
+        Args:
+            *messages: The messages to log.
+
+        Use the `Log Message` keyword if you want to control the log level.
         """
         for msg in messages:
             self.log_message(msg)

@@ -190,6 +190,21 @@ Boolean strings
       - {lang.false_strings}
 '''
 
+DEPRECATIONS = '''
+Deprecations
+~~~~~~~~~~~~
+
+.. list-table::
+    :class: tabular
+    :width: 40em
+    :widths: 2 2 1
+    :header-rows: 1
+
+    * - Old term
+      - New term
+      - Deprecated
+'''
+
 
 def update_translations():
     languages = sorted([lang for lang in Language.__subclasses__() if lang.code != 'en'],
@@ -200,7 +215,16 @@ def update_translations():
 
 def generate_docs(languages):
     for lang in languages:
-        yield from TEMPLATE.format(lang=LanguageWrapper(lang)).splitlines()
+        doc = TEMPLATE.format(lang=LanguageWrapper(lang))
+        if lang.deprecations:
+            doc += DEPRECATIONS
+            for old, (new, version) in lang.deprecations.items():
+                doc += f'''\
+    * - {old}
+      - {new}
+      - RF {version}
+'''
+        yield from doc.splitlines()
 
 
 def list_translations(languages):
@@ -228,3 +252,7 @@ def write(lines, file, start_marker=None, end_marker=None):
             file.write(line.rstrip() + '\n')
         if line == end_marker:
             include = False
+
+
+if __name__ == "__main__":
+    update_translations()

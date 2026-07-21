@@ -57,10 +57,10 @@ Embedded and Positional-only Arguments
 Keyword Documentation
     ${MODEL}[keywords][1][doc]
     ...    <p>A keyword.</p>
-    ...    <p>See <a href="#Get%20Hello" class="name">get hello</a> for details.</p>
+    ...    <p>See <a href="#Get%20Hello" title="&quot;Get Hello&quot; keyword" class="name">get hello</a> for details.</p>
     ${MODEL}[keywords][0][doc]
     ...    <p>Get hello.</p>
-    ...    <p>See <a href="#Importing" class="name">importing</a> for explanation of nothing and <a href="#Introduction" class="name">introduction</a> for no more information.</p>
+    ...    <p>See <a href="#Importing" title="&quot;Importing&quot; section" class="name">importing</a> for explanation of nothing and <a href="#Introduction" title="&quot;Introduction&quot; section" class="name">introduction</a> for no more information.</p>
     ${MODEL}[keywords][5][doc]
     ...    <p>This is short doc. It can span multiple physical lines and contain <b>formatting</b>.</p>
     ...    <p>This is body. It can naturally also contain multiple lines.</p>
@@ -95,10 +95,10 @@ User keyword documentation formatting
     ...    <p>Hyvää yötä.</p>
     ...    <p>Спасибо!</p>
     ${MODEL}[keywords][8][doc]
-    ...    <p>foo bar <a href="#kw" class="name">kw</a>.</p>
+    ...    <p>foo bar <a href="#kw" title="&quot;kw&quot; keyword" class="name">kw</a>.</p>
     ...    <p>FIRST <span class="name">\${a1}</span> alskdj alskdjlajd askf laskdjf asldkfj alsdkfj alsdkfjasldkfj END</p>
     ...    <p>SECOND askf laskdjf <i>asldkfj</i> alsdkfj alsdkfjasldkfj askf <b>laskdjf</b> END</p>
-    ...    <p>THIRD asldkfj <a href="#Introduction" class="name">introduction</a> alsdkfj <a href="http://foo.bar">http://foo.bar</a> END</p>
+    ...    <p>THIRD asldkfj <a href="#Introduction" title="&quot;Introduction&quot; section" class="name">introduction</a> alsdkfj <a href="http://foo.bar">http://foo.bar</a> END</p>
     ...    <ul>
     ...    <li>aaa</li>
     ...    <li>bbb</li>
@@ -114,6 +114,7 @@ User keyword documentation formatting
     ...    <td>bar</td>
     ...    </tr>
     ...    </table>
+    ...    <p>Tags not only on the last line is new in RF 7.5.</p>
 
 Private keyword should be excluded
     [Setup]    Run Libdoc And Parse Model From HTML    ${TESTDATADIR}/resource.robot

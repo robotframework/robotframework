@@ -9,6 +9,14 @@ robot.output.console package
 Submodules
 ----------
 
+robot.output.console.base module
+--------------------------------
+
+.. automodule:: robot.output.console.base
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 robot.output.console.dotted module
 ----------------------------------
 
@@ -29,6 +37,14 @@ robot.output.console.quiet module
 ---------------------------------
 
 .. automodule:: robot.output.console.quiet
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+robot.output.console.types module
+---------------------------------
+
+.. automodule:: robot.output.console.types
    :members:
    :show-inheritance:
    :undoc-members:

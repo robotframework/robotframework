@@ -1,6 +1,8 @@
 import unittest
 from collections import UserDict
 
+from test_robottypes import NoClassAttr
+
 from robot.utils import normalize, NormalizedDict
 from robot.utils.asserts import (
     assert_equal, assert_false, assert_raises, assert_raises_with_msg, assert_true
@@ -314,7 +316,7 @@ class TestNormalizedDict(unittest.TestCase):
 
     def test_eq_with_other_objects(self):
         nd = NormalizedDict()
-        for other in ["string", 2, None, [], self.test_clear]:
+        for other in ["string", 2, None, [], self.test_clear, NoClassAttr()]:
             assert_false(nd == other, other)
             assert_true(nd != other, other)
 

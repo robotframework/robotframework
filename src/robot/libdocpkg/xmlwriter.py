@@ -36,7 +36,7 @@ class LibdocXmlWriter:
             "format": libdoc.doc_format,
             "scope": libdoc.scope,
             "generated": get_generation_time(),
-            "specversion": "6",
+            "specversion": "7",
         }
         self._add_source_info(attrs, libdoc)
         writer.start("keywordspec", attrs)
@@ -46,7 +46,7 @@ class LibdocXmlWriter:
 
     def _add_source_info(self, attrs, item, lib_source=None):
         if item.source and item.source != lib_source:
-            attrs["source"] = str(item.source)
+            attrs["source"] = item.source
         if item.lineno and item.lineno > 0:
             attrs["lineno"] = str(item.lineno)
 
@@ -56,7 +56,8 @@ class LibdocXmlWriter:
             attrs = self._get_start_attrs(kw, lib_source)
             writer.start(kw_type, attrs)
             self._write_arguments(kw, writer)
-            self._write_return_type(kw, writer)
+            self._write_return(kw, writer)
+            self._write_raises(kw.args.raises, writer)
             writer.element("doc", kw.doc)
             writer.element("shortdoc", kw.short_doc)
             if kw_type == "kw" and kw.tags:
@@ -81,6 +82,8 @@ class LibdocXmlWriter:
             writer.start("arg", attrs)
             if arg.name:
                 writer.element("name", arg.name)
+            if arg.doc:
+                writer.element("doc", arg.doc)
             if arg.type:
                 self._write_type_info(arg.type, kw.type_docs[arg.name], writer)
             if arg.default is not NOT_SET:
@@ -108,7 +111,7 @@ class LibdocXmlWriter:
         else:
             writer.element(element, attrs=attrs)
 
-    def _write_return_type(self, kw, writer):
+    def _write_return(self, kw, writer):
         if kw.args.return_type:
             self._write_type_info(
                 kw.args.return_type,
@@ -116,6 +119,15 @@ class LibdocXmlWriter:
                 writer,
                 element="returntype",
             )
+        if kw.args.return_doc:
+            writer.element("returndoc", kw.args.return_doc)
+
+    def _write_raises(self, raises, writer):
+        if raises:
+            writer.start("raises")
+            for name, doc in raises.items():
+                writer.element("type", doc, {"name": name})
+            writer.end("raises")
 
     def _get_start_attrs(self, kw, lib_source):
         attrs = {"name": kw.name}

@@ -38,6 +38,14 @@ def generator():
     yield "generated"
 
 
+class NoClassAttr:
+
+    def __getattribute__(self, name):
+        if name == "__class__":
+            raise AttributeError(name)
+        return super().__getattribute__(name)
+
+
 class TestIsMisc(unittest.TestCase):
 
     def test_is_union(self):
@@ -87,7 +95,7 @@ class TestListLike(unittest.TestCase):
             assert_equal(is_list_like(thing), True, thing)
 
     def test_others_are_not_list_like(self):
-        for thing in [1, None, True, object()]:
+        for thing in [1, None, True, object(), NoClassAttr()]:
             assert_equal(is_list_like(thing), False, thing)
 
     def test_generators_are_not_consumed(self):
@@ -106,7 +114,7 @@ class TestDictLike(unittest.TestCase):
             assert_equal(is_dict_like(thing), True, thing)
 
     def test_others(self):
-        for thing in ["", b"", 1, None, True, object(), [], (), set()]:
+        for thing in ["", b"", 1, None, True, object(), [], (), set(), NoClassAttr()]:
             assert_equal(is_dict_like(thing), False, thing)
 
 
@@ -131,6 +139,9 @@ class TestTypeName(unittest.TestCase):
     def test_file(self):
         with open(__file__, encoding="UTF-8") as f:
             assert_equal(type_name(f), "file")
+
+    def test_object_without_class_attribute(self):
+        assert_equal(type_name(NoClassAttr()), "NoClassAttr")
 
     def test_custom_objects(self):
         class CamelCase:

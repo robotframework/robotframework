@@ -45,13 +45,19 @@ if ExtTypedDict:
 
 
 def is_list_like(item):
-    if isinstance(item, (str, bytes, bytearray, UserString, IOBase)):
+    try:
+        if isinstance(item, (str, bytes, bytearray, UserString, IOBase)):
+            return False
+    except AttributeError:
         return False
     return isinstance(item, Iterable)
 
 
 def is_dict_like(item):
-    return isinstance(item, Mapping)
+    try:
+        return isinstance(item, Mapping)
+    except AttributeError:
+        return False
 
 
 def is_union(item):
@@ -70,18 +76,19 @@ def type_name(item, capitalize=False):
         # Prior to Python 3.10, typing special forms (Any, Union, ...) didn't
         # have `__name__` but instead they had `_name`.
         name = item.__name__ if hasattr(item, "__name__") else item._name
-    elif isinstance(item, IOBase):
-        name = "file"
     else:
         typ = item if isinstance(item, type) else type(item)
-        named_types = {
-            str: "string",
-            bool: "boolean",
-            int: "integer",
-            type(None): "None",
-            dict: "dictionary",
-        }
-        name = named_types.get(typ, typ.__name__.strip("_"))
+        if issubclass(typ, IOBase):
+            name = "file"
+        else:
+            named_types = {
+                str: "string",
+                bool: "boolean",
+                int: "integer",
+                type(None): "None",
+                dict: "dictionary",
+            }
+            name = named_types.get(typ, typ.__name__.strip("_"))
     return name.capitalize() if capitalize and name.islower() else name
 
 

@@ -33,6 +33,9 @@ Currently exposed APIs are:
 * :mod:`.interfaces` module containing optional base classes that can be used
   when creating libraries and other extensions. New in Robot Framework 6.1.
 
+* :mod:`.console` module exposing built-in console loggers that external loggers
+  can extend. New in Robot Framework 7.5.
+
 * :mod:`.types` module with types exposed for libraries and other extensions.
   New in Robot Framework 7.4.
 

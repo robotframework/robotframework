@@ -11,7 +11,7 @@ Default format is got from output file extension
     String ${OUTBASE}.libspec    LIBSPEC     String    path=${OUTBASE}.libspec
 
 Using --format overrides output file extension
-    -f XmL ${TESTDATADIR}/resource.robot ${OUTHTML}       XML         resource
+    -f XmL ${TESTDATADIR}/resource.resource ${OUTHTML}    XML         resource
     --format hTmL BuiltIn ${OUTBASE}.xxx                  HTML        BuiltIn     path=${OUTBASE}.xxx
     --format XML String ${OUTBASE}.libspec                XML         String      path=${OUTBASE}.libspec
 

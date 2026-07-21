@@ -20,6 +20,7 @@ test execution is refactored.
 """
 
 from .logger import LOGGER as LOGGER
+from .loggerapi import ResultFile as ResultFile
 from .loggerhelper import LEVELS as LEVELS, Message as Message
 from .loglevel import LogLevel as LogLevel, SettableLevel as SettableLevel
 from .output import Output as Output

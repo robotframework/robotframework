@@ -13,20 +13,45 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
+from io import TextIOBase
+from pathlib import Path
+from typing import TYPE_CHECKING
 
-from .highlighting import HighlightingStream
+from .base import BaseConsole
+from .types import ConsoleColors, ResultFile
 
-
-class QuietOutput:
-
-    def __init__(self, colors="AUTO", stderr=None):
-        self._stderr = HighlightingStream(stderr or sys.__stderr__, colors)
-
-    def message(self, msg):
-        if msg.level in ("WARN", "ERROR") and msg.console:
-            self._stderr.error(msg.message, msg.level)
+if TYPE_CHECKING:
+    from robot.output import Message
 
 
-class NoOutput:
-    pass
+class QuietConsole(BaseConsole):
+    """Quiet console logger.
+
+    Only reports warnings and errors.
+    """
+
+    def __init__(
+        self,
+        colors: ConsoleColors = "AUTO",
+        stderr: "TextIOBase | None" = None,
+    ):
+        super().__init__(colors=colors, stderr=stderr)
+
+    def result_file(self, kind: ResultFile, path: Path):
+        pass
+
+
+class NoneConsole(BaseConsole):
+    """Totally quiet console logger.
+
+    Does not report anything, not even warnings or errors.
+    """
+
+    def __init__(self):
+        super().__init__()
+
+    def message(self, msg: "Message"):
+        pass
+
+    def result_file(self, kind: ResultFile, path: Path):
+        pass

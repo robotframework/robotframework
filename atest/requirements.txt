@@ -1,9 +1,7 @@
 # Dependencies required by acceptance tests.
 # See atest/README.rst for more information.
 
-markdown
 pygments
-pyyaml
 lxml
 pillow >= 7.1.0; platform_system == 'Windows'
 telnetlib-313-and-up; python_version >= '3.13'

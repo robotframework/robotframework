@@ -300,38 +300,33 @@ similarly as scope__ and version__ are set with their own
 `ROBOT_LIBRARY_*` attributes.
 
 The possible case-insensitive values for documentation format are
-`ROBOT` (default), `HTML`, `TEXT` (plain text),
-and `reST` (reStructuredText_). Using the `reST` format requires
-the docutils_ module to be installed when documentation is generated.
+`ROBOT` (default), `MARKDOWN` (Markdown_), `reST` (reStructuredText_), `HTML`
+and `TEXT` (plain text).
 
 Setting the documentation format is illustrated by the following example that
-uses reStructuredText format.
-See `Documenting libraries`_ section and Libdoc_ chapter for more information
-about documenting test libraries in general.
+uses Markdown. See the `Documenting libraries`_ section and the Libdoc_ chapter
+for more information about documenting libraries in general.
 
 .. sourcecode:: python
 
     """A library for *documentation format* demonstration purposes.
 
-    This documentation is created using reStructuredText__. Here is a link
-    to the only \`Keyword\`.
-
-    __ http://docutils.sourceforge.net
+    This documentation uses [Markdown](https://en.wikipedia.org/wiki/Markdown)
+    for formatting. Here is a link to the only [Keyword].
     """
 
-    ROBOT_LIBRARY_DOC_FORMAT = 'reST'
+    ROBOT_LIBRARY_DOC_FORMAT = 'MARKDOWN'
 
 
     def keyword():
-        """**Nothing** to see here. Not even in the table below.
+        """**Nothing** to see here. Not even in the list below.
 
-        =======  =====  =====
-        Table    here   has
-        nothing  to     see.
-        =======  =====  =====
+        - This is a list.
+        - It has *nothing* to see.
         """
         pass
 
+.. note:: Markdown support is new in Robot Framework 7.5.
 
 __ `Library scope`_
 __ `Library version`_
@@ -774,29 +769,51 @@ set this attribute by using the `@keyword decorator`_:
     from robot.api.deco import keyword
 
 
-    @keyword(tags=['tag1', 'tag2'])
-    def login(username, password):
+    @keyword(tags=['my', 'fine', 'tags'])
+    def example():
         ...
 
     @keyword('Custom name', ['tags', 'here'])
     def another_example():
         ...
 
-Another option for setting tags is giving them on the last line of
-`keyword documentation`__ with `Tags:` prefix and separated by a comma. For
-example:
+Another option for setting tags is listing them as part of the `keyword documentation`__
+in a `Tags:` section. Tags must be separated with a comma and they can be listed
+either on the same line as the `Tags:` header or on subsequent indented lines:
 
 .. sourcecode:: python
 
-    def login(username, password):
-        """Log user in to SUT.
+    def tags_on_same_line():
+        """Some documentation.
 
-        Tags: tag1, tag2
+        Tags: my, fine, tags
         """
         ...
 
+
+    def tags_on_own_line(first, second):
+        """Some documentation.
+
+        Args:
+            first: Documentation of the first argument.
+            second: Documentation of the second argument.
+
+        Tags:
+            my, fine, tags
+
+        Normal documentation continues.
+        """
+        ...
+
+As the latter example demonstrates, the syntax for defining tags is similar
+to how Libdoc handles `argument, return value and exception documentation`__.
+
+.. note:: Prior to Robot Framework 7.5, tags were only supported on the last
+          row of the documentation.
+
 __ `User keyword tags`_
 __ `Documenting libraries`_
+__ `Arguments, return values, exceptions and tags`_
 
 Keyword arguments
 ~~~~~~~~~~~~~~~~~
@@ -2440,8 +2457,6 @@ exception type as a prefix to failure message also with non generic exceptions.
 This is done by adding a special `ROBOT_SUPPRESS_NAME` attribute with
 value `True` to your exception.
 
-Python:
-
 .. sourcecode:: python
 
     class MyError(RuntimeError):
@@ -3063,15 +3078,24 @@ means using docstrings_ as in the example below.
     class MyLibrary:
         """This is an example library with some documentation."""
 
-        def keyword_with_short_documentation(self, argument):
-            """This keyword has only a short documentation"""
+        def keyword_with_short_documentation(self):
+            """This keyword has only a short documentation."""
             pass
 
-        def keyword_with_longer_documentation(self):
+        def keyword_with_longer_documentation(self, argument):
             """First line of the documentation is here.
 
             Longer documentation continues here and it can contain
             multiple lines or paragraphs.
+
+            Args:
+                argument: Separate documentation for arguments is supported.
+
+            Returns:
+                Also return values and exceptions can be documented separately.
+                This keyword returns nothing.
+
+            Normal documentation continues.
             """
             pass
 
@@ -3081,25 +3105,27 @@ technical for some users. Another alternative is using Robot
 Framework's own documentation tool Libdoc_. This tool can
 create a library documentation from libraries
 using the static library API, such as the ones above, but it also handles
-libraries using the `dynamic library API`_.
+libraries using the `dynamic library API`_ as well as `resource files`_.
 
 The first logical line of a keyword documentation, until the first empty line,
 is used for a special purpose and should contain a short overall description
 of the keyword. It is used as a *short documentation* by Libdoc_ (for example,
 as a tool tip) and also shown in the `test logs`_.
 
+Libdoc supports `argument, return value and exception documentation`__
+using `Google Style`_ documentation conventions. The same syntax is
+supported also by many other documentation tools and IDEs.
+
 By default documentation is considered to follow Robot Framework's
 `documentation formatting`_ rules. This simple format allows often used
 styles like `*bold*` and `_italic_`, tables, lists, links, etc.
-It is possible to use also HTML, plain
-text and reStructuredText_ formats. See the `Documentation format`_
-section for information how to set the format in the library source code and
-Libdoc_ chapter for more information about the formats in general.
-
-.. note:: Prior to Robot Framework 3.1, the short documentation contained
-          only the first physical line of the keyword documentation.
+It is possible to use also Markdown_, reStructuredText_, HTML and plain
+text formats. See the `Documentation format`_ section for information how to
+set the format in the library source code and Libdoc_ chapter for more
+information about the formats in general.
 
 .. _docstrings: http://www.python.org/dev/peps/pep-0257
+__ `Arguments, return values, exceptions and tags`_
 
 Testing libraries
 ~~~~~~~~~~~~~~~~~

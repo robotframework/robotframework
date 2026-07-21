@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import re
+from typing import Any, Literal
 
 from .unic import safe_str
 
@@ -141,6 +142,22 @@ def parse_re_flags(flags: "str | None" = None) -> int:
             else:
                 raise ValueError(f"Unknown regexp flag: {flag}")
     return result
+
+
+def validate_literal(value: Any, literal: "type[Literal]", kind: str = "value") -> Any:
+    upper = value.upper() if isinstance(value, str) else None
+    available = literal.__args__
+    matches = []
+    for item in available:
+        if item == value:
+            if type(item) is type(value):
+                return item
+            matches.append(item)
+        elif isinstance(item, str) and item.upper() == upper:
+            matches.append(item)
+    if len(matches) == 1:
+        return matches[0]
+    raise ValueError(f"Invalid {kind} '{value}'. Available: {seq2str(available)}.")
 
 
 class classproperty(property):

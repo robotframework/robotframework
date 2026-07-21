@@ -20,9 +20,7 @@ from typing import Any, Callable, Generic, Mapping, Sequence, TYPE_CHECKING, Typ
 
 from robot.errors import DataError
 from robot.model import Tags
-from robot.utils import (
-    is_init, is_list_like, printable_name, split_tags_from_doc, type_name
-)
+from robot.utils import is_init, is_list_like, printable_name, type_name
 
 from .arguments import ArgumentSpec, DynamicArgumentParser, PythonArgumentParser
 from .dynamicmethods import (
@@ -311,15 +309,18 @@ class LibraryInit(LibraryKeyword):
         super().__init__(owner, name, args, doc, tags)
         self.positional = positional or []
         self.named = named or {}
+        self._dynamic_doc_set = False
 
     @property
     def doc(self) -> str:
-        from .testlibraries import DynamicLibrary
+        if not self._dynamic_doc_set:
+            from .testlibraries import DynamicLibrary
 
-        if isinstance(self.owner, DynamicLibrary):
-            doc = GetKeywordDocumentation(self.owner.instance)("__init__")
-            if doc:
-                return doc
+            if isinstance(self.owner, DynamicLibrary):
+                doc = GetKeywordDocumentation(self.owner.instance)("__init__")
+                if doc:
+                    self._doc = doc
+            self._dynamic_doc_set = True
         return self._doc
 
     @doc.setter
@@ -372,14 +373,12 @@ class KeywordCreator(Generic[K]):
         return self.library.instance
 
     def create(self, **extra) -> K:
-        tags = self.get_tags()
-        doc, doc_tags = split_tags_from_doc(self.get_doc())
         kw = self.keyword_class(
             owner=self.library,
             name=self.get_name(),
             args=self.get_args(),
-            doc=doc,
-            tags=tags + doc_tags,
+            tags=self.get_tags(),
+            doc=self.get_doc(),
             **self.extra,
             **extra,
         )

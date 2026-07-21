@@ -97,7 +97,7 @@ class TestRun(RunningTestCase):
 
     def test_custom_stderr(self):
         stderr = StringIO()
-        assert_equal(run_without_outputs(self.warn, stderr=stderr), 0)
+        assert_equal(run_without_outputs(self.warn, dotted=True, stderr=stderr), 0)
         self._assert_output(stderr, [("[ WARN ]", 4), ("[ ERROR ]", 2)])
         self._assert_outputs(
             [("Warnings And Errors", 2), ("Output:", 1), ("Log:", 0), ("Report:", 0)]

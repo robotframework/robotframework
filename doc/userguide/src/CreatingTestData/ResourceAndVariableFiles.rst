@@ -22,9 +22,10 @@ Resource files
 --------------
 
 Resource files are typically created using the plain text format, but also
-`reStructuredText format`__ and `JSON format`__ are supported.
+reStructuredText__, Markdown__ and JSON__ resource files are supported.
 
-__ `Resource files using reStructured text format`_
+__ `Resource files using reStructuredText format`_
+__ `Resource files using Markdown format`_
 __ `Resource files using JSON format`_
 
 Taking resource files into use
@@ -134,10 +135,10 @@ Example resource file
        [Arguments]    ${password}
        Input Text    password_field    ${password}
 
-Resource files using reStructured text format
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Resource files using reStructuredText format
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The `reStructuredText format`_ that can be used with `suite files`_  works
+The `reStructuredText data format`_ that can be used with `suite files`_  works
 also with resource files. Such resource files can use either :file:`.rst`
 or :file:`.rest` extension and they are otherwise imported exactly as
 normal resource files:
@@ -179,12 +180,12 @@ defines `${MESSAGE}` variable and creates :name:`My Keyword` keyword:
        | My Keyword        | [Arguments]            | ${path} |
        |                   | Directory Should Exist | ${path} |
 
-__ `reStructuredText format`_
+__ `reStructuredText data format`_
 
 Resource files using Markdown format
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The `Markdown format`_ that can be used with `suite files`_ works also with
+The `Markdown data format`_ that can be used with `suite files`_ works also with
 resource files. Such resource files can use either :file:`.md` or
 :file:`.markdown` extension and they are otherwise imported exactly as normal
 resource files:
@@ -225,7 +226,7 @@ defines ``${MESSAGE}`` variable and creates :name:`My Keyword` keyword:
     |                   | Directory Should Exist | ${path} |
     ```
 
-__ `Markdown format`_
+__ `Markdown data format`_
 
 Resource files using JSON format
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -257,7 +258,7 @@ recreated using `ResourceFile.from_json`__:
    # Recreate resource from JSON data.
    resource = ResourceFile.from_json('example.rsrc')
 
-__ `JSON format`_
+__ `JSON data format`_
 __ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.ResourceFile.to_json
 __ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.ResourceFile.from_json
 

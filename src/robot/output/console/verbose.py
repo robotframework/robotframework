@@ -13,191 +13,133 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
-from pathlib import Path
-from typing import Literal
+from io import TextIOBase
+from typing import TYPE_CHECKING
 
 from robot.errors import DataError
-from robot.utils import get_console_length, getshortdoc, isatty, pad_console_length
+from robot.utils import (
+    get_console_length, getshortdoc, isatty, pad_console_length, validate_literal
+)
 
-from .highlighting import HighlightingStream
+from .base import BaseConsole
+from .types import ConsoleColors, ConsoleLinks, ConsoleMarkers, Status
+
+if TYPE_CHECKING:
+    from robot import output, result, running
 
 
-class VerboseOutput:
+class VerboseConsole(BaseConsole):
+    """Verbose console logger.
+
+    Reports started suites and tests separately.
+    """
+
+    status_length = len("| PASS |")
 
     def __init__(
         self,
-        width=78,
-        colors="AUTO",
-        links="AUTO",
-        markers="AUTO",
-        stdout=None,
-        stderr=None,
+        width: int = 78,
+        colors: ConsoleColors = "AUTO",
+        links: ConsoleLinks = "AUTO",
+        markers: ConsoleMarkers = "AUTO",
+        stdout: "TextIOBase | None" = None,
+        stderr: "TextIOBase | None" = None,
     ):
-        self.writer = VerboseWriter(width, colors, links, markers, stdout, stderr)
-        self.started = False
-        self.started_keywords = 0
-        self.running_test = False
+        super().__init__(width, colors, links, stdout, stderr)
+        self.test_started = False
+        self.keywords_started = 0
+        self.markers_enabled = self._markers_enabled(markers)
+        self.marker_count = 0
+        self.current_info = ""
 
-    def start_suite(self, data, result):
-        if not self.started:
-            self.writer.suite_separator()
-            self.started = True
-        self.writer.info(data.full_name, result.doc, start_suite=True)
-        self.writer.suite_separator()
+    def _markers_enabled(self, markers: ConsoleMarkers) -> bool:
+        try:
+            markers = validate_literal(markers, ConsoleMarkers, "console marker")
+        except ValueError as err:
+            raise DataError(str(err))
+        return markers == "AUTO" and isatty(self._stdout.stream) or markers == "ON"
 
-    def end_suite(self, data, result):
-        self.writer.info(data.full_name, result.doc)
-        self.writer.status(result.status)
-        self.writer.message(result.full_message)
-        self.writer.suite_separator()
+    def start_suite(self, data: "running.TestSuite", result: "result.TestSuite"):
+        if not result.parent:
+            self.suite_separator()
+        self.info(result.full_name, result.doc, start_suite=True)
+        self.suite_separator()
 
-    def start_test(self, data, result):
-        self.writer.info(result.name, result.doc)
-        self.running_test = True
+    def end_suite(self, data: "running.TestSuite", result: "result.TestSuite"):
+        self.info(result.full_name, result.doc)
+        self.status(result.status, result.full_message)
+        self.suite_separator()
 
-    def end_test(self, data, result):
-        self.writer.status(result.status, clear=True)
-        self.writer.message(result.message)
-        self.writer.test_separator()
-        self.running_test = False
+    def start_test(self, data: "running.TestCase", result: "result.TestCase"):
+        self.test_started = True
+        self.info(result.name, result.doc)
+
+    def end_test(self, data: "running.TestCase", result: "result.TestCase"):
+        self.status(result.status, result.message)
+        self.test_separator()
+        self.test_started = False
 
     def start_body_item(self, data, result):
-        self.started_keywords += 1
+        self.keywords_started += 1
 
     def end_body_item(self, data, result):
-        self.started_keywords -= 1
-        if self.running_test and not self.started_keywords:
-            self.writer.keyword_marker(result.status)
+        self.keywords_started -= 1
+        if self.test_started and not self.keywords_started:
+            self.marker(result.status)
 
-    def message(self, msg):
-        if msg.level in ("WARN", "ERROR") and msg.console:
-            self.writer.error(msg.message, msg.level, clear=self.running_test)
-
-    def output_file(self, path: "Path | None"):
-        self.writer.result_file("OUTPUT", path)
-
-    def result_file(
-        self,
-        kind: Literal["OUTPUT", "REPORT", "LOG", "XUNIT", "DEBUG"],
-        path: Path,
-    ):
-        self.writer.result_file(kind, path)
-
-
-class VerboseWriter:
-    _status_length = len("| PASS |")
-
-    def __init__(
-        self,
-        width=78,
-        colors="AUTO",
-        links="AUTO",
-        markers="AUTO",
-        stdout=None,
-        stderr=None,
-    ):
-        self.width = width
-        self.stdout = HighlightingStream(stdout or sys.__stdout__, colors, links)
-        self.stderr = HighlightingStream(stderr or sys.__stderr__, colors, links)
-        self._keyword_marker = KeywordMarker(self.stdout, markers)
-        self._last_info = None
-
-    def info(self, name, doc, start_suite=False):
-        width, separator = self._get_info_width_and_separator(start_suite)
-        self._last_info = self._get_info(name, doc, width) + separator
-        self._write_info()
-        self._keyword_marker.reset_count()
-
-    def _write_info(self):
-        self.stdout.write(self._last_info)
-
-    def _get_info_width_and_separator(self, start_suite):
-        if start_suite:
-            return self.width, "\n"
-        return self.width - self._status_length - 1, " "
-
-    def _get_info(self, name, doc, width):
-        if get_console_length(name) > width:
-            return pad_console_length(name, width)
-        doc = getshortdoc(doc, linesep=" ")
-        info = f"{name} :: {doc}" if doc else name
-        return pad_console_length(info, width)
+    def message(self, msg: "output.Message"):
+        if self.marker_count:
+            self.clear()
+            super().message(msg)
+            self.write(self.current_info)
+            self.marker_count = 0
+        else:
+            super().message(msg)
 
     def suite_separator(self):
-        self._fill("=")
+        """Write suite separator."""
+        self.write(f"{'=' * self.width}\n")
 
     def test_separator(self):
-        self._fill("-")
+        """Write test separator."""
+        self.write(f"{'-' * self.width}\n")
 
-    def _fill(self, char):
-        self.stdout.write(f"{char * self.width}\n")
-
-    def status(self, status, clear=False):
-        if self._should_clear_markers(clear):
-            self._clear_status()
-        self.stdout.write("| ", flush=False)
-        self.stdout.highlight(status, flush=False)
-        self.stdout.write(" |\n")
-
-    def _should_clear_markers(self, clear):
-        return clear and self._keyword_marker.marking_enabled
-
-    def _clear_status(self):
-        self._clear_info()
-        self._write_info()
-
-    def _clear_info(self):
-        self.stdout.write(f"\r{' ' * self.width}\r")
-        self._keyword_marker.reset_count()
-
-    def message(self, message):
-        if message:
-            self.stdout.write(message.strip() + "\n")
-
-    def keyword_marker(self, status):
-        if self._keyword_marker.marker_count == self._status_length:
-            self._clear_status()
-            self._keyword_marker.reset_count()
-        self._keyword_marker.mark(status)
-
-    def error(self, message, level, clear=False):
-        if self._should_clear_markers(clear):
-            self._clear_info()
-        self.stderr.error(message, level)
-        if self._should_clear_markers(clear):
-            self._write_info()
-
-    def result_file(self, kind, path):
-        self.stdout.result_file(kind, path)
-
-
-class KeywordMarker:
-
-    def __init__(self, highlighter, markers):
-        self.highlighter = highlighter
-        self.marking_enabled = self._marking_enabled(markers, highlighter)
+    def info(self, name: str, doc: str, start_suite: bool = False):
+        """Write info about started or ended suite or test."""
+        if start_suite:
+            width = self.width
+            separator = "\n"
+        else:
+            width = self.width - self.status_length - 1
+            separator = " "
+        if doc and get_console_length(name) < width:
+            info = f"{name} :: {getshortdoc(doc, linesep=' ')}"
+        else:
+            info = name
+        self.current_info = pad_console_length(info, width) + separator
+        self.write(self.current_info)
         self.marker_count = 0
 
-    def _marking_enabled(self, markers, highlighter):
-        options = {
-            "AUTO": isatty(highlighter.stream),
-            "ON": True,
-            "OFF": False,
-        }
-        try:
-            return options[markers.upper()]
-        except KeyError:
-            raise DataError(
-                f"Invalid console marker value '{markers}'. "
-                f"Available 'AUTO', 'ON' and 'OFF'."
-            )
+    def status(self, status: Status, message: str):
+        """Write status information."""
+        if self.marker_count:
+            self._clear_markers()
+        self.write("| ", flush=False)
+        self.highlight(status, flush=False)
+        self.write(" |\n")
+        if message:
+            self.write(message.strip() + "\n")
 
-    def mark(self, status):
-        if self.marking_enabled:
+    def marker(self, status: str):
+        """Write marker when a top level keyword is started."""
+        if self.markers_enabled:
+            if self.marker_count == self.status_length:
+                self._clear_markers()
             marker, status = (".", "PASS") if status != "FAIL" else ("F", "FAIL")
-            self.highlighter.highlight(marker, status)
+            self.highlight(status, marker)
             self.marker_count += 1
 
-    def reset_count(self):
+    def _clear_markers(self):
+        self.clear()
+        self.write(self.current_info)
         self.marker_count = 0

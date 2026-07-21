@@ -1,6 +1,7 @@
 *** Settings ***
 Library                  Annotations.py
 Library                  OperatingSystem
+Variables                variables.py
 Resource                 conversion.resource
 
 *** Variables ***
@@ -83,6 +84,7 @@ Invalid integer
     Integer              00b1
     Integer              0x0x0
     Integer              ${None}                   arg_type=None
+    Integer              ${NO_CLASS}               arg_type=NoClass
 
 Integral (abc)
     Integral             42                        42
@@ -95,6 +97,7 @@ Invalid integral (abc)
     Integral             foobar                    type=integer
     Integral             inf                       type=integer
     Integral             ${LIST}                   type=integer    arg_type=list
+    Integral             ${NO_CLASS}               type=integer    arg_type=NoClass
 
 Float
     Float                1.5                       1.5
@@ -110,6 +113,7 @@ Invalid float
     [Template]           Conversion Should Fail
     Float                foobar
     Float                ${LIST}                   arg_type=list
+    Float                ${NO_CLASS}               arg_type=NoClass
 
 Real (abc)
     Real                 1.5                       1.5
@@ -122,6 +126,7 @@ Real (abc)
 Invalid real (abc)
     [Template]           Conversion Should Fail
     Real                 foobar                    type=float
+    Real                 ${NO_CLASS}               type=float    arg_type=NoClass
 
 Decimal
     Decimal              3.14                      Decimal('3.14')
@@ -136,6 +141,7 @@ Invalid decimal
     [Template]           Conversion Should Fail
     Decimal              foobar
     Decimal              ${LIST}                   arg_type=list
+    Decimal              ${NO_CLASS}               arg_type=NoClass
 
 Boolean
     Boolean              True                      True
@@ -159,6 +165,7 @@ Invalid boolean string is accepted as-is
 Invalid boolean
     [Template]           Conversion Should Fail
     Boolean              ${LIST}                   arg_type=list
+    Boolean              ${NO_CLASS}               arg_type=NoClass
 
 String
     String               Hello, world!             'Hello, world!'
@@ -202,6 +209,7 @@ Invalid bytes
     Bytes                ${{[1, '2', -3, 4]}}      arg_type=list       error=-3 is not in range 0-255.
     Bytes                ${{[0, 'invalid']}}       arg_type=list       error='invalid' is not an integer.
     Bytes                ${1.3}                    arg_type=float
+    Bytes                ${NO_CLASS}               arg_type=NoClass
 
 Bytearray
     Bytearray            foo                       bytearray(b'foo')
@@ -223,6 +231,7 @@ Invalid bytearray
     Bytearray            ${{[1, '2', -3, 4]}}      arg_type=list       error=-3 is not in range 0-255.
     Bytearray            ${{[0, 'invalid']}}       arg_type=list       error='invalid' is not an integer.
     Bytearray            ${2123.1021}              arg_type=float
+    Bytearray            ${NO_CLASS}               arg_type=NoClass
 
 Bytestring replacement
     [Documentation]    ``collections.abc.ByteString`` that we earlier supported was deprecated
@@ -257,6 +266,7 @@ Invalid datetime
     DateTime             1975:06                   error=Invalid timestamp '1975:06'.
     DateTime             2018                      error=Invalid timestamp '2018'.
     DateTime             201808081443421234567     error=Invalid timestamp '201808081443421234567'.
+    DateTime             ${NO_CLASS}               arg_type=NoClass
 
 Date
     Date                 2014-06-11                date(2014, 6, 11)
@@ -277,6 +287,7 @@ Invalid date
     Date                 20180808000000000001      error=Value is datetime, not date.
     Date                 ${123}                    arg_type=integer
     Date                 ${12.3}                   arg_type=float
+    Date                 ${NO_CLASS}               arg_type=NoClass
 
 Timedelta
     Timedelta            10                        timedelta(seconds=10)
@@ -299,6 +310,7 @@ Invalid timedelta
     Timedelta            1 foo                     error=Invalid time string '1 foo'.
     Timedelta            01:02:03:04               error=Invalid time string '01:02:03:04'.
     Timedelta            ${LIST}                   arg_type=list
+    Timedelta            ${NO_CLASS}               arg_type=NoClass
 
 Path
     Path                 path                      Path('path')
@@ -320,6 +332,7 @@ Path
 Invalid Path
     [Template]           Conversion Should Fail
     Path                 ${1}                      type=Path    arg_type=integer
+    Path                 ${NO_CLASS}               type=Path    arg_type=NoClass
 
 Enum
     Enum                 FOO                       MyEnum.FOO
@@ -365,7 +378,9 @@ Invalid Enum
     Enum                 bar!                      type=MyEnum           error=MyEnum does not have member 'bar!'. Available: 'FOO', 'bar', 'foo' and 'normalize_me'
     Enum                 None                      type=MyEnum           error=MyEnum does not have member 'None'. Available: 'FOO', 'bar', 'foo' and 'normalize_me'
     Enum                 1                         type=MyEnum           error=MyEnum does not have member '1'. Available: 'FOO', 'bar', 'foo' and 'normalize_me'
+    Enum                 ${NO_CLASS}               type=MyEnum           arg_type=NoClass
     Flag                 foobar                    type=MyFlag           error=MyFlag does not have member 'foobar'. Available: 'BLUE' and 'RED'
+    Flag                 ${NO_CLASS}               type=MyFlag           arg_type=NoClass
 
 Invalid IntEnum
     [Template]           Conversion Should Fail
@@ -374,6 +389,7 @@ Invalid IntEnum
     IntEnum              ${2}                      type=MyIntEnum        error=MyIntEnum does not have value '2'. Available: '0' and '1'          arg_type=integer
     IntFlag              3                         type=MyIntFlag        error=MyIntFlag does not have member '3'. Available: 'R (4)', 'W (2)' and 'X (1)'
     IntFlag              ${-1}                     type=MyIntFlag        error=MyIntFlag does not have value '-1'. Available: '1', '2' and '4'    arg_type=integer
+    IntFlag              ${NO_CLASS}               type=MyIntFlag        arg_type=NoClass
 
 None
     None                 None                      None
@@ -389,8 +405,10 @@ Invalid None
     [Template]           Conversion Should Fail
     None                 Hello, world!             type=None
     None                 ${42}                     type=None    arg_type=integer
+    None                 ${NO_CLASS}               type=None    arg_type=NoClass
     NoneType             True                      type=None
     NoneType             ${{[]}}                   type=None    arg_type=list
+    NoneType             ${NO_CLASS}               type=None    arg_type=NoClass
 
 List
     List                 []                        []
@@ -413,6 +431,7 @@ Invalid list
     List                 1 / 0                     error=Invalid expression.
     List                 ${DICT}                   arg_type=DotDict
     List                 ${NONE}                   arg_type=None
+    List                 ${NO_CLASS}               arg_type=NoClass
 
 Sequence (abc)
     Sequence             []                        []
@@ -438,6 +457,8 @@ Invalid sequence (abc)
     Mutable sequence     !"#¤%&/(inv expr)\=?      type=Sequence         error=Invalid expression.
     Sequence             1 / 0                     type=Sequence         error=Invalid expression.
     Mutable sequence     ${DICT}                   type=Sequence         arg_type=DotDict
+    Sequence             ${NO_CLASS}               type=Sequence         arg_type=NoClass
+    Mutable sequence     ${NO_CLASS}               type=Sequence         arg_type=NoClass
 
 Tuple
     Tuple                ()                        ()
@@ -455,6 +476,7 @@ Invalid tuple
     Tuple                ooops                     error=Invalid expression.
     Tuple                ${DICT}                   arg_type=DotDict
     Tuple                ${NONE}                   arg_type=None
+    Tuple                ${NO_CLASS}               arg_type=NoClass
 
 Dictionary
     Dictionary           {}                        {}
@@ -470,6 +492,7 @@ Invalid dictionary
     Dictionary           ooops                     error=Invalid expression.
     Dictionary           {{'not hashable'}: 1}     error=Evaluating expression failed: *
     Dictionary           ${NONE}                   arg_type=None
+    Dictionary           ${NO_CLASS}               arg_type=NoClass
 
 Mapping (abc)
     Mapping              {}                        {}
@@ -487,6 +510,8 @@ Invalid mapping (abc)
     [Template]           Conversion Should Fail
     Mapping              foobar                    type=Mapping          error=Invalid expression.
     Mutable mapping      []                        type=Mapping          error=Value is list, not Mapping.
+    Mapping              ${NO_CLASS}               type=Mapping          arg_type=NoClass
+    Mutable mapping      ${NO_CLASS}               type=Mapping          arg_type=NoClass
 
 Set
     Set                  set()                     set()
@@ -512,6 +537,7 @@ Invalid set
     Set                  frozenset()               error=Invalid expression.
     Set                  ${{(c for c in 'xy')}}    arg_type=generator
     Set                  ${NONE}                   arg_type=None
+    Set                  ${NO_CLASS}               arg_type=NoClass
 
 Set (abc)
     Set abc              set()                     set()
@@ -532,9 +558,11 @@ Invalid set (abc)
     Set abc              {1, ooops}                type=set              error=Invalid expression.
     Set abc              {}                        type=set              error=Value is dictionary, not set.
     Set abc              ooops                     type=set              error=Invalid expression.
+    Set abc              ${NO_CLASS}               type=set              arg_type=NoClass
     Mutable set          {1, ooops}                type=set              error=Invalid expression.
     Mutable set          ${{(c for c in 'xy')}}    type=set              arg_type=generator
     Mutable set          ${NONE}                   type=set              arg_type=None
+    Mutable set          ${NO_CLASS}               type=set              arg_type=NoClass
 
 Frozenset
     Frozenset            frozenset()               frozenset()
@@ -555,6 +583,7 @@ Invalid frozenset
     Frozenset            {}                        error=Value is dictionary, not set.
     Frozenset            ooops                     error=Invalid expression.
     Frozenset            {{'not', 'hashable'}}     error=Evaluating expression failed: *
+    Frozenset            ${NO_CLASS}               arg_type=NoClass
 
 Unknown types are not converted
     Unknown              foo                       'foo'

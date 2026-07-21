@@ -28,6 +28,13 @@ All output files disabled
     Stderr Should Be Empty
     Output Directory Should Be Empty
 
+All output files disabled with dotted console
+    [Documentation]    Turning colors on turns also hyperlinks on console and `NONE` cannot be linked.
+    Run Tests Without Processing Output    --dotted --outputdir ${CLI OUTDIR} -o nOnE -r NONE -l none --console-colors ON   ${TESTFILE}
+    Stdout Should Contain              Output: \ NONE\n
+    Stderr Should Be Empty
+    Output Directory Should Be Empty
+
 Debug, Xunit And Report File Can Be Created When Output Is NONE
     Run Tests Without Processing Output    --outputdir ${CLI OUTDIR} -o NONE -r myreport.html -b mydebug.txt -x myxunit.xml    ${TESTFILE}
     Output Directory Should Contain    mydebug.txt    myreport.html    myxunit.xml

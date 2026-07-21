@@ -60,3 +60,22 @@ Custom console with wrong arguments
 Non-existing custom console
     Run Tests Without Processing Output    --console NonExistent    misc/pass_and_fail.robot
     Stderr Should Start With    [ ERROR ] Taking console logger 'NonExistent' into use failed: Importing console logger 'NonExistent' failed: ModuleNotFoundError:
+
+Extend built-in console loggers
+    [Template]    Validate extending
+    Base       Output: output.xml
+    None
+    Quiet
+    Dotted     .F\nOutput: output.xml
+    Verbose    Pass :: Overwrite!${SPACE*52}| PASS |\n
+
+*** Keywords ***
+Validate extending
+    [Arguments]    ${extended}    ${next_content}=
+    Run Tests    --console extend_builtin.Extend${extended} --pythonpath ${CONSOLES}    misc/pass_and_fail.robot
+    VAR    ${content}    ${extended.upper()}: Pass And Fail\n${next_content}
+    IF    $next_content
+        Stdout Should Contain    ${content}
+    ELSE
+        Stdout Should Be Equal To   ${content}
+    END

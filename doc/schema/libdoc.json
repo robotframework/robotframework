@@ -95,7 +95,7 @@
       "title": "SpecVersion",
       "description": "Version of the spec.",
       "enum": [
-        3
+        4
       ],
       "type": "integer"
     },
@@ -121,12 +121,13 @@
     },
     "DocumentationFormat": {
       "title": "DocumentationFormat",
-      "description": "Documentation format, typically HTML.",
+      "description": "Documentation source format.",
       "enum": [
         "ROBOT",
+        "MARKDOWN",
+        "REST",
         "HTML",
-        "TEXT",
-        "REST"
+        "TEXT"
       ],
       "type": "string"
     },
@@ -192,6 +193,10 @@
           "title": "Name",
           "type": "string"
         },
+        "doc": {
+          "title": "Doc",
+          "type": "string"
+        },
         "type": {
           "title": "TypeInfo",
           "anyOf": [
@@ -229,6 +234,7 @@
       },
       "required": [
         "name",
+        "doc",
         "kind",
         "required",
         "repr"
@@ -241,6 +247,14 @@
       "properties": {
         "name": {
           "title": "Name",
+          "type": "string"
+        },
+        "doc": {
+          "title": "Doc",
+          "type": "string"
+        },
+        "shortdoc": {
+          "title": "Shortdoc",
           "type": "string"
         },
         "args": {
@@ -261,13 +275,23 @@
             }
           ]
         },
-        "doc": {
-          "title": "Doc",
-          "type": "string"
+        "returnDoc": {
+          "title": "Returndoc",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
-        "shortdoc": {
-          "title": "Shortdoc",
-          "type": "string"
+        "raises": {
+          "title": "Raises",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "tags": {
           "title": "Tags",
@@ -317,9 +341,10 @@
       },
       "required": [
         "name",
-        "args",
         "doc",
         "shortdoc",
+        "args",
+        "raises",
         "tags",
         "source"
       ],

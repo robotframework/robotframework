@@ -374,7 +374,7 @@ class TestSuite(ModelObject, Generic[KW, TC]):
         return f"{self.parent.id}-s{index + 1}"
 
     @property
-    def all_tests(self) -> Iterator[TestCase]:
+    def all_tests(self) -> Iterator[TC]:
         """Yields all tests this suite and its child suites contain.
 
         New in Robot Framework 6.1.

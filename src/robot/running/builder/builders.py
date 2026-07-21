@@ -278,27 +278,26 @@ class SuiteStructureParser(SuiteStructureVisitor):
                 suite.rpa = True
 
     def _build_suite_file(self, structure: SuiteFile):
-        source = cast(Path, structure.source)
-        defaults = self.parent_defaults or TestDefaults()
         parser = self.parsers[structure.extension]
+        defaults = self.parent_defaults or TestDefaults()
         try:
-            suite = parser.parse_suite_file(source, defaults)
+            suite = parser.parse_suite_file(structure.source, defaults)
             if not suite.tests:
-                LOGGER.info(f"Data source '{source}' has no tests or tasks.")
+                LOGGER.info(f"Data source '{structure.source}' has no tests or tasks.")
         except DataError as err:
-            raise DataError(f"Parsing '{source}' failed: {err.message}") from err
+            raise DataError(f"Parsing '{structure.source}' failed: {err}") from err
         return suite
 
     def _build_suite_directory(self, structure: SuiteDirectory):
-        source = cast(Path, structure.init_file or structure.source)
-        defaults = TestDefaults(self.parent_defaults)
         parser = self.parsers[structure.extension]
+        defaults = TestDefaults(self.parent_defaults)
+        source = cast(Path, structure.init_file or structure.source)
         try:
             suite = parser.parse_init_file(source, defaults)
             if structure.is_multi_source:
                 suite.config(name="", source=None)
         except DataError as err:
-            raise DataError(f"Parsing '{source}' failed: {err.message}")
+            raise DataError(f"Parsing '{source}' failed: {err}") from err
         return suite, defaults
 
 

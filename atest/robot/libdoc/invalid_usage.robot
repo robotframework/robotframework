@@ -34,7 +34,7 @@ Invalid doc format
     --docformat inv BuiltIn ${OUT HTML}    Doc format must be 'ROBOT', 'MARKDOWN', 'TEXT', 'HTML' or 'REST', got 'INV'.
 
 Invalid doc format in library
-    ${TESTDATADIR}/DocFormatInvalid.py ${OUT HTML}   Invalid documentation format 'INVALID'.
+    ${TESTDATADIR}/DocFormatInvalid.py ${OUT HTML}   Invalid documentation format 'INVALID'. Available: 'ROBOT', 'MARKDOWN', 'HTML', 'TEXT' and 'REST'.
 
 Invalid theme
     --theme bad String ${OUT XML}                    Theme must be 'DARK', 'LIGHT' or 'NONE', got 'BAD'.
@@ -81,7 +81,7 @@ Invalid output file
     ...    Remove Directory    ${OUT XML}
 
 Invalid Spec File version
-    ${TESTDATADIR}/OldSpec.xml ${OUT XML}    Invalid spec file version 'None'. Supported versions are 3, 4, 5, and 6.
+    ${TESTDATADIR}/OldSpec.xml ${OUT XML}    Invalid spec file version 'None'. Supported versions are 3, 4, 5, 6 and 7.
 
 *** Keywords ***
 Run libdoc and verify error

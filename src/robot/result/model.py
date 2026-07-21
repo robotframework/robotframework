@@ -87,7 +87,7 @@ class Iterations(model.BaseIterations[
 class Message(model.Message):
     __slots__ = ()
 
-    def to_dict(self, include_type=True) -> DataDict:
+    def to_dict(self, include_type: bool = True) -> DataDict:
         if not include_type:
             return super().to_dict()
         return {"type": self.type, **super().to_dict()}

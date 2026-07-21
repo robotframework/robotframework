@@ -60,7 +60,7 @@ Markers Are Disabled By Default When Redirecting Output
 
 Invalid Markers
     Run Tests Without Processing Output    -K InVaLid    ${TEST FILE}
-    Stderr Should Be Equal To    [ ERROR ] Invalid console marker value 'InVaLid'. Available 'AUTO', 'ON' and 'OFF'.${USAGE TIP}\n
+    Stderr Should Be Equal To    [ ERROR ] Invalid console marker 'InVaLid'. Available: 'AUTO', 'ON' and 'OFF'.${USAGE TIP}\n
 
 *** Keywords ***
 Run Tests And Verify That Markers Are Disabled

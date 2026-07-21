@@ -161,18 +161,6 @@ def _get_arg_separator_index_from_name_or_path(name):
     return min(colon_index, semicolon_index)
 
 
-def split_tags_from_doc(doc):
-    doc = doc.rstrip()
-    tags = []
-    if not doc:
-        return doc, tags
-    lines = doc.splitlines()
-    if lines[-1].upper().strip().startswith("TAGS:"):
-        doc = "\n".join(lines[:-1]).rstrip()
-        tags = [tag.strip() for tag in lines[-1].split(":", 1)[1].split(",")]
-    return doc, tags
-
-
 def getdoc(item):
     return inspect.getdoc(item) or ""
 

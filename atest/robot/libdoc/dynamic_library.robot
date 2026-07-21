@@ -101,7 +101,7 @@ No keyword source info
 Keyword source info
     Keyword Name Should Be           14    Source Info
     Keyword Should Not Have Source   14
-    Keyword Lineno Should Be         14    90
+    Keyword Lineno Should Be         14    104
 
 Keyword source info with different path than library
     Keyword Name Should Be           16    Source Path Only

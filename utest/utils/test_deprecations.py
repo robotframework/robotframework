@@ -151,6 +151,12 @@ The end.
             data = utils.read_rest_data(file)
             assert_equal(data, "# No real data here...")
 
+    def test_split_tags_from_doc(self):
+        with assert_deprecation("split_tags_from_doc"):
+            doc, tags = utils.split_tags_from_doc("Doc\nTags: one, two")
+            assert_equal(doc, "Doc")
+            assert_equal(tags, ["one", "two"])
+
     def test_non_existing_attribute(self):
         assert_raises(AttributeError, getattr, utils, "xxx")
 

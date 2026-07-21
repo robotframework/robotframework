@@ -49,9 +49,20 @@ def verify_keyword_short_doc(doc_format, doc_input, expected):
 def run_libdoc_and_validate_json(filename):
     if not VALIDATOR:
         raise unittest.SkipTest("jsonschema module is not available")
-    library = DATADIR / filename
-    json_spec = LibraryDocumentation(library).to_json()
-    VALIDATOR.validate(instance=json.loads(json_spec))
+    lib = LibraryDocumentation(DATADIR / filename)
+    VALIDATOR.validate(instance=json.loads(lib.to_json()))
+    _validate_argument_parsing(lib)
+
+
+def _validate_argument_parsing(lib):
+    # Most importantly, validates that POSITIONAL_ONLY_MARKER and NAMED_ONLY_MARKER
+    # are handled properly (i.e. ignored) in parsing. This is not really about
+    # JSON validation, but there was good place where to test this elsewhere.
+    for kw in lib.keywords:
+        expected = [a.name for a in kw.args if not a.is_marker]
+        if kw.args.return_type:
+            expected.append("return")
+        assert_equal(list(kw.type_docs), expected, "Type docs mismatch")
 
 
 class TestHtmlToDoc(unittest.TestCase):
@@ -210,9 +221,6 @@ class TestLibdocJsonWriter(unittest.TestCase):
     def test_toc(self):
         run_libdoc_and_validate_json("toc.py")
 
-    def test_TOCWithInitsAndKeywords(self):
-        run_libdoc_and_validate_json("TOCWithInitsAndKeywords.py")
-
     def test_TypesViaKeywordDeco(self):
         run_libdoc_and_validate_json("TypesViaKeywordDeco.py")
 
@@ -237,18 +245,33 @@ class TestJson(unittest.TestCase):
     def test_roundtrip(self):
         self._test("DynamicLibrary.json")
 
+    def test_roundtrip_from_python(self):
+        # If this fails, DynamicLibrary.json typically needs to be regenerated.
+        self._test("DynamicLibrary.py::required")
+
     def test_roundtrip_with_datatypes(self):
         self._test("DataTypesLibrary.json")
 
-    def _test(self, lib):
-        path = DATADIR / lib
-        spec = LibraryDocumentation(path).to_json()
-        data = json.loads(spec)
-        with open(path, encoding="locale" if PY_VERSION >= (3, 10) else None) as f:
+    def _test(self, lib_path):
+        lib_path = DATADIR / lib_path
+        lib = LibraryDocumentation(lib_path)
+        if lib_path.suffix != ".json":
+            lib.convert_docs_to_html()
+            json_path = lib_path.with_suffix(".json")
+        else:
+            json_path = lib_path
+        data = json.loads(lib.to_json())
+        with open(json_path, encoding="locale" if PY_VERSION >= (3, 10) else None) as f:
             orig_data = json.load(f)
-        data["generated"] = orig_data["generated"] = None
         self.maxDiff = None
-        self.assertDictEqual(data, orig_data)
+        self.assertDictEqual(self._sanitize(data), self._sanitize(orig_data))
+
+    def _sanitize(self, data):
+        data["generated"] = None
+        data["source"] = str(Path(data["source"]).name)
+        for kw in data["keywords"] + data["inits"]:
+            kw["source"] = str(Path(data["source"]).name)
+        return data
 
 
 class TestXmlSpec(unittest.TestCase):
