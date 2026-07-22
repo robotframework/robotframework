@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from collections.abc import Mapping
 from pathlib import Path
 from typing import Any, Generic, Sequence, Type, TYPE_CHECKING, TypeVar
 
@@ -22,6 +23,7 @@ from .body import Body, BodyItem
 from .fixture import create_fixture
 from .itemlist import ItemList
 from .keyword import Keyword
+from .metadata import Metadata
 from .modelobject import DataDict, ModelObject
 from .tags import Tags
 
@@ -55,11 +57,13 @@ class TestCase(ModelObject, Generic[KW]):
         tags: "Tags | Sequence[str]" = (),
         timeout: "str | None" = None,
         lineno: "int | None" = None,
+        metadata: "Mapping[str, str] | None" = None,
         parent: "TestSuite[KW, TestCase[KW]] | None" = None,
     ):
         self.name = name
         self.doc = doc
         self.tags = tags
+        self.metadata = metadata
         self.timeout = timeout
         self.lineno = lineno
         self.parent = parent
@@ -76,6 +80,11 @@ class TestCase(ModelObject, Generic[KW]):
     def tags(self, tags: "Tags | Sequence[str]") -> Tags:
         """Test tags as a :class:`~.model.tags.Tags` object."""
         return Tags(tags)
+
+    @setter
+    def metadata(self, metadata: "Mapping[str, str] | None") -> Metadata:
+        """Test metadata as a :class:`~.model.metadata.Metadata` object."""
+        return Metadata(metadata)
 
     @property
     def setup(self) -> KW:
@@ -207,6 +216,8 @@ class TestCase(ModelObject, Generic[KW]):
             data["doc"] = self.doc
         if self.tags:
             data["tags"] = tuple(self.tags)
+        if self.metadata:
+            data["metadata"] = dict(self.metadata)
         if self.timeout:
             data["timeout"] = self.timeout
         if self.lineno:

@@ -429,6 +429,8 @@ class TestLexTestAndKeywordSettings(unittest.TestCase):
 Name
     [Documentation]    Doc    in multiple
     ...                parts
+    [Metadata]         Key      Value
+    [Metadata]         Key2     Value2
     [Tags]             first    second
     [Setup]            Log    Hello, world!    level=DEBUG
     [Teardown]         No Operation
@@ -445,24 +447,32 @@ Name
             (T.ARGUMENT, "in multiple", 3, 30),
             (T.ARGUMENT, "parts", 4, 23),
             (T.EOS, "", 4, 28),
-            (T.TAGS, "[Tags]", 5, 4),
-            (T.ARGUMENT, "first", 5, 23),
-            (T.ARGUMENT, "second", 5, 32),
-            (T.EOS, "", 5, 38),
-            (T.SETUP, "[Setup]", 6, 4),
-            (T.NAME, "Log", 6, 23),
-            (T.ARGUMENT, "Hello, world!", 6, 30),
-            (T.ARGUMENT, "level=DEBUG", 6, 47),
-            (T.EOS, "", 6, 58),
-            (T.TEARDOWN, "[Teardown]", 7, 4),
-            (T.NAME, "No Operation", 7, 23),
-            (T.EOS, "", 7, 35),
-            (T.TEMPLATE, "[Template]", 8, 4),
-            (T.NAME, "Log Many", 8, 23),
-            (T.EOS, "", 8, 31),
-            (T.TIMEOUT, "[Timeout]", 9, 4),
-            (T.ARGUMENT, "${TIMEOUT}", 9, 23),
-            (T.EOS, "", 9, 33),
+            (T.METADATA, "[Metadata]", 5, 4),
+            (T.NAME, "Key", 5, 23),
+            (T.ARGUMENT, "Value", 5, 32),
+            (T.EOS, "", 5, 37),
+            (T.METADATA, "[Metadata]", 6, 4),
+            (T.NAME, "Key2", 6, 23),
+            (T.ARGUMENT, "Value2", 6, 32),
+            (T.EOS, "", 6, 38),
+            (T.TAGS, "[Tags]", 7, 4),
+            (T.ARGUMENT, "first", 7, 23),
+            (T.ARGUMENT, "second", 7, 32),
+            (T.EOS, "", 7, 38),
+            (T.SETUP, "[Setup]", 8, 4),
+            (T.NAME, "Log", 8, 23),
+            (T.ARGUMENT, "Hello, world!", 8, 30),
+            (T.ARGUMENT, "level=DEBUG", 8, 47),
+            (T.EOS, "", 8, 58),
+            (T.TEARDOWN, "[Teardown]", 9, 4),
+            (T.NAME, "No Operation", 9, 23),
+            (T.EOS, "", 9, 35),
+            (T.TEMPLATE, "[Template]", 10, 4),
+            (T.NAME, "Log Many", 10, 23),
+            (T.EOS, "", 10, 31),
+            (T.TIMEOUT, "[Timeout]", 11, 4),
+            (T.ARGUMENT, "${TIMEOUT}", 11, 23),
+            (T.EOS, "", 11, 33),
         ]
         assert_tokens(data, expected, data_only=True)
 

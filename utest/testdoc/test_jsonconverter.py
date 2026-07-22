@@ -1,6 +1,7 @@
 import unittest
 from pathlib import Path
 
+from robot.running import TestSuite
 from robot.testdoc import JsonConverter, TestSuiteFactory
 from robot.utils.asserts import assert_equal
 
@@ -253,6 +254,21 @@ class TestFormattingAndEscaping(unittest.TestCase):
                 ("CLI&gt;", "<p><b>bold</b></p>"),
                 ("Escape", "<p>this is &lt;b&gt;not bold&lt;/b&gt;</p>"),
                 ("Format", "<p>this is <b>bold</b></p>"),
+            ],
+        )
+
+    def test_test_metadata(self):
+        suite = TestSuite(name="Suite")
+        suite.tests.create(
+            name="Test",
+            metadata={"CLI>": "*bold*", "Escape": "this is <b>not bold</b>"},
+        )
+        converted = JsonConverter().convert(suite)
+        test_convert(
+            converted["tests"][0],
+            metadata=[
+                ("CLI&gt;", "<p><b>bold</b></p>"),
+                ("Escape", "<p>this is &lt;b&gt;not bold&lt;/b&gt;</p>"),
             ],
         )
 
