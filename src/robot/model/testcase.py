@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from collections.abc import Mapping
 from pathlib import Path
 from typing import Any, Generic, Sequence, Type, TYPE_CHECKING, TypeVar
 
@@ -56,7 +57,7 @@ class TestCase(ModelObject, Generic[KW]):
         tags: "Tags | Sequence[str]" = (),
         timeout: "str | None" = None,
         lineno: "int | None" = None,
-        metadata: "dict | None" = None,
+        metadata: "Mapping[str, str] | None" = None,
         parent: "TestSuite[KW, TestCase[KW]] | None" = None,
     ):
         self.name = name
@@ -81,7 +82,7 @@ class TestCase(ModelObject, Generic[KW]):
         return Tags(tags)
 
     @setter
-    def metadata(self, metadata: "dict|None") -> Metadata:
+    def metadata(self, metadata: "Mapping[str, str] | None") -> Metadata:
         """Test metadata as a :class:`~.model.metadata.Metadata` object."""
         return Metadata(metadata)
 
@@ -216,7 +217,7 @@ class TestCase(ModelObject, Generic[KW]):
         if self.tags:
             data["tags"] = tuple(self.tags)
         if self.metadata:
-            data["metadata"] = self.metadata
+            data["metadata"] = dict(self.metadata)
         if self.timeout:
             data["timeout"] = self.timeout
         if self.lineno:

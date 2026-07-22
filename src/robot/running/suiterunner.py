@@ -152,7 +152,10 @@ class SuiteRunner(SuiteVisitor):
             self._resolve_setting(data.tags),
             self._get_timeout(data),
             data.lineno,
-            metadata=data.metadata.copy(),
+            metadata=[
+                (self._resolve_setting(n), self._resolve_setting(v))
+                for n, v in data.metadata.items()
+            ],
             start_time=datetime.now(),
         )
         if result.tags.robot("exclude"):
