@@ -26,6 +26,11 @@ Test Case Metadata Is Included In Log Model
     File Should Contain    ${OUTDIR}/log.html    RF-9999
     File Should Contain    ${OUTDIR}/log.html    &lt;b&gt;value&lt;/b&gt; &amp; data
 
+Test Case Metadata Is Included In JSON Output
+    Copy Previous Outfile
+    Run Tests Without Processing Output    -o output.json    output/testcase_metadata.robot
+    Outputs Should Contain Same Data    ${OUTFILE COPY}    ${OUTDIR}/output.json    ignore_timestamps=True
+
 *** Keywords ***
 Test Case Metadata Should Be Correct
     ${with metadata} =    Check Test Case    Test With Metadata
