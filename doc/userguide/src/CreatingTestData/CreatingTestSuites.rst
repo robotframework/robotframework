@@ -218,6 +218,9 @@ the command line with the :option:`--metadata` option.
 
 __ `Setting free suite metadata`_
 
+Individual test cases can have similar free metadata of their own, see
+`free test metadata`_ for more information.
+
 Suite setup and teardown
 ------------------------
 
