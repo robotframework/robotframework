@@ -323,6 +323,8 @@ class SectionHeader(Statement):
         eol: str = EOL,
     ) -> "SectionHeader":
         if not name:
+            if type == Token.INVALID_HEADER:
+                raise ValueError("Invalid header requires an explicit name.")
             names = (
                 "Settings",
                 "Variables",

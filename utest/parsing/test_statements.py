@@ -111,6 +111,12 @@ class TestCreateStatementsFromParams(unittest.TestCase):
                 tokens, SectionHeader, type=token_type, name=f"*** {name} ***"
             )
 
+    def test_invalid_section_header_requires_name(self):
+        with self.assertRaisesRegex(
+            ValueError, "Invalid header requires an explicit name"
+        ):
+            SectionHeader.from_params(Token.INVALID_HEADER)
+
     def test_SuiteSetup(self):
         # Suite Setup    Setup Keyword    ${arg1}    ${arg2}
         tokens = [
