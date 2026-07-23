@@ -1559,7 +1559,7 @@ class Var(Statement):
                 Token(Token.SEPARATOR, separator),
                 Token(Token.OPTION, f"scope={scope}"),
             ]
-        if value_separator:
+        if value_separator is not None:
             tokens += [
                 Token(Token.SEPARATOR, separator),
                 Token(Token.OPTION, f"separator={value_separator}"),

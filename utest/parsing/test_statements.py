@@ -208,7 +208,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(tokens, KeywordTags, values=["first", "second"])
 
     def test_Variable(self):
-        # ${variable_name}  {'a': 4, 'b': 'abc'}
+        # ${variable_name}    {'a': 4, 'b': 'abc'}
         tokens = [
             Token(Token.VARIABLE, "${variable_name}"),
             Token(Token.SEPARATOR, "    "),
@@ -234,6 +234,11 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         ]
         assert_created_statement(
             tokens, Variable, name="${x}", value=["a", "b"], value_separator="-"
+        )
+        # ${x}    a    b    separator=
+        tokens[-2].value = "separator="
+        assert_created_statement(
+            tokens, Variable, name="${x}", value=["a", "b"], value_separator=""
         )
         # ${var}    first    second    third
         # @{var}    first    second    third
@@ -842,6 +847,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(tokens, End)
 
     def test_Var(self):
+        # VAR    ${name}    value
         tokens = [
             Token(Token.SEPARATOR, "    "),
             Token(Token.VAR),
@@ -856,6 +862,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_equal(var.value, ("value",))
         assert_equal(var.scope, None)
         assert_equal(var.separator, None)
+        # VAR    ${name}    value    value 2    scope=SUITE    separator=\n
         tokens[-1:-1] = [
             Token(Token.SEPARATOR, "    "),
             Token(Token.ARGUMENT, "value 2"),
@@ -876,6 +883,20 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_equal(var.value, ("value", "value 2"))
         assert_equal(var.scope, "SUITE")
         assert_equal(var.separator, r"\n")
+        # VAR    ${name}    value    value 2    scope=SUITE    separator=
+        tokens[-2].value = "separator="
+        var = assert_created_statement(
+            tokens,
+            Var,
+            name="${name}",
+            value=("value", "value 2"),
+            scope="SUITE",
+            value_separator="",
+        )
+        assert_equal(var.name, "${name}")
+        assert_equal(var.value, ("value", "value 2"))
+        assert_equal(var.scope, "SUITE")
+        assert_equal(var.separator, "")
 
     def test_ReturnStatement(self):
         tokens = [
