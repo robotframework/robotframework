@@ -139,7 +139,7 @@ still in Robot Framework 7.5 (`#5709`__). This is something where external
 help would be appreciated and the task is especially suitable for new
 contributors!
 
-.. note:: We may may Markdown the default documentation format in the future.
+.. note:: We may make Markdown the default documentation format in the future.
           If you plan to keep using the Robot Framework format, explicitly
           specifying that documentation format is `ROBOT` is a good idea.
 
