@@ -44,7 +44,7 @@ class Screenshot:
     need to be installed separately. Taking screenshots also requires tests
     to be run with a physical or virtual display.
 
-    ## Table of contents
+    ### Table of contents
 
     %TOC%
 
@@ -57,19 +57,19 @@ class Screenshot:
     [importing] the library. If no tool or module is specified, the first
     one found will be used.
 
-    - [wxPython](http://wxpython.org) — Generic Python GUI toolkit.
-    - [PyGTK](http://pygtk.org) — This module is available by default on most
+    - [wxPython](http://wxpython.org) - Generic Python GUI toolkit.
+    - [PyGTK](http://pygtk.org) - This module is available by default on many
       Linux distributions.
-    - [Pillow](http://python-pillow.github.io) —
-      Only works on Windows. Also the original PIL package is supported.
-    - [Scrot](http://en.wikipedia.org/wiki/Scrot) — Not used on Windows.
+    - [Pillow](http://python-pillow.github.io) -
+      Only used on Windows. Also the original PIL package is supported.
+    - [Scrot](http://en.wikipedia.org/wiki/Scrot) - Not used on Windows.
       Install with `apt-get install scrot` or similar.
 
     ## Where screenshots are saved
 
-    By default screenshots are saved into the same directory where the Robot
-    Framework log file is written. If no log is created, screenshots are saved
-    into the directory where the XML output file is written.
+    Screenshots are saved into the same directory where the Robot Framework log
+    file is written by default. If no log is created, screenshots are saved
+    into the directory where the output file is written.
 
     It is possible to specify a custom location for screenshots using
     `screenshot_directory` argument when [importing] the library and
@@ -177,15 +177,18 @@ class Screenshot:
         Returns:
             Path where the screenshot was saved.
 
-        Examples: (LOGDIR is determined automatically by the library)
+        Examples:
 
         ```robotframework
         *** Test Cases ***
         Take Screenshots
-            Take Screenshot    # LOGDIR/screenshot_1.jpg (index automatically incremented)
-            Take Screenshot    mypic            # LOGDIR/mypic_1.jpg
+            Take Screenshot                        # LOGDIR/screenshot_1.jpg
+            Take Screenshot                        # LOGDIR/screenshot_2.jpg
+            Take Screenshot    mypic               # LOGDIR/mypic_1.jpg
+            Take Screenshot    mypic               # LOGDIR/mypic_2.jpg
+            Take Screenshot    pic.jpg             # LOGDIR/pic.jpg
+            Take Screenshot    pic.jpg             # LOGDIR/pic.jpg
             Take Screenshot    ${TEMPDIR}/mypic    # /tmp/mypic_1.jpg
-            Take Screenshot    pic.jpg          # LOGDIR/pic.jpg (always uses this file)
             Take Screenshot    images/login.jpg    80%
             Take Screenshot    width=550px
         ```
