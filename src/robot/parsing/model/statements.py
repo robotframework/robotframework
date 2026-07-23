@@ -330,6 +330,7 @@ class SectionHeader(Statement):
                 "Tasks",
                 "Keywords",
                 "Comments",
+                "Invalid",
             )
             name = dict(zip(cls.handles_types, names))[type]
         header = f"*** {name} ***" if not name.startswith("*") else name

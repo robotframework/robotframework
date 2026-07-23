@@ -99,6 +99,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             Token.TASK_HEADER: "Tasks",
             Token.KEYWORD_HEADER: "Keywords",
             Token.COMMENT_HEADER: "Comments",
+            Token.INVALID_HEADER: "Invalid",
         }
         for token_type, name in headers.items():
             tokens = [
