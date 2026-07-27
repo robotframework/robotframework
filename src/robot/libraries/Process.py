@@ -379,7 +379,7 @@ class Process:
     [Popen](http://docs.python.org/library/subprocess.html#popen-constructor)
     class.
 
-    ## Table of contents
+    ### Table of contents
 
     %TOC%
 
