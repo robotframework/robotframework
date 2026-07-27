@@ -40,6 +40,8 @@ class Telnet:
     `Telnet` is Robot Framework's standard library that makes it possible to
     connect to Telnet servers and execute commands on the opened connections.
 
+    ### Table of contents
+
     %TOC%
 
     # Dependencies
