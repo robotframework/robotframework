@@ -113,6 +113,8 @@ class XML:
     - Modifying XML and saving it (e.g. [Set Element Text], [Add Element]
       and [Save XML]).
 
+        ### Table of contents
+
         %TOC%
 
     # Parsing XML
