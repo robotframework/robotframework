@@ -1564,11 +1564,11 @@ class Collections(_List, _Dictionary):
     From Dictionary]) and for verifying their contents (e.g. [Lists
     Should Be Equal], [Dictionary Should Contain Value]).
 
-    ## Table of contents
+    ### Table of contents
 
     %TOC%
 
-    ## Related keywords in BuiltIn
+    # Related keywords in BuiltIn
 
     Following keywords in the BuiltIn library can also be used with
     lists and dictionaries:
@@ -1587,7 +1587,7 @@ class Collections(_List, _Dictionary):
     | [Should Not Contain X Times] | lists |
     | [Get Count] | lists |
 
-    ## Using with list-like and dictionary-like objects
+    # Using with list-like and dictionary-like objects
 
     List related keywords can in general be used with tuples and other sequences,
     not only with `list` objects. List keywords that validate something typically
@@ -1610,7 +1610,7 @@ class Collections(_List, _Dictionary):
     in Robot Framework 7.4. With earlier version these keywords could only
     be used with mutable values.
 
-    ## Ignore case
+    # Ignore case
 
     Various keywords support ignoring case in comparisons by using the optional
     `ignore_case` argument. Case-insensitivity can be enabled by using
@@ -1641,7 +1641,7 @@ class Collections(_List, _Dictionary):
     Starting from Robot Framework 7.4, case-insensitivity works also with
     bytes, not only with strings.
 
-    ## Data in examples
+    # Data in examples
 
     List related keywords use variables in format `${Lx}` in their examples.
     They mean lists with as many alphabetic characters as specified by `x`.
