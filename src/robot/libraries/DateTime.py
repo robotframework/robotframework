@@ -21,11 +21,11 @@ as well as doing simple calculations with them (e.g. [Subtract Time From Date],
 [Add Time To Time]). It supports dates and times in various formats, and can
 also be used by other libraries programmatically.
 
-## Table of contents
+### Table of contents
 
 %TOC%
 
-## Terminology
+# Terminology
 
 In the context of this library, `date` and `time` generally have the following
 meanings:
@@ -41,7 +41,7 @@ Basically its
 [timedelta](http://docs.python.org/library/datetime.html#timedelta-objects)
 objects match `date` and `time` as defined by this library.
 
-## Date formats
+# Date formats
 
 Dates can be given to and received from keywords in [Timestamp], [Custom
 timestamp], [Python datetime] and [Epoch time] formats. These formats are
@@ -52,7 +52,7 @@ using custom timestamps, in which case it needs to be given using
 `date_format` argument. Default result format is timestamp, but it can
 be overridden using `result_format` argument.
 
-### Timestamp
+## Timestamp
 
 If a date is given as a string, it is always considered to be a timestamp.
 If no custom formatting is given using `date_format` argument, the timestamp
@@ -77,7 +77,7 @@ ${date} =       Convert Date    20140612 12:57    exclude_millis=yes
 Should Be Equal    ${date}    2014-06-12 12:57:00
 ```
 
-### Custom timestamp
+## Custom timestamp
 
 It is possible to use custom timestamps in both input and output.
 The custom format is same as accepted by Python's
@@ -99,7 +99,7 @@ ${date} =       Convert Date    ${date}    result_format=%d.%m.%Y
 Should Be Equal    ${date}    28.05.2014
 ```
 
-### Python datetime
+## Python datetime
 
 Python's standard
 [datetime](https://docs.python.org/library/datetime.html#datetime.datetime)
@@ -124,7 +124,7 @@ Should Be Equal As Integers    ${datetime.second}      42
 Should Be Equal As Integers    ${datetime.microsecond}    123000
 ```
 
-### Python date
+## Python date
 
 Python's standard [date](https://docs.python.org/library/datetime.html#datetime.date)
 objects are automatically recognized in input starting from Robot Framework 7.0.
@@ -136,7 +136,7 @@ ${datetime} =    Convert Date    2023-12-18 11:10:42    datetime
 Log    ${datetime.date()}    # The time part is ignored.
 ```
 
-### Epoch time
+## Epoch time
 
 Epoch time is the time in seconds since the
 [UNIX epoch](http://en.wikipedia.org/wiki/Unix_time) i.e. 00:00:00.000 (UTC)
@@ -160,7 +160,7 @@ ${date} =       Convert Date    2014-06-12 13:27:59.279    epoch
 Should Be Equal    ${date}    ${1402568879.279}
 ```
 
-### Earliest supported date
+## Earliest supported date
 
 The earliest date that is supported depends on the date format and to some
 extent on the platform:
@@ -170,7 +170,7 @@ extent on the platform:
 - Epoch time supports 1970 and above on Windows.
 - On other platforms epoch time supports 1900 and above or even earlier.
 
-## Time formats
+# Time formats
 
 Similarly as dates, times can be given to and received from keywords in
 various different formats. Supported formats are [Number], [Time string]
@@ -180,7 +180,7 @@ Input format for time is always determined automatically based on the input.
 Result format is number by default, but it can be customised using
 `result_format` argument.
 
-### Number
+## Number
 
 Time given as a number is interpreted to be seconds. It can be given
 either as an integer or a float, or it can be a string that can be converted
@@ -198,7 +198,7 @@ ${time} =       Convert Time    ${time}    result_format=number
 Should Be Equal    ${time}    ${3.14}
 ```
 
-### Time string
+## Time string
 
 Time strings are strings in format like `1 minute 42 seconds` or `1min 42s`.
 The basic idea of this format is having first a number and then a text
@@ -234,7 +234,7 @@ ${time} =       Convert Time    - 1.5 hours    compact
 Should Be Equal    ${time}    - 1h 30min
 ```
 
-### Timer string
+## Timer string
 
 Timer string is a string given in timer like format `hh:mm:ss.mil`. In this
 format both hour and millisecond parts are optional, leading and trailing
@@ -259,7 +259,7 @@ ${time} =       Convert Time    -101.567    timer    exclude_millis=yes
 Should Be Equal    ${time}    -00:01:42
 ```
 
-### Python timedelta
+## Python timedelta
 
 Python's standard
 [timedelta](http://docs.python.org/library/datetime.html#datetime.timedelta)
@@ -274,7 +274,7 @@ ${timedelta} =    Convert Time    01:10:02.123    timedelta
 Should Be Equal    ${timedelta.total_seconds()}    ${4202.123}
 ```
 
-## Millisecond handling
+# Millisecond handling
 
 This library handles dates and times internally using the precision of the
 given input. With [Timestamp], [Time string], and [Timer string] result
@@ -308,7 +308,7 @@ ${time} =       Convert Time    102.567    timer    exclude_millis=true
 Should Be Equal    ${time}    00:01:43
 ```
 
-## Programmatic usage
+# Programmatic usage
 
 In addition to be used as normal library, this library is intended to
 provide a stable API for other libraries to use if they want to support
