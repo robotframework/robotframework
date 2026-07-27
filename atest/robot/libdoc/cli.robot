@@ -47,7 +47,7 @@ Library argument matching resource extension when import fails
 
 Override name and version
     --name MyName --version 42 String ${OUTHTML}    HTML    MyName    42
-    -n MyName -v 42 -f xml BuiltIn ${OUTHTML}       XML     MyName    42
+    -n MyName -v 42 -f xml BuiltIn ${OUTHTML}       XML     MyName    42    docformat=MARKDOWN
 
 Missing destination subdirectory is created
     String ${NEWDIR_HTML}        HTML    String    path=${NEWDIR_HTML}
@@ -91,9 +91,13 @@ Non-existing resource
 
 *** Keywords ***
 Run Libdoc And Verify Created Output File
-    [Arguments]    ${args}   ${format}    ${name}    ${version}=    ${path}=${OUTHTML}    ${theme}=    ${lang}=    ${quiet}=False
+    [Arguments]    ${args}   ${format}    ${name}    ${version}=    ${path}=${OUTHTML}    ${theme}=    ${lang}=    ${quiet}=False    ${docformat}=
     ${stdout} =    Run Libdoc    ${args}
-    Run Keyword    ${format} Doc Should Have Been Created    ${path}    ${name}    ${version}
+    IF    $docformat
+        Run Keyword    ${format} Doc Should Have Been Created    ${path}    ${name}    ${version}    ${docformat}
+    ELSE
+        Run Keyword    ${format} Doc Should Have Been Created    ${path}    ${name}    ${version}
+    END
     File Should Have Correct Line Separators    ${path}
     IF    "${theme}"
         File Should Contain    ${path}    "theme": "${theme}"
