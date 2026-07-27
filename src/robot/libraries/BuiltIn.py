@@ -5232,9 +5232,9 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
 
     %TOC%
 
-    ## Controlling failure messages
+    # Controlling failure messages
 
-    ### Overriding default error message
+    ## Overriding default error message
 
     Various validation keywords accept `msg` and `values` arguments that
     can be used to override keyword specific default failure messages.
@@ -5251,7 +5251,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     Should Be Equal    x    y    Message    values=False    # Fails with 'Message'.
     ```
 
-    ### HTML messages
+    ## HTML messages
 
     It is possible to use HTML formatting in failure messages by prefixing
     messages with `*HTML*`. Notice that this is not limited to the BuiltIn
@@ -5262,7 +5262,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     Fail    *HTML* <b>Message</b>    # Fails with '*Message*'.
     ```
 
-    ## String and bytes normalization
+    # String and bytes normalization
 
     Various validation keywords accept `ignore_case`, `strip_spaces` and
     `collapse_spaces` arguments that make it possible to normalize strings
@@ -5286,7 +5286,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     Support bytes normalization and recursive normalization with collectins
     are new in Robot Framework 7.4.
 
-    ## String representations
+    # String representations
 
     Several keywords log values explicitly (e.g. [Log]) or implicitly (e.g.
     [Should Be Equal] when there are failures). By default, keywords log values
@@ -5328,12 +5328,12 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     [Python built-in functions](https://docs.python.org/library/functions.html)
     with same names. More detailed semantics are explained below.
 
-    ### str
+    ## str
 
     Use the human-readable string representation. Equivalent to using `str()`
     in Python. This is the default.
 
-    ### repr
+    ## repr
 
     Use the machine-readable string representation. Similar to using `repr()`
     in Python, which means that strings like `Hello` are logged like
@@ -5343,7 +5343,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     In this mode bigger lists, dictionaries and other collections are
     pretty-printed so that there is one item per row.
 
-    ### ascii
+    ## ascii
 
     Same as using `ascii()` in Python. Similar to using `repr` explained above
     but with the following differences:
@@ -5353,12 +5353,12 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
       between Unicode characters that are not equal but look the same.
     - Collections are not pretty-printed.
 
-    ## Evaluating expressions
+    # Evaluating expressions
 
     Many keywords, such as [Evaluate], [Run Keyword If] and [Should Be True],
     accept an expression that is evaluated in Python.
 
-    ### Evaluation namespace
+    ## Evaluation namespace
 
     Expressions are evaluated using Python's
     [eval](http://docs.python.org/library/functions.html#eval) function so
@@ -5382,7 +5382,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     comprehensions. See the documentation of the [Evaluate] keyword for mode
     details.
 
-    ### Variables in expressions
+    ## Variables in expressions
 
     When a variable is used in the expressing using the normal `${variable}`
     syntax, its value is replaced before the expression is evaluated. This
@@ -5423,7 +5423,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     to move the logic into a library. That eases maintenance and can also
     enhance execution speed.
 
-    ## Using variables with keywords creating or accessing variables
+    # Using variables with keywords creating or accessing variables
 
     This library has special keywords [Set Global Variable], [Set Suite Variable],
     [Set Test Variable] and [Set Local Variable] for creating variables in
@@ -5466,11 +5466,11 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     [Set Global/Suite/Test/Local Variable] keywords. It makes creating variables
     uniform and avoids all the problems discussed above.
 
-    ## Pattern matching
+    # Pattern matching
 
     Many keywords accept arguments as either glob or regular expression patterns.
 
-    ### Glob patterns
+    ## Glob patterns
 
     Some keywords, for example [Should Match], support so called
     [glob patterns](http://en.wikipedia.org/wiki/Glob_(programming)) where:
@@ -5488,7 +5488,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     `\` and the newline character `\n` are matches by the above
     wildcards.
 
-    ### Regular expressions
+    ## Regular expressions
 
     Some keywords, for example [Should Match Regexp], support
     [regular expressions](http://en.wikipedia.org/wiki/Regular_expression)
@@ -5503,7 +5503,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     Strings that may contain special characters but should be handled
     as literal strings, can be escaped with the [Regexp Escape] keyword.
 
-    ## Multiline string comparison
+    # Multiline string comparison
 
     [Should Be Equal] and [Should Be Equal As Strings] report the failures using
     [unified diff
