@@ -598,10 +598,10 @@ class Fi(Language):
     task_template_setting = "Tehtävän Malli"
     test_timeout_setting = "Testin Aikaraja"
     task_timeout_setting = "Tehtävän Aikaraja"
-    test_tags_setting = "Testin Tagit"
-    task_tags_setting = "Tehtävän Tagit"
-    keyword_tags_setting = "Avainsanan Tagit"
-    tags_setting = "Tagit"
+    test_tags_setting = "Testin Tunnisteet"
+    task_tags_setting = "Tehtävän Tunnisteet"
+    keyword_tags_setting = "Avainsanan Tunnisteet"
+    tags_setting = "Tunnisteet"
     setup_setting = "Alustus"
     teardown_setting = "Alasajo"
     template_setting = "Malli"
@@ -614,6 +614,11 @@ class Fi(Language):
     but_prefixes = ["Mutta"]
     true_strings = ["Tosi", "Kyllä", "Päällä"]
     false_strings = ["Epätosi", "Ei", "Pois"]
+    deprecations = {"Tagit": ("Tunnisteet", "7.5"),
+                    "Avainsanan Tagit": ("Avainsanan Tunnisteet", "7.5"),
+                    "Testin Tagit": ("Testin Tunnisteet", "7.5"),
+                    "Tehtävän Tagit": ("Tehtävän Tunnisteet", "7.5")
+                    }
 
 
 class Fr(Language):
