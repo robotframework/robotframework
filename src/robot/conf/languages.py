@@ -614,11 +614,12 @@ class Fi(Language):
     but_prefixes = ["Mutta"]
     true_strings = ["Tosi", "Kyllä", "Päällä"]
     false_strings = ["Epätosi", "Ei", "Pois"]
-    deprecations = {"Tagit": ("Tunnisteet", "7.5"),
-                    "Avainsanan Tagit": ("Avainsanan Tunnisteet", "7.5"),
-                    "Testin Tagit": ("Testin Tunnisteet", "7.5"),
-                    "Tehtävän Tagit": ("Tehtävän Tunnisteet", "7.5")
-                    }
+    deprecations = {
+        "Tagit": ("Tunnisteet", "7.5"),
+        "Avainsanan Tagit": ("Avainsanan Tunnisteet", "7.5"),
+        "Testin Tagit": ("Testin Tunnisteet", "7.5"),
+        "Tehtävän Tagit": ("Tehtävän Tunnisteet", "7.5"),
+    }
 
 
 class Fr(Language):
