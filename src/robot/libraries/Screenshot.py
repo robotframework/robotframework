@@ -48,7 +48,7 @@ class Screenshot:
 
     %TOC%
 
-    ## Supported screenshot taking tools and modules
+    # Supported screenshot taking tools and modules
 
     How screenshots are taken depends on the operating system. On OSX
     screenshots are taken using the built-in `screencapture` utility. On
@@ -65,7 +65,7 @@ class Screenshot:
     - [Scrot](http://en.wikipedia.org/wiki/Scrot) - Not used on Windows.
       Install with `apt-get install scrot` or similar.
 
-    ## Where screenshots are saved
+    # Where screenshots are saved
 
     Screenshots are saved into the same directory where the Robot Framework log
     file is written by default. If no log is created, screenshots are saved
@@ -76,7 +76,7 @@ class Screenshot:
     using [Set Screenshot Directory] keyword during execution. It is also
     possible to save screenshots using an absolute path.
 
-    ## ScreenCapLibrary
+    # ScreenCapLibrary
 
     [ScreenCapLibrary](https://github.com/mihaiparvu/ScreenCapLibrary) is an
     external Robot Framework library that can be used as an alternative,
