@@ -96,7 +96,7 @@ class DocFormatter:
             )
             md.convert(intro)
             for reference, (target, title) in md.references.items():
-                yield reference, target, title
+                yield reference, target, title or ""
             for header, target in self._get_markdown_toc_tokens(md.toc_tokens):
                 yield header, f"#{target}", f'"{header}" section'
 
