@@ -61,10 +61,10 @@ Standard
 Standard with generics
     DataType Standard Should Be    2
     ...    dictionary
-    ...    Strings must be Python [[]dictionary](https://docs.python.org/library/stdtypes.html#dict)
+    ...    Strings must be Python [[]dictionary] literals.
     DataType Standard Should Be    5
     ...    list
-    ...    Strings must be Python [[]list](https://docs.python.org/library/stdtypes.html#list)
+    ...    Strings must be Python [[]list] or [[]tuple] literals.
 
 Accepted types
     Accepted Types Should Be    0     Standard     Any
