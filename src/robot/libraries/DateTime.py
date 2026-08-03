@@ -360,24 +360,30 @@ def example_keyword(day: datetime, interval: timedelta):
 [format codes]: https://docs.python.org/3/library/datetime.html#format-codes
 """
 
+import calendar
 import datetime
 import sys
 import time
 from typing import Literal, overload, Union
 
 from robot.utils import (
-    elapsed_time_to_string, secs_to_timestr, timestr_to_secs, type_name
+    elapsed_time_to_string,
+    secs_to_timestr,
+    timestr_to_secs,
+    type_name,
 )
 from robot.version import get_version
 
 __version__ = get_version()
 __all__ = [
+    "add_months_to_date",
     "add_time_to_date",
     "add_time_to_time",
     "convert_date",
     "convert_time",
     "get_current_date",
     "subtract_date_from_date",
+    "subtract_months_from_date",
     "subtract_time_from_date",
     "subtract_time_from_time",
 ]
@@ -620,6 +626,82 @@ def subtract_time_from_date(
     return date.convert(result_format, millis=not exclude_millis)
 
 
+def add_months_to_date(
+    date: DateInput,
+    months: int,
+    result_format: DateFormat = "timestamp",
+    exclude_millis: bool = False,
+    date_format: "str | None" = None,
+) -> DateOutput:
+    """Adds the given number of months to a date and returns the resulting date.
+
+    Adding a calendar month differs from adding a fixed time interval because
+    months have a variable number of days. When the original day-of-month is
+    greater than the last day of the target month, the day is clamped to that
+    last day. For example, adding one month to ``2024-01-31`` yields
+    ``2024-02-29`` (or ``2025-02-28`` in a non-leap year). Hours, minutes,
+    seconds and milliseconds are preserved unchanged.
+
+    Arguments:
+    - ``date:``           Date to add months to in one of the supported
+                          `date formats`.
+    - ``months:``         Number of months to add. May be negative to subtract
+                          months instead of adding.
+    - ``result_format:``  Format of the returned date.
+    - ``exclude_millis:`` When set to any true value, rounds and drops
+                          milliseconds as explained in `millisecond handling`.
+    - ``date_format:``    Possible `custom timestamp` format of ``date``.
+
+    Examples:
+    | ${date} =       | Add Months To Date | 2024-01-31 12:05:03.111 | 1 |
+    | Should Be Equal | ${date}            | 2024-02-29 12:05:03.111 |
+    | ${date} =       | Add Months To Date | 2024-06-15 12:05:03.111 | -2 |
+    | Should Be Equal | ${date}            | 2024-04-15 12:05:03.111 |
+    """
+    return (
+        Date(date, date_format)
+        .add_months(int(months))
+        .convert(result_format, millis=not exclude_millis)
+    )
+
+
+def subtract_months_from_date(
+    date: DateInput,
+    months: int,
+    result_format: DateFormat = "timestamp",
+    exclude_millis: bool = False,
+    date_format: "str | None" = None,
+) -> DateOutput:
+    """Subtracts the given number of months from a date and returns the resulting date.
+
+    Subtracts a number of calendar months from a date. Equivalent to calling
+    `Add Months To Date` with a negative ``months`` value but provided for
+    symmetry with `Subtract Time From Date`. End-of-month clamping is applied
+    in the same way as with `Add Months To Date`.
+
+    Arguments:
+    - ``date:``           Date to subtract months from in one of the supported
+                          `date formats`.
+    - ``months:``         Number of months to subtract. May be negative to add
+                          months instead of subtracting.
+    - ``result_format:``  Format of the returned date.
+    - ``exclude_millis:`` When set to any true value, rounds and drops
+                          milliseconds as explained in `millisecond handling`.
+    - ``date_format:``    Possible `custom timestamp` format of ``date``.
+
+    Examples:
+    | ${date} =       | Subtract Months From Date | 2024-02-29 12:05:03.111 | 1 |
+    | Should Be Equal | ${date}                  | 2024-01-29 12:05:03.111 |
+    | ${date} =       | Subtract Months From Date | 2024-04-15 12:05:03.111 | -2 |
+    | Should Be Equal | ${date}                  | 2024-06-15 12:05:03.111 |
+    """
+    return (
+        Date(date, date_format)
+        .add_months(-int(months))
+        .convert(result_format, millis=not exclude_millis)
+    )
+
+
 def add_time_to_time(
     time1: TimeInput,
     time2: TimeInput,
@@ -787,6 +869,19 @@ class Date:
         raise TypeError(
             f"Can only subtract Date or Time from Date, got {type_name(other)}."
         )
+
+    def add_months(self, months: int) -> "Date":
+        if not isinstance(months, int):
+            raise TypeError(f"Months must be an integer, got {type_name(months)}.")
+        dt = self.datetime
+        total = dt.year * 12 + (dt.month - 1) + months
+        year, zero_based_month = divmod(total, 12)
+        month = zero_based_month + 1
+        # Clamp the day to the last valid day of the target month so that
+        # adding a month to e.g. Jan 31 yields Feb 28/29 (end-of-month clamp).
+        last_day = calendar.monthrange(year, month)[1]
+        day = min(dt.day, last_day)
+        return Date(dt.replace(year=year, month=month, day=day))
 
 
 class Time:
