@@ -53,7 +53,7 @@ Standard
     ...    Any value is accepted. No conversion is done.
     DataType Standard Should Be    1
     ...    boolean
-    ...    Strings ``TRUE``, ``YES``, ``ON``, ``1`` and
+    ...    Strings `TRUE`, `YES`, `ON`, `1` and
     DataType Standard Should Be    6
     ...    Literal
     ...    Only specified values are accepted.
@@ -61,10 +61,10 @@ Standard
 Standard with generics
     DataType Standard Should Be    2
     ...    dictionary
-    ...    Strings must be Python [[]https://docs.python.org/library/stdtypes.html#dict|dictionary]
+    ...    Strings must be Python [[]dictionary](https://docs.python.org/library/stdtypes.html#dict)
     DataType Standard Should Be    5
     ...    list
-    ...    Strings must be Python [[]https://docs.python.org/library/stdtypes.html#list|list]
+    ...    Strings must be Python [[]list](https://docs.python.org/library/stdtypes.html#list)
 
 Accepted types
     Accepted Types Should Be    0     Standard     Any
