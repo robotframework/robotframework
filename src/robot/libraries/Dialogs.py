@@ -80,10 +80,6 @@ def get_value_from_user(
         message: The instruction shown in the dialog.
         default_value: The possible default value shown in the input field.
         hidden: If given a true value, the value typed by the user is hidden.
-            `hidden` is considered true if it is a non-empty string not equal to
-            `false`, `none` or `no`, case-insensitively. If it is not a string,
-            its truth value is got directly using same
-            [rules as in Python](http://docs.python.org/library/stdtypes.html#truth).
 
     Returns:
         Value typed by the user, or the default value.
@@ -96,7 +92,7 @@ def get_value_from_user(
     ```robotframework
     *** Test Cases ***
     Get Credentials
-        ${username} =    Get Value From User    Input user name    default
+        ${username} =    Get Value From User    Input username    default
         ${password} =    Get Value From User    Input password    hidden=yes
     ```
     """
