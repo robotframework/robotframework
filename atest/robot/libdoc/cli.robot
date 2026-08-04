@@ -5,7 +5,7 @@ Test Template    Run Libdoc And Verify Created Output File
 *** Test Cases ***
 Default format is got from output file extension
     String ${OUTHTML}            HTML         String
-    String ${OUTXML}             XML          String    path=${OUTXML}
+    String ${OUTXML}             XML          String    path=${OUTXML}    docformat=MARKDOWN
 
 '*.libspec' extension creates XML file with HTML docs
     String ${OUTBASE}.libspec    LIBSPEC     String    path=${OUTBASE}.libspec
@@ -13,12 +13,12 @@ Default format is got from output file extension
 Using --format overrides output file extension
     -f XmL ${TESTDATADIR}/resource.resource ${OUTHTML}    XML         resource
     --format hTmL BuiltIn ${OUTBASE}.xxx                  HTML        BuiltIn     path=${OUTBASE}.xxx
-    --format XML String ${OUTBASE}.libspec                XML         String      path=${OUTBASE}.libspec
+    --format XML String ${OUTBASE}.libspec                XML         String      path=${OUTBASE}.libspec    docformat=MARKDOWN
 
 Using --specdocformat to specify doc format in output
-    --format XML --specdocformat RAW String ${OUTXML}              XML        String      path=${OUTXML}
+    --format XML --specdocformat RAW String ${OUTXML}              XML        String      path=${OUTXML}    docformat=MARKDOWN
     --format XML --specdocformat HTML String ${OUTXML}             LIBSPEC    String      path=${OUTXML}
-    --format XML --specdocformat RAW String ${OUTBASE}.libspec     XML        String      path=${OUTBASE}.libspec
+    --format XML --specdocformat RAW String ${OUTBASE}.libspec     XML        String      path=${OUTBASE}.libspec    docformat=MARKDOWN
     --format XML --specdocformat HTML String ${OUTBASE}.libspec    LIBSPEC    String      path=${OUTBASE}.libspec
 
 Library arguments
@@ -51,7 +51,7 @@ Override name and version
 
 Missing destination subdirectory is created
     String ${NEWDIR_HTML}        HTML    String    path=${NEWDIR_HTML}
-    String ${NEWDIR_XML}         XML     String    path=${NEWDIR_XML}
+    String ${NEWDIR_XML}         XML     String    path=${NEWDIR_XML}    docformat=MARKDOWN
 
 Quiet
     --quiet String ${OUTHTML}    HTML    String    quiet=True
@@ -91,9 +91,13 @@ Non-existing resource
 
 *** Keywords ***
 Run Libdoc And Verify Created Output File
-    [Arguments]    ${args}   ${format}    ${name}    ${version}=    ${path}=${OUTHTML}    ${theme}=    ${lang}=    ${quiet}=False
+    [Arguments]    ${args}   ${format}    ${name}    ${version}=    ${path}=${OUTHTML}    ${theme}=    ${lang}=    ${quiet}=False    ${docformat}=
     ${stdout} =    Run Libdoc    ${args}
-    Run Keyword    ${format} Doc Should Have Been Created    ${path}    ${name}    ${version}
+    IF    $docformat
+        Run Keyword    ${format} Doc Should Have Been Created    ${path}    ${name}    ${version}    ${docformat}
+    ELSE
+        Run Keyword    ${format} Doc Should Have Been Created    ${path}    ${name}    ${version}
+    END
     File Should Have Correct Line Separators    ${path}
     IF    "${theme}"
         File Should Contain    ${path}    "theme": "${theme}"
