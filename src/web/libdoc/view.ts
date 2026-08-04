@@ -58,7 +58,11 @@ class View {
     Handlebars.registerHelper(
       "hasVisibleReturnType",
       function (returnType: ArgType | null | undefined) {
-        return returnType !== null && returnType !== undefined && returnType.name !== "None";
+        return (
+          returnType !== null &&
+          returnType !== undefined &&
+          returnType.name !== "None"
+        );
       },
     );
     Handlebars.registerHelper("dictSize", function (context) {
