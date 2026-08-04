@@ -553,6 +553,7 @@ class ListenerV2Facade(ListenerFacade):
             id=data.id,
             doc=result.doc,
             tags=list(result.tags),
+            metadata=dict(result.metadata),
             lineno=data.lineno,
             starttime=result.starttime,
             longname=result.full_name,

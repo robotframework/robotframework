@@ -12,7 +12,7 @@ from robot.utils.asserts import (
 class TestTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.test = TestCase(tags=["t1", "t2"], name="test")
+        self.test = TestCase(tags=["t1", "t2"], name="test", metadata={"M": "V"})
 
     def test_type(self):
         assert_equal(self.test.type, "TEST")
@@ -71,6 +71,16 @@ class TestTestCase(unittest.TestCase):
         self.test.tags = ["s2", "s1"]
         self.test.tags.add("s3")
         assert_equal(list(self.test.tags), ["s1", "s2", "s3"])
+
+    def test_modify_metadata(self):
+        self.test.metadata["m"] = "v"
+        self.test.metadata["n"] = "w"
+        assert_equal(dict(self.test.metadata), {"M": "v", "n": "w"})
+
+    def test_set_metadata(self):
+        self.test.metadata = {"a": "1", "b": "1"}
+        self.test.metadata["A"] = "2"
+        assert_equal(dict(self.test.metadata), {"a": "2", "b": "1"})
 
     def test_longname(self):
         assert_equal(self.test.longname, "test")

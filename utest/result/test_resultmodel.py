@@ -1045,7 +1045,9 @@ class TestToFromDictAndJson(unittest.TestCase):
         )
 
     def test_testcase_structure(self):
-        test = TestCase("TC", "my doc", ["T1", "T2"], "1 minute", 42)
+        test = TestCase(
+            "TC", "my doc", ["T1", "T2"], "1 minute", 42, {"Owner": "Team Robot"}
+        )
         test.setup.config(name="Setup", status="PASS")
         test.teardown.config(name="Teardown", args="a")
         test.body.create_keyword("K1", "suite")
@@ -1059,6 +1061,7 @@ class TestToFromDictAndJson(unittest.TestCase):
             status="FAIL",
             doc="my doc",
             tags=("T1", "T2"),
+            metadata={"Owner": "Team Robot"},
             timeout="1 minute",
             lineno=42,
             elapsed_time=0,

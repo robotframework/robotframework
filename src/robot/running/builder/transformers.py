@@ -319,6 +319,9 @@ class TestCaseBuilder(BodyBuilder):
     def visit_Documentation(self, node):
         self.model.doc = node.value
 
+    def visit_Metadata(self, node):
+        self.model.metadata[node.name] = node.value
+
     def visit_Setup(self, node):
         self.model.setup.config(name=node.name, args=node.args, lineno=node.lineno)
 

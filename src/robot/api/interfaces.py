@@ -312,6 +312,7 @@ class StartTestAttributes(TypedDict):
     originalname: str
     doc: str
     tags: "list[str]"
+    metadata: "dict[str, str]"
     template: str
     source: str
     lineno: int

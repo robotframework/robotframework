@@ -228,6 +228,12 @@ function stopPropagation(event) {
           <td class="doc">{{html doc}}</td>
         </tr>
         {{/if}}
+        {{each metadata}}
+        <tr>
+          <th>{{html $value[0]}}:</th>
+          <td class="doc">{{html $value[1]}}</td>
+        </tr>
+        {{/each}}
         {{if tags.length}}
         <tr>
           <th>Tags:</th>
