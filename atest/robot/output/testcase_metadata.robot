@@ -1,41 +1,52 @@
 *** Settings ***
 Resource       atest_resource.robot
-Suite Setup    Run Tests    --log log.html --report report.html    output/testcase_metadata.robot
+Suite Setup    Run Tests    --log log.html --report report.html    output/testcase_metadata.robot    validate output=True
 
 *** Test Cases ***
-Test Case Metadata Is Available In Result Model
-    Test Case Metadata Should Be Correct
+Metadata is available in modlel
+    Validate metadata in model
 
-Test Case Metadata Is Written To XML Output
-    ${owner} =    Get Element    ${OUTFILE}    .//test[@name="Test With Metadata"]/meta[@name="Owner"]
-    Should Be Equal    ${owner.text}    Team Robot
-    ${ticket} =    Get Element    ${OUTFILE}    .//test[@name="Test With Metadata"]/meta[@name="Ticket"]
-    Should Be Equal    ${ticket.text}    RF-9999
-    ${html} =    Get Element    ${OUTFILE}    .//test[@name="Test With Metadata"]/meta[@name="Html"]
-    Should Be Equal    ${html.text}    <b>value</b> & data
-    Element Should Not Exist    ${OUTFILE}    xpath=.//test[@name="Test Without Metadata"]/meta
+Metadata is included in XML
+    Validate metadata in XML
 
-Test Case Metadata Is Preserved By Rebot
+Metadata is included in log
+    Validate metadate in HTML    ${OUTDIR}/log.html
+
+Metadata is included in report
+    Validate metadate in HTML    ${OUTDIR}/report.html
+
+Metadata is preserved by Rebot
     Copy Previous Outfile
     Run Rebot    --log rebot-log.html --report NONE    ${OUTFILE COPY}
-    Test Case Metadata Should Be Correct
+    Validate metadata in model
 
-Test Case Metadata Is Included In Log Model
-    Run Tests    --log log.html --report NONE    output/testcase_metadata.robot
-    File Should Contain    ${OUTDIR}/log.html    Team Robot
-    File Should Contain    ${OUTDIR}/log.html    RF-9999
-    File Should Contain    ${OUTDIR}/log.html    &lt;b&gt;value&lt;/b&gt; &amp; data
-
-Test Case Metadata Is Included In JSON Output
+Metadata is included in JSON
     Copy Previous Outfile
-    Run Tests Without Processing Output    -o output.json    output/testcase_metadata.robot
+    Run Tests    -o output.json    output/testcase_metadata.robot    output=${OUTDIR}/output.json    validate output=True
+    Validate metadata in model
     Outputs Should Contain Same Data    ${OUTFILE COPY}    ${OUTDIR}/output.json    ignore_timestamps=True
 
 *** Keywords ***
-Test Case Metadata Should Be Correct
-    ${with metadata} =    Check Test Case    Test With Metadata
-    Should Be Equal    ${with metadata.metadata['Owner']}    Team Robot
-    Should Be Equal    ${with metadata.metadata['Ticket']}    RF-9999
-    Should Be Equal    ${with metadata.metadata['Html']}    <b>value</b> & data
-    ${without metadata} =    Check Test Case    Test Without Metadata
-    Should Be Empty    ${without metadata.metadata}
+Validate metadata in model
+    ${tc} =    Check Test Case    Test With Metadata
+    Should Be Equal    ${tc.metadata}[Owner]     Team Robot
+    Should Be Equal    ${tc.metadata}[Ticket]    RF-4409
+    Should Be Equal    ${tc.metadata}[Escape]    not <b>bold</b> & <extra>
+    Should Be Equal    ${tc.metadata}[Format]    *bold* & <extra>
+    ${tc} =    Check Test Case    Test Without Metadata
+    Should Be Empty    ${tc.metadata}
+
+Validate metadata in XML
+    ${tc} =    Get Element    ${OUTFILE}    xpath=.//test[@name="Test With Metadata"]
+    Element Text Should Be    ${tc}    Team Robot                   xpath=meta[@name="Owner"]
+    Element Text Should Be    ${tc}    RF-4409                      xpath=meta[@name="Ticket"]
+    Element Text Should Be    ${tc}    not <b>bold</b> & <extra>    xpath=meta[@name="Escape"]
+    Element Text Should Be    ${tc}    *bold* & <extra>             xpath=meta[@name="Format"]
+    Element Should Not Exist    ${OUTFILE}    xpath=.//test[@name="Test Without Metadata"]/meta
+
+Validate metadate in HTML
+    [Arguments]    ${path}
+    File Should Contain    ${path}    Team Robot
+    File Should Contain    ${path}    RF-4409
+    File Should Contain    ${path}    not &lt;b&gt;bold&lt;/b&gt; &amp; &lt;extra&gt;
+    File Should Contain    ${path}    <b>bold\\x3c/b> &amp; &lt;extra&gt;

@@ -1,8 +1,9 @@
 *** Test Cases ***
 Test With Metadata
-    [Metadata]    Owner    Team Robot
-    [Metadata]    Ticket    RF-9999
-    [Metadata]    Html    <b>value</b> & data
+    [Metadata]    Owner     Team Robot
+    [Metadata]    Ticket    RF-4409
+    [Metadata]    Escape    not <b>bold</b> & <extra>
+    [Metadata]    Format    *bold* & <extra>
     No Operation
 
 Test Without Metadata
