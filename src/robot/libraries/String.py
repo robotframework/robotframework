@@ -21,6 +21,7 @@ from string import ascii_lowercase, ascii_uppercase, digits
 from typing import Callable, Literal
 
 from robot.api import logger
+from robot.api.deco import library
 from robot.utils import FileReader, parse_re_flags, plural_or_not as s, type_name
 from robot.version import get_version
 
@@ -36,6 +37,12 @@ MARKERS = {
 }
 
 
+@library(
+    scope="GLOBAL",
+    version=get_version(),
+    doc_format="MARKDOWN",
+    auto_keywords=True,
+)
 class String:
     """A library for string manipulation and verification.
 
@@ -49,75 +56,73 @@ class String:
     Following keywords from `BuiltIn` library can also be used with strings
     and bytes:
 
-    - [Get Length]
-    - [Length Should Be]
-    - [Should (Not) Be Empty]
-    - [Should (Not) Be Equal (As Strings/Integers/Numbers)]
-    - [Should (Not) Match (Regexp)]
-    - [Should (Not) Contain]
-    - [Should (Not) Start With]
-    - [Should (Not) End With]
-    - [Convert To String]
-    - [Convert To Bytes]
+    - `Get Length`
+    - `Length Should Be`
+    - `Should (Not) Be Empty`
+    - `Should (Not) Be Equal (As Strings/Integers/Numbers)`
+    - `Should (Not) Match (Regexp)`
+    - `Should (Not) Contain`
+    - `Should (Not) Start With`
+    - `Should (Not) End With`
+    - `Convert To String`
+    - `Convert To Bytes`
     """
-
-    ROBOT_LIBRARY_SCOPE = "GLOBAL"
-    ROBOT_LIBRARY_VERSION = get_version()
-    ROBOT_LIBRARY_DOC_FORMAT = "Markdown"
 
     def convert_to_lower_case(self, string: "str | bytes") -> "str | bytes":
         """Converts string to lower case.
 
-        Uses Python's standard
-        [lower()](https://docs.python.org/library/stdtypes.html#str.lower)
-        method.
-
         Args:
-
             string: The string or bytes to convert.
 
         Returns:
-
             The input converted to lower case.
+
+        Uses Python's standard
+        [str.lower()](https://docs.python.org/library/stdtypes.html#str.lower) or
+        [bytes.lower()](https://docs.python.org/library/stdtypes.html#bytes.lower)
+        method, depending on the input value type.
 
         Examples:
 
         ```robotframework
-        ${str1} =    Convert To Lower Case    ABC
-        ${str2} =    Convert To Lower Case    1A2c3D
-        Should Be Equal    ${str1}    abc
-        Should Be Equal    ${str2}    1a2c3d
+        *** Test Cases ***
+        Convert to lower case
+            ${str1} =    Convert To Lower Case    ABC
+            ${str2} =    Convert To Lower Case    1A2c3D
+            Should Be Equal    ${str1}    abc
+            Should Be Equal    ${str2}    1a2c3d
         ```
 
-        If this keyword is used with bytes, only ASCII characters are lower cased.
+        If this keyword is used with bytes, only ASCII characters are lowercased.
         """
         return string.lower()
 
     def convert_to_upper_case(self, string: "str | bytes") -> "str | bytes":
         """Converts string to upper case.
 
-        Uses Python's standard
-        [upper()](https://docs.python.org/library/stdtypes.html#str.upper)
-        method.
-
         Args:
-
             string: The string or bytes to convert.
 
         Returns:
-
             The input converted to upper case.
+
+        Uses Python's standard
+        [str.upper()](https://docs.python.org/library/stdtypes.html#str.upper) or
+        [bytes.upper()](https://docs.python.org/library/stdtypes.html#bytes.upper)
+        method, depending on the input value type.
 
         Examples:
 
         ```robotframework
-        ${str1} =    Convert To Upper Case    abc
-        ${str2} =    Convert To Upper Case    1a2C3d
-        Should Be Equal    ${str1}    ABC
-        Should Be Equal    ${str2}    1A2C3D
+        *** Test Cases ***
+        Convert to upper case
+            ${str1} =    Convert To Upper Case    abc
+            ${str2} =    Convert To Upper Case    1a2C3d
+            Should Be Equal    ${str1}    ABC
+            Should Be Equal    ${str2}    1A2C3D
         ```
 
-        If this keyword is used with bytes, only ASCII characters are upper cased.
+        If this keyword is used with bytes, only ASCII characters are uppercased.
         """
         return string.upper()
 
@@ -128,7 +133,16 @@ class String:
     ) -> "str | bytes":
         """Converts string to title case.
 
-        Uses the following algorithm:
+        Args:
+            string: The string or bytes to convert.
+            exclude: Optional words to exclude from title casing. Can be a list
+              or a comma-separated string. Each word is treated as a regular
+              expression pattern.
+
+        Returns:
+            The input converted to title case.
+
+        Titlecasing is done using the following algorithm:
 
         - Split the string to words from whitespace characters (spaces,
           newlines, etc.).
@@ -142,46 +156,33 @@ class String:
         Explicitly excluded words can be given as a list or as a string with
         words separated by a comma and an optional space. Excluded words are
         actually considered to be regular expression patterns, so it is
-        possible to use something like "example[.!?]?" to match the word
-        "example" on it own and also if followed by ".", "!" or "?".
-        See [BuiltIn.Should Match Regexp] for more information about Python
+        possible to use something like `example[.!?]?` to match the word
+        `example` on its own and also if followed by `.`, `!` or `?`.
+        See `BuiltIn.Should Match Regexp` for more information about Python
         regular expression syntax in general and how to use it in Robot
         Framework data in particular.
-
-        Args:
-
-            string: The string or bytes to convert.
-            exclude: Optional words to exclude from title casing. Can be a
-                list or a comma-separated string. Each word is treated as a
-                regular expression pattern.
-
-        Returns:
-
-            The input converted to title case.
-
-        Raises:
-
-            ValueError: If an exclude pattern is invalid.
 
         Examples:
 
         ```robotframework
-        ${str1} =    Convert To Title Case    hello, world!
-        ${str2} =    Convert To Title Case    it's an OK iPhone    exclude=a, an, the
-        ${str3} =    Convert To Title Case    distance is 1 km.    exclude=is, km.?
-        Should Be Equal    ${str1}    Hello, World!
-        Should Be Equal    ${str2}    It's an OK iPhone
-        Should Be Equal    ${str3}    Distance is 1 km.
+        *** Test Cases ***
+        Convert to title case
+            ${str1} =    Convert To Title Case    hello, world!
+            ${str2} =    Convert To Title Case    it's an OK iPhone    exclude=a, an, the
+            ${str3} =    Convert To Title Case    distance is 1 km.    exclude=is, km.?
+            Should Be Equal    ${str1}    Hello, World!
+            Should Be Equal    ${str2}    It's an OK iPhone
+            Should Be Equal    ${str3}    Distance is 1 km.
         ```
 
         The reason this keyword does not use Python's standard
-        [title()](https://docs.python.org/library/stdtypes.html#str.title)
+        [str.title()](https://docs.python.org/library/stdtypes.html#str.title)
         method is that it can yield undesired results, for example, if
         strings contain upper case letters or special characters like
         apostrophes. It would, for example, convert "it's an OK iPhone"
         to "It'S An Ok Iphone".
 
-        If this keyword is used with bytes, only ASCII characters are title cased.
+        If this keyword is used with bytes, only ASCII characters are titlecased.
         Bytes support is new in Robot Framework 7.4.
         """
         if isinstance(exclude, str):
@@ -190,11 +191,11 @@ class String:
             exclude = [e.strip() for e in exclude.split(b",")]
         elif not exclude:
             exclude = []
-        if isinstance(string, bytes):
-            exclude = [self._ensure_bytes(e) for e in exclude]
-            split, join = rb"(\s+)", b""
+        if isinstance(string, str):
+            splitter, joiner = r"(\s+)", ""
         else:
-            split, join = r"(\s+)", ""
+            splitter, joiner = rb"(\s+)", b""
+            exclude = [self._ensure_bytes(e) for e in exclude]
         try:
             exclude = [re.compile(e) for e in exclude]
         except re.error as err:
@@ -204,18 +205,17 @@ class String:
             )
 
         def title(word):
-            if any(e.fullmatch(word) for e in exclude) or not word.islower():
-                return word
-            for i, char in enumerate(word):
-                if isinstance(char, int):  # iterating bytes
-                    char = bytes([char])
-                if char.isalpha():
-                    j = i + 1
-                    return word[:i] + word[i:j].title() + word[j:]
+            if word.islower() and not any(e.fullmatch(word) for e in exclude):
+                for i, char in enumerate(word):
+                    if isinstance(char, int):  # iterating bytes
+                        char = bytes([char])
+                    if char.isalpha():
+                        j = i + 1
+                        return word[:i] + word[i:j].title() + word[j:]
             return word
 
-        tokens = re.split(split, string)
-        return join.join(title(t) if i % 2 == 0 else t for i, t in enumerate(tokens))
+        tokens = re.split(splitter, string)
+        return joiner.join(title(t) if i % 2 == 0 else t for i, t in enumerate(tokens))
 
     def encode_string_to_bytes(
         self,
@@ -225,36 +225,35 @@ class String:
     ) -> bytes:
         """Encodes the given `string` to bytes using the given `encoding`.
 
-        `errors` argument controls what to do if encoding some characters fails.
-        All values accepted by `encode` method in Python are valid, but in
-        practice the following values are most useful:
+        Args:
+            string: The string to encode.
+            encoding: The encoding to use.
+            errors: How to handle encoding errors.
+
+        Returns:
+            The input string encoded to bytes.
+
+        The `errors` argument supports all Python's standard
+        [error handlers](https://docs.python.org/3/library/codecs.html#error-handlers),
+        but in practice the following values are most useful:
 
         - `strict`: fail if characters cannot be encoded (default)
         - `ignore`: ignore characters that cannot be encoded
         - `replace`: replace characters that cannot be encoded with
           a replacement character
 
-        Args:
-
-            string: The string to encode.
-            encoding: The encoding to use.
-            errors: How to handle encoding errors. See above for common values.
-
-        Returns:
-
-            The encoded bytes.
-
         Examples:
 
         ```robotframework
-        ${bytes} =    Encode String To Bytes    ${string}    UTF-8
-        ${bytes} =    Encode String To Bytes    ${string}    ASCII    errors=ignore
+        *** Test Cases ***
+        Encode string to bytes
+            ${bytes} =    Encode String To Bytes    ${string}    UTF-8
+            ${bytes} =    Encode String To Bytes    ${string}    ASCII    errors=ignore
         ```
 
-        Use [Convert To Bytes] in `BuiltIn` if you want to create bytes based
-        on character or integer sequences. Use [Decode Bytes To String] if you
-        need to convert bytes to strings and [Convert To String]
-        in `BuiltIn` if you need to convert arbitrary objects to strings.
+        Use [Decode Bytes To String]  if you need to convert bytes to strings.
+        Use `BuiltIn.Convert To Bytes` if you want to create bytes based
+        on character or integer sequences.
         """
         return bytes(string.encode(encoding, errors))
 
@@ -266,35 +265,35 @@ class String:
     ) -> str:
         """Decodes the given `bytes` to a string using the given `encoding`.
 
-        `errors` argument controls what to do if decoding some bytes fails.
-        All values accepted by `decode` method in Python are valid, but in
-        practice the following values are most useful:
-
-        - `strict`: fail if characters cannot be decoded (default)
-        - `ignore`: ignore characters that cannot be decoded
-        - `replace`: replace characters that cannot be decoded with
-          a replacement character
-
         Args:
-
             bytes: The bytes to decode.
             encoding: The encoding to use.
-            errors: How to handle decoding errors. See above for common values.
+            errors: How to handle encoding errors.
 
         Returns:
+            The input bytes decoded to string,
 
-            The decoded string.
+        The `errors` argument supports all Python's standard
+        [error handlers](https://docs.python.org/3/library/codecs.html#error-handlers),
+        but in practice the following values are most useful:
+
+        - `strict`: fail if characters cannot be encoded (default)
+        - `ignore`: ignore characters that cannot be encoded
+        - `replace`: replace characters that cannot be encoded with
+          a replacement character
 
         Examples:
 
         ```robotframework
-        ${string} =    Decode Bytes To String    ${bytes}    UTF-8
-        ${string} =    Decode Bytes To String    ${bytes}    ASCII    errors=ignore
+        *** Test Cases ***
+        Decide bytes ti strinog
+            ${string} =    Decode Bytes To String    ${bytes}    UTF-8
+            ${string} =    Decode Bytes To String    ${bytes}    ASCII    errors=ignore
         ```
 
         Use [Encode String To Bytes] if you need to convert strings to bytes,
-        and [Convert To String] in `BuiltIn` if you need to
-        convert arbitrary objects to strings.
+        Use `BuiltIn.Convert To String` if you want to convert arbitrary objects
+        to strings.
         """
         return bytes.decode(encoding, errors)
 
@@ -307,42 +306,42 @@ class String:
     ) -> "str | bytes":
         """Formats a `template` using the given `positional` and `named` arguments.
 
+        Args:
+            template: A template string or an absolute path to a template file.
+            *positional: Positional arguments used to format the template.
+            **named: Named arguments used to format the template.
+
+        Returns:
+            The formatted string or bytes.
+
         The template can be either be a string or an absolute path to
         an existing file. In the latter case the file is read and its contents
         are used as the template. If the template file contains non-ASCII
         characters, it must be encoded using UTF-8.
 
-        The template is formatted using Python's
-        [format string syntax](https://docs.python.org/library/string.html#format-string-syntax).
+        The template is formatted using Python's [format string syntax].
         Placeholders are marked using `{}` with possible
         field name and format specification inside. Literal curly braces
         can be inserted by doubling them like `{{` and `}}`.
 
-        Args:
-
-            template: The template string or an absolute path to a template file.
-            *positional: Positional arguments used to format the template.
-            **named: Named arguments used to format the template.
-
-        Returns:
-
-            The formatted string or bytes.
-
         Examples:
 
         ```robotframework
-        ${to} =    Format String    To: {} <{}>                    ${user}      ${email}
-        ${to} =    Format String    To: {name} <{email}>           name=${name}    email=${email}
-        ${to} =    Format String    To: {user.name} <{user.email}>    user=${user}
-        ${xx} =    Format String    {:*^30}                        centered
-        ${yy} =    Format String    {0:{width}{base}}              ${42}    base=X    width=10
-        ${zz} =    Format String    ${CURDIR}/template.txt         positional    named=value
+        *** Test Cases ***
+        Format string
+            ${to} =    Format String    To: {} <{}>                 ${user}    ${email}
+            ${to} =    Format String    To: {name} <{email}>        name=${name}    email=${email}
+            ${to} =    Format String    To: {u.name} <{u.email}>    u=${user_object}
+            ${xx} =    Format String    {:*^30}                     centered
+            ${yy} =    Format String    {0:{width}{base}}           ${42}    base=X    width=10
+            ${zz} =    Format String    ${CURDIR}/template.txt      positional    named=value
         ```
 
         Prior to Robot Framework 7.1, possible equal signs in the template string
-        needed to be escaped with a backslash like `x\\={}`.
+        needed to be escaped with a backslash like `x\\={}`. Bytes support is new
+        in Robot Framework 7.4.
 
-        Support for bytes is new in Robot Framework 7.4.
+        [format string syntax]: https://docs.python.org/library/string.html#format-string-syntax
         """
         if os.path.isabs(template) and os.path.isfile(template):
             template = template.replace("/", os.sep)
@@ -383,11 +382,9 @@ class String:
         """Returns and logs the number of lines in the given string.
 
         Args:
-
             string: The string or bytes to count lines from.
 
         Returns:
-
             The number of lines.
         """
         count = len(string.splitlines())
@@ -402,6 +399,14 @@ class String:
     ) -> "list[str] | list[bytes]":
         """Splits the given string to lines.
 
+        Args:
+            string: The string or bytes to split.
+            start: Start index for line selection. Defaults to `0`.
+            end: End index for line selection. Defaults to `None` (end of string).
+
+        Returns:
+            A list of lines.
+
         It is possible to get only a selection of lines from `start`
         to `end` so that `start` index is inclusive and `end` is
         exclusive. Line numbering starts from 0, and it is possible to
@@ -410,25 +415,17 @@ class String:
         Lines are returned without the newlines. The number of
         returned lines is automatically logged.
 
-        Args:
-
-            string: The string or bytes to split.
-            start: Start index for line selection. Defaults to `0`.
-            end: End index for line selection. Defaults to `None` (end of string).
-
-        Returns:
-
-            A list of lines.
-
         Examples:
 
         ```robotframework
-        @{lines} =        Split To Lines    ${manylines}
-        @{ignore first} = Split To Lines    ${manylines}    1
-        @{ignore last} =  Split To Lines    ${manylines}    end=-1
-        @{5th to 10th} =  Split To Lines    ${manylines}    4    10
-        @{first two} =    Split To Lines    ${manylines}    end=1
-        @{last two} =     Split To Lines    ${manylines}    -2
+        *** Test Cases ***
+        Split to lines
+            @{lines} =           Split To Lines    ${string}
+            @{ignore first} =    Split To Lines    ${string}    1
+            @{ignore last} =     Split To Lines    ${string}    end=-1
+            @{5th to 10th} =     Split To Lines    ${string}    4    10
+            @{first two} =       Split To Lines    ${string}    end=1
+            @{last two} =        Split To Lines    ${string}    start=-2
         ```
 
         Use [Get Line] if you only need to get a single line.
@@ -442,27 +439,27 @@ class String:
     def get_line(self, string: "str | bytes", line_number: int) -> "str | bytes":
         """Returns the specified line from the given `string`.
 
-        Line numbering starts from 0, and it is possible to use
-        negative indices to refer to lines from the end. The line is
-        returned without the newline character.
-
         Args:
-
             string: The string or bytes to get the line from.
             line_number: Index of the line to return.
 
         Returns:
-
             The specified line without the newline character.
+
+        Line numbering starts from 0, and it is possible to use
+        negative indices to refer to lines from the end. The line is
+        returned without the newline character.
 
         Examples:
 
         ```robotframework
-        ${first} =    Get Line    ${string}    0
-        ${2nd last} =    Get Line    ${string}    -2
+        *** Test Cases ***
+        Get line
+            ${first} =    Get Line    ${string}    0
+            ${2nd last} =    Get Line    ${string}    -2
         ```
 
-        Use [Split To Lines] if all lines are needed.
+        Use [Split To Lines] if all lines, or a subset of lines, are needed.
         """
         return string.splitlines()[line_number]
 
@@ -475,6 +472,16 @@ class String:
     ) -> "str | bytes":
         """Returns lines of the given `string` that contain the `pattern`.
 
+
+        Args:
+            string: The string or bytes to search lines from.
+            pattern: The string pattern to search for.
+            case_insensitive: Deprecated alias for `ignore_case`.
+            ignore_case: If given a true value, matching is case-insensitive.
+
+        Returns:
+            Matching lines joined with newlines.
+
         The `pattern` is always considered to be a normal string, not a glob
         or regexp pattern. A line matches if the `pattern` is found anywhere
         on it.
@@ -484,35 +491,24 @@ class String:
         Framework 7.0, but with older versions it is possible to use the
         nowadays deprecated `case_insensitive` argument.
 
-        Lines are returned as a string with lines joined together with
+        Lines are returned as a single string with lines joined together with
         a newline. Possible trailing newline is never returned. The number
         of matching lines is automatically logged.
-
-        Args:
-
-            string: The string or bytes to search from.
-            pattern: The string pattern to search for.
-            case_insensitive: Deprecated alias for `ignore_case`.
-            ignore_case: If given a true value, matching is case-insensitive.
-
-        Returns:
-
-            Matching lines joined with newlines.
 
         Examples:
 
         ```robotframework
-        ${lines} =    Get Lines Containing String    ${result}    An example
-        ${ret} =    Get Lines Containing String    ${ret}    FAIL    ignore_case=True
+        *** Test Cases ***
+        Get lines containing string
+            ${lines} =    Get Lines Containing String    ${string}    An example
+            ${lines} =    Get Lines Containing String    ${string}    FAIL    ignore_case=True
         ```
 
         See [Get Lines Matching Pattern] and [Get Lines Matching Regexp]
         if you need more complex pattern matching.
 
         If the first argument is bytes, the second argument is automatically
-        converted to bytes as well.
-
-        Bytes support is new in Robot Framework 7.4.
+        converted to bytes as well. Bytes support is new in Robot Framework 7.4.
         """
         if isinstance(string, bytes):
             pattern = self._ensure_bytes(pattern)
@@ -531,14 +527,23 @@ class String:
     ) -> "str | bytes":
         """Returns lines of the given `string` that match the `pattern`.
 
+        Args:
+            string: The string or bytes to search lines from.
+            pattern: The glob pattern to match.
+            case_insensitive: Deprecated alias for `ignore_case`.
+            ignore_case: If given a true value, matching is case-insensitive.
+
+        Returns:
+            Matching lines joined with newlines.
+
         The `pattern` is a _glob pattern_ where:
 
-        | Pattern | Meaning |
-        | --- | --- |
-        | `*` | matches everything |
-        | `?` | matches any single character |
-        | `[chars]` | matches any character inside square brackets (e.g. `[abc]` matches either `a`, `b` or `c`) |
-        | `[!chars]` | matches any character not inside square brackets |
+        |   Pattern  |                    Meaning                        |
+        | ---------- | ------------------------------------------------- |
+        | `*`        | Matches everything.                               |
+        | `?`        | Matches any single character.                     |
+        | `[chars]`  | Matches any character inside square brackets (e.g. `[abc]` matches either `a`, `b` or `c`). |
+        | `[!chars]` | Matches any character not inside square brackets. |
 
         A line matches only if it matches the `pattern` fully.
 
@@ -547,26 +552,17 @@ class String:
         Framework 7.0, but with older versions it is possible to use the
         nowadays deprecated `case_insensitive` argument.
 
-        Lines are returned as a string with lines joined together with
+        Lines are returned as a single string with lines joined together with
         a newline. Possible trailing newline is never returned. The number
         of matching lines is automatically logged.
-
-        Args:
-
-            string: The string or bytes to search from.
-            pattern: The glob pattern to match.
-            case_insensitive: Deprecated alias for `ignore_case`.
-            ignore_case: If given a true value, matching is case-insensitive.
-
-        Returns:
-
-            Matching lines joined with newlines.
 
         Examples:
 
         ```robotframework
-        ${lines} =    Get Lines Matching Pattern    ${result}    Wild???? example
-        ${ret} =    Get Lines Matching Pattern    ${ret}    FAIL: *    ignore_case=True
+        *** Test Cases ***
+        Get lines matching regexp
+            ${lines} =    Get Lines Matching Pattern    ${string}    Wild???? example
+            ${lines} =    Get Lines Matching Pattern    ${string}    FAIL: *    ignore_case=True
         ```
 
         See [Get Lines Matching Regexp] if you need more complex
@@ -574,9 +570,7 @@ class String:
         literal strings is enough.
 
         If the first argument is bytes, the second argument is automatically
-        converted to bytes as well.
-
-        Bytes support is new in Robot Framework 7.4.
+        converted to bytes as well. Bytes support is new in Robot Framework 7.4.
         """
         if isinstance(string, bytes):
             pattern = self._ensure_bytes(pattern)
@@ -598,9 +592,15 @@ class String:
     ) -> "str | bytes":
         """Returns lines of the given `string` that match the regexp `pattern`.
 
-        See [BuiltIn.Should Match Regexp] for more information about
-        Python regular expression syntax in general and how to use it
-        in Robot Framework data in particular.
+        Args:
+            string: The string or bytes to search lines from.
+            pattern: The regular expression pattern to match.
+            partial_match: If given a true value, lines match if the pattern
+              is found anywhere on the line.
+            flags: Optional regular expression flags.
+
+        Returns:
+            Matching lines joined with newlines.
 
         Lines match only if they match the pattern fully by default, but
         partial matching can be enabled by giving the `partial_match`
@@ -614,38 +614,36 @@ class String:
         `flags=IGNORECASE | VERBOSE`) or embedded to the pattern (e.g.
         `(?ix)pattern`).
 
-        Lines are returned as one string concatenated back together with
+        Lines are returned as a single string concatenated back together with
         newlines. Possible trailing newline is never returned. The
         number of matching lines is automatically logged.
-
-        Args:
-
-            string: The string or bytes to search from.
-            pattern: The regular expression pattern to match.
-            partial_match: If given a true value, lines match if the pattern
-                is found anywhere on the line.
-            flags: Optional regular expression flags.
-
-        Returns:
-
-            Matching lines joined with newlines.
 
         Examples:
 
         ```robotframework
-        ${lines} =    Get Lines Matching Regexp    ${result}    Reg\\w{3} example
-        ${lines} =    Get Lines Matching Regexp    ${result}    Reg\\w{3} example    partial_match=true
-        ${ret} =    Get Lines Matching Regexp    ${ret}    (?i)FAIL: .*
-        ${ret} =    Get Lines Matching Regexp    ${ret}    FAIL: .*    flags=IGNORECASE
+        *** Test Cases ***
+        Get lines matching regexp
+            ${lines} =    Get Lines Matching Regexp    ${string}    Reg\\\\w{3} example
+            ${lines} =    Get Lines Matching Regexp    ${string}    Reg\\\\w{3} example    partial_match=True
+            ${lines} =    Get Lines Matching Regexp    ${string}    (?i)FAIL: .*
+            ${lines} =    Get Lines Matching Regexp    ${string}    FAIL: .*    flags=IGNORECASE
         ```
 
-        See [Get Lines Matching Pattern] and [Get Lines Containing String] if you
-        do not need the full regular expression powers (and complexity).
+        Notice that the backslash character that is often used with regular
+        expressions is an escape character in Robot Framework data. If
+        a literal backslash is needed, it needs to be doubled as the above
+        example illustrates. For more information about the supported regular
+        expression syntax and using regular expressions with Robot Framework
+        in general, see the documentation of the `BuiltIn.Should Match Regexp`
+        keyword.
 
-        The `flags` argument is new in Robot Framework 6.0.
+        Use [Get Lines Matching Pattern] and [Get Lines Containing String] if
+        you do not need the full regular expression powers (and complexity).
 
         If the first argument is bytes, the second argument is automatically
         converted to bytes as well. This is new in Robot Framework 7.4.
+
+        The `flags` argument is new in Robot Framework 6.0.
         """
         if isinstance(string, bytes):
             pattern = self._ensure_bytes(pattern)
@@ -672,8 +670,17 @@ class String:
     ) -> "list[str] | list[tuple[str, ...]] | list[bytes] | list[tuple[bytes, ...]]":
         """Returns a list of all non-overlapping matches in the given string.
 
+        Args:
+            string: The string or bytes to find matches from.
+            pattern: The regular expression pattern to match.
+            *groups: Optional group indexes or names to return.
+            flags: Optional regular expression flags.
+
+        Returns:
+            A list of matches, group contents, or tuples of group contents.
+
         `string` is the string to find matches from and `pattern` is the
-        regular expression. See [BuiltIn.Should Match Regexp] for more
+        regular expression. See `BuiltIn.Should Match Regexp` for more
         information about Python regular expression syntax in general and how
         to use it in Robot Framework data in particular.
 
@@ -681,43 +688,43 @@ class String:
         group is used, the list contains only contents of that group. If
         multiple groups are used, the list contains tuples that contain
         individual group contents. All groups can be given as indexes (starting
-        from 1) and named groups also as names.
+        from 1) and named groups can also be given as names.
 
         Possible flags altering how the expression is parsed (e.g. `re.IGNORECASE`,
         `re.MULTILINE`) can be given using the `flags` argument (e.g.
         `flags=IGNORECASE | MULTILINE`) or embedded to the pattern (e.g.
         `(?im)pattern`).
 
-        Args:
-
-            string: The string or bytes to find matches from.
-            pattern: The regular expression pattern to match.
-            *groups: Optional group indexes or names to return.
-            flags: Optional regular expression flags.
-
-        Returns:
-
-            A list of matches, group contents, or tuples of group contents.
-
         Examples:
 
         ```robotframework
-        ${no match} =    Get Regexp Matches    the string    xxx
-        ${matches} =    Get Regexp Matches    the string    t..
-        ${matches} =    Get Regexp Matches    the string    T..    flags=IGNORECASE
-        ${one group} =    Get Regexp Matches    the string    t(..)    1
-        ${named group} =    Get Regexp Matches    the string    t(?P<name>..)    name
-        ${two groups} =    Get Regexp Matches    the string    t(.)(.)    1    2
-        ```
+        *** Variables ***
+        ${string}        the string
 
-        Above examples would set variables as follows:
+        *** Test Cases ***
+        No match
+            ${result} =    Get Regexp Matches    ${string}    xxx
+            Should Be Equal    ${result}    []    type=list
 
-        ```robotframework
-        ${no match} =    Create List
-        ${matches} =    Create List    the    tri
-        ${one group} =    Create List    he    ri
-        ${named group} =    Create List    he    ri
-        ${two groups} =    Create List    ('h', 'e')    ('r', 'i')
+        Match
+            ${result} =    Get Regexp Matches    ${string}    t..
+            Should Be Equal    ${result}    ["the", "tri"]    type=list
+
+        Flags
+            ${result} =    Get Regexp Matches    ${string}    T..    flags=IGNORECASE
+            Should Be Equal    ${result}    ["the", "tri"]    type=list
+
+        One group by index
+            ${result} =    Get Regexp Matches    ${string}    t(..)    1
+            Should Be Equal    ${result}    ["he", "ri"]    type=list
+
+        One group by name
+            ${result} =    Get Regexp Matches    ${string}    t(?P<name>..)    name
+            Should Be Equal    ${result}    ["he", "ri"]    type=list
+
+        Multiple groups
+            ${result} =    Get Regexp Matches    ${string}    t(.)(.)    1    2
+            Should Be Equal    ${result}    [("h", "e"), ("r", "i")]    type=list
         ```
 
         If the first argument is bytes, the second argument is automatically
@@ -746,36 +753,36 @@ class String:
     ) -> "str | bytes":
         """Replaces `search_for` in the given `string` with `replace_with`.
 
-        `search_for` is used as a literal string. See [Replace String
-        Using Regexp] if more powerful pattern matching is needed.
-        If you need to just remove a string see [Remove String].
-
-        If the optional argument `count` is given, only that many
-        occurrences from left are replaced. Negative `count` means
-        that all occurrences are replaced (default behaviour) and zero
-        means that nothing is done.
-
-        A modified version of the string is returned and the original
-        string is not altered.
-
         Args:
-
             string: The string or bytes to modify.
-            search_for: The literal string to search for.
+            search_for: The string to search for.
             replace_with: The replacement string.
             count: Maximum number of replacements. `-1` means all (default).
 
         Returns:
-
             The modified string or bytes.
+
+        If the optional argument `count` is given, only that many
+        occurrences from left are replaced. Negative `count` means
+        that all occurrences are replaced (default behavior) and zero
+        means that nothing is done.
+
+        `search_for` is used as a literal string. See [Replace String
+        Using Regexp] if more powerful pattern matching is needed.
+        If you need to just remove a string, see [Remove String].
+
+        A modified version of the string is returned and the original
+        string is not altered.
 
         Examples:
 
         ```robotframework
-        ${str} =    Replace String    Hello, world!    world    tellus
-        Should Be Equal    ${str}    Hello, tellus!
-        ${str} =    Replace String    Hello, world!    l    ${EMPTY}    count=1
-        Should Be Equal    ${str}    Helo, world!
+        *** Test Cases ***
+        Replace string
+            ${str} =    Replace String    Hello, world!    world    tellus
+            Should Be Equal    ${str}    Hello, tellus!
+            ${str} =    Replace String    Hello, world!    l    e    count=1
+            Should Be Equal    ${str}    Heelo, world!
         ```
 
         If the first argument is bytes, the following two arguments are automatically
@@ -796,9 +803,19 @@ class String:
     ) -> "str | bytes":
         """Replaces `pattern` in the given `string` with `replace_with`.
 
+        Args:
+            string: The string or bytes to modify.
+            pattern: The regular expression pattern to search for.
+            replace_with: The replacement string.
+            count: Maximum number of replacements. `-1` means all (default).
+            flags: Optional regular expression flags.
+
+        Returns:
+            The modified string or bytes.
+
         This keyword is otherwise identical to [Replace String], but
         the `pattern` to search for is considered to be a regular
-        expression.  See [BuiltIn.Should Match Regexp] for more
+        expression.  See `BuiltIn.Should Match Regexp` for more
         information about Python regular expression syntax in general
         and how to use it in Robot Framework data in particular.
 
@@ -809,23 +826,13 @@ class String:
 
         If you need to just remove a string see [Remove String Using Regexp].
 
-        Args:
-
-            string: The string or bytes to modify.
-            pattern: The regular expression pattern to search for.
-            replace_with: The replacement string.
-            count: Maximum number of replacements. `-1` means all (default).
-            flags: Optional regular expression flags.
-
-        Returns:
-
-            The modified string or bytes.
-
         Examples:
 
         ```robotframework
-        ${str} =    Replace String Using Regexp    ${str}    20\\d\\d-\\d\\d-\\d\\d    <DATE>
-        ${str} =    Replace String Using Regexp    ${str}    (Hello|Hi)    ${EMPTY}    count=1
+        *** Test Cases ***
+        Replace string using regexp
+            ${str} =    Replace String Using Regexp    ${str}    2026-\\\\d\\\\d-\\\\d\\\\d    <DATE>
+            ${str} =    Replace String Using Regexp    ${str}    (Hello|Hi)    Moi    count=1
         ```
 
         If the first argument is bytes, the following two arguments are automatically
@@ -854,9 +861,16 @@ class String:
     ) -> "str | bytes":
         """Removes all `removables` from the given `string`.
 
+        Args:
+            string: The string or bytes to modify.
+            *removables: Strings to remove.
+
+        Returns:
+            The modified string or bytes.
+
         `removables` are used as literal strings. Each removable will be
         matched to a temporary string from which preceding removables have
-        been already removed. See second example below.
+        been already removed. See the second example below.
 
         Use [Remove String Using Regexp] if more powerful pattern matching is
         needed. If only a certain number of matches should be removed,
@@ -865,28 +879,19 @@ class String:
         A modified version of the string is returned and the original
         string is not altered.
 
-        Args:
-
-            string: The string or bytes to modify.
-            *removables: Literal strings to remove.
-
-        Returns:
-
-            The modified string or bytes.
-
         Examples:
 
         ```robotframework
-        ${str} =    Remove String    Robot Framework    work
-        Should Be Equal    ${str}    Robot Frame
-        ${str} =    Remove String    Robot Framework    o    bt
-        Should Be Equal    ${str}    R Framewrk
+        *** Test Cases ***
+        Remove string
+            ${str} =    Remove String    Robot Framework    work
+            Should Be Equal    ${str}    Robot Frame
+            ${str} =    Remove String    Robot Framework    o    bt
+            Should Be Equal    ${str}    R Framewrk
         ```
 
         If the first argument is bytes, the second argument is automatically
-        converted to bytes as well.
-
-        Bytes support is new in Robot Framework 7.4.
+        converted to bytes as well. Bytes support is new in Robot Framework 7.4.
         """
         for removable in removables:
             string = self.replace_string(string, removable, "")
@@ -900,6 +905,14 @@ class String:
     ) -> "str | bytes":
         """Removes `patterns` from the given `string`.
 
+        Args:
+            string: The string or bytes to modify.
+            *patterns: Regular expression patterns to remove.
+            flags: Optional regular expression flags.
+
+        Returns:
+            The modified string or bytes.
+
         This keyword is otherwise identical to [Remove String], but
         the `patterns` to search for are considered to be a regular
         expression. See [Replace String Using Regexp] for more information
@@ -912,21 +925,10 @@ class String:
         `flags=IGNORECASE | MULTILINE`) or embedded to the pattern (e.g.
         `(?im)pattern`).
 
-        Args:
-
-            string: The string or bytes to modify.
-            *patterns: Regular expression patterns to remove.
-            flags: Optional regular expression flags.
-
-        Returns:
-
-            The modified string or bytes.
-
         If the first argument is bytes, the second argument is automatically
-        converted to bytes as well.
+        converted to bytes as well. Bytes support is new in Robot Framework 7.4.
 
         The `flags` argument is new in Robot Framework 6.0.
-        Bytes support is new in Robot Framework 7.4.
         """
         for pattern in patterns:
             string = self.replace_string_using_regexp(string, pattern, "", flags=flags)
@@ -940,30 +942,30 @@ class String:
     ) -> "list[str] | list[bytes]":
         """Splits the `string` using `separator` as a delimiter string.
 
-        If a `separator` is not given, any whitespace string is a
-        separator. In that case also possible consecutive whitespace
-        as well as leading and trailing whitespace is ignored.
-
-        Split words are returned as a list. If the optional
-        `max_split` is given, at most `max_split` splits are done, and
-        the returned list will have maximum `max_split + 1` elements.
-
         Args:
-
             string: The string or bytes to split.
             separator: The delimiter string. Defaults to splitting on whitespace.
             max_split: Maximum number of splits. `-1` means no limit (default).
 
         Returns:
-
             A list of split parts.
+
+        If a `separator` is not given, any whitespace string is a
+        separator. In that case also possible consecutive whitespace
+        as well as leading and trailing whitespace is ignored.
+
+        Split parts are returned as a list. If the optional
+        `max_split` is given, at most `max_split` splits are done, and
+        the returned list will have maximum `max_split + 1` elements.
 
         Examples:
 
         ```robotframework
-        @{words} =    Split String    ${string}
-        @{words} =    Split String    ${string}    ,${SPACE}
-        ${pre}    ${post} =    Split String    ${string}    ::    1
+        *** Test Cases ***
+        Split string
+            @{words} =    Split String    ${string}
+            @{words} =    Split String    ${string}    ,${SPACE}
+            ${pre}    ${post} =    Split String    ${string}    ::    1
         ```
 
         See [Split String From Right] if you want to start splitting
@@ -986,24 +988,24 @@ class String:
     ) -> "list[str] | list[bytes]":
         """Splits the `string` using `separator` starting from right.
 
-        Same as [Split String], but splitting is started from right. This has
-        an effect only when `max_split` is given.
-
         Args:
-
             string: The string or bytes to split.
             separator: The delimiter string. Defaults to splitting on whitespace.
             max_split: Maximum number of splits. `-1` means no limit (default).
 
         Returns:
-
             A list of split parts.
+
+        Same as [Split String], but splitting is started from right. This has
+        an effect only when `max_split` is given.
 
         Examples:
 
         ```robotframework
-        ${first}    ${rest} =    Split String    ${string}    -    1
-        ${rest}    ${last} =    Split String From Right    ${string}    -    1
+        *** Test Cases ***
+        Split string from right
+            ${first}    ${rest} =    Split String    ${string}    -    1
+            ${rest}    ${last} =    Split String From Right    ${string}    -    1
         ```
 
         If the first argument is bytes, the second argument is automatically
@@ -1021,17 +1023,17 @@ class String:
         """Splits the given `string` to characters.
 
         Args:
-
             string: The string or bytes to split.
 
         Returns:
-
             A list of single-character strings or bytes.
 
         Example:
 
         ```robotframework
-        @{characters} =    Split String To Characters    ${string}
+        *** Test Cases ***
+        Split string to characters
+            @{characters} =    Split String To Characters    ${string}
         ```
 
         Bytes support is new in Robot Framework 7.4.
@@ -1047,16 +1049,14 @@ class String:
     ) -> "str | bytes":
         """Returns contents of the `string` before the first occurrence of `marker`.
 
-        If the `marker` is not found, whole string is returned.
-
         Args:
-
             string: The string or bytes to search from.
             marker: The marker string to search for.
 
         Returns:
-
             The part of the string before the first `marker`.
+
+        If the `marker` is not found, whole string is returned.
 
         If the first argument is bytes, the second argument is automatically
         converted to bytes as well. This is new in Robot Framework 7.4.
@@ -1074,16 +1074,14 @@ class String:
     ) -> "str | bytes":
         """Returns contents of the `string` after the last occurrence of `marker`.
 
-        If the `marker` is not found, whole string is returned.
-
         Args:
-
             string: The string or bytes to search from.
             marker: The marker string to search for.
 
         Returns:
-
             The part of the string after the last `marker`.
+
+        If the `marker` is not found, whole string is returned.
 
         If the first argument is bytes, the second argument is automatically
         converted to bytes as well. This is new in Robot Framework 7.4.
@@ -1101,6 +1099,14 @@ class String:
     ) -> str:
         """Generates a string with a desired `length` from the given `chars`.
 
+        Args:
+            length: Desired length of the generated string. Can be an integer,
+              a string representation of an integer, or a range like `5-10`.
+            chars: Characters to use when generating the string.
+
+        Returns:
+            The generated random string.
+
         `length` can be given as a number, a string representation of a number,
         or as a range of numbers, such as `5-10`. When a range of values is given
         the range will be selected by random within the range.
@@ -1110,44 +1116,32 @@ class String:
         characters, and it is possible to use special markers
         explained in the table below:
 
-        | Marker | Explanation |
-        | --- | --- |
-        | `[LOWER]` | Lowercase ASCII characters from `a` to `z`. |
-        | `[UPPER]` | Uppercase ASCII characters from `A` to `Z`. |
-        | `[LETTERS]` | Lowercase and uppercase ASCII characters. |
-        | `[NUMBERS]` | Numbers from 0 to 9. |
-        | `[ARABIC]` | Arabic characters from U+0600 to U+06FF (inclusive). |
-        | `[POLISH]` | ASCII characters and Polish diacritical signs. |
-
-        Args:
-
-            length: Desired length of the generated string. Can be an integer,
-                a string representation of an integer, or a range like `5-10`.
-            chars: Characters to use when generating the string.
-
-        Returns:
-
-            The generated random string.
-
-        Raises:
-
-            ValueError: If `length` cannot be converted to an integer.
+        |   Marker    |                   Explanation                        |
+        | ----------- | ---------------------------------------------------- |
+        | `[LOWER]`   | Lowercase ASCII characters from `a` to `z`.          |
+        | `[UPPER]`   | Uppercase ASCII characters from `A` to `Z`.          |
+        | `[LETTERS]` | Lowercase and uppercase ASCII characters.            |
+        | `[NUMBERS]` | Numbers from 0 to 9.                                 |
+        | `[ARABIC]`  | Arabic characters from U+0600 to U+06FF (inclusive). |
+        | `[POLISH]`  | ASCII characters and Polish diacritical signs.       |
 
         Examples:
 
         ```robotframework
-        ${ret} =    Generate Random String
-        ${low} =    Generate Random String    12    [LOWER]
-        ${bin} =    Generate Random String    8    01
-        ${hex} =    Generate Random String    4    [NUMBERS]abcdef
-        ${rnd} =    Generate Random String    5-10    # Generates a string 5 to 10 characters long
+        *** Test Cases ***
+        Generate random string
+            ${ret} =    Generate Random String
+            ${low} =    Generate Random String    12    [LOWER]
+            ${bin} =    Generate Random String    8     01
+            ${hex} =    Generate Random String    4     [NUMBERS]abcdef
+            ${rnd} =    Generate Random String    5-10
         ```
 
         Giving `length` as a range of values is new in Robot Framework 5.0.
-        Support for markers `[POLISH]` and `[ARABIC]` is new in Robot Framework 7.4.
+        Support for `[POLISH]` and `[ARABIC]` markers is new in Robot Framework 7.4.
         """
         length = self._deprecate_empty_string("length", length, 8)
-        if isinstance(length, str) and re.match(r"^\d+-\d+$", length):
+        if isinstance(length, str) and re.fullmatch(r"\d+-\d+", length):
             min_length, max_length = length.split("-")
             length = randint(
                 self._length_to_int(min_length),
@@ -1156,7 +1150,8 @@ class String:
         else:
             length = self._length_to_int(length)
         for name, value in MARKERS.items():
-            chars = chars.replace(name, value)
+            if name in chars:
+                chars = chars.replace(name, value)
         maxi = len(chars) - 1
         return "".join(chars[randint(0, maxi)] for _ in range(length))
 
@@ -1176,28 +1171,28 @@ class String:
     ) -> "str | bytes":
         """Returns a substring from `start` index to `end` index.
 
-        The `start` index is inclusive and `end` is exclusive.
-        Indexing starts from 0, and it is possible to use
-        negative indices to refer to characters from the end.
-
         Args:
-
             string: The string or bytes to get the substring from.
             start: Start index. Defaults to `0`.
             end: End index. Defaults to `None` (end of string).
 
         Returns:
-
             The requested substring.
+
+        The `start` index is inclusive and `end` is exclusive.
+        Indexing starts from 0, and it is possible to use
+        negative indices to refer to characters from the end.
 
         Examples:
 
         ```robotframework
-        ${ignore first} =    Get Substring    ${string}    1
-        ${ignore last} =    Get Substring    ${string}    0    -1
-        ${5th to 10th} =    Get Substring    ${string}    4    10
-        ${first two} =    Get Substring    ${string}    0    1
-        ${last two} =    Get Substring    ${string}    -2
+        *** Test Cases ***
+        Get substring
+            ${ignore first} =    Get Substring    ${string}    1
+            ${ignore last} =     Get Substring    ${string}    0    -1
+            ${5th to 10th} =     Get Substring    ${string}    4    10
+            ${first two} =       Get Substring    ${string}    end=1
+            ${last two} =        Get Substring    ${string}    -2
         ```
 
         Default value with `start` is new in Robot Framework 7.4.
@@ -1214,41 +1209,39 @@ class String:
     ) -> "str | bytes":
         """Remove leading and/or trailing whitespaces from the given string.
 
-        `mode` is either `left` to remove leading characters, `right` to
-        remove trailing characters, `both` (default) to remove the
-        characters from both sides of the string or `none` to return the
-        unmodified string.
-
-        If the optional `characters` is given, it must be a string and the
-        characters in the string will be stripped in the string. Please note,
-        that this is not a substring to be removed but a list of characters,
-        see the example below.
-
         Args:
-
             string: The string or bytes to strip.
             mode: Which end(s) of the string to strip from.
             characters: Optional characters to remove instead of whitespace.
 
         Returns:
-
             The stripped string or bytes.
+
+        `mode` is either `left` to remove leading characters, `right` to
+        remove trailing characters, `both` (default) to remove the
+        characters from both sides of the string or `none` to return the
+        unmodified string.
+
+        This keyword strips whitespace by default, but arbitrary characters
+        can be stripped by using the optional `characters` argument.
+        As the example below illustrates, each character is separately stripped
+        instead of considering `characters` a substring to be stripped.
 
         Examples:
 
         ```robotframework
-        ${stripped}=    Strip String    ${SPACE}Hello${SPACE}
-        Should Be Equal    ${stripped}    Hello
-        ${stripped}=    Strip String    ${SPACE}Hello${SPACE}    mode=left
-        Should Be Equal    ${stripped}    Hello${SPACE}
-        ${stripped}=    Strip String    aabaHelloeee    characters=abe
-        Should Be Equal    ${stripped}    Hello
+        *** Test Cases ***
+        Strip string
+            ${stripped} =    Strip String    ${SPACE}Hello${SPACE}
+            Should Be Equal    ${stripped}    Hello
+            ${stripped} =    Strip String    ${SPACE}Hello${SPACE}    mode=left
+            Should Be Equal    ${stripped}    Hello${SPACE}
+            ${stripped} =    Strip String    aabaHelloeee    characters=abe
+            Should Be Equal    ${stripped}    Hello
         ```
 
         If the first argument is bytes, the `characters` argument is automatically
-        converted to bytes as well.
-
-        Bytes support is new in Robot Framework 7.4.
+        converted to bytes as well. Bytes support is new in Robot Framework 7.4.
         """
         if isinstance(string, bytes) and characters is not None:
             characters = self._ensure_bytes(characters)
@@ -1264,7 +1257,6 @@ class String:
         """Fails if the given `item` is not a string.
 
         Args:
-
             item: The object to verify.
             msg: Optional custom error message.
         """
@@ -1275,7 +1267,6 @@ class String:
         """Fails if the given `item` is a string.
 
         Args:
-
             item: The object to verify.
             msg: Optional custom error message.
         """
@@ -1289,7 +1280,6 @@ class String:
         That keyword should be used instead and this keyword will be deprecated.
 
         Args:
-
             item: The object to verify.
             msg: Optional custom error message.
         """
@@ -1301,7 +1291,6 @@ class String:
         Use [Should Be String] if you want to verify the `item` is a string.
 
         Args:
-
             item: The object to verify.
             msg: Optional custom error message.
         """
@@ -1311,13 +1300,12 @@ class String:
     def should_be_lower_case(self, string: "str | bytes", msg: "str | None" = None):
         """Fails if the given `string` is not in lower case.
 
-        For example, `'string'` and `'with specials!'` would pass, and
-        `'String'`, `''` and `' '` would fail.
-
         Args:
-
             string: The string or bytes to verify.
             msg: Optional custom error message.
+
+        For example, `'string'` and `'with specials!'` would pass, and
+        `'String'`, `''` and `' '` would fail.
 
         See also [Should Be Upper Case] and [Should Be Title Case].
         """
@@ -1327,13 +1315,12 @@ class String:
     def should_be_upper_case(self, string: "str | bytes", msg: "str | None" = None):
         """Fails if the given `string` is not in upper case.
 
-        For example, `'STRING'` and `'WITH SPECIALS!'` would pass, and
-        `'String'`, `''` and `' '` would fail.
-
         Args:
-
             string: The string or bytes to verify.
             msg: Optional custom error message.
+
+        For example, `'STRING'` and `'WITH SPECIALS!'` would pass, and
+        `'String'`, `''` and `' '` would fail.
 
         See also [Should Be Title Case] and [Should Be Lower Case].
         """
@@ -1348,6 +1335,13 @@ class String:
     ):
         """Fails if given `string` is not title.
 
+        Args:
+            string: The string or bytes to verify.
+            msg: Optional custom error message.
+            exclude: Optional words to exclude from title case verification.
+              Can be a list or a comma-separated string. Each word is treated
+              as a regular expression pattern.
+
         `string` is a title cased string if there is at least one upper case
         letter in each word.
 
@@ -1358,32 +1352,16 @@ class String:
         [Convert To Title Case]. See [Convert To Title Case] for title case
         algorithm and reasoning.
 
-        Args:
-
-            string: The string or bytes to verify.
-            msg: Optional custom error message.
-            exclude: Optional words to exclude from title case verification.
-                Can be a list or a comma-separated string. Each word is treated
-                as a regular expression pattern.
-
-        Words can be explicitly excluded with the optional `exclude` argument.
-
-        Explicitly excluded words can be given as a list or as a string with
-        words separated by a comma and an optional space. Excluded words are
-        actually considered to be regular expression patterns, so it is
-        possible to use something like "example[.!?]?" to match the word
-        "example" on it own and also if followed by ".", "!" or "?".
-        See [BuiltIn.Should Match Regexp] for more information about Python
-        regular expression syntax in general and how to use it in Robot
-        Framework data in particular.
-
         See also [Should Be Upper Case] and [Should Be Lower Case].
         """
         if string != self.convert_to_title_case(string, exclude):
             raise AssertionError(msg or f"{string!r} is not title case.")
 
     def _deprecate_empty_string(
-        self, name: str, value: object, instead: object
+        self,
+        name: str,
+        value: object,
+        instead: object,
     ) -> object:
         # Deprecated in RF 7.4. TODO: Remove in RF 9.
         if value == "":
