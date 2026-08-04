@@ -385,8 +385,10 @@ class TestSuite(ModelObject, Generic[KW, TC]):
 
     @property
     def test_count(self) -> int:
-        """Total number of the tests in this suite and in its child suites."""
-        # This is considerably faster than `return len(list(self.all_tests))`.
+        """Total number of the tests in this suite and in its child suites.
+
+        This is considerably faster than `len(list(suite.all_tests))`.
+        """
         return len(self.tests) + sum(suite.test_count for suite in self.suites)
 
     @property
