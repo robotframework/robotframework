@@ -1,6 +1,6 @@
 *** Settings ***
 Resource       atest_resource.robot
-Suite Setup    Run Tests    --log log.html --report report.html    output/testcase_metadata.robot    validate output=True
+Suite Setup    Run Tests    --log log.html --report report.html    parsing/test_metadata.robot    validate output=True
 
 *** Test Cases ***
 Metadata is available in modlel
@@ -22,7 +22,7 @@ Metadata is preserved by Rebot
 
 Metadata is included in JSON
     Copy Previous Outfile
-    Run Tests    -o output.json    output/testcase_metadata.robot    output=${OUTDIR}/output.json    validate output=True
+    Run Tests    -o output.json    parsing/test_metadata.robot    output=${OUTDIR}/output.json    validate output=True
     Validate metadata in model
     Outputs Should Contain Same Data    ${OUTFILE COPY}    ${OUTDIR}/output.json    ignore_timestamps=True
 
