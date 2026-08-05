@@ -13,7 +13,7 @@ from xmlschema import XMLSchema
 
 from robot.api import logger
 from robot.running.arguments import ArgInfo, TypeInfo
-from robot.utils import NOT_SET, SYSTEM_ENCODING
+from robot.utils import NOT_SET
 
 ROOT = Path(__file__).absolute().parent.parent.parent.parent
 
@@ -44,7 +44,7 @@ class LibDocLib:
             cwd=ROOT / "src",
             stdout=PIPE,
             stderr=STDOUT,
-            encoding=SYSTEM_ENCODING,
+            encoding="UTF-8",
             timeout=120,
             text=True,
         )
