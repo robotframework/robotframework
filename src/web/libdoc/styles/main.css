@@ -8,6 +8,8 @@
   --highlighted-background-color: yellow;
   --less-important-text-color: gray;
   --link-color: #0000ee;
+  --hover-tint: #fafafa;
+  --more-hover-color: var(--link-color);
 }
 
 [data-theme="dark"] {
@@ -20,7 +22,15 @@
   --highlighted-background-color: yellow;
   --less-important-text-color: #5b6a6f;
   --link-color: #52adff;
+  --hover-tint: #232a30;
+  --more-hover-color: var(--robot-highlight);
   color-scheme: dark;
+}
+
+html[theme-toggled] body {
+  transition:
+    background 0.3s,
+    color 0.3s;
 }
 
 body {
@@ -101,7 +111,7 @@ a {
   padding-left: 2%;
   padding-right: 2%;
   overflow: auto;
-  max-width: 1000px;
+  max-width: 1060px;
 }
 
 .libdoc-title {
@@ -134,6 +144,32 @@ a {
 #language-container svg {
   width: 20px;
   height: 20px;
+}
+
+#theme-toggle {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  width: 28px;
+  height: 28px;
+  padding: 4px;
+  border: none;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  background: var(--light-background-color);
+  cursor: pointer;
+  z-index: 1000;
+}
+
+#theme-toggle svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+[data-theme="dark"] .dark-mode-icon,
+[data-theme="light"] .light-mode-icon {
+  display: none;
 }
 
 #language-container svg path {
@@ -359,18 +395,30 @@ h4 a:hover {
   -webkit-text-size-adjust: none;
 }
 
+.tags .section-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
 .tag-link {
+  padding: 0.05rem 0.6rem;
+  font-size: 0.85em;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
   cursor: pointer;
 }
 
 .tag-link:hover {
-  text-decoration: underline;
+  background: var(--light-background-color);
 }
 
-.args .arg-kind {
+.arg-kind {
   color: transparent;
   text-shadow: 0 0 0 var(--less-important-text-color);
-  padding: 0;
+  /* Separates the marker from the name. Set here because the template joins
+     them without whitespace. */
+  padding: 0 0.45em 0 0;
   font-size: 0.8em;
 }
 
@@ -442,7 +490,7 @@ h4 a:hover {
   .hamburger-menu:checked ~ .libdoc-overview {
     display: block;
     position: fixed;
-    height: calc(100vh - 44px);
+    height: 100vh;
     width: 100%;
   }
 
@@ -457,36 +505,12 @@ h4 a:hover {
   }
 
   #language-container {
-    display: none;
+    right: 50px;
+    width: 100px;
   }
 
-  input.hamburger-menu:checked ~ #language-container {
-    display: block;
-    top: auto;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: auto;
-    padding: 0.4rem 0.75rem;
-    border-top: 1px solid var(--border-color);
-    background: var(--background-color);
-    z-index: 150;
-  }
-
-  input.hamburger-menu:checked ~ #language-container button {
-    display: none;
-  }
-
-  /* Show language list inline, overriding the .hidden class used by the desktop dropdown */
-  input.hamburger-menu:checked ~ #language-container ul,
-  input.hamburger-menu:checked ~ #language-container ul.hidden {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem 0.75rem;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    background: none;
+  #language-container button {
+    cursor: pointer;
   }
 }
 
@@ -551,17 +575,6 @@ input.switch:checked + .slider::before {
 .keywords {
   display: flex;
   flex-direction: column;
-}
-.kw-overview {
-  display: flex;
-  flex-direction: column;
-  justify-content: start;
-}
-@media only screen and (min-width: 899px) {
-  .kw-overview {
-    max-width: 850px;
-    margin-right: 1.5rem;
-  }
 }
 .kw-docs {
   display: flex;
@@ -633,139 +646,225 @@ h4 {
   text-decoration: none;
   font-weight: bold;
 }
-.args {
+.args,
+.return-info,
+.raises-info {
   min-width: 200px;
 }
 
-/* Shared styles for arguments and return-info tables */
+/* Section contents are indented below their heading when there is room. */
+@media only screen and (min-width: 700px) {
+  .section-content {
+    margin-left: 1.4rem;
+  }
+}
+
+/* Arguments, returns and raises share the same layout: one `tbody` per entry
+   holding the signature row and an optional documentation row below it. */
 .kw-info-table {
   width: 100%;
-  table-layout: fixed;
+  max-width: 1000px;
+  table-layout: auto;
   border-collapse: separate;
   border-spacing: 0;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  overflow: hidden;
   margin-bottom: 1.33rem;
 }
 
 .kw-info-table th,
 .kw-info-table td {
   text-align: left;
-  vertical-align: top;
-  padding: 0.4rem 0.55rem;
+  vertical-align: baseline;
+  padding: 0.4rem 1.5rem 0.4rem 0;
+  overflow-wrap: break-word;
+}
+
+.kw-info-table th:last-child,
+.kw-info-table td:last-child {
+  padding-right: 0;
 }
 
 .kw-info-table thead th {
-  border-bottom: 2px solid var(--border-color);
+  font-size: 0.78em;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--less-important-text-color);
   white-space: nowrap;
-}
-
-.kw-info-table tbody td {
+  padding-bottom: 0.2rem;
   border-bottom: 1px solid var(--border-color);
 }
 
-.kw-info-table tbody tr:last-child td {
+.kw-info-table .arg-group > tr > td {
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Signature and documentation of one entry belong together, so the hairline
+   is drawn below the documentation instead. */
+.kw-info-table .arg-group > tr.arg-row.has-doc > td {
+  border-bottom: none;
+  padding-bottom: 0.15rem;
+}
+
+.kw-info-table .arg-group:last-child > tr:last-child > td {
   border-bottom: none;
 }
 
-.kw-info-table td .doc {
+.kw-info-table .arg-group:hover > tr > td {
+  background: var(--hover-tint);
+}
+
+.kw-info-table .doc-row > td {
+  padding-top: 0;
+  padding-bottom: 0.5rem;
+}
+
+/* Documentation is set apart from the signature by indentation and a bar. */
+.arg-doc-wrap {
+  max-width: 1000px;
+  margin-left: 1.6rem;
+  padding-left: 0.75rem;
+  border-left: 3px solid var(--border-color);
+  transition: border-color 0.15s;
+}
+
+.arg-group:hover .arg-doc-wrap {
+  border-left-color: var(--robot-highlight);
+}
+
+.arg-doc {
   font-size: 0.95em;
 }
 
-.kw-info-table td .doc > p {
+/* Only documentation that really is too long stays clamped. `truncated` is
+   set by the view after measuring, and only then a click opens the modal. */
+.arg-doc.clamped {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.arg-doc.truncated {
+  cursor: pointer;
+}
+
+/* Tighter than the regular documentation formatting, which is loaded after
+   this file and therefore needs to be overridden with a stronger selector. */
+.arg-doc.doc > p {
   margin: 0 0 0.35rem;
 }
 
-.kw-info-table td .doc > p:last-child {
+.arg-doc.doc > p:last-child {
   margin-bottom: 0;
 }
 
-.kw-info-table td .doc > ul,
-.kw-info-table td .doc > ol,
-.kw-info-table td .doc > pre {
+.arg-doc.doc > *:first-child {
+  margin-top: 0;
+}
+
+.arg-doc.doc > ul,
+.arg-doc.doc > ol,
+.arg-doc.doc > pre {
   margin-top: 0.25rem;
   margin-bottom: 0.4rem;
 }
 
-.kw-info-table td .doc code,
-.kw-info-table td .doc .docutils.literal {
-  font-size: 1em;
+.doc-more {
+  display: inline-block;
+  margin-top: 0.15rem;
+  font-size: 0.85em;
+  color: var(--less-important-text-color);
+  cursor: pointer;
 }
 
-@media only screen and (max-width: 899px) {
-  .kw-info-table {
+.arg-doc-wrap:hover .doc-more {
+  color: var(--more-hover-color);
+  font-weight: 600;
+}
+
+/* Argument details shown in the modal. */
+.arg-detail-container {
+  padding: 0.5rem 1.5rem 1.5rem;
+}
+
+.arg-detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.arg-detail-label {
+  margin-right: 0.4rem;
+  color: var(--less-important-text-color);
+}
+
+/* Arguments stack below each other when there is not enough room for columns. */
+@media only screen and (max-width: 640px) {
+  .kw-info-table,
+  .kw-info-table tbody,
+  .kw-info-table tr,
+  .kw-info-table td {
     display: block;
-    overflow-x: auto;
+    width: auto;
+  }
+
+  .kw-info-table thead {
+    display: none;
+  }
+
+  .kw-info-table td {
+    padding: 0;
+  }
+
+  .kw-info-table .arg-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 0.7rem;
+    row-gap: 0.15rem;
+  }
+
+  .kw-info-table .arg-group {
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .kw-info-table .arg-group > tr > td,
+  .kw-info-table .arg-group > tr.arg-row.has-doc > td {
+    border-bottom: none;
+  }
+
+  .kw-info-table .arg-group:last-child {
+    border-bottom: none;
+  }
+
+  .arg-doc-wrap {
+    margin-left: 0.85rem;
+    margin-top: 0.2rem;
   }
 }
 
-/* Arguments table column widths */
-.args .arguments-table .arg-col-name {
-  width: 20%;
-}
-
-.args .arguments-table .arg-col-default {
-  width: 10%;
-}
-
-.args .arguments-table .arg-col-type {
-  width: 24%;
-}
-
-.args .arguments-table .arg-col-doc {
-  width: auto;
-}
-
-/* Importing section has longer argument names than keywords — widen Name, narrow Type */
-#importing-container .args .arguments-table .arg-col-name {
-  width: 30%;
-}
-
-#importing-container .args .arguments-table .arg-col-type {
-  width: 18%;
-}
-
-.args .arguments-table td:nth-child(1),
-.args .arguments-table td:nth-child(2),
-.args .arguments-table td:nth-child(3) {
-  overflow-wrap: break-word;
-}
-
-.args .arguments-table td:nth-child(4) {
-  width: 100%;
-}
-
-/* Return info table column widths */
-.return-info {
-  min-width: 200px;
-}
-
-.return-info .return-info-table .ret-col-type {
-  width: 22%;
-}
-
-.return-info .return-info-table .ret-col-doc {
-  width: auto;
-}
-
-.return-info .return-info-table td {
-  overflow-wrap: break-word;
-}
-
 .enum-type-members span,
-.args span,
-.return-info span,
-.args a {
+.arg-name,
+.arg-default-value,
+.raise-name {
   font-family: monospace;
   background: var(--light-background-color);
+  border-radius: 3px;
   padding: 0 0.1em;
   font-size: 1.1em;
+}
+
+.arg-default-eq {
+  color: var(--less-important-text-color);
+  padding-right: 0.15em;
 }
 
 .arg-type,
 span.type,
 a.type {
+  font-family: monospace;
   font-size: 1em;
   background: none;
   padding: 0 0;
@@ -792,9 +891,12 @@ a.type {
   font-size: 1.1em;
 }
 
-.args span .highlight {
+/* Search matches found by mark.js. */
+mark {
   background: var(--highlighted-background-color);
   color: var(--highlighted-color);
+  border-radius: 2px;
+  padding: 0 1px;
 }
 
 .tags a {

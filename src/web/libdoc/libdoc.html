@@ -82,6 +82,26 @@
     <div id="root"></div>
     <script type="text/x-handlebars-template" id="base-template">
       <div class="base-container">
+        <div id="language-container">
+        </div>
+        <button id="theme-toggle" type="button" title="{{t 'toggleTheme'}}">
+          <svg
+            class="light-mode-icon"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="var(--text-color)"
+          ><rect fill="none" height="24" width="24" /><path
+              d="M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0 c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2 c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1 C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06 c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41 l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41 c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36 c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"
+            /></svg>
+          <svg
+            class="dark-mode-icon"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="var(--text-color)"
+          ><rect fill="none" height="24" width="24" /><path
+              d="M11.01,3.05C6.51,3.54,3,7.36,3,12c0,4.97,4.03,9,9,9c4.63,0,8.45-3.5,8.95-8c0.09-0.79-0.78-1.42-1.54-0.95 c-0.84,0.54-1.84,0.85-2.91,0.85c-2.98,0-5.4-2.42-5.4-5.4c0-1.06,0.31-2.06,0.84-2.89C12.39,3.94,11.9,2.98,11.01,3.05z"
+            /></svg>
+        </button>
         <input
           id="hamburger-menu-input"
           class="hamburger-menu"
@@ -90,7 +110,6 @@
         <span class="hamburger-menu hamburger-menu-1"></span>
         <span class="hamburger-menu hamburger-menu-2"></span>
         <span class="hamburger-menu hamburger-menu-3"></span>
-        <div id="language-container"></div>
         <div class="libdoc-overview"><div id="shortcuts-container"></div></div>
         <div class="libdoc-details">
           <table class="metadata">
@@ -163,42 +182,43 @@
       <div class="keywords">
           {{#each inits}}
           <div class="kw-row">
-            <div class="kw-overview">
-            {{#if this.args.length}}
-                <div class="args">
-                  <h4>{{t "arguments"}}</h4>
-                  <table class="arguments-table kw-info-table">
-                    <colgroup>
-                      <col class="arg-col-name" />
-                      <col class="arg-col-default" />
-                      <col class="arg-col-type" />
-                      <col class="arg-col-doc" />
-                    </colgroup>
-                    <thead>
-                      <tr>
-                        <th>{{t "name"}}</th>
-                        <th>{{t "default"}}</th>
-                        <th>{{t "type"}}</th>
-                        <th>{{t "doc"}}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                    {{#each this.args}}
-                      {{> arg }}
-                    {{/each}}
-                    </tbody>
-                  </table>
+            <div class="keyword-content">
+              {{> argsSection this}}
+              {{#if this.doc}}
+                <div class="kw-docs">
+                  <h4>{{t "doc"}}</h4>
+                  <div class="section-content">
+                    <div class="kwdoc doc">{{{this.doc}}}</div>
+                  </div>
                 </div>
-            {{/if}}
-            {{#if this.doc}}
-              <div class="kw-docs">
-                <h4>{{t "doc"}}</h4>
-                <div class="kwdoc doc">{{{this.doc}}}</div>
-              </div>
-            {{/if}}
+              {{/if}}
+            </div>
           </div>
           {{/each}}
       </div>
+    </script>
+    <script type="text/x-handlebars-template" id="arguments-section-template">
+      {{#if args.length}}
+        <div class="args">
+          <h4>{{t "arguments"}}</h4>
+          <div class="section-content">
+            <table class="arguments-table kw-info-table">
+              <thead>
+                <tr>
+                  <th class="arg-col-name">{{t "name"}}</th>
+                  {{#if (hasDefaults args)}}
+                    <th class="arg-col-default">{{t "default"}}</th>
+                  {{/if}}
+                  <th class="arg-col-type">{{t "type"}}</th>
+                </tr>
+              </thead>
+              {{#each args}}
+                {{> arg this showDefault=(hasDefaults ../args)}}
+              {{/each}}
+            </table>
+          </div>
+        </div>
+      {{/if}}
     </script>
     <script type="text/x-handlebars-template" id="shortcuts-template">
       <div class="keywords-overview">
@@ -279,148 +299,130 @@
               </h2>
          </div>
          <div class="keyword-content">
-            <div class="kw-overview">
-              {{#if args.length}}
-                <div class="args">
-                  <h4>{{t "arguments"}}</h4>
-                  <table class="arguments-table kw-info-table">
-                    <colgroup>
-                      <col class="arg-col-name" />
-                      <col class="arg-col-default" />
-                      <col class="arg-col-type" />
-                      <col class="arg-col-doc" />
-                    </colgroup>
-                    <thead>
-                      <tr>
-                        <th>{{t "name"}}</th>
-                        <th>{{t "default"}}</th>
-                        <th>{{t "type"}}</th>
-                        <th>{{t "doc"}}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {{#each args}}
-                        {{> arg this}}
-                      {{/each}}
+            {{> argsSection this}}
+            {{#if (or (hasVisibleReturnType returnType) returnDoc)}}
+              <div class="return-info">
+                <h4>{{t "returns"}}</h4>
+                <div class="section-content">
+                  <table class="return-info-table kw-info-table">
+                    <tbody class="arg-group">
+                      {{#if (hasVisibleReturnType returnType)}}
+                        <tr class="arg-row{{#if returnDoc}} has-doc{{/if}}">
+                          <td class="arg-cell-type"><span
+                              class="arg-type"
+                            >{{{renderTypeInfo returnType true}}}</span></td>
+                        </tr>
+                      {{/if}}
+                      {{#if returnDoc}}
+                        <tr class="doc-row">
+                          <td>
+                            <div class="arg-doc-wrap">
+                              <div class="doc arg-doc clamped">{{{returnDoc}}}</div>
+                            </div>
+                          </td>
+                        </tr>
+                      {{/if}}
                     </tbody>
                   </table>
                 </div>
-              {{/if}}
-              {{#if (or (hasVisibleReturnType returnType) returnDoc)}}
-              <div class="return-info">
-                <h4>{{t "returns"}}</h4>
-                <table class="return-info-table kw-info-table">
-                  <colgroup>
-                    <col class="ret-col-type" />
-                    <col class="ret-col-doc" />
-                  </colgroup>
-                  <thead>
-                    <tr>
-                      <th>{{t "type"}}</th>
-                      <th>{{t "doc"}}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>
-                        {{#if (hasVisibleReturnType returnType)}}
-                          <span class="arg-type">
-                          {{{renderTypeInfo returnType true}}}
-                          </span>
-                        {{/if}}
-                      </td>
-                      <td>
-                        <div class="doc">{{{returnDoc}}}</div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
               </div>
-              {{/if}}
-              {{#if (dictSize raises)}}
-              <div class="return-info">
+            {{/if}}
+            {{#if (dictSize raises)}}
+              <div class="raises-info">
                 <h4>{{t "raises"}}</h4>
-                <table class="return-info-table kw-info-table">
-                  <colgroup>
-                    <col class="ret-col-type" />
-                    <col class="ret-col-doc" />
-                  </colgroup>
-                  <thead>
-                    <tr>
-                      <th>{{t "type"}}</th>
-                      <th>{{t "doc"}}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
+                <div class="section-content">
+                  <table class="raises-table kw-info-table">
                     {{#each raises}}
-                      <tr>
-                        <td><span class="arg-type">{{@key}}</span></td>
-                        <td><div class="doc">{{{this}}}</div></td>
-                      </tr>
+                      <tbody class="arg-group">
+                        <tr class="arg-row{{#if this}} has-doc{{/if}}">
+                          <td class="arg-cell-name"><span
+                              class="raise-name"
+                            >{{@key}}</span></td>
+                        </tr>
+                        {{#if this}}
+                          <tr class="doc-row">
+                            <td>
+                              <div class="arg-doc-wrap">
+                                <div class="doc arg-doc clamped">{{{this}}}</div>
+                              </div>
+                            </td>
+                          </tr>
+                        {{/if}}
+                      </tbody>
                     {{/each}}
-                  </tbody>
-                </table>
+                  </table>
+                </div>
               </div>
-              {{/if}}
+            {{/if}}
             {{#if tags.length}}
-            <div class="tags">
-              <h4>{{t "tags"}}</h4>
-              <table class="kw-info-table">
-                <tbody>
-                    <tr>
-                      <td>
-                        {{#each tags}}
-                          <span class="tag-link"
-                                title="Show keywords with this tag"
-                          >{{this}}</span>{{#unless @last}},&nbsp;{{/unless}}
-                        {{/each}}
-                      </td>
-                    </tr>
-                </tbody>
-              </table>
-            </div>
-          {{/if}}
-        </div>
+              <div class="tags">
+                <h4>{{t "tags"}}</h4>
+                <div class="section-content">
+                  {{#each tags}}<span
+                      class="tag-link"
+                      title="{{t 'showTagKeywords'}}"
+                    >{{this}}</span>{{/each}}
+                </div>
+              </div>
+            {{/if}}
             {{#if doc}}
               <div class="kw-docs">
                 <h4>{{t "doc"}}</h4>
-                <div class="kwdoc doc">{{{doc}}}</div>
+                <div class="section-content">
+                  <div class="kwdoc doc">{{{doc}}}</div>
+                </div>
               </div>
             {{/if}}
          </div>
       </div>
     </script>
     <script type="text/x-handlebars-template" id="argument-template">
-      {{#ifEquals kind "NAMED_ONLY_MARKER"}}
-      {{else}}
-      {{#ifEquals kind "POSITIONAL_ONLY_MARKER"}}
-      {{else}}
-          <tr>
-            <td>
-              <span class="arg-name {{#if required}}arg-required{{else}}arg-optional{{/if}}" title="{{t 'name'}}">
-                {{#ifEquals kind "VAR_POSITIONAL"}}<span class="arg-kind" title="{{t 'varArgs'}}">*</span>{{/ifEquals}}
-                {{#ifEquals kind "VAR_NAMED"}}<span class="arg-kind" title="{{t 'varNamedArgs'}}">**</span>{{/ifEquals}}
-                {{#ifEquals kind "NAMED_ONLY"}}<span class="arg-kind" title="{{t 'namedOnlyArg'}}">&#x1F3F7;</span>{{/ifEquals}}
-                {{#ifEquals kind "POSITIONAL_ONLY"}}<span class="arg-kind" title="{{t 'posOnlyArg'}}">&#x27F6;</span>{{/ifEquals}}
-                {{name}}
-              </span>
-            </td>
-            <td>
-              {{#ifNotNull defaultValue}}
-                <span class="arg-default-value" title="{{t 'defaultTitle'}}">{{defaultValue}}</span>
-              {{/ifNotNull}}
-            </td>
-            <td>
-              {{#if type}}
-                {{{renderTypeInfo type false}}}
-              {{/if}}
-            </td>
-            <td>
-              <div class="doc">{{{doc}}}</div>
-            </td>
+      {{#unless (isArgMarker kind)}}
+        <tbody class="arg-group">
+          <tr class="arg-row{{#if doc}} has-doc{{/if}}">
+            <td class="arg-cell-name"><span
+                class="arg-name {{#if required}}arg-required{{else}}arg-optional{{/if}}"
+                title="{{t 'name'}}"
+              >{{~#ifEquals kind "VAR_POSITIONAL"~}}<span
+                    class="arg-kind"
+                    title="{{t 'varArgs'}}"
+                  >*</span>{{~/ifEquals~}}{{~#ifEquals kind "VAR_NAMED"~}}<span
+                    class="arg-kind"
+                    title="{{t 'varNamedArgs'}}"
+                  >**</span>{{~/ifEquals~}}{{~#ifEquals kind "NAMED_ONLY"~}}<span
+                    class="arg-kind"
+                    title="{{t 'namedOnlyArg'}}"
+                  >&#x1F3F7;</span>{{~/ifEquals~}}{{~#ifEquals
+                  kind
+                  "POSITIONAL_ONLY"
+                ~}}<span
+                    class="arg-kind"
+                    title="{{t 'posOnlyArg'}}"
+                  >&#x27F6;</span>{{~/ifEquals~}}{{~name~}}</span></td>
+            {{#if showDefault}}
+              <td class="arg-cell-default">{{#ifNotNull defaultValue}}<span
+                    class="arg-default-eq"
+                  >=</span> <span
+                    class="arg-default-value"
+                    title="{{t 'defaultTitle'}}"
+                  >{{defaultValue}}</span>{{/ifNotNull}}</td>
+            {{/if}}
+            <td class="arg-cell-type">{{#if type}}{{{renderTypeInfo
+                type
+                false
+              }}}{{/if}}</td>
           </tr>
-      {{/ifEquals}}
-      {{/ifEquals}}
+          {{#if doc}}
+            <tr class="doc-row">
+              <td colspan="{{#if showDefault}}3{{else}}2{{/if}}">
+                <div class="arg-doc-wrap">
+                  <div class="doc arg-doc clamped">{{{doc}}}</div>
+                </div>
+              </td>
+            </tr>
+          {{/if}}
+        </tbody>
+      {{/unless}}
     </script>
     <script type="text/x-handlebars-template" id="tags-shortcuts-template">
       <option value="" {{#ifEquals selectedTag ""}}selected{{/ifEquals}}>- Show all tags -</option>

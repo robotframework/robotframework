@@ -24,6 +24,8 @@ class View {
   libdoc: RuntimeLibdoc;
   translations: Translations;
   searchTime: number;
+  resizeListenerAdded = false;
+  resizeTimer: NodeJS.Timeout;
 
   constructor(
     libdoc: RuntimeLibdoc,
@@ -76,6 +78,14 @@ class View {
       }
       return Object.keys(context).length;
     });
+    Handlebars.registerHelper("isArgMarker", function (kind: string) {
+      return kind === "NAMED_ONLY_MARKER" || kind === "POSITIONAL_ONLY_MARKER";
+    });
+    Handlebars.registerHelper("hasDefaults", function (args) {
+      return (
+        Array.isArray(args) && args.some((arg) => arg.defaultValue !== null)
+      );
+    });
     Handlebars.registerHelper(
       "renderTypeInfo",
       function (argType: ArgType, isReturnType: boolean) {
@@ -124,6 +134,7 @@ class View {
       },
     );
     this.registerPartial("arg", "argument-template");
+    this.registerPartial("argsSection", "arguments-section-template");
     this.registerPartial("keyword", "keyword-template");
     this.registerPartial("dataType", "data-type-template");
   }
@@ -140,13 +151,34 @@ class View {
     this.initTagSearch();
     this.initHashEvents();
     this.initLanguageMenu();
+    this.initThemeToggle();
     setTimeout(() => {
       if (this.storage.get("keyword-wall") === "open") {
         this.openKeywordWall();
       }
     }, 0);
-    createModal();
+    if (!document.getElementById("modal-background")) {
+      createModal();
+    }
     this.addCopyButtons();
+    requestAnimationFrame(() => this.updateDocClamping());
+    if (!this.resizeListenerAdded) {
+      this.resizeListenerAdded = true;
+      window.addEventListener("resize", () => {
+        clearTimeout(this.resizeTimer);
+        this.resizeTimer = setTimeout(() => this.updateDocClamping(), 200);
+      });
+      window
+        .matchMedia("(prefers-color-scheme: dark)")
+        .addEventListener("change", ({ matches }) => {
+          if (this.storage.get("theme") === undefined && !this.libdoc.theme) {
+            document.documentElement.setAttribute(
+              "data-theme",
+              matches ? "dark" : "light",
+            );
+          }
+        });
+    }
   }
 
   private renderTemplates() {
@@ -239,6 +271,100 @@ class View {
   private renderImporting() {
     this.renderLibdocTemplate("importing");
     this.registerTypeDocHandlers("#importing-container");
+    this.updateDocClamping();
+  }
+
+  /**
+   * Documentation is clamped to a few lines with CSS. Only documentation that
+   * really is too long gets the `more...` link and becomes clickable.
+   */
+  private updateDocClamping() {
+    document.querySelectorAll(".arg-doc-wrap").forEach((wrap) => {
+      const doc = wrap.querySelector(".arg-doc") as HTMLElement | null;
+      if (!doc) {
+        return;
+      }
+      wrap.querySelectorAll(".doc-more").forEach((more) => more.remove());
+      doc.classList.add("clamped");
+      doc.classList.remove("truncated");
+      doc.onclick = null;
+      if (doc.scrollHeight <= doc.clientHeight + 1) {
+        doc.classList.remove("clamped");
+        return;
+      }
+      doc.classList.add("truncated");
+      const more = document.createElement("span");
+      more.classList.add("doc-more");
+      more.textContent = this.translations.translate("more");
+      more.title = this.translations.translate("argInfoDialog");
+      wrap.appendChild(more);
+      const showDetails = (event: Event) => {
+        event.stopPropagation();
+        this.showArgDocModal(wrap as HTMLElement);
+      };
+      doc.onclick = showDetails;
+      more.onclick = showDetails;
+    });
+  }
+
+  private showArgDocModal(wrap: HTMLElement) {
+    const group = wrap.closest("tbody");
+    const doc = wrap.querySelector(".arg-doc");
+    if (!group || !doc) {
+      return;
+    }
+    const container = document.createElement("div");
+    container.classList.add("arg-detail-container");
+
+    const heading = document.createElement("h2");
+    heading.classList.add("arg-detail-name");
+    const name = group.querySelector(".arg-name, .raise-name");
+    if (name) {
+      heading.appendChild(name.cloneNode(true));
+    } else {
+      heading.textContent = this.translations.translate("returns");
+    }
+    container.appendChild(heading);
+
+    const meta = document.createElement("div");
+    meta.classList.add("arg-detail-meta");
+    const defaultValue = group.querySelector(".arg-default-value");
+    if (defaultValue) {
+      meta.appendChild(this.argDetailItem("default", defaultValue.outerHTML));
+    }
+    const type = group.querySelector(".arg-cell-type");
+    if (type?.textContent?.trim()) {
+      meta.appendChild(this.argDetailItem("type", type.innerHTML));
+    }
+    if (meta.childElementCount) {
+      container.appendChild(meta);
+    }
+
+    const fullDoc = doc.cloneNode(true) as HTMLElement;
+    fullDoc.classList.remove("clamped", "truncated");
+    container.appendChild(fullDoc);
+    showModal(container);
+  }
+
+  private argDetailItem(labelKey: string, html: string) {
+    const item = document.createElement("span");
+    item.classList.add("arg-detail-item");
+    const label = document.createElement("span");
+    label.classList.add("arg-detail-label");
+    label.textContent = `${this.translations.translate(labelKey)}:`;
+    item.appendChild(label);
+    const value = document.createElement("span");
+    value.classList.add("arg-detail-value");
+    value.innerHTML = html;
+    // Type links open the data type modal and cannot be nested into this one.
+    value.querySelectorAll("a.type").forEach((link) => {
+      const plain = document.createElement("span");
+      plain.classList.add("type");
+      plain.textContent = link.textContent;
+      link.replaceWith(plain);
+    });
+    item.appendChild(value);
+    return item;
   }
 
   private renderShortcuts() {
@@ -278,6 +404,7 @@ class View {
       });
     });
     this.registerTypeDocHandlers("#keywords-container");
+    this.updateDocClamping();
     document.getElementById("keyword-statistics-header")!.innerText =
       "" + this.libdoc.keywords.length;
     this.addCopyButtons();
@@ -288,6 +415,16 @@ class View {
   }
 
   private getTheme() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has("theme")) {
+      const urlTheme = params.get("theme") === "dark" ? "dark" : "light";
+      this.storage.set("theme", urlTheme);
+      return urlTheme;
+    }
+    const stored = this.storage.get("theme");
+    if (stored === "dark" || stored === "light") {
+      return stored as string;
+    }
     if (this.libdoc.theme != null) {
       return this.libdoc.theme;
     } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
@@ -322,6 +459,20 @@ class View {
       });
       block.appendChild(btn);
     });
+  }
+
+  private initThemeToggle() {
+    document
+      .getElementById("theme-toggle")
+      ?.addEventListener("click", () => this.toggleTheme());
+  }
+
+  private toggleTheme() {
+    const current = document.documentElement.getAttribute("data-theme");
+    const theme = current === "dark" ? "light" : "dark";
+    this.storage.set("theme", theme);
+    document.documentElement.setAttribute("theme-toggled", "");
+    document.documentElement.setAttribute("data-theme", theme);
   }
 
   private scrollToHash() {
@@ -400,17 +551,20 @@ class View {
     }
     if (include.tags) {
       const matches = document.querySelectorAll(
-        "#keywords-container .match .tags a, #tags-shortcuts-container .match .tags a",
+        "#keywords-container .match .tags .tag-link",
       );
       if (include.tagsExact) {
+        // Filtering by a tag highlights that tag in every matching keyword the
+        // same way search results are highlighted.
         const filtered: Array<Element> = [];
         matches.forEach((elem) => {
-          if (elem.textContent?.toUpperCase() == string.toUpperCase())
+          if (elem.textContent?.trim().toUpperCase() == string.toUpperCase()) {
             filtered.push(elem);
+          }
         });
         new Mark(filtered).mark(string);
       } else {
-        new Mark(matches).mark(string);
+        new Mark(Array.from(matches)).mark(string);
       }
     }
   }
