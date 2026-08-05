@@ -68,15 +68,12 @@ Run And Return RC And Output
     Should Be Equal    ${output}    hello
 
 Run Non-ascii Command Returning Non-ascii Output
-    ${cmd} =    Set Variable If    sys.version[0] == '2' or os.sep == '/'
-    ...    echo Hyvää üötä    python -c "print('Hyvää üötä')"
-    ${output} =    Run    ${cmd}
+    ${output} =    Run    python -c "print('Hyvää üötä')"
     Should Be Equal    ${output.strip()}    Hyvää üötä
 
 Trailing Newline Is Removed Automatically
     ${output} =    Run    echo hello
-    Log    ${output.__repr__()}
-    Should Be True    '${output}'[-1] not in ['\\n', '\\r']
+    Should Be True    $output[-1] not in ('\\n', '\\r')
 
 It Is Possible To Start Background Processes
     ${output} =    Run    ${PROG} 0 foo bar&

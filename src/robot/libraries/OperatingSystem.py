@@ -18,6 +18,7 @@ import glob
 import os
 import re
 import shutil
+import subprocess
 import tempfile
 import time
 from datetime import datetime, timedelta
@@ -28,7 +29,7 @@ from robot.api.types import Secret
 from robot.utils import (
     abspath, ConnectionCache, console_decode, CONSOLE_ENCODING, del_env_var,
     get_env_var, get_env_vars, get_time, parse_time, plural_or_not as s, PY_VERSION,
-    safe_str, secs_to_timestr, seq2str, set_env_var, WINDOWS
+    safe_str, secs_to_timestr, seq2str, set_env_var
 )
 from robot.version import get_version
 
@@ -220,11 +221,16 @@ class OperatingSystem:
         return self._run(command)
 
     def _run(self, command: str) -> "tuple[int, str]":
-        process = _Process(command)
-        self._info(f"Running command '{process}'.")
-        stdout = process.read()
-        rc = process.close()
-        return rc, stdout
+        self._info(f"Running command '{command}'.")
+        process = subprocess.Popen(
+            command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        )
+        output, _ = process.communicate()
+        output = console_decode(output, "SYSTEM").replace("\r\n", "\n")
+        if output.endswith("\n"):
+            output = output[:-1]
+        rc = process.returncode % 256
+        return rc, output
 
     def get_file(
         self,
@@ -1515,47 +1521,3 @@ class OperatingSystem:
 
     def _log(self, msg: str, level: logger.LogLevel):
         logger.write(msg, level)
-
-
-class _Process:
-
-    def __init__(self, command):
-        self._command = self._process_command(command)
-        self._process = os.popen(self._command)
-
-    def __str__(self):
-        return self._command
-
-    def read(self):
-        return self._process_output(self._process.read())
-
-    def close(self):
-        try:
-            rc = self._process.close()
-        except IOError:  # Has occurred sometimes in Windows
-            return 255
-        if rc is None:
-            return 0
-        # In Windows return code is value returned by
-        # command (can be almost anything)
-        # In other OS:
-        #   Return code must be converted with 'rc >> 8' and it is
-        #   between 0-255 after conversion
-        if WINDOWS:
-            return rc % 256
-        return rc >> 8
-
-    def _process_command(self, command):
-        if ">" not in command:
-            if command.endswith("&"):
-                command = command[:-1] + " 2>&1 &"
-            else:
-                command += " 2>&1"
-        return command
-
-    def _process_output(self, output):
-        if "\r\n" in output:
-            output = output.replace("\r\n", "\n")
-        if output.endswith("\n"):
-            output = output[:-1]
-        return console_decode(output)

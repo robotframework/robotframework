@@ -140,8 +140,7 @@ class ProcessResult:
     def _format_output(self, output):
         if output is None:
             return None
-        output = console_decode(output, self._output_encoding)
-        output = output.replace("\r\n", "\n")
+        output = console_decode(output, self._output_encoding).replace("\r\n", "\n")
         if output.endswith("\n"):
             output = output[:-1]
         return output

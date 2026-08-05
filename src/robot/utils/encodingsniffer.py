@@ -56,6 +56,8 @@ def _get_encoding(platform_getters, default):
 
 
 def _get_python_system_encoding():
+    if sys.flags.utf8_mode:
+        return "UTF-8"
     if PY_VERSION >= (3, 11):
         return locale.getencoding()
     # ValueError occurs with PyPy 3.10 if language config is invalid.
