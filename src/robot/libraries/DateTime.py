@@ -44,8 +44,9 @@ Dates can be given to and received from keywords in different formats:
 
 - [Timestamp]
 - [Custom timestamp]
-- [Python datetime]
-- [Python date]
+- [TODAY and NOW]
+- [datetime object]
+- [date object]
 - [Epoch time]
 
 Input format is in most cases determined automatically. An exception is that
@@ -101,7 +102,24 @@ Custom timestamps
     Should Be Equal    ${date}    28.05.2014
 ```
 
-## Python datetime
+## `TODAY` and `NOW`
+
+Strings `TODAY` and `NOW` (case-insensitive) can be used to get the current
+date automatically without using the [Get Current Date] keyword.
+
+```robotframework
+*** Variables ***
+${ROBOCON 2027}    2027-03-08
+
+*** Test Cases ***
+Days to RoboCon 2027
+    ${delta} =    Subtract Date From Date    ${ROBOCON 2027}    TODAY    result_format=timedelta
+    Log    It is ${delta.days} days to RoboCon 2027!
+```
+
+Support for `TODAY` and `NOW` is new in Robot Framework 7.5.
+
+## `datetime` object
 
 Python's standard [datetime] objects can be used both in input and output.
 In input, they are recognized automatically, and in output it is possible
@@ -126,7 +144,7 @@ Datetine
     Should Be Equal    ${datetime.microsecond}    123000    type=int
 ```
 
-## Python date
+## `date` object
 
 Python's standard [date] objects are automatically recognized in input
 the same way as [datetime] objects are. In output, it is possible to get
@@ -721,6 +739,8 @@ class Date:
         timestamp: str,
         input_format: "str | None",
     ) -> datetime.datetime:
+        if timestamp.upper() in ("TODAY", "NOW"):
+            return datetime.datetime.now()
         if not input_format:
             timestamp = self._normalize_timestamp(timestamp)
             input_format = "%Y-%m-%d %H:%M:%S.%f"
