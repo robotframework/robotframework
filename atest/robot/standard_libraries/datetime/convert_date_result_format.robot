@@ -1,25 +1,28 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/datetime/convert_date_result_format.robot
-Resource         atest_resource.robot
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/datetime/convert_date_result_format.robot
+Resource          atest_resource.robot
 
 *** Test Cases ***
-Should convert to timestamp
+Timestamp
     Check Test Case    ${TESTNAME}
 
-Timestamp should contain millis rounded to three digits
+Milliseconds handling with timestamps
     Check Test Case    ${TESTNAME}
 
-Should convert to timestamp with format
+Custom timestamp
     Check Test Case    ${TESTNAME}
 
-Should convert to epoch
+Datetime
     Check Test Case    ${TESTNAME}
 
-Should convert to datetime
+Date
     Check Test Case    ${TESTNAME}
 
-Should exclude milliseconds
+Epoch
     Check Test Case    ${TESTNAME}
 
-Epoch time is float regardless are millis included or not
+Excluding milliseconds
+    Check Test Case    ${TESTNAME}
+
+Epoch is float regardless are millis included or not
     Check Test Case    ${TESTNAME}

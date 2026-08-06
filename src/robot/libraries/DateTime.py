@@ -40,19 +40,23 @@ defined by this library.
 
 # Date formats
 
-Dates can be given to and received from keywords in [Timestamp], [Custom
-timestamp], [Python datetime] and [Epoch time] formats. These formats are
-discussed thoroughly in subsequent sections.
+Dates can be given to and received from keywords in different formats:
+
+- [Timestamp]
+- [Custom timestamp]
+- [Python datetime]
+- [Python date]
+- [Epoch time]
 
 Input format is in most cases determined automatically. An exception is that
-when using [custom timestamps], the format must be specified using the
-`date_format` argument. Default result format is timestamp, but it can
-be overridden using the `result_format` argument.
+when using a [custom timestamp], the format must be specified using the
+`date_format` argument. The default result format is [timestamp], but it can
+be overridden using the `result_format` argument like `result_format=datetime`.
 
 ## Timestamp
 
 If a date is given as a string, it is always considered to be a timestamp.
-If custom format is given using the `date_format` argument, the timestamp
+If a custom format is not given using the `date_format` argument, the timestamp
 is expected to be in [ISO 8601] like format `YYYY-MM-DD hh:mm:ss.mmmmmm`,
 where any non-digit character can be used as a separator or separators can be
 omitted altogether. Additionally, only the date part is mandatory, all missing
@@ -124,16 +128,13 @@ Datetine
 
 ## Python date
 
-Python's standard [date] objects are automatically recognized in input starting
-from Robot Framework 7.0. They are not supported in output, but `datetime`
-objects can be converted to `date` objects if needed:
+Python's standard [date] objects are automatically recognized in input
+the same way as [datetime] objects are. In output, it is possible to get
+[date] objects by using `result_format=date`. Possible non-zero time
+components are simply discarded.
 
-```robotframework
-*** Test Cases ***
-Date
-    ${datetime} =    Convert Date    2023-12-18 11:10:42    datetime
-    Log    ${datetime.date()}    # The time part is ignored.
-```
+Support for [date] objects in input and output is new Robot Framework 7.0
+and Robot Framework 7.5, respectively.
 
 ## Epoch time
 
@@ -384,7 +385,7 @@ __all__ = [
 ROBOT_LIBRARY_DOC_FORMAT = "Markdown"
 
 DateInput = Union[datetime.datetime, datetime.date, float, int, str]
-DateOutput = Union[datetime.datetime, float, str]
+DateOutput = Union[datetime.datetime, datetime.date, float, str]
 DateFormat = Union[Literal["timestamp", "datetime", "epoch"], str]
 TimeInput = Union[datetime.timedelta, float, int, str]
 TimeOutput = Union[datetime.timedelta, float, str]
@@ -745,6 +746,8 @@ class Date:
             return self._convert_to_timestamp(dt, millis)
         if format == "datetime":
             return dt
+        if format == "date":
+            return dt.date()
         if format == "epoch":
             return self._convert_to_epoch(dt)
         raise ValueError(f"Unknown format '{format}'.")
