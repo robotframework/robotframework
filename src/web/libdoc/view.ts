@@ -6,6 +6,11 @@ import { createModal, showModal } from "./modal";
 import { RuntimeLibdoc, ArgType } from "./types";
 import { htmlEscape, regexpEscape, delay } from "./util";
 
+// Feather Icons copy (MIT licence, https://feathericons.com)
+const CLIPBOARD_SVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+// Heroicons check (MIT licence, https://heroicons.com)
+const CHECK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>`;
+
 interface MatchInclude {
   args?: boolean;
   doc?: boolean;
@@ -58,7 +63,11 @@ class View {
     Handlebars.registerHelper(
       "hasVisibleReturnType",
       function (returnType: ArgType | null | undefined) {
-        return returnType !== null && returnType !== undefined && returnType.name !== "None";
+        return (
+          returnType !== null &&
+          returnType !== undefined &&
+          returnType.name !== "None"
+        );
       },
     );
     Handlebars.registerHelper("dictSize", function (context) {
@@ -137,6 +146,7 @@ class View {
       }
     }, 0);
     createModal();
+    this.addCopyButtons();
   }
 
   private renderTemplates() {
@@ -270,6 +280,7 @@ class View {
     this.registerTypeDocHandlers("#keywords-container");
     document.getElementById("keyword-statistics-header")!.innerText =
       "" + this.libdoc.keywords.length;
+    this.addCopyButtons();
   }
 
   private setTheme() {
@@ -284,6 +295,33 @@ class View {
     } else {
       return "light";
     }
+  }
+
+  private addCopyButtons() {
+    if (!navigator.clipboard) return;
+    document.querySelectorAll<HTMLElement>(".doc .code").forEach((block) => {
+      if (block.querySelector(".code-copy-btn")) return;
+      const btn = document.createElement("button");
+      btn.className = "code-copy-btn";
+      btn.title = this.translations.translate("copyCode");
+      btn.innerHTML = CLIPBOARD_SVG;
+      btn.addEventListener("click", () => {
+        const pre = block.querySelector("pre");
+        if (!pre) return;
+        navigator.clipboard
+          .writeText(pre.innerText)
+          .then(() => {
+            btn.innerHTML = CHECK_SVG;
+            setTimeout(() => {
+              btn.innerHTML = CLIPBOARD_SVG;
+            }, 1500);
+          })
+          .catch(() => {
+            btn.innerHTML = CLIPBOARD_SVG;
+          });
+      });
+      block.appendChild(btn);
+    });
   }
 
   private scrollToHash() {

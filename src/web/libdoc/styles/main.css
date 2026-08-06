@@ -778,6 +778,35 @@ a.type {
   text-decoration: none;
   padding: 0 0.1em;
 }
+/* Code blocks need a stacking context for the absolutely-positioned copy button */
+.doc .code {
+  position: relative;
+}
+
+.code-copy-btn {
+  background: var(--light-background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  color: var(--less-important-text-color);
+  cursor: pointer;
+  height: 1.6rem;
+  padding: 0.15rem;
+  position: absolute;
+  right: 0.3rem;
+  top: 0.3rem;
+  width: 1.6rem;
+}
+
+.code-copy-btn:hover {
+  color: var(--text-color);
+}
+
+.code-copy-btn svg {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
 .footer {
   font-size: 0.9em;
 }
