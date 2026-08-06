@@ -47,7 +47,7 @@ Library argument matching resource extension when import fails
 
 Override name and version
     --name MyName --version 42 String ${OUTHTML}    HTML    MyName    42
-    -n MyName -v 42 -f xml BuiltIn ${OUTHTML}       XML     MyName    42
+    -n MyName -v 42 -f xml BuiltIn ${OUTHTML}       XML     MyName    42    docformat=MARKDOWN
 
 Missing destination subdirectory is created
     String ${NEWDIR_HTML}        HTML    String    path=${NEWDIR_HTML}
