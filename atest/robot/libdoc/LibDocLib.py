@@ -13,7 +13,7 @@ from xmlschema import XMLSchema
 
 from robot.api import logger
 from robot.running.arguments import ArgInfo, TypeInfo
-from robot.utils import NOT_SET
+from robot.utils import NOT_SET, SYSTEM_ENCODING
 
 ROOT = Path(__file__).absolute().parent.parent.parent.parent
 
@@ -39,12 +39,16 @@ class LibDocLib:
         cmd = self.libdoc + self._split_args(args)
         cmd[-1] = cmd[-1].replace("/", os.sep)
         logger.info(" ".join(cmd))
+        if self.interpreter.version_info >= (3, 15):
+            encoding = "UTF-8"
+        else:
+            encoding = SYSTEM_ENCODING
         result = run(
             cmd,
             cwd=ROOT / "src",
             stdout=PIPE,
             stderr=STDOUT,
-            encoding="UTF-8",
+            encoding=encoding,
             timeout=120,
             text=True,
         )
