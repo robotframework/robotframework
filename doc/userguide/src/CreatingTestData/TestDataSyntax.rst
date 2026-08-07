@@ -384,6 +384,63 @@ are parsed by default when executing a directory. Parsing files with
 the :file:`.md` or :file:`.markdown` extension `can be enabled`__ by using
 either :option:`--parseinclude` or :option:`--extension` option.
 
+Living documentation
+''''''''''''''''''''
+
+In test automation, the term *Living documentation* is commonly used when
+acceptance tests are written in such a way that they can be used as an
+executable specification. The executable specification acts as the single
+source of truth from which both the specification document and the test
+automation is derived. When the specification changes, the test changes,
+implying a compliant system when the tests pass.
+
+A common issue is that test automation requires files to be in the tool's
+syntax, but the people responsible for the specification typically don't work
+well with syntax-rich files. They prefer regular documents. With Robot
+Framework's Markdown support, we bring these two worlds together in a
+single file.
+
+.. sourcecode:: markdown
+
+   # Feature title
+
+   Free text introducing the feature. Include pictures, if you like.
+
+   <!---
+   Comments can be added in blocks like this. Text inside these blockes is not
+   rendered. We can use comments to hide the syntax parts needed for Robot
+   Framework. We keep only the test cases visible as code blocks. These are
+   the formal part of the specification.
+   -->
+
+   <!---
+   ```robotframework
+   *** Settings ***
+   Resource   my_keywords.robot
+
+   *** Test Cases ***
+   ```
+   -->
+
+   ## Business Rule 1
+
+   In Specification by Example, test cases are usually grouped per business
+   rule. Example scenarios illustrate the behavior of the rule. The scenarios
+   are what links the specification document and Robot Framework together. The
+   scenarios stay visible to both sides and are not inside a comment block.
+
+   ```robotframework
+   Scenario 1
+      No operation
+   ```
+
+   Some additional in-between explanation.
+
+   ```robotframework
+   Scenario 2
+      No operation
+   ```
+
 __ `Selecting files to parse`_
 
 .. note:: Using Markdown_ files with Robot Framework does not require any
