@@ -1,7 +1,7 @@
 const DATA: Libdoc = {
   specversion: 3,
   name: "Browser",
-  doc: "<p>Browser library is a browser automation library for Robot Framework.</p>\n<p>This is the keyword documentation for Browser library. For information about installation, support, and more please visit the <a href=\"https://github.com/MarketSquare/robotframework-playwright\">project pages</a>. For more information about Robot Framework itself, see <a href=\"https://robotframework.org\">robotframework.org</a>.</p>\n<p>Browser library uses <a href=\"https://github.com/microsoft/playwright\">Playwright Node module</a> to automate <a href=\"https://www.chromium.org/Home\">Chromium</a>, <a href=\"https://www.mozilla.org/en-US/firefox/new/\">Firefox</a> and <a href=\"https://webkit.org/\">WebKit</a> with a single library.</p>\n<h3 id=\"Table of contents\">Table of contents</h3>\n<ul>\n<li><a href=\"#Browser%2C%20Context%20and%20Page\">Browser, Context and Page</a></li>\n<ul>\n<li><a href=\"#Browsers\">Browsers</a></li>\n<li><a href=\"#Contexts\">Contexts</a></li>\n<li><a href=\"#Pages\">Pages</a></li>\n</ul>\n<li><a href=\"#Automatic%20page%20and%20context%20closing\">Automatic page and context closing</a></li>\n<li><a href=\"#Finding%20elements\">Finding elements</a></li>\n<ul>\n<li><a href=\"#Explicit%20Selector%20Strategy\">Explicit Selector Strategy</a></li>\n<li><a href=\"#Implicit%20Selector%20Strategy\">Implicit Selector Strategy</a></li>\n<li><a href=\"#CSS\">CSS</a></li>\n<li><a href=\"#XPath\">XPath</a></li>\n<li><a href=\"#Text\">Text</a></li>\n<li><a href=\"#Cascaded%20selector%20syntax\">Cascaded selector syntax</a></li>\n<li><a href=\"#Examples\">Examples</a></li>\n<li><a href=\"#iFrames\">iFrames</a></li>\n<li><a href=\"#WebComponents%20and%20Shadow%20DOM\">WebComponents and Shadow DOM</a></li>\n<li><a href=\"#Element%20reference%20syntax\">Element reference syntax</a></li>\n</ul>\n<li><a href=\"#Assertions\">Assertions</a></li>\n<ul>\n<li><a href=\"#The%20'then'%20or%20'evaluate'%20closure\">The 'then' or 'evaluate' closure</a></li>\n<li><a href=\"#Examples\">Examples</a></li>\n</ul>\n<li><a href=\"#Implicit%20waiting\">Implicit waiting</a></li>\n<li><a href=\"#Experimental%3A%20Re-using%20same%20node%20process\">Experimental: Re-using same node process</a></li>\n<li><a href=\"#Scope%20Setting\">Scope Setting</a></li>\n<li><a href=\"#Extending%20Browser%20library%20with%20a%20JavaScript%20module\">Extending Browser library with a JavaScript module</a></li>\n<ul>\n<li><a href=\"#Example%20module.js\">Example module.js</a></li>\n<li><a href=\"#Example%20Robot%20Framework%20side\">Example Robot Framework side</a></li>\n<li><a href=\"#Example%20module%20keyword%20for%20custom%20selector%20registering\">Example module keyword for custom selector registering</a></li>\n</ul>\n<li><a href=\"#Plugins\">Plugins</a></li>\n<li><a href=\"#Language\">Language</a></li>\n<ul>\n<li><a href=\"#Translation%20file\">Translation file</a></li>\n<li><a href=\"#Generating%20template%20translation%20file\">Generating template translation file</a></li>\n</ul>\n<li><a href=\"#ENVIRONMENT%20VARIABLES\">ENVIRONMENT VARIABLES</a></li>\n<li><a href=\"#Experimental%3A%20Provide%20parameters%20to%20node%20process\">Experimental: Provide parameters to node process</a></li>\n</ul>\n<h2 id=\"Browser, Context and Page\">Browser, Context and Page</h2>\n<p>Browser library works with three different layers that build on each other: <b>Browser</b>, <b>Context</b> and <b>Page</b>.</p>\n<h3 id=\"Browsers\">Browsers</h3>\n<p>A <b>browser</b> can be started with one of the three different engines Chromium, Firefox or Webkit.</p>\n<h4 id=\"Supported Browsers\">Supported Browsers</h4>\n<table border=\"1\">\n<tr>\n<td>Browser</td>\n<td>Browser with this engine</td>\n</tr>\n<tr>\n<td><code>chromium</code></td>\n<td>Google Chrome, Microsoft Edge (since 2020), Opera</td>\n</tr>\n<tr>\n<td><code>firefox</code></td>\n<td>Mozilla Firefox</td>\n</tr>\n<tr>\n<td><code>webkit</code></td>\n<td>Apple Safari, Mail, AppStore on MacOS and iOS</td>\n</tr>\n</table>\n<p>Since <a href=\"https://github.com/microsoft/playwright\">Playwright</a> comes with a pack of builtin binaries for all browsers, no additional drivers e.g. geckodriver are needed.</p>\n<p>All these browsers that cover more than 85% of the world wide used browsers, can be tested on Windows, Linux and MacOS. There is no need for dedicated machines anymore.</p>\n<p>A browser process is started <code>headless</code> (without a GUI) by default. Run <a href=\"#New%20Browser\" title=\"&quot;New Browser&quot; keyword\" class=\"name\">New Browser</a> with specified arguments if a browser with a GUI is requested or if a proxy has to be configured. A browser process can contain several contexts.</p>\n<h3 id=\"Contexts\">Contexts</h3>\n<p>A <b>context</b> corresponds to a set of independent incognito pages in a browser that share cookies, sessions or profile settings. Pages in two separate contexts do not share cookies, sessions or profile settings. Compared to Selenium, these do <b>not</b> require their own browser process. To get a clean environment a test can just open a new context. Due to this new independent browser sessions can be opened with Robot Framework Browser about 10 times faster than with Selenium by just opening a <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a> within the opened browser.</p>\n<p>To make pages in the same suite share state, use the same context by opening the context with <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a> on suite setup.</p>\n<p>The context layer is useful e.g. for testing different user sessions on the same webpage without opening a whole new browser context. Contexts can also have detailed configurations, such as geo-location, language settings, the viewport size or color scheme. Contexts do also support http credentials to be set, so that basic authentication can also be tested. To be able to download files within the test, the <code>acceptDownloads</code> argument must be set to <code>True</code> in <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a> keyword. A context can contain different pages.</p>\n<h3 id=\"Pages\">Pages</h3>\n<p>A <b>page</b> does contain the content of the loaded web site and has a browsing history. Pages and browser tabs are the same.</p>\n<p>Typical usage could be:</p>\n<pre>\n<b>*</b> Test Cases <b>*</b>\nStarting a browser with a page\n    New Browser    chromium    headless=false\n    New Context    viewport={'width': 1920, 'height': 1080}\n    New Page       <a href=\"https://marketsquare.github.io/robotframework-browser/Browser.html\">https://marketsquare.github.io/robotframework-browser/Browser.html</a>\n    Get Title      ==    Browser\n</pre>\n<p>The <a href=\"#Open%20Browser\" title=\"&quot;Open Browser&quot; keyword\" class=\"name\">Open Browser</a> keyword opens a new browser, a new context and a new page. This keyword is useful for quick experiments or debugging sessions.</p>\n<p>When a <a href=\"#New%20Page\" title=\"&quot;New Page&quot; keyword\" class=\"name\">New Page</a> is called without an open browser, <a href=\"#New%20Browser\" title=\"&quot;New Browser&quot; keyword\" class=\"name\">New Browser</a> and <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a> are executed with default values first.</p>\n<p>Each Browser, Context and Page has a unique ID with which they can be addressed. A full catalog of what is open can be received by <a href=\"#Get%20Browser%20Catalog\" title=\"&quot;Get Browser Catalog&quot; keyword\" class=\"name\">Get Browser Catalog</a> as a dictionary.</p>\n<h2 id=\"Automatic page and context closing\">Automatic page and context closing</h2>\n<p>Controls when contexts and pages are closed during the test execution.</p>\n<p>If automatic closing level is <span class=\"name\">TEST</span>, contexts and pages that are created during a single test are automatically closed when the test ends. Contexts and pages that are created during suite setup are closed when the suite teardown ends.</p>\n<p>If automatic closing level is <span class=\"name\">SUITE</span>, all contexts and pages that are created during the test suite are closed when the suite teardown ends.</p>\n<p>If automatic closing level is <span class=\"name\">MANUAL</span>, nothing is closed automatically while the test execution is ongoing. All browsers, context and pages are automatically closed when test execution ends.</p>\n<p>If automatic closing level is <span class=\"name\">KEEP</span>, nothing is closed automatically while the test execution is ongoing. Also, nothing is closed when test execution ends, including the node process. Therefore, it is users responsibility to close all browsers, context and pages and ensure that all process that are left running after the test execution end are closed. This level is only intended for test case development and must not be used when running tests in CI or similar environments.</p>\n<p>Automatic closing can be configured or switched off with the auto_closing_level library import parameter.</p>\n<p>See: <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">Importing</a></p>\n<h2 id=\"Finding elements\">Finding elements</h2>\n<p>All keywords in the library that need to interact with an element on a web page take an argument typically named <code>selector</code> that specifies how to find the element. Keywords can find elements with strict mode. If strict mode is true and locator finds multiple elements from the page, keyword will fail. If keyword finds one element, keyword does not fail because of strict mode. If strict mode is false, keyword does not fail if selector points many elements. Strict mode is enabled by default, but can be changed in library <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> or <a href=\"#Set%20Strict%20Mode\" title=\"&quot;Set Strict Mode&quot; keyword\" class=\"name\">Set Strict Mode</a> keyword. Keyword documentation states if keyword uses strict mode. If keyword does not state that strict mode is used, then strict mode is not applied for the keyword. For more details, see Playwright <a href=\"https://playwright.dev/docs/api/class-page#page-query-selector\">strict documentation</a>.</p>\n<p>Selector strategies that are supported by default are listed in the table below.</p>\n<table border=\"1\">\n<tr>\n<th>Strategy</th>\n<th>Match based on</th>\n<th>Example</th>\n</tr>\n<tr>\n<td><code>css</code></td>\n<td>CSS selector.</td>\n<td><code>css=.class &gt; \\#login_btn</code></td>\n</tr>\n<tr>\n<td><code>xpath</code></td>\n<td>XPath expression.</td>\n<td><code>xpath=//input[@id=\"login_btn\"]</code></td>\n</tr>\n<tr>\n<td><code>text</code></td>\n<td>Browser text engine.</td>\n<td><code>text=Login</code></td>\n</tr>\n<tr>\n<td><code>id</code></td>\n<td>Element ID Attribute.</td>\n<td><code>id=login_btn</code></td>\n</tr>\n</table>\n<p>CSS Selectors can also be recorded with <a href=\"#Record%20Selector\" title=\"&quot;Record Selector&quot; keyword\" class=\"name\">Record selector</a> keyword.</p>\n<h3 id=\"Explicit Selector Strategy\">Explicit Selector Strategy</h3>\n<p>The explicit selector strategy is specified with a prefix using syntax <code>strategy=value</code>. Spaces around the separator are ignored, so <code>css=foo</code>, <code>css= foo</code> and <code>css = foo</code> are all equivalent.</p>\n<h3 id=\"Implicit Selector Strategy\">Implicit Selector Strategy</h3>\n<p><b>The default selector strategy is <a href=\"#CSS\" title=\"&quot;CSS&quot; section\" class=\"name\">css</a>.</b></p>\n<p>If selector does not contain one of the know explicit selector strategies, it is assumed to contain css selector.</p>\n<p>Selectors that are starting with <code>//</code> or <code>..</code> are considered as xpath selectors.</p>\n<p>Selectors that are in quotes are considered as text selectors.</p>\n<p>Examples:</p>\n<pre>\n# CSS selectors are default.\n<a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>  span &gt; button.some_class         # This is equivalent\n<a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>  css=span &gt; button.some_class     # to this.\n\n# // or .. leads to xpath selector strategy\n<a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>  //span/button[@class=\"some_class\"]\n<a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>  xpath=//span/button[@class=\"some_class\"]\n\n# \"text\" in quotes leads to exact text selector strategy\n<a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>  \"Login\"\n<a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>  text=\"Login\"\n</pre>\n<h3 id=\"CSS\">CSS</h3>\n<p>As written before, the default selector strategy is <a href=\"#CSS\" title=\"&quot;CSS&quot; section\" class=\"name\">css</a>. See <a href=\"https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors\">css selector</a> for more information.</p>\n<p>Any malformed selector not starting with <code>//</code> or <code>..</code> nor starting and ending with a quote is assumed to be a css selector.</p>\n<p>Note that <code>#</code> is a comment character in <a href=\"https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#ignored-data\">Robot Framework syntax</a> and needs to be escaped like <code>\\#</code> to work as a <a href=\"https://developer.mozilla.org/en-US/docs/Web/CSS/ID_selectors\">css ID selector</a>.</p>\n<p>Examples:</p>\n<pre>\n<a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>  span &gt; button.some_class\n<a href=\"#Get%20Text\" title=\"&quot;Get Text&quot; keyword\" class=\"name\">Get Text</a>  \\#username_field  ==  George\n</pre>\n<h3 id=\"XPath\">XPath</h3>\n<p>XPath engine is equivalent to <a href=\"https://developer.mozilla.org/en/docs/Web/API/Document/evaluate\">Document.evaluate</a>. Example: <code>xpath=//html/body//span[text()=\"Hello World\"]</code>.</p>\n<p>Malformed selector starting with <code>//</code> or <code>..</code> is assumed to be an xpath selector. For example, <code>//html/body</code> is converted to <code>xpath=//html/body</code>. More examples are displayed in <a href=\"#Examples\" title=\"&quot;Examples&quot; section\" class=\"name\">Examples</a>.</p>\n<p>Note that xpath does not pierce <a href=\"https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM\">shadow_roots</a>.</p>\n<h3 id=\"Text\">Text</h3>\n<p>Text engine finds an element that contains a text node with the passed text. For example, <code>Click    text=Login</code> clicks on a login button, and <code>Wait For Elements State   text=\"lazy loaded text\"</code> waits for the \"lazy loaded text\" to appear in the page.</p>\n<p>Text engine finds fields based on their labels in text inserting keywords.</p>\n<p>Malformed selector starting and ending with a quote (either <code>\"</code> or <code>'</code>) is assumed to be a text selector. For example, <code>Click    \"Login\"</code> is converted to <code>Click    text=\"Login\"</code>. Be aware that these leads to exact matches only! More examples are displayed in <a href=\"#Examples\" title=\"&quot;Examples&quot; section\" class=\"name\">Examples</a>.</p>\n<h4 id=\"Insensitive match\">Insensitive match</h4>\n<p>By default, the match is case-insensitive, ignores leading/trailing whitespace and searches for a substring. This means <code>text= Login</code> matches <code>&lt;button&gt;Button loGIN (click me)&lt;/button&gt;</code>.</p>\n<h4 id=\"Exact match\">Exact match</h4>\n<p>Text body can be escaped with single or double quotes for precise matching, insisting on exact match, including specified whitespace and case. This means <code>text=\"Login \"</code> will only match <code>&lt;button&gt;Login &lt;/button&gt;</code> with exactly one space after \"Login\". Quoted text follows the usual escaping rules, e.g. use <code>\\\"</code> to escape double quote in a double-quoted string: <code>text=\"foo\\\"bar\"</code>.</p>\n<h4 id=\"RegEx\">RegEx</h4>\n<p>Text body can also be a JavaScript-like regex wrapped in / symbols. This means <code>text=/^hello .*!$/i</code> or <code>text=/^Hello .*!$/</code> will match <code>&lt;span&gt;Hello Peter Parker!&lt;/span&gt;</code> with any name after <code>Hello</code>, ending with <code>!</code>. The first one flagged with <code>i</code> for case-insensitive. See <a href=\"https://regex101.com/\">https://regex101.com</a> for more information about RegEx.</p>\n<h4 id=\"Button and Submit Values\">Button and Submit Values</h4>\n<p>Input elements of the type button and submit are rendered with their value as text, and text engine finds them. For example, <code>text=Login</code> matches <code>&lt;input type=button value=\"Login\"&gt;</code>.</p>\n<h3 id=\"Cascaded selector syntax\">Cascaded selector syntax</h3>\n<p>Browser library supports the same selector strategies as the underlying Playwright node module: xpath, css, id and text. The strategy can either be explicitly specified with a prefix or the strategy can be implicit.</p>\n<p>A major advantage of Browser is that multiple selector engines can be used within one selector. It is possible to mix XPath, CSS and Text selectors while selecting a single element.</p>\n<p>Selectors are strings that consists of one or more clauses separated by <code>&gt;&gt;</code> token, e.g. <code>clause1 &gt;&gt; clause2 &gt;&gt; clause3</code>. When multiple clauses are present, next one is queried relative to the previous one's result. Browser library supports concatenation of different selectors separated by <code>&gt;&gt;</code>.</p>\n<p>For example:</p>\n<pre>\n<a href=\"#Highlight%20Elements\" title=\"&quot;Highlight Elements&quot; keyword\" class=\"name\">Highlight Elements</a>    \"Hello\" &gt;&gt; ../.. &gt;&gt; .select_button\n<a href=\"#Highlight%20Elements\" title=\"&quot;Highlight Elements&quot; keyword\" class=\"name\">Highlight Elements</a>    text=Hello &gt;&gt; xpath=../.. &gt;&gt; css=.select_button\n</pre>\n<p>Each clause contains a selector engine name and selector body, e.g. <code>engine=body</code>. Here <code>engine</code> is one of the supported engines (e.g. css or a custom one). Selector <code>body</code> follows the format of the particular engine, e.g. for css engine it should be a <a href=\"https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors\">css selector</a>. Body format is assumed to ignore leading and trailing white spaces, so that extra whitespace can be added for readability. If the selector engine needs to include <code>&gt;&gt;</code> in the body, it should be escaped inside a string to not be confused with clause separator, e.g. <code>text=\"some &gt;&gt; text\"</code>.</p>\n<p>Selector engine name can be prefixed with <code>*</code> to capture an element that matches the particular clause instead of the last one. For example, <code>css=article &gt;&gt; text=Hello</code> captures the element with the text <code>Hello</code>, and <code>*css=article &gt;&gt; text=Hello</code> (note the *) captures the article element that contains some element with the text Hello.</p>\n<p>For convenience, selectors in the wrong format are heuristically converted to the right format. See <a href=\"#Implicit%20Selector%20Strategy\" title=\"&quot;Implicit Selector Strategy&quot; section\" class=\"name\">Implicit Selector Strategy</a></p>\n<h3 id=\"Examples\">Examples</h3>\n<pre>\n# queries 'div' css selector\nGet Element    css=div\n\n# queries '//html/body/div' xpath selector\nGet Element    //html/body/div\n\n# queries '\"foo\"' text selector\nGet Element    text=foo\n\n# queries 'span' css selector inside the result of '//html/body/div' xpath selector\nGet Element    xpath=//html/body/div &gt;&gt; css=span\n\n# converted to 'css=div'\nGet Element    div\n\n# converted to 'xpath=//html/body/div'\nGet Element    //html/body/div\n\n# converted to 'text=\"foo\"'\nGet Element    \"foo\"\n\n# queries the div element of every 2nd span element inside an element with the id foo\nGet Element    \\#foo &gt;&gt; css=span:nth-child(2n+1) &gt;&gt; div\nGet Element    id=foo &gt;&gt; css=span:nth-child(2n+1) &gt;&gt; div\n</pre>\n<p>Be aware that using <code>#</code> as a starting character in Robot Framework would be interpreted as comment. Due to that fact a <code>#id</code> must be escaped as <code>\\#id</code>.</p>\n<h3 id=\"iFrames\">iFrames</h3>\n<p>By default, selector chains do not cross frame boundaries. It means that a simple CSS selector is not able to select an element located inside an iframe or a frameset. For this use case, there is a special selector <code>&gt;&gt;&gt;</code> which can be used to combine a selector for the frame and a selector for an element inside a frame.</p>\n<p>Given this simple pseudo html snippet:</p>\n<pre>\n&lt;iframe id=\"iframe\" src=\"src.html\"&gt;\n  #document\n    &lt;!DOCTYPE html&gt;\n    &lt;html&gt;\n      &lt;head&gt;&lt;/head&gt;\n      &lt;body&gt;\n        &lt;button id=\"btn\"&gt;Click Me&lt;/button&gt;\n      &lt;/body&gt;\n    &lt;/html&gt;\n&lt;/iframe&gt;\n</pre>\n<p>Here's a keyword call that clicks the button inside the frame.</p>\n<pre>\nClick   id=iframe &gt;&gt;&gt; id=btn\n</pre>\n<p>The selectors on the left and right side of <code>&gt;&gt;&gt;</code> can be any valid selectors. The selector clause directly before the frame opener <code>&gt;&gt;&gt;</code> must select the frame element itself. Frame selection is the only place where Browser Library modifies the selector, as explained in above. In all cases, the library does not alter the selector in any way, instead it is passed as is to the Playwright side.</p>\n<p>If multiple keyword shall be performed inside a frame, it is possible to define a selector prefix with <a href=\"#Set%20Selector%20Prefix\" title=\"&quot;Set Selector Prefix&quot; keyword\" class=\"name\">Set Selector Prefix</a>. If this prefix is set to a frame/iframe it has similar behavior as SeleniumLibrary keyword <span class=\"name\">Select Frame</span>.</p>\n<h3 id=\"WebComponents and Shadow DOM\">WebComponents and Shadow DOM</h3>\n<p>Playwright and so also Browser are able to do automatic piercing of Shadow DOMs and therefore are the best automation technology when working with WebComponents.</p>\n<p>Also other technologies claim that they can handle <a href=\"https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM\">Shadow DOM and Web Components</a>. However, none of them do pierce shadow roots automatically, which may be inconvenient when working with Shadow DOM and Web Components.</p>\n<p>For that reason, the css engine pierces shadow roots. More specifically, every <a href=\"https://developer.mozilla.org/en-US/docs/Web/CSS/Descendant_combinator\">Descendant combinator</a> pierces an arbitrary number of open shadow roots, including the implicit descendant combinator at the start of the selector.</p>\n<p>That means, it is not necessary to select each shadow host, open its shadow root and select the next shadow host until you reach the element that should be controlled.</p>\n<h4 id=\"CSS:light\">CSS:light</h4>\n<p><code>css:light</code> engine is equivalent to <a href=\"https://developer.mozilla.org/en/docs/Web/API/Document/querySelector\">Document.querySelector</a> and behaves according to the CSS spec. However, it does not pierce shadow roots.</p>\n<p><code>css</code> engine first searches for elements in the light dom in the iteration order, and then recursively inside open shadow roots in the iteration order. It does not search inside closed shadow roots or iframes.</p>\n<p>Examples:</p>\n<pre>\n&lt;article&gt;\n  &lt;div&gt;In the light dom&lt;/div&gt;\n  &lt;div slot='myslot'&gt;In the light dom, but goes into the shadow slot&lt;/div&gt;\n  &lt;open mode shadow root&gt;\n      &lt;div class='in-the-shadow'&gt;\n          &lt;span class='content'&gt;\n              In the shadow dom\n              &lt;open mode shadow root&gt;\n                  &lt;li id='target'&gt;Deep in the shadow&lt;/li&gt;\n              &lt;/open mode shadow root&gt;\n          &lt;/span&gt;\n      &lt;/div&gt;\n      &lt;slot name='myslot'&gt;&lt;/slot&gt;\n  &lt;/open mode shadow root&gt;\n&lt;/article&gt;\n</pre>\n<p>Note that <code>&lt;open mode shadow root&gt;</code> is not an html element, but rather a shadow root created with <code>element.attachShadow({mode: 'open'})</code>.</p>\n<ul>\n<li>Both <code>\"css=article div\"</code> and <code>\"css:light=article div\"</code> match the first <code>&lt;div&gt;In the light dom&lt;/div&gt;</code>.</li>\n<li>Both <code>\"css=article &gt; div\"</code> and <code>\"css:light=article &gt; div\"</code> match two <code>div</code> elements that are direct children of the <code>article</code>.</li>\n<li><code>\"css=article .in-the-shadow\"</code> matches the <code>&lt;div class='in-the-shadow'&gt;</code>, piercing the shadow root, while <code>\"css:light=article .in-the-shadow\"</code> does not match anything.</li>\n<li><code>\"css:light=article div &gt; span\"</code> does not match anything, because both light-dom <code>div</code> elements do not contain a <code>span</code>.</li>\n<li><code>\"css=article div &gt; span\"</code> matches the <code>&lt;span class='content'&gt;</code>, piercing the shadow root.</li>\n<li><code>\"css=article &gt; .in-the-shadow\"</code> does not match anything, because <code>&lt;div class='in-the-shadow'&gt;</code> is not a direct child of <code>article</code></li>\n<li><code>\"css:light=article &gt; .in-the-shadow\"</code> does not match anything.</li>\n<li><code>\"css=article li#target\"</code> matches the <code>&lt;li id='target'&gt;Deep in the shadow&lt;/li&gt;</code>, piercing two shadow roots.</li>\n</ul>\n<h4 id=\"text:light\">text:light</h4>\n<p><code>text</code> engine open pierces shadow roots similarly to <code>css</code>, while <code>text:light</code> does not. Text engine first searches for elements in the light dom in the iteration order, and then recursively inside open shadow roots in the iteration order. It does not search inside closed shadow roots or iframes.</p>\n<h4 id=\"id, data-testid, data-test-id, data-test and their :light counterparts\">id, data-testid, data-test-id, data-test and their :light counterparts</h4>\n<p>Attribute engines are selecting based on the corresponding attribute value. For example: <code>data-test-id=foo</code> is equivalent to <code>css=[data-test-id=\"foo\"]</code>, and <code>id:light=foo</code> is equivalent to <code>css:light=[id=\"foo\"]</code>.</p>\n<h3 id=\"Element reference syntax\">Element reference syntax</h3>\n<p>It is possible to get a reference to a Locator by using <a href=\"#Get%20Element\" title=\"&quot;Get Element&quot; keyword\" class=\"name\">Get Element</a> and <a href=\"#Get%20Elements\" title=\"&quot;Get Elements&quot; keyword\" class=\"name\">Get Elements</a> keywords. Keywords do not save reference to an element in the HTML document, instead it saves reference to a Playwright <a href=\"https://playwright.dev/docs/api/class-locator\">Locator</a>. In nutshell Locator captures the logic of how to retrieve that element from the page. Each time an action is performed, the locator re-searches the elements in the page. This reference can be used as a <b>first</b> part of a selector by using a special selector syntax <span class=\"name\">element=</span>. like this:</p>\n<pre>\n${ref}=    Get Element    .some_class\n           Click          ${ref} &gt;&gt; .some_child     # Locator searches an element from the page.\n           Click          ${ref} &gt;&gt; .other_child    # Locator searches again an element from the page.\n</pre>\n<p>The <span class=\"name\">.some_child</span> and <span class=\"name\">.other_child</span> selectors in the example are relative to the element referenced by ${ref}. Please note that frame piercing is not possible with element reference.</p>\n<h2 id=\"Assertions\">Assertions</h2>\n<p>Keywords that accept arguments <code>assertion_operator</code> &lt;<a href=\"#type-AssertionOperator\" title=\"&quot;AssertionOperator&quot; type\" class=\"name\">AssertionOperator</a>&gt; and <code>assertion_expected</code> can optionally assert that a specified condition holds. Keywords will return the value even when the assertion is performed by the keyword.</p>\n<p>Assert will retry and fail only after a specified timeout. See <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">Importing</a> and <code>retry_assertions_for</code> (default is 1 second) for configuring this timeout.</p>\n<p>Currently supported assertion operators are:</p>\n<table border=\"1\">\n<tr>\n<th>Operator</th>\n<th>Alternative Operators</th>\n<th>Description</th>\n<th>Validate Equivalent</th>\n</tr>\n<tr>\n<td><code>==</code></td>\n<td><code>equal</code>, <code>equals</code>, <code>should be</code></td>\n<td>Checks if returned value is equal to expected value.</td>\n<td><code>value == expected</code></td>\n</tr>\n<tr>\n<td><code>!=</code></td>\n<td><code>inequal</code>, <code>should not be</code></td>\n<td>Checks if returned value is not equal to expected value.</td>\n<td><code>value != expected</code></td>\n</tr>\n<tr>\n<td><code>&gt;</code></td>\n<td><code>greater than</code></td>\n<td>Checks if returned value is greater than expected value.</td>\n<td><code>value &gt; expected</code></td>\n</tr>\n<tr>\n<td><code>&gt;=</code></td>\n<td></td>\n<td>Checks if returned value is greater than or equal to expected value.</td>\n<td><code>value &gt;= expected</code></td>\n</tr>\n<tr>\n<td><code>&lt;</code></td>\n<td><code>less than</code></td>\n<td>Checks if returned value is less than expected value.</td>\n<td><code>value &lt; expected</code></td>\n</tr>\n<tr>\n<td><code>&lt;=</code></td>\n<td></td>\n<td>Checks if returned value is less than or equal to expected value.</td>\n<td><code>value &lt;= expected</code></td>\n</tr>\n<tr>\n<td><code>*=</code></td>\n<td><code>contains</code></td>\n<td>Checks if returned value contains expected value as substring.</td>\n<td><code>expected in value</code></td>\n</tr>\n<tr>\n<td></td>\n<td><code>not contains</code></td>\n<td>Checks if returned value does not contain expected value as substring.</td>\n<td><code>expected in value</code></td>\n</tr>\n<tr>\n<td><code>^=</code></td>\n<td><code>should start with</code>, <code>starts</code></td>\n<td>Checks if returned value starts with expected value.</td>\n<td><code>re.search(f\"^{expected}\", value)</code></td>\n</tr>\n<tr>\n<td><code>$=</code></td>\n<td><code>should end with</code>, <code>ends</code></td>\n<td>Checks if returned value ends with expected value.</td>\n<td><code>re.search(f\"{expected}$\", value)</code></td>\n</tr>\n<tr>\n<td><code>matches</code></td>\n<td></td>\n<td>Checks if given RegEx matches minimum once in returned value.</td>\n<td><code>re.search(expected, value)</code></td>\n</tr>\n<tr>\n<td><code>validate</code></td>\n<td></td>\n<td>Checks if given Python expression evaluates to <code>True</code>.</td>\n<td></td>\n</tr>\n<tr>\n<td><code>evaluate</code></td>\n<td><code>then</code></td>\n<td>When using this operator, the keyword does return the evaluated Python expression.</td>\n<td></td>\n</tr>\n</table>\n<p>There are three different possibilities what keyword returns when <span class=\"name\">matches</span> operator is used: string, tuple or dictionary. What keyword returns depends on how the RegEx is formed. If RegEx does not contain group(s), then keyword will return the string without modifications. If RegEx contains groups, meaning (...), then keyword will return a tuple. Each tuple item contains the text which is matched by the group. If there is group and group has a name, (?P&lt;name&gt;...) syntax, then keyword returns a dictionary. In this case dictionary key is the group name and value contains the matched text. If there mix of groups and groups with names, then tuple is returned.</p>\n<p>Currently supported formatters for assertions are:</p>\n<table border=\"1\">\n<tr>\n<th>Formatter</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>normalize spaces</code></td>\n<td>Substitutes multiple spaces to single space from the value</td>\n</tr>\n<tr>\n<td><code>strip</code></td>\n<td>Removes spaces from the beginning and end of the value</td>\n</tr>\n<tr>\n<td><code>case insensitive</code></td>\n<td>Converts value to lower case before comparing</td>\n</tr>\n<tr>\n<td><code>apply to expected</code></td>\n<td>Applies rules also for the expected value</td>\n</tr>\n</table>\n<p>Formatters are applied to the value before assertion is performed and keywords returns a value where rule is applied. Formatter is only applied to the value which keyword returns and not all rules are valid for all assertion operators. If <code>apply to expected</code> formatter is defined, then formatters are then formatter are also applied to expected value.</p>\n<p>By default, keywords will provide an error message if an assertion fails. Default error messages can be overwritten with a <code>message</code> argument. The <code>message</code> argument accepts <span class=\"name\">{value}</span>, <span class=\"name\">{value_type}</span>, <span class=\"name\">{expected}</span> and <span class=\"name\">{expected_type}</span> <a href=\"https://docs.python.org/3/library/stdtypes.html#str.format\">format</a> options. The <span class=\"name\">{value}</span> is the value returned by the keyword and the <span class=\"name\">{expected}</span> is the expected value defined by the user, usually the value in the <code>assertion_expected</code> argument. The <span class=\"name\">{value_type}</span> and <span class=\"name\">{expected_type}</span> are the type definitions from <span class=\"name\">{value}</span> and <span class=\"name\">{expected}</span> arguments. In similar fashion as Python <a href=\"https://docs.python.org/3/library/functions.html#type\">type</a> returns type definition. Assertions will retry until <code>timeout</code> has expired if they do not pass.</p>\n<p>The assertion <code>assertion_expected</code> value is not converted by the library and is used as is. Therefore when assertion is made, the <code>assertion_expected</code> argument value and value returned the keyword must have the same type. If types are not the same, assertion will fail. Example <a href=\"#Get%20Text\" title=\"&quot;Get Text&quot; keyword\" class=\"name\">Get Text</a> always returns a string and has to be compared with a string, even the returned value might look like a number.</p>\n<p>Other Keywords have other specific types they return. <a href=\"#Get%20Element%20Count\" title=\"&quot;Get Element Count&quot; keyword\" class=\"name\">Get Element Count</a> always returns an integer. <a href=\"#Get%20BoundingBox\" title=\"&quot;Get BoundingBox&quot; keyword\" class=\"name\">Get Bounding Box</a> and <a href=\"#Get%20Viewport%20Size\" title=\"&quot;Get Viewport Size&quot; keyword\" class=\"name\">Get Viewport Size</a> can be filtered. They return a dictionary without a filter and a number when filtered. These Keywords do automatic conversion for the expected value if a number is returned.</p>\n<p>* &lt; less or greater &gt; With Strings* Comparisons of strings with <code>greater than</code> or <code>less than</code> compares each character, starting from 0 regarding where it stands in the code page. Example: <code>A &lt; Z</code>, <code>Z &lt; a</code>, <code>ac &lt; dc<span class=\"name\"> It does never compare the length of elements. Neither lists nor strings. The comparison stops at the first character that is different. Examples: </span>`'abcde' &lt; 'abd'</code>, <code>'100.000' &lt; '2'</code> In Python 3 and therefore also in Browser it is not possible to compare numbers with strings with a greater or less operator. On keywords that return numbers, the given expected value is automatically converted to a number before comparison.</p>\n<p>The getters <span class=\"name\">Get Page State</span> and <a href=\"#Get%20Browser%20Catalog\" title=\"&quot;Get Browser Catalog&quot; keyword\" class=\"name\">Get Browser Catalog</a> return a dictionary. Values of the dictionary can directly asserted. Pay attention of possible types because they are evaluated in Python. For example:</p>\n<pre>\nGet Page State    validate    2020 &gt;= value['year']                     # Comparison of numbers\nGet Page State    validate    \"IMPORTANT MESSAGE!\" == value['message']  # Comparison of strings\n</pre>\n<h3 id=\"The 'then' or 'evaluate' closure\">The 'then' or 'evaluate' closure</h3>\n<p>Keywords that accept arguments <code>assertion_operator</code> and <code>assertion_expected</code> can optionally also use <code>then</code> or <code>evaluate</code> closure to modify the returned value with BuiltIn Evaluate. Actual value can be accessed with <code>value</code>.</p>\n<p>For example <code>Get Title  then  'TITLE: '+value</code>. See <a href=\"https://robotframework.org/robotframework/latest/libraries/BuiltIn.html#Evaluating%20expressions\">Builtin Evaluating expressions</a> for more info on the syntax.</p>\n<h3 id=\"Examples\">Examples</h3>\n<pre>\n# <b>Keyword</b>    <b>Selector</b>                    <b>Key</b>        <b>Assertion Operator</b>    <b>Assertion Expected</b>\nGet Title                                           equal                 Page Title\nGet Title                                           ^=                    Page\nGet Style    //*[@id=\"div-element\"]      width      &gt;                     100\nGet Title                                           matches               \\\\w+\\\\s\\\\w+\nGet Title                                           validate              value == \"Login Page\"\nGet Title                                           evaluate              value if value == \"some value\" else \"something else\"\n</pre>\n<h2 id=\"Implicit waiting\">Implicit waiting</h2>\n<p>Browser library and Playwright have many mechanisms to help in waiting for elements. Playwright will auto-wait before performing actions on elements. Please see <a href=\"https://playwright.dev/docs/actionability/\">Auto-waiting on Playwright documentation</a> for more information.</p>\n<p>On top of Playwright auto-waiting Browser assertions will wait and retry for specified time before failing any <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a>. Time is specified in Browser library initialization with <code>retry_assertions_for</code>.</p>\n<p>Browser library also includes explicit waiting keywords such as <a href=\"#Wait%20For%20Elements%20State\" title=\"&quot;Wait For Elements State&quot; keyword\" class=\"name\">Wait for Elements State</a> if more control for waiting is needed.</p>\n<h2 id=\"Experimental: Re-using same node process\">Experimental: Re-using same node process</h2>\n<p>Browser library integrated nodejs and python. The NodeJS side can be also executed as a standalone process. Browser libraries running on the same machine can talk to that instead of starting new node processes. This can speed execution when running tests parallel. To start node side run on the directory when the Browser package is <code>PLAYWRIGHT_BROWSERS_PATH=0 node Browser/wrapper/index.js PORT</code>.</p>\n<p><code>PORT</code> is the port you want to use for the node process. To execute tests then with pabot for example do <code>ROBOT_FRAMEWORK_BROWSER_NODE_PORT=PORT pabot ..</code>.</p>\n<h2 id=\"Scope Setting\">Scope Setting</h2>\n<p>Some keywords which manipulates library settings have a scope argument. With that scope argument one can set the \"live time\" of that setting. Available Scopes are: <span class=\"name\">Global</span>, <span class=\"name\">Suite</span> and <span class=\"name\">Test</span>/<span class=\"name\">Task</span> See <a href=\"#type-Scope\" title=\"&quot;Scope&quot; type\" class=\"name\">Scope</a>. Is a scope finished, this scoped setting, like timeout, will no longer be used.</p>\n<p>Live Times:</p>\n<ul>\n<li>A <span class=\"name\">Global</span> scope will live forever until it is overwritten by another <span class=\"name\">Global</span> scope. Or locally temporarily overridden by a more narrow scope.</li>\n<li>A <span class=\"name\">Suite</span> scope will locally override the <span class=\"name\">Global</span> scope and live until the end of the Suite within it is set, or if it is overwritten by a later setting with <span class=\"name\">Global</span> or same scope. Children suite does inherit the setting from the parent suite but also may have its own local <span class=\"name\">Suite</span> setting that then will be inherited to its children suites.</li>\n<li>A <span class=\"name\">Test</span> or <span class=\"name\">Task</span> scope will be inherited from its parent suite but when set, lives until the end of that particular test or task.</li>\n</ul>\n<p>A new set higher order scope will always remove the lower order scope which may be in charge. So the setting of a <span class=\"name\">Suite</span> scope from a test, will set that scope to the robot file suite where that test is and removes the <span class=\"name\">Test</span> scope that may have been in place.</p>\n<h2 id=\"Extending Browser library with a JavaScript module\">Extending Browser library with a JavaScript module</h2>\n<p>Browser library can be extended with JavaScript. The module must be in CommonJS format that Node.js uses. You can translate your ES6 module to Node.js CommonJS style with Babel. Many other languages can be also translated to modules that can be used from Node.js. For example TypeScript, PureScript and ClojureScript just to mention few.</p>\n<pre>\nasync function myGoToKeyword(url, args, page, logger, playwright) {\n  logger(args.toString())\n  playwright.coolNewFeature()\n  return await page.goto(url);\n}\n</pre>\n<p>Functions can contain any number of arguments and arguments may have default values.</p>\n<p>There are some reserved arguments that are not accessible from Robot Framework side. They are injected to the function if they are in the arguments:</p>\n<p><code>page</code>: <a href=\"https://playwright.dev/docs/api/class-page\">the playwright Page object</a>.</p>\n<p><code>context</code>: <a href=\"https://playwright.dev/docs/api/class-browsercontext\">the playwright BrowserContext object</a>.</p>\n<p><code>browser</code>: <a href=\"https://playwright.dev/docs/api/class-browser\">the playwright Browser object</a>.</p>\n<p><code>args</code>: the rest of values from Robot Framework keyword call <code>*args</code>.</p>\n<p><code>logger</code>: callback function that takes strings as arguments and writes them to robot log. Can be called multiple times.</p>\n<p><code>playwright</code>: playwright module (* from 'playwright'). Useful for integrating with Playwright features that Browser library doesn't support with it's own keywords. <a href=\"https://playwright.dev/docs/api/class-playwright\">API docs</a></p>\n<p>also argument name <code>self</code> can not be used.</p>\n<h3 id=\"Example module.js\">Example module.js</h3>\n<pre>\nasync function myGoToKeyword(pageUrl, page) {\n  await page.goto(pageUrl);\n  return await page.title();\n}\nexports.__esModule = true;\nexports.myGoToKeyword = myGoToKeyword;\n</pre>\n<h3 id=\"Example Robot Framework side\">Example Robot Framework side</h3>\n<pre>\n<b>*</b> Settings <b>*</b>\nLibrary   Browser  jsextension=${CURDIR}/module.js\n\n<b>*</b> Test Cases <b>*</b>\nHello\n  New Page\n  ${title}=  myGoToKeyword  <a href=\"https://playwright.dev\">https://playwright.dev</a>\n  Should be equal  ${title}  Playwright\n</pre>\n<p>Also selector syntax can be extended with a custom selector using a js module</p>\n<h3 id=\"Example module keyword for custom selector registering\">Example module keyword for custom selector registering</h3>\n<pre>\nasync function registerMySelector(playwright) {\nplaywright.selectors.register(\"myselector\", () =&gt; ({\n   // Returns the first element matching given selector in the root's subtree.\n   query(root, selector) {\n      return root.querySelector(<span class=\"name\">a[data-title=\"${selector}\"]</span>);\n    },\n\n    // Returns all elements matching given selector in the root's subtree.\n    queryAll(root, selector) {\n      return Array.from(root.querySelectorAll(<span class=\"name\">a[data-title=\"${selector}\"]</span>));\n    }\n}));\nreturn 1;\n}\nexports.__esModule = true;\nexports.registerMySelector = registerMySelector;\n</pre>\n<h2 id=\"Plugins\">Plugins</h2>\n<p>Browser library offers plugins as a way to modify and add library keywords and modify some of the internal functionality without creating a new library or hacking the source code. See plugin API <a href=\"https://github.com/MarketSquare/robotframework-browser/blob/main/docs/plugins/README.md\">documentation</a> for further details.</p>\n<h2 id=\"Language\">Language</h2>\n<p>Browser library offers possibility to translate keyword names and documentation to new language. If language is defined, Browser library will search from <a href=\"https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#module-search-path\">module search path</a> Python packages starting with <span class=\"name\">robotframework_browser_translation</span> by using <a href=\"https://packaging.python.org/en/latest/guides/creating-and-discovering-plugins/\">Python pluging API</a>. Library is using naming convention to find Python plugins.</p>\n<p>The package must implement single API call, <code>get_language</code> without any arguments. Method must return a dictionary containing two keys: <code>language</code> and <code>path</code>. The language key value defines which language the package contains. Also value should match (case insensitive) the library <code>language</code> import parameter. The path parameter value should be full path to the translation file.</p>\n<h3 id=\"Translation file\">Translation file</h3>\n<p>The file name or extension is not important, but data must be in <a href=\"https://www.json.org/json-en.html\">json</a> format. The keys of json are the methods names, not the keyword names, which implements keywords. Value of key is json object which contains two keys: <code>name</code> and <code>doc</code>. The <code>name</code> key contains the keyword translated name and <span class=\"name\">doc</span> contains translated documentation. Providing doc and name are optional, example translation json file can only provide translations to keyword names or only to documentation. But it is always recommended to provide translation to both name and doc. Special key <code>__intro__</code> is for class level documentation and <code>__init__</code> is for init level documentation. These special values <code>name</code> can not be translated, instead <code>name</code> should be kept the same.</p>\n<h3 id=\"Generating template translation file\">Generating template translation file</h3>\n<p>Template translation file, with English language can be created by running: <span class=\"name\">rfbrowser translation /path/to/translation.json</span> command. Command does not provide translations to other languages, it only provides easy way to create full list keywords and their documentation in correct format. It is also possible to add keywords from library plugins and js extensions by providing <span class=\"name\">--plugings</span> and <span class=\"name\">--jsextension</span> arguments to command. Example: <span class=\"name\">rfbrowser translation --plugings myplugin.SomePlugin --jsextension /path/ot/jsplugin.js /path/to/translation.json</span></p>\n<p>Example project for translation can be found from <a href=\"https://github.com/MarketSquare/robotframework-browser-translation-fi\">robotframework-browser-translation-fi</a> repository.</p>\n<h2 id=\"ENVIRONMENT VARIABLES\">ENVIRONMENT VARIABLES</h2>\n<p>There are some environment variables that can be used to modify the behavior of the library. Some of these environment variables are for experimental/development features and must not be used in production environments. They are listed here to prevent users using them by accident without knowing the possible consequences.</p>\n<p>These are:</p>\n<table border=\"1\">\n<tr>\n<th>Environment variable</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>ROBOT_FRAMEWORK_BROWSER_NODE_PORT</code></td>\n<td>Port number for connecting to an existing node process. This is an alternative to <code>playwright_process_port</code> import argument.</td>\n</tr>\n<tr>\n<td><code>ROBOT_FRAMEWORK_BROWSER_NODE_COVERAGE</code></td>\n<td>If set to <code>1</code>, will collect code coverage for the node process. This must not be used in production environments and is not supported on Windows.</td>\n</tr>\n<tr>\n<td><code>ROBOT_FRAMEWORK_BROWSER_NODE_DEBUG_OPTIONS</code></td>\n<td>Debug options for the node process. This is a comma-separated list of arguments, for example <code>--inspect</code>. This must not be used in production environments.</td>\n</tr>\n</table>\n<h2 id=\"Experimental: Provide parameters to node process\">Experimental: Provide parameters to node process</h2>\n<p>Browser library is integrated with Node.js and Python. Browser library starts a node process, to communicate Playwright API on the Node.js side. It is possible to provide parameters for the started node process by defining ROBOT_FRAMEWORK_BROWSER_NODE_DEBUG_OPTIONS environment variable, before starting the test execution. Example: <code>ROBOT_FRAMEWORK_BROWSER_NODE_DEBUG_OPTIONS=--inspect,--trace-warnings robot path/to/tests</code>. There can be multiple arguments defined in the environment variable and arguments must be separated with comma.</p>",
+  doc: '<p>Browser library is a browser automation library for Robot Framework.</p>\n<p>This is the keyword documentation for Browser library. For information about installation, support, and more please visit the <a href="https://github.com/MarketSquare/robotframework-playwright">project pages</a>. For more information about Robot Framework itself, see <a href="https://robotframework.org">robotframework.org</a>.</p>\n<p>Browser library uses <a href="https://github.com/microsoft/playwright">Playwright Node module</a> to automate <a href="https://www.chromium.org/Home">Chromium</a>, <a href="https://www.mozilla.org/en-US/firefox/new/">Firefox</a> and <a href="https://webkit.org/">WebKit</a> with a single library.</p>\n<h3 id="Table of contents">Table of contents</h3>\n<ul>\n<li><a href="#Browser%2C%20Context%20and%20Page">Browser, Context and Page</a></li>\n<ul>\n<li><a href="#Browsers">Browsers</a></li>\n<li><a href="#Contexts">Contexts</a></li>\n<li><a href="#Pages">Pages</a></li>\n</ul>\n<li><a href="#Automatic%20page%20and%20context%20closing">Automatic page and context closing</a></li>\n<li><a href="#Finding%20elements">Finding elements</a></li>\n<ul>\n<li><a href="#Explicit%20Selector%20Strategy">Explicit Selector Strategy</a></li>\n<li><a href="#Implicit%20Selector%20Strategy">Implicit Selector Strategy</a></li>\n<li><a href="#CSS">CSS</a></li>\n<li><a href="#XPath">XPath</a></li>\n<li><a href="#Text">Text</a></li>\n<li><a href="#Cascaded%20selector%20syntax">Cascaded selector syntax</a></li>\n<li><a href="#Examples">Examples</a></li>\n<li><a href="#iFrames">iFrames</a></li>\n<li><a href="#WebComponents%20and%20Shadow%20DOM">WebComponents and Shadow DOM</a></li>\n<li><a href="#Element%20reference%20syntax">Element reference syntax</a></li>\n</ul>\n<li><a href="#Assertions">Assertions</a></li>\n<ul>\n<li><a href="#The%20\'then\'%20or%20\'evaluate\'%20closure">The \'then\' or \'evaluate\' closure</a></li>\n<li><a href="#Examples">Examples</a></li>\n</ul>\n<li><a href="#Implicit%20waiting">Implicit waiting</a></li>\n<li><a href="#Experimental%3A%20Re-using%20same%20node%20process">Experimental: Re-using same node process</a></li>\n<li><a href="#Scope%20Setting">Scope Setting</a></li>\n<li><a href="#Extending%20Browser%20library%20with%20a%20JavaScript%20module">Extending Browser library with a JavaScript module</a></li>\n<ul>\n<li><a href="#Example%20module.js">Example module.js</a></li>\n<li><a href="#Example%20Robot%20Framework%20side">Example Robot Framework side</a></li>\n<li><a href="#Example%20module%20keyword%20for%20custom%20selector%20registering">Example module keyword for custom selector registering</a></li>\n</ul>\n<li><a href="#Plugins">Plugins</a></li>\n<li><a href="#Language">Language</a></li>\n<ul>\n<li><a href="#Translation%20file">Translation file</a></li>\n<li><a href="#Generating%20template%20translation%20file">Generating template translation file</a></li>\n</ul>\n<li><a href="#ENVIRONMENT%20VARIABLES">ENVIRONMENT VARIABLES</a></li>\n<li><a href="#Experimental%3A%20Provide%20parameters%20to%20node%20process">Experimental: Provide parameters to node process</a></li>\n</ul>\n<h2 id="Browser, Context and Page">Browser, Context and Page</h2>\n<p>Browser library works with three different layers that build on each other: <b>Browser</b>, <b>Context</b> and <b>Page</b>.</p>\n<h3 id="Browsers">Browsers</h3>\n<p>A <b>browser</b> can be started with one of the three different engines Chromium, Firefox or Webkit.</p>\n<h4 id="Supported Browsers">Supported Browsers</h4>\n<table border="1">\n<tr>\n<td>Browser</td>\n<td>Browser with this engine</td>\n</tr>\n<tr>\n<td><code>chromium</code></td>\n<td>Google Chrome, Microsoft Edge (since 2020), Opera</td>\n</tr>\n<tr>\n<td><code>firefox</code></td>\n<td>Mozilla Firefox</td>\n</tr>\n<tr>\n<td><code>webkit</code></td>\n<td>Apple Safari, Mail, AppStore on MacOS and iOS</td>\n</tr>\n</table>\n<p>Since <a href="https://github.com/microsoft/playwright">Playwright</a> comes with a pack of builtin binaries for all browsers, no additional drivers e.g. geckodriver are needed.</p>\n<p>All these browsers that cover more than 85% of the world wide used browsers, can be tested on Windows, Linux and MacOS. There is no need for dedicated machines anymore.</p>\n<p>A browser process is started <code>headless</code> (without a GUI) by default. Run <a href="#New%20Browser" title="&quot;New Browser&quot; keyword" class="name">New Browser</a> with specified arguments if a browser with a GUI is requested or if a proxy has to be configured. A browser process can contain several contexts.</p>\n<h3 id="Contexts">Contexts</h3>\n<p>A <b>context</b> corresponds to a set of independent incognito pages in a browser that share cookies, sessions or profile settings. Pages in two separate contexts do not share cookies, sessions or profile settings. Compared to Selenium, these do <b>not</b> require their own browser process. To get a clean environment a test can just open a new context. Due to this new independent browser sessions can be opened with Robot Framework Browser about 10 times faster than with Selenium by just opening a <a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a> within the opened browser.</p>\n<p>To make pages in the same suite share state, use the same context by opening the context with <a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a> on suite setup.</p>\n<p>The context layer is useful e.g. for testing different user sessions on the same webpage without opening a whole new browser context. Contexts can also have detailed configurations, such as geo-location, language settings, the viewport size or color scheme. Contexts do also support http credentials to be set, so that basic authentication can also be tested. To be able to download files within the test, the <code>acceptDownloads</code> argument must be set to <code>True</code> in <a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a> keyword. A context can contain different pages.</p>\n<h3 id="Pages">Pages</h3>\n<p>A <b>page</b> does contain the content of the loaded web site and has a browsing history. Pages and browser tabs are the same.</p>\n<p>Typical usage could be:</p>\n<pre>\n<b>*</b> Test Cases <b>*</b>\nStarting a browser with a page\n    New Browser    chromium    headless=false\n    New Context    viewport={\'width\': 1920, \'height\': 1080}\n    New Page       <a href="https://marketsquare.github.io/robotframework-browser/Browser.html">https://marketsquare.github.io/robotframework-browser/Browser.html</a>\n    Get Title      ==    Browser\n</pre>\n<p>The <a href="#Open%20Browser" title="&quot;Open Browser&quot; keyword" class="name">Open Browser</a> keyword opens a new browser, a new context and a new page. This keyword is useful for quick experiments or debugging sessions.</p>\n<p>When a <a href="#New%20Page" title="&quot;New Page&quot; keyword" class="name">New Page</a> is called without an open browser, <a href="#New%20Browser" title="&quot;New Browser&quot; keyword" class="name">New Browser</a> and <a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a> are executed with default values first.</p>\n<p>Each Browser, Context and Page has a unique ID with which they can be addressed. A full catalog of what is open can be received by <a href="#Get%20Browser%20Catalog" title="&quot;Get Browser Catalog&quot; keyword" class="name">Get Browser Catalog</a> as a dictionary.</p>\n<h2 id="Automatic page and context closing">Automatic page and context closing</h2>\n<p>Controls when contexts and pages are closed during the test execution.</p>\n<p>If automatic closing level is <span class="name">TEST</span>, contexts and pages that are created during a single test are automatically closed when the test ends. Contexts and pages that are created during suite setup are closed when the suite teardown ends.</p>\n<p>If automatic closing level is <span class="name">SUITE</span>, all contexts and pages that are created during the test suite are closed when the suite teardown ends.</p>\n<p>If automatic closing level is <span class="name">MANUAL</span>, nothing is closed automatically while the test execution is ongoing. All browsers, context and pages are automatically closed when test execution ends.</p>\n<p>If automatic closing level is <span class="name">KEEP</span>, nothing is closed automatically while the test execution is ongoing. Also, nothing is closed when test execution ends, including the node process. Therefore, it is users responsibility to close all browsers, context and pages and ensure that all process that are left running after the test execution end are closed. This level is only intended for test case development and must not be used when running tests in CI or similar environments.</p>\n<p>Automatic closing can be configured or switched off with the auto_closing_level library import parameter.</p>\n<p>See: <a href="#Importing" title="&quot;Importing&quot; section" class="name">Importing</a></p>\n<h2 id="Finding elements">Finding elements</h2>\n<p>All keywords in the library that need to interact with an element on a web page take an argument typically named <code>selector</code> that specifies how to find the element. Keywords can find elements with strict mode. If strict mode is true and locator finds multiple elements from the page, keyword will fail. If keyword finds one element, keyword does not fail because of strict mode. If strict mode is false, keyword does not fail if selector points many elements. Strict mode is enabled by default, but can be changed in library <a href="#Importing" title="&quot;Importing&quot; section" class="name">importing</a> or <a href="#Set%20Strict%20Mode" title="&quot;Set Strict Mode&quot; keyword" class="name">Set Strict Mode</a> keyword. Keyword documentation states if keyword uses strict mode. If keyword does not state that strict mode is used, then strict mode is not applied for the keyword. For more details, see Playwright <a href="https://playwright.dev/docs/api/class-page#page-query-selector">strict documentation</a>.</p>\n<p>Selector strategies that are supported by default are listed in the table below.</p>\n<table border="1">\n<tr>\n<th>Strategy</th>\n<th>Match based on</th>\n<th>Example</th>\n</tr>\n<tr>\n<td><code>css</code></td>\n<td>CSS selector.</td>\n<td><code>css=.class &gt; \\#login_btn</code></td>\n</tr>\n<tr>\n<td><code>xpath</code></td>\n<td>XPath expression.</td>\n<td><code>xpath=//input[@id="login_btn"]</code></td>\n</tr>\n<tr>\n<td><code>text</code></td>\n<td>Browser text engine.</td>\n<td><code>text=Login</code></td>\n</tr>\n<tr>\n<td><code>id</code></td>\n<td>Element ID Attribute.</td>\n<td><code>id=login_btn</code></td>\n</tr>\n</table>\n<p>CSS Selectors can also be recorded with <a href="#Record%20Selector" title="&quot;Record Selector&quot; keyword" class="name">Record selector</a> keyword.</p>\n<h3 id="Explicit Selector Strategy">Explicit Selector Strategy</h3>\n<p>The explicit selector strategy is specified with a prefix using syntax <code>strategy=value</code>. Spaces around the separator are ignored, so <code>css=foo</code>, <code>css= foo</code> and <code>css = foo</code> are all equivalent.</p>\n<h3 id="Implicit Selector Strategy">Implicit Selector Strategy</h3>\n<p><b>The default selector strategy is <a href="#CSS" title="&quot;CSS&quot; section" class="name">css</a>.</b></p>\n<p>If selector does not contain one of the know explicit selector strategies, it is assumed to contain css selector.</p>\n<p>Selectors that are starting with <code>//</code> or <code>..</code> are considered as xpath selectors.</p>\n<p>Selectors that are in quotes are considered as text selectors.</p>\n<p>Examples:</p>\n<pre>\n# CSS selectors are default.\n<a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>  span &gt; button.some_class         # This is equivalent\n<a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>  css=span &gt; button.some_class     # to this.\n\n# // or .. leads to xpath selector strategy\n<a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>  //span/button[@class="some_class"]\n<a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>  xpath=//span/button[@class="some_class"]\n\n# "text" in quotes leads to exact text selector strategy\n<a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>  "Login"\n<a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>  text="Login"\n</pre>\n<h3 id="CSS">CSS</h3>\n<p>As written before, the default selector strategy is <a href="#CSS" title="&quot;CSS&quot; section" class="name">css</a>. See <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors">css selector</a> for more information.</p>\n<p>Any malformed selector not starting with <code>//</code> or <code>..</code> nor starting and ending with a quote is assumed to be a css selector.</p>\n<p>Note that <code>#</code> is a comment character in <a href="https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#ignored-data">Robot Framework syntax</a> and needs to be escaped like <code>\\#</code> to work as a <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/ID_selectors">css ID selector</a>.</p>\n<p>Examples:</p>\n<pre>\n<a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>  span &gt; button.some_class\n<a href="#Get%20Text" title="&quot;Get Text&quot; keyword" class="name">Get Text</a>  \\#username_field  ==  George\n</pre>\n<h3 id="XPath">XPath</h3>\n<p>XPath engine is equivalent to <a href="https://developer.mozilla.org/en/docs/Web/API/Document/evaluate">Document.evaluate</a>. Example: <code>xpath=//html/body//span[text()="Hello World"]</code>.</p>\n<p>Malformed selector starting with <code>//</code> or <code>..</code> is assumed to be an xpath selector. For example, <code>//html/body</code> is converted to <code>xpath=//html/body</code>. More examples are displayed in <a href="#Examples" title="&quot;Examples&quot; section" class="name">Examples</a>.</p>\n<p>Note that xpath does not pierce <a href="https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM">shadow_roots</a>.</p>\n<h3 id="Text">Text</h3>\n<p>Text engine finds an element that contains a text node with the passed text. For example, <code>Click    text=Login</code> clicks on a login button, and <code>Wait For Elements State   text="lazy loaded text"</code> waits for the "lazy loaded text" to appear in the page.</p>\n<p>Text engine finds fields based on their labels in text inserting keywords.</p>\n<p>Malformed selector starting and ending with a quote (either <code>"</code> or <code>\'</code>) is assumed to be a text selector. For example, <code>Click    "Login"</code> is converted to <code>Click    text="Login"</code>. Be aware that these leads to exact matches only! More examples are displayed in <a href="#Examples" title="&quot;Examples&quot; section" class="name">Examples</a>.</p>\n<h4 id="Insensitive match">Insensitive match</h4>\n<p>By default, the match is case-insensitive, ignores leading/trailing whitespace and searches for a substring. This means <code>text= Login</code> matches <code>&lt;button&gt;Button loGIN (click me)&lt;/button&gt;</code>.</p>\n<h4 id="Exact match">Exact match</h4>\n<p>Text body can be escaped with single or double quotes for precise matching, insisting on exact match, including specified whitespace and case. This means <code>text="Login "</code> will only match <code>&lt;button&gt;Login &lt;/button&gt;</code> with exactly one space after "Login". Quoted text follows the usual escaping rules, e.g. use <code>\\"</code> to escape double quote in a double-quoted string: <code>text="foo\\"bar"</code>.</p>\n<h4 id="RegEx">RegEx</h4>\n<p>Text body can also be a JavaScript-like regex wrapped in / symbols. This means <code>text=/^hello .*!$/i</code> or <code>text=/^Hello .*!$/</code> will match <code>&lt;span&gt;Hello Peter Parker!&lt;/span&gt;</code> with any name after <code>Hello</code>, ending with <code>!</code>. The first one flagged with <code>i</code> for case-insensitive. See <a href="https://regex101.com/">https://regex101.com</a> for more information about RegEx.</p>\n<h4 id="Button and Submit Values">Button and Submit Values</h4>\n<p>Input elements of the type button and submit are rendered with their value as text, and text engine finds them. For example, <code>text=Login</code> matches <code>&lt;input type=button value="Login"&gt;</code>.</p>\n<h3 id="Cascaded selector syntax">Cascaded selector syntax</h3>\n<p>Browser library supports the same selector strategies as the underlying Playwright node module: xpath, css, id and text. The strategy can either be explicitly specified with a prefix or the strategy can be implicit.</p>\n<p>A major advantage of Browser is that multiple selector engines can be used within one selector. It is possible to mix XPath, CSS and Text selectors while selecting a single element.</p>\n<p>Selectors are strings that consists of one or more clauses separated by <code>&gt;&gt;</code> token, e.g. <code>clause1 &gt;&gt; clause2 &gt;&gt; clause3</code>. When multiple clauses are present, next one is queried relative to the previous one\'s result. Browser library supports concatenation of different selectors separated by <code>&gt;&gt;</code>.</p>\n<p>For example:</p>\n<pre>\n<a href="#Highlight%20Elements" title="&quot;Highlight Elements&quot; keyword" class="name">Highlight Elements</a>    "Hello" &gt;&gt; ../.. &gt;&gt; .select_button\n<a href="#Highlight%20Elements" title="&quot;Highlight Elements&quot; keyword" class="name">Highlight Elements</a>    text=Hello &gt;&gt; xpath=../.. &gt;&gt; css=.select_button\n</pre>\n<p>Each clause contains a selector engine name and selector body, e.g. <code>engine=body</code>. Here <code>engine</code> is one of the supported engines (e.g. css or a custom one). Selector <code>body</code> follows the format of the particular engine, e.g. for css engine it should be a <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors">css selector</a>. Body format is assumed to ignore leading and trailing white spaces, so that extra whitespace can be added for readability. If the selector engine needs to include <code>&gt;&gt;</code> in the body, it should be escaped inside a string to not be confused with clause separator, e.g. <code>text="some &gt;&gt; text"</code>.</p>\n<p>Selector engine name can be prefixed with <code>*</code> to capture an element that matches the particular clause instead of the last one. For example, <code>css=article &gt;&gt; text=Hello</code> captures the element with the text <code>Hello</code>, and <code>*css=article &gt;&gt; text=Hello</code> (note the *) captures the article element that contains some element with the text Hello.</p>\n<p>For convenience, selectors in the wrong format are heuristically converted to the right format. See <a href="#Implicit%20Selector%20Strategy" title="&quot;Implicit Selector Strategy&quot; section" class="name">Implicit Selector Strategy</a></p>\n<h3 id="Examples">Examples</h3>\n<pre>\n# queries \'div\' css selector\nGet Element    css=div\n\n# queries \'//html/body/div\' xpath selector\nGet Element    //html/body/div\n\n# queries \'"foo"\' text selector\nGet Element    text=foo\n\n# queries \'span\' css selector inside the result of \'//html/body/div\' xpath selector\nGet Element    xpath=//html/body/div &gt;&gt; css=span\n\n# converted to \'css=div\'\nGet Element    div\n\n# converted to \'xpath=//html/body/div\'\nGet Element    //html/body/div\n\n# converted to \'text="foo"\'\nGet Element    "foo"\n\n# queries the div element of every 2nd span element inside an element with the id foo\nGet Element    \\#foo &gt;&gt; css=span:nth-child(2n+1) &gt;&gt; div\nGet Element    id=foo &gt;&gt; css=span:nth-child(2n+1) &gt;&gt; div\n</pre>\n<p>Be aware that using <code>#</code> as a starting character in Robot Framework would be interpreted as comment. Due to that fact a <code>#id</code> must be escaped as <code>\\#id</code>.</p>\n<h3 id="iFrames">iFrames</h3>\n<p>By default, selector chains do not cross frame boundaries. It means that a simple CSS selector is not able to select an element located inside an iframe or a frameset. For this use case, there is a special selector <code>&gt;&gt;&gt;</code> which can be used to combine a selector for the frame and a selector for an element inside a frame.</p>\n<p>Given this simple pseudo html snippet:</p>\n<pre>\n&lt;iframe id="iframe" src="src.html"&gt;\n  #document\n    &lt;!DOCTYPE html&gt;\n    &lt;html&gt;\n      &lt;head&gt;&lt;/head&gt;\n      &lt;body&gt;\n        &lt;button id="btn"&gt;Click Me&lt;/button&gt;\n      &lt;/body&gt;\n    &lt;/html&gt;\n&lt;/iframe&gt;\n</pre>\n<p>Here\'s a keyword call that clicks the button inside the frame.</p>\n<pre>\nClick   id=iframe &gt;&gt;&gt; id=btn\n</pre>\n<p>The selectors on the left and right side of <code>&gt;&gt;&gt;</code> can be any valid selectors. The selector clause directly before the frame opener <code>&gt;&gt;&gt;</code> must select the frame element itself. Frame selection is the only place where Browser Library modifies the selector, as explained in above. In all cases, the library does not alter the selector in any way, instead it is passed as is to the Playwright side.</p>\n<p>If multiple keyword shall be performed inside a frame, it is possible to define a selector prefix with <a href="#Set%20Selector%20Prefix" title="&quot;Set Selector Prefix&quot; keyword" class="name">Set Selector Prefix</a>. If this prefix is set to a frame/iframe it has similar behavior as SeleniumLibrary keyword <span class="name">Select Frame</span>.</p>\n<h3 id="WebComponents and Shadow DOM">WebComponents and Shadow DOM</h3>\n<p>Playwright and so also Browser are able to do automatic piercing of Shadow DOMs and therefore are the best automation technology when working with WebComponents.</p>\n<p>Also other technologies claim that they can handle <a href="https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM">Shadow DOM and Web Components</a>. However, none of them do pierce shadow roots automatically, which may be inconvenient when working with Shadow DOM and Web Components.</p>\n<p>For that reason, the css engine pierces shadow roots. More specifically, every <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Descendant_combinator">Descendant combinator</a> pierces an arbitrary number of open shadow roots, including the implicit descendant combinator at the start of the selector.</p>\n<p>That means, it is not necessary to select each shadow host, open its shadow root and select the next shadow host until you reach the element that should be controlled.</p>\n<h4 id="CSS:light">CSS:light</h4>\n<p><code>css:light</code> engine is equivalent to <a href="https://developer.mozilla.org/en/docs/Web/API/Document/querySelector">Document.querySelector</a> and behaves according to the CSS spec. However, it does not pierce shadow roots.</p>\n<p><code>css</code> engine first searches for elements in the light dom in the iteration order, and then recursively inside open shadow roots in the iteration order. It does not search inside closed shadow roots or iframes.</p>\n<p>Examples:</p>\n<pre>\n&lt;article&gt;\n  &lt;div&gt;In the light dom&lt;/div&gt;\n  &lt;div slot=\'myslot\'&gt;In the light dom, but goes into the shadow slot&lt;/div&gt;\n  &lt;open mode shadow root&gt;\n      &lt;div class=\'in-the-shadow\'&gt;\n          &lt;span class=\'content\'&gt;\n              In the shadow dom\n              &lt;open mode shadow root&gt;\n                  &lt;li id=\'target\'&gt;Deep in the shadow&lt;/li&gt;\n              &lt;/open mode shadow root&gt;\n          &lt;/span&gt;\n      &lt;/div&gt;\n      &lt;slot name=\'myslot\'&gt;&lt;/slot&gt;\n  &lt;/open mode shadow root&gt;\n&lt;/article&gt;\n</pre>\n<p>Note that <code>&lt;open mode shadow root&gt;</code> is not an html element, but rather a shadow root created with <code>element.attachShadow({mode: \'open\'})</code>.</p>\n<ul>\n<li>Both <code>"css=article div"</code> and <code>"css:light=article div"</code> match the first <code>&lt;div&gt;In the light dom&lt;/div&gt;</code>.</li>\n<li>Both <code>"css=article &gt; div"</code> and <code>"css:light=article &gt; div"</code> match two <code>div</code> elements that are direct children of the <code>article</code>.</li>\n<li><code>"css=article .in-the-shadow"</code> matches the <code>&lt;div class=\'in-the-shadow\'&gt;</code>, piercing the shadow root, while <code>"css:light=article .in-the-shadow"</code> does not match anything.</li>\n<li><code>"css:light=article div &gt; span"</code> does not match anything, because both light-dom <code>div</code> elements do not contain a <code>span</code>.</li>\n<li><code>"css=article div &gt; span"</code> matches the <code>&lt;span class=\'content\'&gt;</code>, piercing the shadow root.</li>\n<li><code>"css=article &gt; .in-the-shadow"</code> does not match anything, because <code>&lt;div class=\'in-the-shadow\'&gt;</code> is not a direct child of <code>article</code></li>\n<li><code>"css:light=article &gt; .in-the-shadow"</code> does not match anything.</li>\n<li><code>"css=article li#target"</code> matches the <code>&lt;li id=\'target\'&gt;Deep in the shadow&lt;/li&gt;</code>, piercing two shadow roots.</li>\n</ul>\n<h4 id="text:light">text:light</h4>\n<p><code>text</code> engine open pierces shadow roots similarly to <code>css</code>, while <code>text:light</code> does not. Text engine first searches for elements in the light dom in the iteration order, and then recursively inside open shadow roots in the iteration order. It does not search inside closed shadow roots or iframes.</p>\n<h4 id="id, data-testid, data-test-id, data-test and their :light counterparts">id, data-testid, data-test-id, data-test and their :light counterparts</h4>\n<p>Attribute engines are selecting based on the corresponding attribute value. For example: <code>data-test-id=foo</code> is equivalent to <code>css=[data-test-id="foo"]</code>, and <code>id:light=foo</code> is equivalent to <code>css:light=[id="foo"]</code>.</p>\n<h3 id="Element reference syntax">Element reference syntax</h3>\n<p>It is possible to get a reference to a Locator by using <a href="#Get%20Element" title="&quot;Get Element&quot; keyword" class="name">Get Element</a> and <a href="#Get%20Elements" title="&quot;Get Elements&quot; keyword" class="name">Get Elements</a> keywords. Keywords do not save reference to an element in the HTML document, instead it saves reference to a Playwright <a href="https://playwright.dev/docs/api/class-locator">Locator</a>. In nutshell Locator captures the logic of how to retrieve that element from the page. Each time an action is performed, the locator re-searches the elements in the page. This reference can be used as a <b>first</b> part of a selector by using a special selector syntax <span class="name">element=</span>. like this:</p>\n<pre>\n${ref}=    Get Element    .some_class\n           Click          ${ref} &gt;&gt; .some_child     # Locator searches an element from the page.\n           Click          ${ref} &gt;&gt; .other_child    # Locator searches again an element from the page.\n</pre>\n<p>The <span class="name">.some_child</span> and <span class="name">.other_child</span> selectors in the example are relative to the element referenced by ${ref}. Please note that frame piercing is not possible with element reference.</p>\n<h2 id="Assertions">Assertions</h2>\n<p>Keywords that accept arguments <code>assertion_operator</code> &lt;<a href="#type-AssertionOperator" title="&quot;AssertionOperator&quot; type" class="name">AssertionOperator</a>&gt; and <code>assertion_expected</code> can optionally assert that a specified condition holds. Keywords will return the value even when the assertion is performed by the keyword.</p>\n<p>Assert will retry and fail only after a specified timeout. See <a href="#Importing" title="&quot;Importing&quot; section" class="name">Importing</a> and <code>retry_assertions_for</code> (default is 1 second) for configuring this timeout.</p>\n<p>Currently supported assertion operators are:</p>\n<table border="1">\n<tr>\n<th>Operator</th>\n<th>Alternative Operators</th>\n<th>Description</th>\n<th>Validate Equivalent</th>\n</tr>\n<tr>\n<td><code>==</code></td>\n<td><code>equal</code>, <code>equals</code>, <code>should be</code></td>\n<td>Checks if returned value is equal to expected value.</td>\n<td><code>value == expected</code></td>\n</tr>\n<tr>\n<td><code>!=</code></td>\n<td><code>inequal</code>, <code>should not be</code></td>\n<td>Checks if returned value is not equal to expected value.</td>\n<td><code>value != expected</code></td>\n</tr>\n<tr>\n<td><code>&gt;</code></td>\n<td><code>greater than</code></td>\n<td>Checks if returned value is greater than expected value.</td>\n<td><code>value &gt; expected</code></td>\n</tr>\n<tr>\n<td><code>&gt;=</code></td>\n<td></td>\n<td>Checks if returned value is greater than or equal to expected value.</td>\n<td><code>value &gt;= expected</code></td>\n</tr>\n<tr>\n<td><code>&lt;</code></td>\n<td><code>less than</code></td>\n<td>Checks if returned value is less than expected value.</td>\n<td><code>value &lt; expected</code></td>\n</tr>\n<tr>\n<td><code>&lt;=</code></td>\n<td></td>\n<td>Checks if returned value is less than or equal to expected value.</td>\n<td><code>value &lt;= expected</code></td>\n</tr>\n<tr>\n<td><code>*=</code></td>\n<td><code>contains</code></td>\n<td>Checks if returned value contains expected value as substring.</td>\n<td><code>expected in value</code></td>\n</tr>\n<tr>\n<td></td>\n<td><code>not contains</code></td>\n<td>Checks if returned value does not contain expected value as substring.</td>\n<td><code>expected in value</code></td>\n</tr>\n<tr>\n<td><code>^=</code></td>\n<td><code>should start with</code>, <code>starts</code></td>\n<td>Checks if returned value starts with expected value.</td>\n<td><code>re.search(f"^{expected}", value)</code></td>\n</tr>\n<tr>\n<td><code>$=</code></td>\n<td><code>should end with</code>, <code>ends</code></td>\n<td>Checks if returned value ends with expected value.</td>\n<td><code>re.search(f"{expected}$", value)</code></td>\n</tr>\n<tr>\n<td><code>matches</code></td>\n<td></td>\n<td>Checks if given RegEx matches minimum once in returned value.</td>\n<td><code>re.search(expected, value)</code></td>\n</tr>\n<tr>\n<td><code>validate</code></td>\n<td></td>\n<td>Checks if given Python expression evaluates to <code>True</code>.</td>\n<td></td>\n</tr>\n<tr>\n<td><code>evaluate</code></td>\n<td><code>then</code></td>\n<td>When using this operator, the keyword does return the evaluated Python expression.</td>\n<td></td>\n</tr>\n</table>\n<p>There are three different possibilities what keyword returns when <span class="name">matches</span> operator is used: string, tuple or dictionary. What keyword returns depends on how the RegEx is formed. If RegEx does not contain group(s), then keyword will return the string without modifications. If RegEx contains groups, meaning (...), then keyword will return a tuple. Each tuple item contains the text which is matched by the group. If there is group and group has a name, (?P&lt;name&gt;...) syntax, then keyword returns a dictionary. In this case dictionary key is the group name and value contains the matched text. If there mix of groups and groups with names, then tuple is returned.</p>\n<p>Currently supported formatters for assertions are:</p>\n<table border="1">\n<tr>\n<th>Formatter</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>normalize spaces</code></td>\n<td>Substitutes multiple spaces to single space from the value</td>\n</tr>\n<tr>\n<td><code>strip</code></td>\n<td>Removes spaces from the beginning and end of the value</td>\n</tr>\n<tr>\n<td><code>case insensitive</code></td>\n<td>Converts value to lower case before comparing</td>\n</tr>\n<tr>\n<td><code>apply to expected</code></td>\n<td>Applies rules also for the expected value</td>\n</tr>\n</table>\n<p>Formatters are applied to the value before assertion is performed and keywords returns a value where rule is applied. Formatter is only applied to the value which keyword returns and not all rules are valid for all assertion operators. If <code>apply to expected</code> formatter is defined, then formatters are then formatter are also applied to expected value.</p>\n<p>By default, keywords will provide an error message if an assertion fails. Default error messages can be overwritten with a <code>message</code> argument. The <code>message</code> argument accepts <span class="name">{value}</span>, <span class="name">{value_type}</span>, <span class="name">{expected}</span> and <span class="name">{expected_type}</span> <a href="https://docs.python.org/3/library/stdtypes.html#str.format">format</a> options. The <span class="name">{value}</span> is the value returned by the keyword and the <span class="name">{expected}</span> is the expected value defined by the user, usually the value in the <code>assertion_expected</code> argument. The <span class="name">{value_type}</span> and <span class="name">{expected_type}</span> are the type definitions from <span class="name">{value}</span> and <span class="name">{expected}</span> arguments. In similar fashion as Python <a href="https://docs.python.org/3/library/functions.html#type">type</a> returns type definition. Assertions will retry until <code>timeout</code> has expired if they do not pass.</p>\n<p>The assertion <code>assertion_expected</code> value is not converted by the library and is used as is. Therefore when assertion is made, the <code>assertion_expected</code> argument value and value returned the keyword must have the same type. If types are not the same, assertion will fail. Example <a href="#Get%20Text" title="&quot;Get Text&quot; keyword" class="name">Get Text</a> always returns a string and has to be compared with a string, even the returned value might look like a number.</p>\n<p>Other Keywords have other specific types they return. <a href="#Get%20Element%20Count" title="&quot;Get Element Count&quot; keyword" class="name">Get Element Count</a> always returns an integer. <a href="#Get%20BoundingBox" title="&quot;Get BoundingBox&quot; keyword" class="name">Get Bounding Box</a> and <a href="#Get%20Viewport%20Size" title="&quot;Get Viewport Size&quot; keyword" class="name">Get Viewport Size</a> can be filtered. They return a dictionary without a filter and a number when filtered. These Keywords do automatic conversion for the expected value if a number is returned.</p>\n<p>* &lt; less or greater &gt; With Strings* Comparisons of strings with <code>greater than</code> or <code>less than</code> compares each character, starting from 0 regarding where it stands in the code page. Example: <code>A &lt; Z</code>, <code>Z &lt; a</code>, <code>ac &lt; dc<span class="name"> It does never compare the length of elements. Neither lists nor strings. The comparison stops at the first character that is different. Examples: </span>`\'abcde\' &lt; \'abd\'</code>, <code>\'100.000\' &lt; \'2\'</code> In Python 3 and therefore also in Browser it is not possible to compare numbers with strings with a greater or less operator. On keywords that return numbers, the given expected value is automatically converted to a number before comparison.</p>\n<p>The getters <span class="name">Get Page State</span> and <a href="#Get%20Browser%20Catalog" title="&quot;Get Browser Catalog&quot; keyword" class="name">Get Browser Catalog</a> return a dictionary. Values of the dictionary can directly asserted. Pay attention of possible types because they are evaluated in Python. For example:</p>\n<pre>\nGet Page State    validate    2020 &gt;= value[\'year\']                     # Comparison of numbers\nGet Page State    validate    "IMPORTANT MESSAGE!" == value[\'message\']  # Comparison of strings\n</pre>\n<h3 id="The \'then\' or \'evaluate\' closure">The \'then\' or \'evaluate\' closure</h3>\n<p>Keywords that accept arguments <code>assertion_operator</code> and <code>assertion_expected</code> can optionally also use <code>then</code> or <code>evaluate</code> closure to modify the returned value with BuiltIn Evaluate. Actual value can be accessed with <code>value</code>.</p>\n<p>For example <code>Get Title  then  \'TITLE: \'+value</code>. See <a href="https://robotframework.org/robotframework/latest/libraries/BuiltIn.html#Evaluating%20expressions">Builtin Evaluating expressions</a> for more info on the syntax.</p>\n<h3 id="Examples">Examples</h3>\n<pre>\n# <b>Keyword</b>    <b>Selector</b>                    <b>Key</b>        <b>Assertion Operator</b>    <b>Assertion Expected</b>\nGet Title                                           equal                 Page Title\nGet Title                                           ^=                    Page\nGet Style    //*[@id="div-element"]      width      &gt;                     100\nGet Title                                           matches               \\\\w+\\\\s\\\\w+\nGet Title                                           validate              value == "Login Page"\nGet Title                                           evaluate              value if value == "some value" else "something else"\n</pre>\n<h2 id="Implicit waiting">Implicit waiting</h2>\n<p>Browser library and Playwright have many mechanisms to help in waiting for elements. Playwright will auto-wait before performing actions on elements. Please see <a href="https://playwright.dev/docs/actionability/">Auto-waiting on Playwright documentation</a> for more information.</p>\n<p>On top of Playwright auto-waiting Browser assertions will wait and retry for specified time before failing any <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a>. Time is specified in Browser library initialization with <code>retry_assertions_for</code>.</p>\n<p>Browser library also includes explicit waiting keywords such as <a href="#Wait%20For%20Elements%20State" title="&quot;Wait For Elements State&quot; keyword" class="name">Wait for Elements State</a> if more control for waiting is needed.</p>\n<h2 id="Experimental: Re-using same node process">Experimental: Re-using same node process</h2>\n<p>Browser library integrated nodejs and python. The NodeJS side can be also executed as a standalone process. Browser libraries running on the same machine can talk to that instead of starting new node processes. This can speed execution when running tests parallel. To start node side run on the directory when the Browser package is <code>PLAYWRIGHT_BROWSERS_PATH=0 node Browser/wrapper/index.js PORT</code>.</p>\n<p><code>PORT</code> is the port you want to use for the node process. To execute tests then with pabot for example do <code>ROBOT_FRAMEWORK_BROWSER_NODE_PORT=PORT pabot ..</code>.</p>\n<h2 id="Scope Setting">Scope Setting</h2>\n<p>Some keywords which manipulates library settings have a scope argument. With that scope argument one can set the "live time" of that setting. Available Scopes are: <span class="name">Global</span>, <span class="name">Suite</span> and <span class="name">Test</span>/<span class="name">Task</span> See <a href="#type-Scope" title="&quot;Scope&quot; type" class="name">Scope</a>. Is a scope finished, this scoped setting, like timeout, will no longer be used.</p>\n<p>Live Times:</p>\n<ul>\n<li>A <span class="name">Global</span> scope will live forever until it is overwritten by another <span class="name">Global</span> scope. Or locally temporarily overridden by a more narrow scope.</li>\n<li>A <span class="name">Suite</span> scope will locally override the <span class="name">Global</span> scope and live until the end of the Suite within it is set, or if it is overwritten by a later setting with <span class="name">Global</span> or same scope. Children suite does inherit the setting from the parent suite but also may have its own local <span class="name">Suite</span> setting that then will be inherited to its children suites.</li>\n<li>A <span class="name">Test</span> or <span class="name">Task</span> scope will be inherited from its parent suite but when set, lives until the end of that particular test or task.</li>\n</ul>\n<p>A new set higher order scope will always remove the lower order scope which may be in charge. So the setting of a <span class="name">Suite</span> scope from a test, will set that scope to the robot file suite where that test is and removes the <span class="name">Test</span> scope that may have been in place.</p>\n<h2 id="Extending Browser library with a JavaScript module">Extending Browser library with a JavaScript module</h2>\n<p>Browser library can be extended with JavaScript. The module must be in CommonJS format that Node.js uses. You can translate your ES6 module to Node.js CommonJS style with Babel. Many other languages can be also translated to modules that can be used from Node.js. For example TypeScript, PureScript and ClojureScript just to mention few.</p>\n<pre>\nasync function myGoToKeyword(url, args, page, logger, playwright) {\n  logger(args.toString())\n  playwright.coolNewFeature()\n  return await page.goto(url);\n}\n</pre>\n<p>Functions can contain any number of arguments and arguments may have default values.</p>\n<p>There are some reserved arguments that are not accessible from Robot Framework side. They are injected to the function if they are in the arguments:</p>\n<p><code>page</code>: <a href="https://playwright.dev/docs/api/class-page">the playwright Page object</a>.</p>\n<p><code>context</code>: <a href="https://playwright.dev/docs/api/class-browsercontext">the playwright BrowserContext object</a>.</p>\n<p><code>browser</code>: <a href="https://playwright.dev/docs/api/class-browser">the playwright Browser object</a>.</p>\n<p><code>args</code>: the rest of values from Robot Framework keyword call <code>*args</code>.</p>\n<p><code>logger</code>: callback function that takes strings as arguments and writes them to robot log. Can be called multiple times.</p>\n<p><code>playwright</code>: playwright module (* from \'playwright\'). Useful for integrating with Playwright features that Browser library doesn\'t support with it\'s own keywords. <a href="https://playwright.dev/docs/api/class-playwright">API docs</a></p>\n<p>also argument name <code>self</code> can not be used.</p>\n<h3 id="Example module.js">Example module.js</h3>\n<pre>\nasync function myGoToKeyword(pageUrl, page) {\n  await page.goto(pageUrl);\n  return await page.title();\n}\nexports.__esModule = true;\nexports.myGoToKeyword = myGoToKeyword;\n</pre>\n<h3 id="Example Robot Framework side">Example Robot Framework side</h3>\n<pre>\n<b>*</b> Settings <b>*</b>\nLibrary   Browser  jsextension=${CURDIR}/module.js\n\n<b>*</b> Test Cases <b>*</b>\nHello\n  New Page\n  ${title}=  myGoToKeyword  <a href="https://playwright.dev">https://playwright.dev</a>\n  Should be equal  ${title}  Playwright\n</pre>\n<p>Also selector syntax can be extended with a custom selector using a js module</p>\n<h3 id="Example module keyword for custom selector registering">Example module keyword for custom selector registering</h3>\n<pre>\nasync function registerMySelector(playwright) {\nplaywright.selectors.register("myselector", () =&gt; ({\n   // Returns the first element matching given selector in the root\'s subtree.\n   query(root, selector) {\n      return root.querySelector(<span class="name">a[data-title="${selector}"]</span>);\n    },\n\n    // Returns all elements matching given selector in the root\'s subtree.\n    queryAll(root, selector) {\n      return Array.from(root.querySelectorAll(<span class="name">a[data-title="${selector}"]</span>));\n    }\n}));\nreturn 1;\n}\nexports.__esModule = true;\nexports.registerMySelector = registerMySelector;\n</pre>\n<h2 id="Plugins">Plugins</h2>\n<p>Browser library offers plugins as a way to modify and add library keywords and modify some of the internal functionality without creating a new library or hacking the source code. See plugin API <a href="https://github.com/MarketSquare/robotframework-browser/blob/main/docs/plugins/README.md">documentation</a> for further details.</p>\n<h2 id="Language">Language</h2>\n<p>Browser library offers possibility to translate keyword names and documentation to new language. If language is defined, Browser library will search from <a href="https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#module-search-path">module search path</a> Python packages starting with <span class="name">robotframework_browser_translation</span> by using <a href="https://packaging.python.org/en/latest/guides/creating-and-discovering-plugins/">Python pluging API</a>. Library is using naming convention to find Python plugins.</p>\n<p>The package must implement single API call, <code>get_language</code> without any arguments. Method must return a dictionary containing two keys: <code>language</code> and <code>path</code>. The language key value defines which language the package contains. Also value should match (case insensitive) the library <code>language</code> import parameter. The path parameter value should be full path to the translation file.</p>\n<h3 id="Translation file">Translation file</h3>\n<p>The file name or extension is not important, but data must be in <a href="https://www.json.org/json-en.html">json</a> format. The keys of json are the methods names, not the keyword names, which implements keywords. Value of key is json object which contains two keys: <code>name</code> and <code>doc</code>. The <code>name</code> key contains the keyword translated name and <span class="name">doc</span> contains translated documentation. Providing doc and name are optional, example translation json file can only provide translations to keyword names or only to documentation. But it is always recommended to provide translation to both name and doc. Special key <code>__intro__</code> is for class level documentation and <code>__init__</code> is for init level documentation. These special values <code>name</code> can not be translated, instead <code>name</code> should be kept the same.</p>\n<h3 id="Generating template translation file">Generating template translation file</h3>\n<p>Template translation file, with English language can be created by running: <span class="name">rfbrowser translation /path/to/translation.json</span> command. Command does not provide translations to other languages, it only provides easy way to create full list keywords and their documentation in correct format. It is also possible to add keywords from library plugins and js extensions by providing <span class="name">--plugings</span> and <span class="name">--jsextension</span> arguments to command. Example: <span class="name">rfbrowser translation --plugings myplugin.SomePlugin --jsextension /path/ot/jsplugin.js /path/to/translation.json</span></p>\n<p>Example project for translation can be found from <a href="https://github.com/MarketSquare/robotframework-browser-translation-fi">robotframework-browser-translation-fi</a> repository.</p>\n<h2 id="ENVIRONMENT VARIABLES">ENVIRONMENT VARIABLES</h2>\n<p>There are some environment variables that can be used to modify the behavior of the library. Some of these environment variables are for experimental/development features and must not be used in production environments. They are listed here to prevent users using them by accident without knowing the possible consequences.</p>\n<p>These are:</p>\n<table border="1">\n<tr>\n<th>Environment variable</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>ROBOT_FRAMEWORK_BROWSER_NODE_PORT</code></td>\n<td>Port number for connecting to an existing node process. This is an alternative to <code>playwright_process_port</code> import argument.</td>\n</tr>\n<tr>\n<td><code>ROBOT_FRAMEWORK_BROWSER_NODE_COVERAGE</code></td>\n<td>If set to <code>1</code>, will collect code coverage for the node process. This must not be used in production environments and is not supported on Windows.</td>\n</tr>\n<tr>\n<td><code>ROBOT_FRAMEWORK_BROWSER_NODE_DEBUG_OPTIONS</code></td>\n<td>Debug options for the node process. This is a comma-separated list of arguments, for example <code>--inspect</code>. This must not be used in production environments.</td>\n</tr>\n</table>\n<h2 id="Experimental: Provide parameters to node process">Experimental: Provide parameters to node process</h2>\n<p>Browser library is integrated with Node.js and Python. Browser library starts a node process, to communicate Playwright API on the Node.js side. It is possible to provide parameters for the started node process by defining ROBOT_FRAMEWORK_BROWSER_NODE_DEBUG_OPTIONS environment variable, before starting the test execution. Example: <code>ROBOT_FRAMEWORK_BROWSER_NODE_DEBUG_OPTIONS=--inspect,--trace-warnings robot path/to/tests</code>. There can be multiple arguments defined in the environment variable and arguments must be separated with comma.</p>',
   version: "20.0.0",
   generated: "2026-07-07T11:36:38+00:00",
   type: "LIBRARY",
@@ -28,7 +28,8 @@ const DATA: Libdoc = {
     {
       name: "__init__",
       doc: "",
-      shortdoc: "Browser library can be taken into use with optional arguments:",
+      shortdoc:
+        "Browser library can be taken into use with optional arguments:",
       args: [
         {
           name: "_",
@@ -41,7 +42,7 @@ const DATA: Libdoc = {
         },
         {
           name: "auto_closing_level",
-          doc: "<p>Configure context and page automatic closing. Default is <code>TEST</code>, for more details, see <span class=\"name\">AutoClosingLevel</span></p>",
+          doc: '<p>Configure context and page automatic closing. Default is <code>TEST</code>, for more details, see <span class="name">AutoClosingLevel</span></p>',
           type: {
             name: "AutoClosingLevel",
             typedoc: "AutoClosingLevel",
@@ -55,7 +56,7 @@ const DATA: Libdoc = {
         },
         {
           name: "auto_delete_passed_tracing",
-          doc: "<p>If <code>auto_closing_level</code> is set to <code>SUITE</code> or <code>TEST</code> and <code>tracing</code> of <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a> active, traces of passed tests or suites, depending on the context scope, not be saved. Also temp files will all be deleted after the whole execution ends.</p>",
+          doc: '<p>If <code>auto_closing_level</code> is set to <code>SUITE</code> or <code>TEST</code> and <code>tracing</code> of <a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a> active, traces of passed tests or suites, depending on the context scope, not be saved. Also temp files will all be deleted after the whole execution ends.</p>',
           type: {
             name: "bool",
             typedoc: "boolean",
@@ -69,7 +70,7 @@ const DATA: Libdoc = {
         },
         {
           name: "enable_playwright_debug",
-          doc: "<p>Enable low level debug information from the playwright to playwright-log.txt file. For more details, see <span class=\"name\">PlaywrightLogTypes</span>.</p>",
+          doc: '<p>Enable low level debug information from the playwright to playwright-log.txt file. For more details, see <span class="name">PlaywrightLogTypes</span>.</p>',
           type: {
             name: "Union",
             typedoc: null,
@@ -96,7 +97,7 @@ const DATA: Libdoc = {
         },
         {
           name: "enable_presenter_mode",
-          doc: "<p>Automatic highlights the interacted components, slowMo and a small pause at the end. Can be enabled by giving True or can be customized by giving a dictionary: <span class=\"name\">{\"duration\": \"2 seconds\", \"width\": \"2px\", \"style\": \"dotted\", \"color\": \"blue\"}</span> Where <span class=\"name\">duration</span> is time format in Robot Framework format, defaults to 2 seconds. <span class=\"name\">width</span> is width of the marker in pixels, defaults the <span class=\"name\">2px</span>. <span class=\"name\">style</span> is the style of border, defaults to <span class=\"name\">dotted</span>. <span class=\"name\">color</span> is the color of the marker, defaults to <span class=\"name\">blue</span>. By default, the call banner keyword is also enabled unless explicitly disabled.</p>",
+          doc: '<p>Automatic highlights the interacted components, slowMo and a small pause at the end. Can be enabled by giving True or can be customized by giving a dictionary: <span class="name">{"duration": "2 seconds", "width": "2px", "style": "dotted", "color": "blue"}</span> Where <span class="name">duration</span> is time format in Robot Framework format, defaults to 2 seconds. <span class="name">width</span> is width of the marker in pixels, defaults the <span class="name">2px</span>. <span class="name">style</span> is the style of border, defaults to <span class="name">dotted</span>. <span class="name">color</span> is the color of the marker, defaults to <span class="name">blue</span>. By default, the call banner keyword is also enabled unless explicitly disabled.</p>',
           type: {
             name: "Union",
             typedoc: null,
@@ -123,7 +124,7 @@ const DATA: Libdoc = {
         },
         {
           name: "external_browser_executable",
-          doc: "<p>Dict mapping name of browser to path of executable of a browser. Will make opening new browsers of the given type use the set executablePath. Currently only configuring of <span class=\"name\">chromium</span> to a separate executable (chrome, chromium and Edge executables all work with recent versions) works.</p>",
+          doc: '<p>Dict mapping name of browser to path of executable of a browser. Will make opening new browsers of the given type use the set executablePath. Currently only configuring of <span class="name">chromium</span> to a separate executable (chrome, chromium and Edge executables all work with recent versions) works.</p>',
           type: {
             name: "Union",
             typedoc: null,
@@ -271,7 +272,7 @@ const DATA: Libdoc = {
         },
         {
           name: "playwright_process_port",
-          doc: "<p>Experimental reusing of playwright process. <code>playwright_process_port</code> is preferred over environment variable <code>ROBOT_FRAMEWORK_BROWSER_NODE_PORT</code>. See <a href=\"#Experimental%3A%20Re-using%20same%20node%20process\" title=\"&quot;Experimental: Re-using same node process&quot; section\" class=\"name\">Experimental: Re-using same node process</a> for more details.</p>",
+          doc: '<p>Experimental reusing of playwright process. <code>playwright_process_port</code> is preferred over environment variable <code>ROBOT_FRAMEWORK_BROWSER_NODE_PORT</code>. See <a href="#Experimental%3A%20Re-using%20same%20node%20process" title="&quot;Experimental: Re-using same node process&quot; section" class="name">Experimental: Re-using same node process</a> for more details.</p>',
           type: {
             name: "Union",
             typedoc: null,
@@ -393,7 +394,7 @@ const DATA: Libdoc = {
         },
         {
           name: "show_keyword_call_banner",
-          doc: "<p>If set to <code>True</code>, will show a banner with the keyword name and arguments before the keyword is executed at the bottom of the page. If set to <code>False</code>, will not show the banner. If set to None, which is the default, will show the banner only if the presenter mode is enabled. <a href=\"#Get%20Page%20Source\" title=\"&quot;Get Page Source&quot; keyword\" class=\"name\">Get Page Source</a> and <a href=\"#Take%20Screenshot\" title=\"&quot;Take Screenshot&quot; keyword\" class=\"name\">Take Screenshot</a> will not show the banner, because that could negatively affect your test cases/tasks. This feature may be super helpful when you are debugging your tests and using tracing from <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a> or <span class=\"name\">Video recording</span> features.</p>",
+          doc: '<p>If set to <code>True</code>, will show a banner with the keyword name and arguments before the keyword is executed at the bottom of the page. If set to <code>False</code>, will not show the banner. If set to None, which is the default, will show the banner only if the presenter mode is enabled. <a href="#Get%20Page%20Source" title="&quot;Get Page Source&quot; keyword" class="name">Get Page Source</a> and <a href="#Take%20Screenshot" title="&quot;Take Screenshot&quot; keyword" class="name">Take Screenshot</a> will not show the banner, because that could negatively affect your test cases/tasks. This feature may be super helpful when you are debugging your tests and using tracing from <a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a> or <span class="name">Video recording</span> features.</p>',
           type: {
             name: "Union",
             typedoc: null,
@@ -434,7 +435,7 @@ const DATA: Libdoc = {
         },
         {
           name: "timeout",
-          doc: "<p>Timeout for keywords that operate on elements. The keywords will wait for this time for the element to appear into the page. Defaults to \"10s\" =&gt; 10 seconds.</p>",
+          doc: '<p>Timeout for keywords that operate on elements. The keywords will wait for this time for the element to appear into the page. Defaults to "10s" =&gt; 10 seconds.</p>',
           type: {
             name: "timedelta",
             typedoc: "timedelta",
@@ -448,7 +449,7 @@ const DATA: Libdoc = {
         },
         {
           name: "tracing_group_mode",
-          doc: "<p>Defines how Robot Framework keyword calls are logged in Playwright trace log. Default is <span class=\"name\">Full</span>. For more details, see <span class=\"name\">TracingGroupMode</span>.</p>",
+          doc: '<p>Defines how Robot Framework keyword calls are logged in Playwright trace log. Default is <span class="name">Full</span>. For more details, see <span class="name">TracingGroupMode</span>.</p>',
           type: {
             name: "TracingGroupMode",
             typedoc: "TracingGroupMode",
@@ -472,7 +473,7 @@ const DATA: Libdoc = {
   keywords: [
     {
       name: "Add Cookie",
-      doc: "<p>Adds a cookie to currently active browser context.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>name</code></td>\n<td>Name of the cookie.</td>\n</tr>\n<tr>\n<td><code>value</code></td>\n<td>Given value for the cookie.</td>\n</tr>\n<tr>\n<td><code>url</code></td>\n<td>Given url for the cookie. Defaults to None. Either <code>url</code> or <code>domain</code> / <code>path</code> pair must be set.</td>\n</tr>\n<tr>\n<td><code>domain</code></td>\n<td>Given domain for the cookie. Defaults to None. Either <code>url</code> or <code>domain</code> / <code>path</code> pair must be set.</td>\n</tr>\n<tr>\n<td><code>path</code></td>\n<td>Given path for the cookie. Defaults to None. Either <code>url</code> or <code>domain</code> / <code>path</code> pair must be set.</td>\n</tr>\n<tr>\n<td><code>expires</code></td>\n<td>Given expiry for the cookie. Can be of date format or unix time or a datetime object. Supports the same formats as the <a href=\"http://robotframework.org/robotframework/latest/libraries/DateTime.html\">DateTime</a> library or an epoch timestamp. - example: 2027-09-28 16:21:35</td>\n</tr>\n<tr>\n<td><code>httpOnly</code></td>\n<td>Sets the httpOnly token.</td>\n</tr>\n<tr>\n<td><code>secure</code></td>\n<td>Sets the secure token.</td>\n</tr>\n<tr>\n<td><code>samesite</code></td>\n<td>Sets the samesite mode.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href=\"#Add%20Cookie\" title=\"&quot;Add Cookie&quot; keyword\" class=\"name\">Add Cookie</a>   foo   bar   <a href=\"http://address.com/path/to/site\">http://address.com/path/to/site</a>                                     # Using url argument.\n<a href=\"#Add%20Cookie\" title=\"&quot;Add Cookie&quot; keyword\" class=\"name\">Add Cookie</a>   foo   bar   domain=example.com                path=/foo/bar                     # Using domain and url arguments.\n<a href=\"#Add%20Cookie\" title=\"&quot;Add Cookie&quot; keyword\" class=\"name\">Add Cookie</a>   foo   bar   <a href=\"http://address.com/path/to/site\">http://address.com/path/to/site</a>   expires=2027-09-28 16:21:35       # Expires as timestamp.\n<a href=\"#Add%20Cookie\" title=\"&quot;Add Cookie&quot; keyword\" class=\"name\">Add Cookie</a>   foo   bar   <a href=\"http://address.com/path/to/site\">http://address.com/path/to/site</a>   expires=1822137695                # Expires as epoch seconds.\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4233\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Adds a cookie to currently active browser context.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>name</code></td>\n<td>Name of the cookie.</td>\n</tr>\n<tr>\n<td><code>value</code></td>\n<td>Given value for the cookie.</td>\n</tr>\n<tr>\n<td><code>url</code></td>\n<td>Given url for the cookie. Defaults to None. Either <code>url</code> or <code>domain</code> / <code>path</code> pair must be set.</td>\n</tr>\n<tr>\n<td><code>domain</code></td>\n<td>Given domain for the cookie. Defaults to None. Either <code>url</code> or <code>domain</code> / <code>path</code> pair must be set.</td>\n</tr>\n<tr>\n<td><code>path</code></td>\n<td>Given path for the cookie. Defaults to None. Either <code>url</code> or <code>domain</code> / <code>path</code> pair must be set.</td>\n</tr>\n<tr>\n<td><code>expires</code></td>\n<td>Given expiry for the cookie. Can be of date format or unix time or a datetime object. Supports the same formats as the <a href="http://robotframework.org/robotframework/latest/libraries/DateTime.html">DateTime</a> library or an epoch timestamp. - example: 2027-09-28 16:21:35</td>\n</tr>\n<tr>\n<td><code>httpOnly</code></td>\n<td>Sets the httpOnly token.</td>\n</tr>\n<tr>\n<td><code>secure</code></td>\n<td>Sets the secure token.</td>\n</tr>\n<tr>\n<td><code>samesite</code></td>\n<td>Sets the samesite mode.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href="#Add%20Cookie" title="&quot;Add Cookie&quot; keyword" class="name">Add Cookie</a>   foo   bar   <a href="http://address.com/path/to/site">http://address.com/path/to/site</a>                                     # Using url argument.\n<a href="#Add%20Cookie" title="&quot;Add Cookie&quot; keyword" class="name">Add Cookie</a>   foo   bar   domain=example.com                path=/foo/bar                     # Using domain and url arguments.\n<a href="#Add%20Cookie" title="&quot;Add Cookie&quot; keyword" class="name">Add Cookie</a>   foo   bar   <a href="http://address.com/path/to/site">http://address.com/path/to/site</a>   expires=2027-09-28 16:21:35       # Expires as timestamp.\n<a href="#Add%20Cookie" title="&quot;Add Cookie&quot; keyword" class="name">Add Cookie</a>   foo   bar   <a href="http://address.com/path/to/site">http://address.com/path/to/site</a>   expires=1822137695                # Expires as epoch seconds.\n</pre>\n<p><a href="https://forum.robotframework.org/t//4233">Comment &gt;&gt;</a></p>',
       shortdoc: "Adds a cookie to currently active browser context.",
       args: [
         {
@@ -701,18 +702,16 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/cookie.py",
       lineno: 90,
     },
     {
       name: "Add Locator Handler Click",
-      doc: "<p>Add a handler function which will activate when <span class=\"name\">selector</span> is visible and click.</p>\n<p>The handler will click the element indicated by <span class=\"name\">click_selector</span>.</p>\n<p>When testing a web page, sometimes unexpected overlays, example \"Accept Cookies\" dialog might appear and block the interaction with the page, like <a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a> keyword. These overlays can be problematic to handle, because they might appear randomly in the page. This keyword allows to create automatic method, which will close those overlays by clicking the element indicated by <code>click_selector</code>. Handler is activated when element indicated by <code>selector</code> is visible. For further information, see Playwright's <a href=\"https://playwright.dev/docs/api/class-page#page-add-locator-handler\">addLocatorHandler</a> method.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Is the selector to the element which indicated that locator handler should be called.</td>\n</tr>\n<tr>\n<td><code>noWaitAfter</code></td>\n<td>By default, after calling the handler Playwright will wait until the overlay becomes hidden, and only then library will continue with the action/assertion that triggered the handler. This option allows to opt-out of this behavior, so that overlay can stay visible after the handler has run.</td>\n</tr>\n<tr>\n<td><code>times</code></td>\n<td>Is the number of times to how often locator handler is is called. None is unlimited.</td>\n</tr>\n<tr>\n<td><code>click_selector</code></td>\n<td>Is the selector to the element to be clicked.</td>\n</tr>\n<tr>\n<td><code>click_clickCount</code></td>\n<td>Is the number of times to click the element.</td>\n</tr>\n<tr>\n<td><code>click_delay</code></td>\n<td>Time to wait between mousedown and mouseup in milliseconds. Defaults to 0.</td>\n</tr>\n<tr>\n<td><code>click_force</code></td>\n<td>Whether to bypass checks and dispatch the event directly. Defaults to false.</td>\n</tr>\n</table>\n<p>The arguments <span class=\"name\">click_selector</span>, <span class=\"name\">click_clickCount</span>, <span class=\"name\">click_delay</span> and <span class=\"name\">click_force</span> are same as <a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a> keyword. The <span class=\"name\">selector</span>, <span class=\"name\">noWaitAfter</span> and <span class=\"name\">times</span> are for the locator handler. The handler is tied to the active page, if there is need to add handler to another page, this keyword needs to be called separately for each page. If the <span class=\"name\">times</span> argument is set to positive value, the locator handler is removed after the handler has been called the specified number of times.</p>\n<p>Example add locator handler to click button with id=\"ButtonInOverlay\" when id=Overlay is visible:</p>\n<pre>\n<a href=\"#New%20Page\" title=\"&quot;New Page&quot; keyword\" class=\"name\">New Page</a>    ${URL}\n<a href=\"#Add%20Locator%20Handler%20Click\" title=\"&quot;Add Locator Handler Click&quot; keyword\" class=\"name\">Add Locator Handler Click</a>    id=Overlay    id=ButtonInOverlay     # Add locator handler to page\n<a href=\"#Type%20Text\" title=\"&quot;Type Text&quot; keyword\" class=\"name\">Type Text</a>    id:username    user    # If element with id=Overlay appears, the handler will click the button id=ButtonInOverlay\n<a href=\"#Type%20Text\" title=\"&quot;Type Text&quot; keyword\" class=\"name\">Type Text</a>    id:password    password    # Or if overlay is visible here, then handler is called here\n<a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>    id:login\n<a href=\"#Remove%20Locator%20Handler\" title=\"&quot;Remove Locator Handler&quot; keyword\" class=\"name\">Remove Locator Handler</a>    id:button    # Removes the locator handler from page\n</pre>",
-      shortdoc: "Add a handler function which will activate when `selector` is visible and click.",
+      doc: '<p>Add a handler function which will activate when <span class="name">selector</span> is visible and click.</p>\n<p>The handler will click the element indicated by <span class="name">click_selector</span>.</p>\n<p>When testing a web page, sometimes unexpected overlays, example "Accept Cookies" dialog might appear and block the interaction with the page, like <a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a> keyword. These overlays can be problematic to handle, because they might appear randomly in the page. This keyword allows to create automatic method, which will close those overlays by clicking the element indicated by <code>click_selector</code>. Handler is activated when element indicated by <code>selector</code> is visible. For further information, see Playwright\'s <a href="https://playwright.dev/docs/api/class-page#page-add-locator-handler">addLocatorHandler</a> method.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Is the selector to the element which indicated that locator handler should be called.</td>\n</tr>\n<tr>\n<td><code>noWaitAfter</code></td>\n<td>By default, after calling the handler Playwright will wait until the overlay becomes hidden, and only then library will continue with the action/assertion that triggered the handler. This option allows to opt-out of this behavior, so that overlay can stay visible after the handler has run.</td>\n</tr>\n<tr>\n<td><code>times</code></td>\n<td>Is the number of times to how often locator handler is is called. None is unlimited.</td>\n</tr>\n<tr>\n<td><code>click_selector</code></td>\n<td>Is the selector to the element to be clicked.</td>\n</tr>\n<tr>\n<td><code>click_clickCount</code></td>\n<td>Is the number of times to click the element.</td>\n</tr>\n<tr>\n<td><code>click_delay</code></td>\n<td>Time to wait between mousedown and mouseup in milliseconds. Defaults to 0.</td>\n</tr>\n<tr>\n<td><code>click_force</code></td>\n<td>Whether to bypass checks and dispatch the event directly. Defaults to false.</td>\n</tr>\n</table>\n<p>The arguments <span class="name">click_selector</span>, <span class="name">click_clickCount</span>, <span class="name">click_delay</span> and <span class="name">click_force</span> are same as <a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a> keyword. The <span class="name">selector</span>, <span class="name">noWaitAfter</span> and <span class="name">times</span> are for the locator handler. The handler is tied to the active page, if there is need to add handler to another page, this keyword needs to be called separately for each page. If the <span class="name">times</span> argument is set to positive value, the locator handler is removed after the handler has been called the specified number of times.</p>\n<p>Example add locator handler to click button with id="ButtonInOverlay" when id=Overlay is visible:</p>\n<pre>\n<a href="#New%20Page" title="&quot;New Page&quot; keyword" class="name">New Page</a>    ${URL}\n<a href="#Add%20Locator%20Handler%20Click" title="&quot;Add Locator Handler Click&quot; keyword" class="name">Add Locator Handler Click</a>    id=Overlay    id=ButtonInOverlay     # Add locator handler to page\n<a href="#Type%20Text" title="&quot;Type Text&quot; keyword" class="name">Type Text</a>    id:username    user    # If element with id=Overlay appears, the handler will click the button id=ButtonInOverlay\n<a href="#Type%20Text" title="&quot;Type Text&quot; keyword" class="name">Type Text</a>    id:password    password    # Or if overlay is visible here, then handler is called here\n<a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>    id:login\n<a href="#Remove%20Locator%20Handler" title="&quot;Remove Locator Handler&quot; keyword" class="name">Remove Locator Handler</a>    id:button    # Removes the locator handler from page\n</pre>',
+      shortdoc:
+        "Add a handler function which will activate when `selector` is visible and click.",
       args: [
         {
           name: "selector",
@@ -837,18 +836,16 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/locator_handler.py",
       lineno: 24,
     },
     {
       name: "Add Locator Handler Custom",
-      doc: "<p>Add a handler function which will activate when <span class=\"name\">selector</span> is visible and performs handler specification.</p>\n<p>When element indicated by <span class=\"name\">selector</span> is visible, the handler will perform the actions specified in the <span class=\"name\">handler_spec</span>.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Is the selector to the element which indicated that locator handler should be called.</td>\n</tr>\n<tr>\n<td><code>noWaitAfter</code></td>\n<td>By default, after calling the handler Playwright will wait until the overlay becomes hidden, and only then library will continue with the action/assertion that triggered the handler. This option allows to opt-out of this behavior, so that overlay can stay visible after the handler has run.</td>\n</tr>\n<tr>\n<td><code>times</code></td>\n<td>Is the number of times to how often locator handler is is called. None is unlimited.</td>\n</tr>\n<tr>\n<td><code>handler_spec</code></td>\n<td>Is a list of dictionaries which defines the actions to be performed.</td>\n</tr>\n</table>\n<p>The <span class=\"name\">handler_spec</span> is a list of dictionaries, where each dictionary defines one action. The dictionary must contain the key <span class=\"name\">action</span> which defines the action to be performed. The action can be one of the following: <a href=\"https://playwright.dev/docs/api/class-locator#locator-click\">click</a>, <a href=\"https://playwright.dev/docs/api/class-locator#locator-fill\">fill</a>, <a href=\"https://playwright.dev/docs/api/class-locator#locator-check\">check</a> and <a href=\"https://playwright.dev/docs/api/class-locator#locator-uncheck\">uncheck</a>. Action is also case insensitive. The dictionary must also contain key <span class=\"name\">selector</span> which defines the element to be interacted with. The <span class=\"name\">fill</span> action must also contain the key <span class=\"name\">value</span> which defines the value to be filled in the element. Additional keys are passed to the action as keyword arguments. Example for the <a href=\"https://playwright.dev/docs/api/class-locator#locator-click\">click</a> action refer to the Playwright's documentation which options are possible.</p>\n<p>The <span class=\"name\">selector</span>, <span class=\"name\">noWaitAfter</span> and <span class=\"name\">times</span> are for the locator handler <a href=\"https://playwright.dev/docs/api/class-page#page-add-locator-handler\">method</a>. The handler is tied to the active page, if there is need to add handler to another page, this keyword needs to be called separately for each page. If the <span class=\"name\">times</span> argument is set to positive value, the locator handler is removed after the handler has been called the specified number of times.</p>\n<p>Running the handler will alter your page state mid-test. For example it will change the currently focused element and move the mouse. Make sure that keywords that run after the handler are self-contained and do not rely on the focus and mouse state being unchanged.</p>\n<p>Please note that the automatic argument conversion is not done for the <span class=\"name\">handler_spec</span> dictionary. This is because Robot Framework does not convert values inside the dictionary that are actually arguments to a separate Playwright API call. Therefore the user is responsible to convert the values to the correct type. Example if timeout is needed, the value must be converted to a number in Robot Framework test data side.</p>\n<p>Example adds locator handler to fill input id=overlayInput with value \"Hello\" and click element id=OverlayCloseButton when id=Overlay is visible:</p>\n<pre>\n<a href=\"#New%20Page\" title=\"&quot;New Page&quot; keyword\" class=\"name\">New Page</a>    ${URL}\nVAR    &amp;{handler_spec_fill}\n...    action=Fill\n...    selector=id=overlayInput\n...    value=Hello\nVAR    &amp;{handler_spec_click}\n...    action=click\n...    selector=id=OverlayCloseButton\n<a href=\"#Add%20Locator%20Handler%20Custom\" title=\"&quot;Add Locator Handler Custom&quot; keyword\" class=\"name\">Add Locator Handler Custom</a>\n...    id=overlay\n...    [${handler_spec_fill}, ${handler_spec_click}]\n<a href=\"#Type%20Text\" title=\"&quot;Type Text&quot; keyword\" class=\"name\">Type Text</a>    id:username    user    # If element with id=Overlay appears, the handler will click the button id=ButtonInOverlay\n<a href=\"#Type%20Text\" title=\"&quot;Type Text&quot; keyword\" class=\"name\">Type Text</a>    id:password    password    # Or if overlay is visible here, then handler is called here\n<a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>    id:login\n</pre>\n<p>Example with click and different options and types:</p>\n<pre>\nVAR    &amp;{handler_spec}\n...    action=CLICK    # Action is case insensitive\n...    selector=id=OverlayCloseButton\n...    button=left\n...    clickCount=${1}\n...    delay=${0.1}\n...    force=${True}\nAdd Locator Handler Custom    id=overlay    [${handler_spec}]\n</pre>\n<p>The keyword can only handle click, fill, check and uncheck Playwright API calls. If there is a need for more complex interactions, it is recommended to create a custom js extension to handle the interactions.</p>\n<p>Example:</p>\n<pre>\nasync function customLocatorHandler(locator, pageLocator, clickLocator, page) {\n    console.log(\"Adding custom locator handler for: \" + locator);\n    const pageLocator = page.locator(locator).first();\n    await page.addLocatorHandler(\n        pageLocator,\n        async () =&gt; {\n            console.log(\"Handling custom locator: \" + clickLocator);\n            // More complex interactions can be added here\n            await page.locator(clickLocator).click();\n        }\n    );\n}\nexports.__esModule = true;\nexports.customLocatorHandler = customLocatorHandler;\n</pre>",
-      shortdoc: "Add a handler function which will activate when `selector` is visible and performs handler specification.",
+      doc: '<p>Add a handler function which will activate when <span class="name">selector</span> is visible and performs handler specification.</p>\n<p>When element indicated by <span class="name">selector</span> is visible, the handler will perform the actions specified in the <span class="name">handler_spec</span>.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Is the selector to the element which indicated that locator handler should be called.</td>\n</tr>\n<tr>\n<td><code>noWaitAfter</code></td>\n<td>By default, after calling the handler Playwright will wait until the overlay becomes hidden, and only then library will continue with the action/assertion that triggered the handler. This option allows to opt-out of this behavior, so that overlay can stay visible after the handler has run.</td>\n</tr>\n<tr>\n<td><code>times</code></td>\n<td>Is the number of times to how often locator handler is is called. None is unlimited.</td>\n</tr>\n<tr>\n<td><code>handler_spec</code></td>\n<td>Is a list of dictionaries which defines the actions to be performed.</td>\n</tr>\n</table>\n<p>The <span class="name">handler_spec</span> is a list of dictionaries, where each dictionary defines one action. The dictionary must contain the key <span class="name">action</span> which defines the action to be performed. The action can be one of the following: <a href="https://playwright.dev/docs/api/class-locator#locator-click">click</a>, <a href="https://playwright.dev/docs/api/class-locator#locator-fill">fill</a>, <a href="https://playwright.dev/docs/api/class-locator#locator-check">check</a> and <a href="https://playwright.dev/docs/api/class-locator#locator-uncheck">uncheck</a>. Action is also case insensitive. The dictionary must also contain key <span class="name">selector</span> which defines the element to be interacted with. The <span class="name">fill</span> action must also contain the key <span class="name">value</span> which defines the value to be filled in the element. Additional keys are passed to the action as keyword arguments. Example for the <a href="https://playwright.dev/docs/api/class-locator#locator-click">click</a> action refer to the Playwright\'s documentation which options are possible.</p>\n<p>The <span class="name">selector</span>, <span class="name">noWaitAfter</span> and <span class="name">times</span> are for the locator handler <a href="https://playwright.dev/docs/api/class-page#page-add-locator-handler">method</a>. The handler is tied to the active page, if there is need to add handler to another page, this keyword needs to be called separately for each page. If the <span class="name">times</span> argument is set to positive value, the locator handler is removed after the handler has been called the specified number of times.</p>\n<p>Running the handler will alter your page state mid-test. For example it will change the currently focused element and move the mouse. Make sure that keywords that run after the handler are self-contained and do not rely on the focus and mouse state being unchanged.</p>\n<p>Please note that the automatic argument conversion is not done for the <span class="name">handler_spec</span> dictionary. This is because Robot Framework does not convert values inside the dictionary that are actually arguments to a separate Playwright API call. Therefore the user is responsible to convert the values to the correct type. Example if timeout is needed, the value must be converted to a number in Robot Framework test data side.</p>\n<p>Example adds locator handler to fill input id=overlayInput with value "Hello" and click element id=OverlayCloseButton when id=Overlay is visible:</p>\n<pre>\n<a href="#New%20Page" title="&quot;New Page&quot; keyword" class="name">New Page</a>    ${URL}\nVAR    &amp;{handler_spec_fill}\n...    action=Fill\n...    selector=id=overlayInput\n...    value=Hello\nVAR    &amp;{handler_spec_click}\n...    action=click\n...    selector=id=OverlayCloseButton\n<a href="#Add%20Locator%20Handler%20Custom" title="&quot;Add Locator Handler Custom&quot; keyword" class="name">Add Locator Handler Custom</a>\n...    id=overlay\n...    [${handler_spec_fill}, ${handler_spec_click}]\n<a href="#Type%20Text" title="&quot;Type Text&quot; keyword" class="name">Type Text</a>    id:username    user    # If element with id=Overlay appears, the handler will click the button id=ButtonInOverlay\n<a href="#Type%20Text" title="&quot;Type Text&quot; keyword" class="name">Type Text</a>    id:password    password    # Or if overlay is visible here, then handler is called here\n<a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>    id:login\n</pre>\n<p>Example with click and different options and types:</p>\n<pre>\nVAR    &amp;{handler_spec}\n...    action=CLICK    # Action is case insensitive\n...    selector=id=OverlayCloseButton\n...    button=left\n...    clickCount=${1}\n...    delay=${0.1}\n...    force=${True}\nAdd Locator Handler Custom    id=overlay    [${handler_spec}]\n</pre>\n<p>The keyword can only handle click, fill, check and uncheck Playwright API calls. If there is a need for more complex interactions, it is recommended to create a custom js extension to handle the interactions.</p>\n<p>Example:</p>\n<pre>\nasync function customLocatorHandler(locator, pageLocator, clickLocator, page) {\n    console.log("Adding custom locator handler for: " + locator);\n    const pageLocator = page.locator(locator).first();\n    await page.addLocatorHandler(\n        pageLocator,\n        async () =&gt; {\n            console.log("Handling custom locator: " + clickLocator);\n            // More complex interactions can be added here\n            await page.locator(clickLocator).click();\n        }\n    );\n}\nexports.__esModule = true;\nexports.customLocatorHandler = customLocatorHandler;\n</pre>',
+      shortdoc:
+        "Add a handler function which will activate when `selector` is visible and performs handler specification.",
       args: [
         {
           name: "selector",
@@ -929,18 +926,15 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/locator_handler.py",
       lineno: 99,
     },
     {
       name: "Add Style Tag",
-      doc: "<p>Adds a &lt;style type=\"text/css\"&gt; tag with the content.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>content</code></td>\n<td>Raw CSS content to be injected into frame.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href=\"#Add%20Style%20Tag\" title=\"&quot;Add Style Tag&quot; keyword\" class=\"name\">Add Style Tag</a>    \\#username_field:focus {background-color: aqua;}\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4234\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Adds a <style type=\"text/css\"> tag with the content.",
+      doc: '<p>Adds a &lt;style type="text/css"&gt; tag with the content.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>content</code></td>\n<td>Raw CSS content to be injected into frame.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href="#Add%20Style%20Tag" title="&quot;Add Style Tag&quot; keyword" class="name">Add Style Tag</a>    \\#username_field:focus {background-color: aqua;}\n</pre>\n<p><a href="https://forum.robotframework.org/t//4234">Comment &gt;&gt;</a></p>',
+      shortdoc: 'Adds a <style type="text/css"> tag with the content.',
       args: [
         {
           name: "content",
@@ -959,17 +953,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/evaluation.py",
       lineno: 144,
     },
     {
       name: "Advance Clock",
-      doc: "<p>Advance the clock by a specified amount of time.</p>\n<table border=\"1\">\n<tr>\n<td>Argument</td>\n<td>Description</td>\n</tr>\n<tr>\n<td>time</td>\n<td>The time to advance.</td>\n</tr>\n<tr>\n<td>advance_type</td>\n<td>The type of advance. Default is <span class=\"name\">fast_forward</span>.</td>\n</tr>\n</table>\n<p>The <span class=\"name\">run_forward</span> advances the clock by firing all the time-related callbacks. The <span class=\"name\">fast_forward</span> advances the clock by jumping forward in time. Only fires due timers at most once.</p>",
+      doc: '<p>Advance the clock by a specified amount of time.</p>\n<table border="1">\n<tr>\n<td>Argument</td>\n<td>Description</td>\n</tr>\n<tr>\n<td>time</td>\n<td>The time to advance.</td>\n</tr>\n<tr>\n<td>advance_type</td>\n<td>The type of advance. Default is <span class="name">fast_forward</span>.</td>\n</tr>\n</table>\n<p>The <span class="name">run_forward</span> advances the clock by firing all the time-related callbacks. The <span class="name">fast_forward</span> advances the clock by jumping forward in time. Only fires due timers at most once.</p>',
       shortdoc: "Advance the clock by a specified amount of time.",
       args: [
         {
@@ -1003,17 +994,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "Clock",
-        "Setter",
-      ],
+      tags: ["Clock", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/clock.py",
       lineno: 95,
     },
     {
       name: "Cancel Download",
-      doc: "<p>Cancels an active download.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td>download</td>\n<td>A <a href=\"#type-DownloadInfo\" title=\"&quot;DownloadInfo&quot; type\" class=\"name\">DownloadInfo</a> object or id of the download to be canceled.</td>\n</tr>\n</table>\n<p><a href=\"https://forum.robotframework.org/t//6478\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Cancels an active download.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td>download</td>\n<td>A <a href="#type-DownloadInfo" title="&quot;DownloadInfo&quot; type" class="name">DownloadInfo</a> object or id of the download to be canceled.</td>\n</tr>\n</table>\n<p><a href="https://forum.robotframework.org/t//6478">Comment &gt;&gt;</a></p>',
       shortdoc: "Cancels an active download.",
       args: [
         {
@@ -1046,18 +1034,16 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/playwright_state.py",
       lineno: 1731,
     },
     {
       name: "Check Checkbox",
-      doc: "<p>Checks the checkbox or selects radio button found by <code>selector</code>.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n<td></td>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the checkbox. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n<td></td>\n</tr>\n<tr>\n<td><code>force</code></td>\n<td>Set to True to skip Playwright's [<a href=\"https://playwright.dev/docs/actionability\">https://playwright.dev/docs/actionability</a></td>\n<td>Actionability checks].</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>Does nothing if the element is already checked/selected.</p>\n<p><a href=\"https://forum.robotframework.org/t//4235\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Checks the checkbox or selects radio button found by ``selector``.",
+      doc: '<p>Checks the checkbox or selects radio button found by <code>selector</code>.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n<td></td>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the checkbox. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n<td></td>\n</tr>\n<tr>\n<td><code>force</code></td>\n<td>Set to True to skip Playwright\'s [<a href="https://playwright.dev/docs/actionability">https://playwright.dev/docs/actionability</a></td>\n<td>Actionability checks].</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>Does nothing if the element is already checked/selected.</p>\n<p><a href="https://forum.robotframework.org/t//4235">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Checks the checkbox or selects radio button found by ``selector``.",
       args: [
         {
           name: "selector",
@@ -1090,32 +1076,26 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 695,
     },
     {
       name: "Clear Permissions",
-      doc: "<p>Clears all permissions from the current context.</p>\n<p><a href=\"https://forum.robotframework.org/t//4236\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Clears all permissions from the current context.</p>\n<p><a href="https://forum.robotframework.org/t//4236">Comment &gt;&gt;</a></p>',
       shortdoc: "Clears all permissions from the current context.",
       args: [],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/browser_control.py",
       lineno: 633,
     },
     {
       name: "Clear Text",
-      doc: "<p>Clears the text field found by <code>selector</code>.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the text field. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p><a href=\"https://forum.robotframework.org/t//4237\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Clears the text field found by <code>selector</code>.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the text field. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p><a href="https://forum.robotframework.org/t//4237">Comment &gt;&gt;</a></p>',
       shortdoc: "Clears the text field found by ``selector``.",
       args: [
         {
@@ -1135,10 +1115,7 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 119,
@@ -1146,7 +1123,8 @@ const DATA: Libdoc = {
     {
       name: "Click",
       doc: "<p><b>Creating keyword failed:</b> Documentation given to non-existing argument '&lt;no-name&gt;'.</p>",
-      shortdoc: "*Creating keyword failed:* Documentation given to non-existing argument '<no-name>'.",
+      shortdoc:
+        "*Creating keyword failed:* Documentation given to non-existing argument '<no-name>'.",
       args: [
         {
           name: "selector",
@@ -1181,25 +1159,22 @@ const DATA: Libdoc = {
         name: "None",
         typedoc: "None",
         nested: [],
-        union: false
+        union: false,
       },
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 330,
     },
     {
       name: "Click With Options",
-      doc: "<p>Simulates mouse click on the element found by <code>selector</code>.</p>\n<p>This keyword clicks an element matching <code>selector</code> by performing the following steps:</p>\n<ul>\n<li>Find an element matches selector. If there is none, wait until a matching element is attached to the DOM.</li>\n<li>Wait for actionability checks on the matched element, unless <code>force</code> option is set. If the element is detached during the checks, the whole action is retried.</li>\n<li>Scroll the element into view if needed.</li>\n<li>Use <a href=\"#Mouse%20Button\" title=\"&quot;Mouse Button&quot; keyword\" class=\"name\">Mouse Button</a> to click in the center of the element, or the specified position.</li>\n<li>Wait for initiated navigation to either succeed or fail, unless <code>noWaitAfter</code> option is set.</li>\n</ul>\n<p>Arguments <code>clickCount</code>, <code>delay</code>, <code>position_x</code>, <code>position_y</code>, <code>force</code>, <code>noWaitAfter</code> and <code>trial</code> are named-only arguments and must be specified using their names..</p>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#Click%20With%20Options\" title=\"&quot;Click With Options&quot; keyword\" class=\"name\">Click With Options</a>    id=button_location\n<a href=\"#Click%20With%20Options\" title=\"&quot;Click With Options&quot; keyword\" class=\"name\">Click With Options</a>    id=button_location    trial=True\n<a href=\"#Click%20With%20Options\" title=\"&quot;Click With Options&quot; keyword\" class=\"name\">Click With Options</a>    \\#clickWithOptions    delay=100ms    clickCount=2\n<a href=\"#Click%20With%20Options\" title=\"&quot;Click With Options&quot; keyword\" class=\"name\">Click With Options</a>    id=clickWithModifiers    left     Alt    Meta    Shift    clickCount=1    force=True\n<a href=\"#Click%20With%20Options\" title=\"&quot;Click With Options&quot; keyword\" class=\"name\">Click With Options</a>    id=clickWithOptions    right    clickCount=2    force=True\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//5936\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Simulates mouse click on the element found by <code>selector</code>.</p>\n<p>This keyword clicks an element matching <code>selector</code> by performing the following steps:</p>\n<ul>\n<li>Find an element matches selector. If there is none, wait until a matching element is attached to the DOM.</li>\n<li>Wait for actionability checks on the matched element, unless <code>force</code> option is set. If the element is detached during the checks, the whole action is retried.</li>\n<li>Scroll the element into view if needed.</li>\n<li>Use <a href="#Mouse%20Button" title="&quot;Mouse Button&quot; keyword" class="name">Mouse Button</a> to click in the center of the element, or the specified position.</li>\n<li>Wait for initiated navigation to either succeed or fail, unless <code>noWaitAfter</code> option is set.</li>\n</ul>\n<p>Arguments <code>clickCount</code>, <code>delay</code>, <code>position_x</code>, <code>position_y</code>, <code>force</code>, <code>noWaitAfter</code> and <code>trial</code> are named-only arguments and must be specified using their names..</p>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>Example:</p>\n<pre>\n<a href="#Click%20With%20Options" title="&quot;Click With Options&quot; keyword" class="name">Click With Options</a>    id=button_location\n<a href="#Click%20With%20Options" title="&quot;Click With Options&quot; keyword" class="name">Click With Options</a>    id=button_location    trial=True\n<a href="#Click%20With%20Options" title="&quot;Click With Options&quot; keyword" class="name">Click With Options</a>    \\#clickWithOptions    delay=100ms    clickCount=2\n<a href="#Click%20With%20Options" title="&quot;Click With Options&quot; keyword" class="name">Click With Options</a>    id=clickWithModifiers    left     Alt    Meta    Shift    clickCount=1    force=True\n<a href="#Click%20With%20Options" title="&quot;Click With Options&quot; keyword" class="name">Click With Options</a>    id=clickWithOptions    right    clickCount=2    force=True\n</pre>\n<p><a href="https://forum.robotframework.org/t//5936">Comment &gt;&gt;</a></p>',
       shortdoc: "Simulates mouse click on the element found by ``selector``.",
       args: [
         {
           name: "selector",
-          doc: "<p>Selector element to click. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</p>",
+          doc: '<p>Selector element to click. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</p>',
           type: {
             name: "str",
             typedoc: "string",
@@ -1210,6 +1185,137 @@ const DATA: Libdoc = {
           kind: "POSITIONAL_OR_NAMED",
           required: true,
           repr: "selector: str",
+        },
+        {
+          name: "result_format",
+          doc: "<p>Format of the returned date.</p>",
+          type: {
+            name: "Union",
+            typedoc: null,
+            nested: [
+              {
+                name: "None",
+                typedoc: "None",
+                nested: [],
+                union: false,
+              },
+              {
+                name: "None",
+                typedoc: "None",
+                nested: [],
+                union: false,
+              },
+              {
+                name: "None",
+                typedoc: "None",
+                nested: [],
+                union: false,
+              },
+              {
+                name: "KeyboardModifier",
+                typedoc: "KeyboardModifier",
+                nested: [],
+                union: false,
+              },
+              {
+                name: "Literal",
+                typedoc: "Literal",
+                nested: [
+                  {
+                    name: "'timestamp'",
+                    typedoc: null,
+                    nested: [],
+                    union: false,
+                  },
+                  {
+                    name: "'datetime'",
+                    typedoc: null,
+                    nested: [],
+                    union: false,
+                  },
+                  {
+                    name: "'epoch'",
+                    typedoc: null,
+                    nested: [],
+                    union: false,
+                  },
+                  {
+                    name: "'other'",
+                    typedoc: null,
+                    nested: [],
+                    union: false,
+                  },
+                ],
+                union: false,
+              },
+              {
+                name: "Literal",
+                typedoc: "Literal",
+                nested: [
+                  {
+                    name: "'timestamp'",
+                    typedoc: null,
+                    nested: [],
+                    union: false,
+                  },
+                  {
+                    name: "'datetime'",
+                    typedoc: null,
+                    nested: [],
+                    union: false,
+                  },
+                  {
+                    name: "'epoch'",
+                    typedoc: null,
+                    nested: [],
+                    union: false,
+                  },
+                  {
+                    name: "'other'",
+                    typedoc: null,
+                    nested: [],
+                    union: false,
+                  },
+                  {
+                    name: "'something'",
+                    typedoc: null,
+                    nested: [],
+                    union: false,
+                  },
+                ],
+                union: false,
+              },
+              {
+                name: "KeyboardModifier",
+                typedoc: "KeyboardModifier",
+                nested: [],
+                union: false,
+              },
+              {
+                name: "str",
+                typedoc: "string",
+                nested: [],
+                union: false,
+              },
+              {
+                name: "int",
+                typedoc: "integer",
+                nested: [],
+                union: false,
+              },
+              {
+                name: "None",
+                typedoc: "None",
+                nested: [],
+                union: false,
+              },
+            ],
+            union: true,
+          },
+          defaultValue: "timestamp",
+          kind: "POSITIONAL_OR_NAMED",
+          required: false,
+          repr: "result_format: Literal['timestamp', 'datetime', 'epoch'] | str = timestamp",
         },
         {
           name: "button",
@@ -1227,7 +1333,7 @@ const DATA: Libdoc = {
         },
         {
           name: "modifiers",
-          doc: "<p>Modifier keys to press. Ensures that only these modifiers are pressed during the click, and then restores current modifiers back. If not specified, currently pressed modifiers are used. Modifiers can be specified in any order, and multiple modifiers can be specified. Valid modifier keys are <code>Control</code>, <code>Alt</code>, <code>Shift</code> and <code>Meta</code>. Due to the fact that the argument <span class=\"name\">*modifiers</span> is a positional only argument, all preceding keyword arguments have to be specified as positional arguments before <span class=\"name\">*modifiers</span>.</p>",
+          doc: '<p>Modifier keys to press. Ensures that only these modifiers are pressed during the click, and then restores current modifiers back. If not specified, currently pressed modifiers are used. Modifiers can be specified in any order, and multiple modifiers can be specified. Valid modifier keys are <code>Control</code>, <code>Alt</code>, <code>Shift</code> and <code>Meta</code>. Due to the fact that the argument <span class="name">*modifiers</span> is a positional only argument, all preceding keyword arguments have to be specified as positional arguments before <span class="name">*modifiers</span>.</p>',
           type: {
             name: "KeyboardModifier",
             typedoc: "KeyboardModifier",
@@ -1248,7 +1354,8 @@ const DATA: Libdoc = {
             nested: [],
             union: false,
           },
-          defaultValue: "1128093498732498723498273498273492837423987432987324987234982734982374928734293847234987234 98 23987 23987 23987342 923847 234987 243",
+          defaultValue:
+            "1128093498732498723498273498273492837423987432987324987234982734982374928734293847234987234 98 23987 23987 23987342 923847 234987 243",
           kind: "NAMED_ONLY",
           required: false,
           repr: "clickCount: int = 1",
@@ -1284,7 +1391,6 @@ const DATA: Libdoc = {
                 nested: [],
                 union: false,
               },
-
             ],
             union: true,
           },
@@ -1295,7 +1401,7 @@ const DATA: Libdoc = {
         },
         {
           name: "force",
-          doc: "<p>Set to True to skip Playwright's Actionability checks (<a href=\"https://playwright.dev/docs/actionability\">https://playwright.dev/docs/actionability</a>).</p>",
+          doc: '<p>Set to True to skip Playwright\'s Actionability checks (<a href="https://playwright.dev/docs/actionability">https://playwright.dev/docs/actionability</a>).</p>',
           type: {
             name: "bool",
             typedoc: "boolean",
@@ -1400,24 +1506,23 @@ const DATA: Libdoc = {
         name: "None",
         typedoc: "None",
         nested: [],
-        union: false
+        union: false,
       },
-      returnDoc: "<p>Nothing. Raises an exception if the click fails or element is not found.</p>",
+      returnDoc:
+        "<p>Nothing. Raises an exception if the click fails or element is not found.</p>",
       raises: {
         AssertionError: "<p>If the element is not found or click fails.</p>",
-        TypeErrorThisIsReallyLongErrorMessageWhichShouldBeWrappedAndNotTruncated: "<p>This should not happen.</p>",
+        TypeErrorThisIsReallyLongErrorMessageWhichShouldBeWrappedAndNotTruncated:
+          "<p>This should not happen.</p>",
       },
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 357,
     },
     {
       name: "Close Browser",
-      doc: "<p>Closes the current browser.</p>\n<p>Active browser is set to the browser that was active before this one. Closes all context and pages belonging to this browser. See <a href=\"#Browser%2C%20Context%20and%20Page\" title=\"&quot;Browser, Context and Page&quot; section\" class=\"name\">Browser, Context and Page</a> for more information about Browser and related concepts.</p>\n<table border=\"1\">\n<tr>\n<th>Argument</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>browser</code></td>\n<td>Browser to close. <code>CURRENT</code> selects the active browser. <code>ALL</code> closes all browsers. When a browser id is provided, that browser is closed.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href=\"#Close%20Browser\" title=\"&quot;Close Browser&quot; keyword\" class=\"name\">Close Browser</a>    ALL        # Closes all browsers\n<a href=\"#Close%20Browser\" title=\"&quot;Close Browser&quot; keyword\" class=\"name\">Close Browser</a>    CURRENT    # Close current browser\n<a href=\"#Close%20Browser\" title=\"&quot;Close Browser&quot; keyword\" class=\"name\">Close Browser</a>               # Close current browser\n<a href=\"#Close%20Browser\" title=\"&quot;Close Browser&quot; keyword\" class=\"name\">Close Browser</a>    ${id}      # Close browser matching id\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4239\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Closes the current browser.</p>\n<p>Active browser is set to the browser that was active before this one. Closes all context and pages belonging to this browser. See <a href="#Browser%2C%20Context%20and%20Page" title="&quot;Browser, Context and Page&quot; section" class="name">Browser, Context and Page</a> for more information about Browser and related concepts.</p>\n<table border="1">\n<tr>\n<th>Argument</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>browser</code></td>\n<td>Browser to close. <code>CURRENT</code> selects the active browser. <code>ALL</code> closes all browsers. When a browser id is provided, that browser is closed.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href="#Close%20Browser" title="&quot;Close Browser&quot; keyword" class="name">Close Browser</a>    ALL        # Closes all browsers\n<a href="#Close%20Browser" title="&quot;Close Browser&quot; keyword" class="name">Close Browser</a>    CURRENT    # Close current browser\n<a href="#Close%20Browser" title="&quot;Close Browser&quot; keyword" class="name">Close Browser</a>               # Close current browser\n<a href="#Close%20Browser" title="&quot;Close Browser&quot; keyword" class="name">Close Browser</a>    ${id}      # Close browser matching id\n</pre>\n<p><a href="https://forum.robotframework.org/t//4239">Comment &gt;&gt;</a></p>',
       shortdoc: "Closes the current browser.",
       args: [
         {
@@ -1450,18 +1555,16 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/playwright_state.py",
       lineno: 117,
     },
     {
       name: "Close Browser Server",
-      doc: "<p>Close a playwright Browser Server identified by its websocket endpoint (wsEndpoint).</p>\n<p>The wsEndpoint string is returned by <a href=\"#Launch%20Browser%20Server\" title=\"&quot;Launch Browser Server&quot; keyword\" class=\"name\">Launch Browser Server</a> and is also used by <a href=\"#Connect%20To%20Browser\" title=\"&quot;Connect To Browser&quot; keyword\" class=\"name\">Connect To Browser</a>.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n</table>\n<pre>\n<code>wsEndpoint</code> | Address of the browser server. Example: <span class=\"name\">`ws://127.0.0.1:63784/ca69bf0e9471391e8183d9ac1e90e1ba</span>`|\n</pre>",
-      shortdoc: "Close a playwright Browser Server identified by its websocket endpoint (wsEndpoint).",
+      doc: '<p>Close a playwright Browser Server identified by its websocket endpoint (wsEndpoint).</p>\n<p>The wsEndpoint string is returned by <a href="#Launch%20Browser%20Server" title="&quot;Launch Browser Server&quot; keyword" class="name">Launch Browser Server</a> and is also used by <a href="#Connect%20To%20Browser" title="&quot;Connect To Browser&quot; keyword" class="name">Connect To Browser</a>.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n</table>\n<pre>\n<code>wsEndpoint</code> | Address of the browser server. Example: <span class="name">`ws://127.0.0.1:63784/ca69bf0e9471391e8183d9ac1e90e1ba</span>`|\n</pre>',
+      shortdoc:
+        "Close a playwright Browser Server identified by its websocket endpoint (wsEndpoint).",
       args: [
         {
           name: "wsEndpoint",
@@ -1480,17 +1583,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/playwright_state.py",
       lineno: 547,
     },
     {
       name: "Close Context",
-      doc: "<p>Closes a Context.</p>\n<p>Active context is set to the context that was active before this one. Closes pages belonging to this context. See <a href=\"#Browser%2C%20Context%20and%20Page\" title=\"&quot;Browser, Context and Page&quot; section\" class=\"name\">Browser, Context and Page</a> for more information about Context and related concepts.</p>\n<table border=\"1\">\n<tr>\n<th>Argument</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>context</code></td>\n<td>Context to close. <code>CURRENT</code> selects the active context. <code>ALL</code> closes all contexts. When a context id is provided, that context is closed.</td>\n</tr>\n<tr>\n<td><code>browser</code></td>\n<td>Browser where to close context. <code>CURRENT</code> selects the active browser. <code>ALL</code> closes all browsers. When a browser id is provided, that browser is closed.</td>\n</tr>\n<tr>\n<td><code>save_trace</code></td>\n<td>If set to <code>False</code>, the trace of this context is not saved, even if it was enables by <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a>. Defaults to <code>True</code>.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href=\"#Close%20Context\" title=\"&quot;Close Context&quot; keyword\" class=\"name\">Close Context</a>                          #  Closes current context and current browser\n<a href=\"#Close%20Context\" title=\"&quot;Close Context&quot; keyword\" class=\"name\">Close Context</a>    CURRENT    CURRENT    #  Closes current context and current browser\n<a href=\"#Close%20Context\" title=\"&quot;Close Context&quot; keyword\" class=\"name\">Close Context</a>    ALL        CURRENT    #  Closes all context from current browser and current browser\n<a href=\"#Close%20Context\" title=\"&quot;Close Context&quot; keyword\" class=\"name\">Close Context</a>    ALL        ALL        #  Closes all context from current browser and all browser\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4240\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Closes a Context.</p>\n<p>Active context is set to the context that was active before this one. Closes pages belonging to this context. See <a href="#Browser%2C%20Context%20and%20Page" title="&quot;Browser, Context and Page&quot; section" class="name">Browser, Context and Page</a> for more information about Context and related concepts.</p>\n<table border="1">\n<tr>\n<th>Argument</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>context</code></td>\n<td>Context to close. <code>CURRENT</code> selects the active context. <code>ALL</code> closes all contexts. When a context id is provided, that context is closed.</td>\n</tr>\n<tr>\n<td><code>browser</code></td>\n<td>Browser where to close context. <code>CURRENT</code> selects the active browser. <code>ALL</code> closes all browsers. When a browser id is provided, that browser is closed.</td>\n</tr>\n<tr>\n<td><code>save_trace</code></td>\n<td>If set to <code>False</code>, the trace of this context is not saved, even if it was enables by <a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a>. Defaults to <code>True</code>.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href="#Close%20Context" title="&quot;Close Context&quot; keyword" class="name">Close Context</a>                          #  Closes current context and current browser\n<a href="#Close%20Context" title="&quot;Close Context&quot; keyword" class="name">Close Context</a>    CURRENT    CURRENT    #  Closes current context and current browser\n<a href="#Close%20Context" title="&quot;Close Context&quot; keyword" class="name">Close Context</a>    ALL        CURRENT    #  Closes all context from current browser and current browser\n<a href="#Close%20Context" title="&quot;Close Context&quot; keyword" class="name">Close Context</a>    ALL        ALL        #  Closes all context from current browser and all browser\n</pre>\n<p><a href="https://forum.robotframework.org/t//4240">Comment &gt;&gt;</a></p>',
       shortdoc: "Closes a Context.",
       args: [
         {
@@ -1573,17 +1673,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/playwright_state.py",
       lineno: 164,
     },
     {
       name: "Close Page",
-      doc: "<p>Closes the <code>page</code> in <code>context</code> in <code>browser</code>.</p>\n<p>Defaults to current for all three. Active page is set to the page that was active before this one. See <a href=\"#Browser%2C%20Context%20and%20Page\" title=\"&quot;Browser, Context and Page&quot; section\" class=\"name\">Browser, Context and Page</a> for more information about Page and related concepts.</p>\n<p><code>runBeforeUnload</code> defines where to run the <a href=\"https://developer.mozilla.org/en-US/docs/Web/API/Window/beforeunload_event\">before unload</a> page handlers. Defaults to false.</p>\n<table border=\"1\">\n<tr>\n<th>Argument</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>page</code></td>\n<td>Page to close. <code>CURRENT</code> selects the active page. <code>ALL</code> closes all pages. When a page id is provided, that page is closed.</td>\n</tr>\n<tr>\n<td><code>context</code></td>\n<td>Context where to close page. <code>CURRENT</code> selects the active context. <code>ALL</code> closes all contexts. When a context id is provided, that context is closed.</td>\n</tr>\n<tr>\n<td><code>browser</code></td>\n<td>Browser where to close page. <code>CURRENT</code> selects the active browser. <code>ALL</code> closes all browsers. When a browser id is provided, that browser is closed.</td>\n</tr>\n</table>\n<p>Returns a list of dictionaries containing id, errors and console messages from the page.</p>\n<p>Example</p>\n<pre>\n<a href=\"#Close%20Page\" title=\"&quot;Close Page&quot; keyword\" class=\"name\">Close Page</a>                                       # Closes current page, within the current context and browser\n<a href=\"#Close%20Page\" title=\"&quot;Close Page&quot; keyword\" class=\"name\">Close Page</a>    CURRENT     CURRENT     CURRENT    # Closes current page, within the current context and browser\n<a href=\"#Close%20Page\" title=\"&quot;Close Page&quot; keyword\" class=\"name\">Close Page</a>    ALL         ALL         ALL        # Closes all pages, within all contexts and browsers\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4241\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Closes the <code>page</code> in <code>context</code> in <code>browser</code>.</p>\n<p>Defaults to current for all three. Active page is set to the page that was active before this one. See <a href="#Browser%2C%20Context%20and%20Page" title="&quot;Browser, Context and Page&quot; section" class="name">Browser, Context and Page</a> for more information about Page and related concepts.</p>\n<p><code>runBeforeUnload</code> defines where to run the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/beforeunload_event">before unload</a> page handlers. Defaults to false.</p>\n<table border="1">\n<tr>\n<th>Argument</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>page</code></td>\n<td>Page to close. <code>CURRENT</code> selects the active page. <code>ALL</code> closes all pages. When a page id is provided, that page is closed.</td>\n</tr>\n<tr>\n<td><code>context</code></td>\n<td>Context where to close page. <code>CURRENT</code> selects the active context. <code>ALL</code> closes all contexts. When a context id is provided, that context is closed.</td>\n</tr>\n<tr>\n<td><code>browser</code></td>\n<td>Browser where to close page. <code>CURRENT</code> selects the active browser. <code>ALL</code> closes all browsers. When a browser id is provided, that browser is closed.</td>\n</tr>\n</table>\n<p>Returns a list of dictionaries containing id, errors and console messages from the page.</p>\n<p>Example</p>\n<pre>\n<a href="#Close%20Page" title="&quot;Close Page&quot; keyword" class="name">Close Page</a>                                       # Closes current page, within the current context and browser\n<a href="#Close%20Page" title="&quot;Close Page&quot; keyword" class="name">Close Page</a>    CURRENT     CURRENT     CURRENT    # Closes current page, within the current context and browser\n<a href="#Close%20Page" title="&quot;Close Page&quot; keyword" class="name">Close Page</a>    ALL         ALL         ALL        # Closes all pages, within all contexts and browsers\n</pre>\n<p><a href="https://forum.robotframework.org/t//4241">Comment &gt;&gt;</a></p>',
       shortdoc: "Closes the ``page`` in ``context`` in ``browser``.",
       args: [
         {
@@ -1702,18 +1799,16 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/playwright_state.py",
       lineno: 268,
     },
     {
       name: "Connect To Browser",
-      doc: "<p>Connect to a Playwright browser server via playwright websocket or Chrome DevTools Protocol.</p>\n<p>See <a href=\"#Launch%20Browser%20Server\" title=\"&quot;Launch Browser Server&quot; keyword\" class=\"name\">Launch Browser Server</a> for more information about how to launch a playwright browser server.</p>\n<p>See <a href=\"#Browser%2C%20Context%20and%20Page\" title=\"&quot;Browser, Context and Page&quot; section\" class=\"name\">Browser, Context and Page</a> for more information about Browser and related concepts.</p>\n<p>Returns a stable identifier for the connected browser.</p>\n<table border=\"1\">\n<tr>\n<th>Argument</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>wsEndpoint</code></td>\n<td>Address to connect to. Either <code>ws://</code> or <code>http://</code> if cdp is used.</td>\n</tr>\n<tr>\n<td><code>browser</code></td>\n<td>Opens the specified browser. Defaults to <code>chromium</code>.</td>\n</tr>\n<tr>\n<td><code>use_cdp</code></td>\n<td>Connect to browser via Chrome DevTools Protocol. Defaults to False. Works only with Chromium based browsers.</td>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>Maximum time in Robot Framework time format to wait for the connection to be established. Defaults to 30 seconds. Pass 0 to disable timeout.</td>\n</tr>\n</table>\n<p>To Connect to a Browser viw Chrome DevTools Protocol, the browser must be started with this protocol enabled. This typically done by starting a Chrome browser with the argument <code>--remote-debugging-port=9222</code> or similar. When the browser is running with activated CDP, it is possible to connect to it either with websockets (<code>ws://</code>) or via HTTP (<code>http://</code>). The HTTP connection can be used when <code>use_cdp</code> is set to True. A typical address for a CDP connection is <code>http://127.0.0.1:9222</code>.</p>\n<p><a href=\"https://forum.robotframework.org/t//4242\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Connect to a Playwright browser server via playwright websocket or Chrome DevTools Protocol.",
+      doc: '<p>Connect to a Playwright browser server via playwright websocket or Chrome DevTools Protocol.</p>\n<p>See <a href="#Launch%20Browser%20Server" title="&quot;Launch Browser Server&quot; keyword" class="name">Launch Browser Server</a> for more information about how to launch a playwright browser server.</p>\n<p>See <a href="#Browser%2C%20Context%20and%20Page" title="&quot;Browser, Context and Page&quot; section" class="name">Browser, Context and Page</a> for more information about Browser and related concepts.</p>\n<p>Returns a stable identifier for the connected browser.</p>\n<table border="1">\n<tr>\n<th>Argument</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>wsEndpoint</code></td>\n<td>Address to connect to. Either <code>ws://</code> or <code>http://</code> if cdp is used.</td>\n</tr>\n<tr>\n<td><code>browser</code></td>\n<td>Opens the specified browser. Defaults to <code>chromium</code>.</td>\n</tr>\n<tr>\n<td><code>use_cdp</code></td>\n<td>Connect to browser via Chrome DevTools Protocol. Defaults to False. Works only with Chromium based browsers.</td>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>Maximum time in Robot Framework time format to wait for the connection to be established. Defaults to 30 seconds. Pass 0 to disable timeout.</td>\n</tr>\n</table>\n<p>To Connect to a Browser viw Chrome DevTools Protocol, the browser must be started with this protocol enabled. This typically done by starting a Chrome browser with the argument <code>--remote-debugging-port=9222</code> or similar. When the browser is running with activated CDP, it is possible to connect to it either with websockets (<code>ws://</code>) or via HTTP (<code>http://</code>). The HTTP connection can be used when <code>use_cdp</code> is set to True. A typical address for a CDP connection is <code>http://127.0.0.1:9222</code>.</p>\n<p><a href="https://forum.robotframework.org/t//4242">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Connect to a Playwright browser server via playwright websocket or Chrome DevTools Protocol.",
       args: [
         {
           name: "wsEndpoint",
@@ -1783,18 +1878,16 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/playwright_state.py",
       lineno: 379,
     },
     {
       name: "Crawl Site",
-      doc: "<p>Web crawler is a tool to go through all the pages on a specific URL domain. This happens by finding all links going to the same site and opening those.</p>\n<p>returns list of crawled urls.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>url</code></td>\n<td>is the page to start crawling from.</td>\n</tr>\n<tr>\n<td><code>page_crawl_keyword</code></td>\n<td>is the keyword that will be executed on every page.  By default it will take a screenshot on every page.</td>\n</tr>\n<tr>\n<td><code>max_number_of_page_to_crawl</code></td>\n<td>is the upper limit of pages to crawl. Crawling will stop if the number of crawled pages goes over this.</td>\n</tr>\n<tr>\n<td><code>max_depth_to_crawl</code></td>\n<td>is the upper limit of consecutive links followed from the start page. Crawling will stop if there are no more links under this depth.</td>\n</tr>\n</table>\n<p><a href=\"https://forum.robotframework.org/t//4243\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Web crawler is a tool to go through all the pages on a specific URL domain. This happens by finding all links going to the same site and opening those.",
+      doc: '<p>Web crawler is a tool to go through all the pages on a specific URL domain. This happens by finding all links going to the same site and opening those.</p>\n<p>returns list of crawled urls.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>url</code></td>\n<td>is the page to start crawling from.</td>\n</tr>\n<tr>\n<td><code>page_crawl_keyword</code></td>\n<td>is the keyword that will be executed on every page.  By default it will take a screenshot on every page.</td>\n</tr>\n<tr>\n<td><code>max_number_of_page_to_crawl</code></td>\n<td>is the upper limit of pages to crawl. Crawling will stop if the number of crawled pages goes over this.</td>\n</tr>\n<tr>\n<td><code>max_depth_to_crawl</code></td>\n<td>is the upper limit of consecutive links followed from the start page. Crawling will stop if there are no more links under this depth.</td>\n</tr>\n</table>\n<p><a href="https://forum.robotframework.org/t//4243">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Web crawler is a tool to go through all the pages on a specific URL domain. This happens by finding all links going to the same site and opening those.",
       args: [
         {
           name: "url",
@@ -1863,32 +1956,29 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "Crawling",
-      ],
+      tags: ["Crawling"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/crawling.py",
       lineno: 13,
     },
     {
       name: "Delete All Cookies",
-      doc: "<p>Deletes all cookies from the currently active browser context.</p>\n<p><a href=\"https://forum.robotframework.org/t//4244\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Deletes all cookies from the currently active browser context.",
+      doc: '<p>Deletes all cookies from the currently active browser context.</p>\n<p><a href="https://forum.robotframework.org/t//4244">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Deletes all cookies from the currently active browser context.",
       args: [],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/cookie.py",
       lineno: 151,
     },
     {
       name: "Deselect Options",
-      doc: "<p>Deselects all options from select element found by <code>selector</code>.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the select tag. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n</table>\n<p>If you just want to select one or more specific options and currently more options are selected, use <a href=\"#Select%20Options%20By\" title=\"&quot;Select Options By&quot; keyword\" class=\"name\">Select Options By</a> keyword with the options to be selected in the end.</p>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p><a href=\"https://forum.robotframework.org/t//4245\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Deselects all options from select element found by ``selector``.",
+      doc: '<p>Deselects all options from select element found by <code>selector</code>.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the select tag. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n</table>\n<p>If you just want to select one or more specific options and currently more options are selected, use <a href="#Select%20Options%20By" title="&quot;Select Options By&quot; keyword" class="name">Select Options By</a> keyword with the options to be selected in the end.</p>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p><a href="https://forum.robotframework.org/t//4245">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Deselects all options from select element found by ``selector``.",
       args: [
         {
           name: "selector",
@@ -1907,17 +1997,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 811,
     },
     {
       name: "Download",
-      doc: "<p>Download given url content.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>url</code></td>\n<td>URL to the file that shall be downloaded.</td>\n</tr>\n<tr>\n<td><code>saveAs</code></td>\n<td>Path where the file shall be saved persistently. If empty, generated unique path (GUID) is used and file is deleted when the context is closed.</td>\n</tr>\n<tr>\n<td><code>wait_for_finished</code></td>\n<td>If set to <code>False</code> keyword returns immediately after the download is started. Defaults to <code>True</code>.</td>\n</tr>\n<tr>\n<td><code>download_timeout</code></td>\n<td>Timeout for the download itself if <code>wait_for_finished</code> is set to <code>True</code>. By default no timeout is set.</td>\n</tr>\n</table>\n<p>Keyword returns dictionary of type <a href=\"#type-DownloadInfo\" title=\"&quot;DownloadInfo&quot; type\" class=\"name\">DownloadInfo</a>.</p>\n<p>Example:</p>\n<pre>\n{\n  \"saveAs\": \"/tmp/robotframework-browser/downloads/2f1b3b7c-1b1b-4b1b-9b1b-1b1b1b1b1b1b\",\n  \"suggestedFilename\": \"downloaded_file.txt\"\n  \"state\": \"finished\",\n  \"downloadID\": None,\n}\n</pre>\n<p>If the download should be started by an interaction with an element on the page, <a href=\"#Promise%20To%20Wait%20For%20Download\" title=\"&quot;Promise To Wait For Download&quot; keyword\" class=\"name\">Promise To Wait For Download</a> keyword may be a better choice.</p>\n<p>The keyword <a href=\"#New%20Browser\" title=\"&quot;New Browser&quot; keyword\" class=\"name\">New Browser</a> has a <code>downloadsPath</code> setting which can be used to set the default download directory. If <span class=\"name\">saveAs</span> is set to a relative path, the file will be saved relative to the browser's <code>downloadsPath</code> setting or if that is not set, relative to the Playwright's working directory. If <code>saveAs</code> is set to an absolute path, the file will be saved to that absolute path independent of <code>downloadsPath</code>.</p>\n<p>To enable downloads context's <code>acceptDownloads</code> needs to be true. This keyword requires that there is currently an open page. The keyword uses the current pages local state (cookies, sessionstorage, localstorage) for the download to avoid authentication problems.</p>\n<p>Example:</p>\n<pre>\n${file_object}=    <a href=\"#Download\" title=\"&quot;Download&quot; keyword\" class=\"name\">Download</a>    ${url}\n${actual_size}=    Get File Size    ${file_object.saveAs}\n</pre>\n<p>Example 2:</p>\n<pre>\n${href}=          <a href=\"#Get%20Property\" title=\"&quot;Get Property&quot; keyword\" class=\"name\">Get Property</a>    text=\"Download File\"    href\n<a href=\"#Download\" title=\"&quot;Download&quot; keyword\" class=\"name\">Download</a>    ${href}    saveAs=${OUTPUT DIR}/downloads/downloaded_file.txt\nFile Should Exist    ${OUTPUT DIR}/downloads/downloaded_file.txt\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4246\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Download given url content.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>url</code></td>\n<td>URL to the file that shall be downloaded.</td>\n</tr>\n<tr>\n<td><code>saveAs</code></td>\n<td>Path where the file shall be saved persistently. If empty, generated unique path (GUID) is used and file is deleted when the context is closed.</td>\n</tr>\n<tr>\n<td><code>wait_for_finished</code></td>\n<td>If set to <code>False</code> keyword returns immediately after the download is started. Defaults to <code>True</code>.</td>\n</tr>\n<tr>\n<td><code>download_timeout</code></td>\n<td>Timeout for the download itself if <code>wait_for_finished</code> is set to <code>True</code>. By default no timeout is set.</td>\n</tr>\n</table>\n<p>Keyword returns dictionary of type <a href="#type-DownloadInfo" title="&quot;DownloadInfo&quot; type" class="name">DownloadInfo</a>.</p>\n<p>Example:</p>\n<pre>\n{\n  "saveAs": "/tmp/robotframework-browser/downloads/2f1b3b7c-1b1b-4b1b-9b1b-1b1b1b1b1b1b",\n  "suggestedFilename": "downloaded_file.txt"\n  "state": "finished",\n  "downloadID": None,\n}\n</pre>\n<p>If the download should be started by an interaction with an element on the page, <a href="#Promise%20To%20Wait%20For%20Download" title="&quot;Promise To Wait For Download&quot; keyword" class="name">Promise To Wait For Download</a> keyword may be a better choice.</p>\n<p>The keyword <a href="#New%20Browser" title="&quot;New Browser&quot; keyword" class="name">New Browser</a> has a <code>downloadsPath</code> setting which can be used to set the default download directory. If <span class="name">saveAs</span> is set to a relative path, the file will be saved relative to the browser\'s <code>downloadsPath</code> setting or if that is not set, relative to the Playwright\'s working directory. If <code>saveAs</code> is set to an absolute path, the file will be saved to that absolute path independent of <code>downloadsPath</code>.</p>\n<p>To enable downloads context\'s <code>acceptDownloads</code> needs to be true. This keyword requires that there is currently an open page. The keyword uses the current pages local state (cookies, sessionstorage, localstorage) for the download to avoid authentication problems.</p>\n<p>Example:</p>\n<pre>\n${file_object}=    <a href="#Download" title="&quot;Download&quot; keyword" class="name">Download</a>    ${url}\n${actual_size}=    Get File Size    ${file_object.saveAs}\n</pre>\n<p>Example 2:</p>\n<pre>\n${href}=          <a href="#Get%20Property" title="&quot;Get Property&quot; keyword" class="name">Get Property</a>    text="Download File"    href\n<a href="#Download" title="&quot;Download&quot; keyword" class="name">Download</a>    ${href}    saveAs=${OUTPUT DIR}/downloads/downloaded_file.txt\nFile Should Exist    ${OUTPUT DIR}/downloads/downloaded_file.txt\n</pre>\n<p><a href="https://forum.robotframework.org/t//4246">Comment &gt;&gt;</a></p>',
       shortdoc: "Download given url content.",
       args: [
         {
@@ -1997,17 +2084,16 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Page Content",
-      ],
+      tags: ["Page Content"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/evaluation.py",
       lineno: 160,
     },
     {
       name: "Drag And Drop",
-      doc: "<p>Executes a Drag&amp;Drop operation from the element selected by <code>selector_from</code> to the element selected by <code>selector_to</code>.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector_from</code></td>\n<td>Identifies the element, which center is the start-point.</td>\n</tr>\n<tr>\n<td><code>selector_to</code></td>\n<td>Identifies the element, which center is the end-point.</td>\n</tr>\n<tr>\n<td><code>steps</code></td>\n<td>Defines how many intermediate mouse move events are sent. Often it is necessary to send more than one intermediate event to get the desired result. Defaults to 1.</td>\n</tr>\n</table>\n<p>See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</p>\n<p>First it moves the mouse to the start-point, then presses the left mouse button, then moves to the end-point in specified number of steps, then releases the mouse button.</p>\n<p>Start- and end-point are defined by the center of the elements boundingbox.</p>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>Example</p>\n<pre>\n<a href=\"#Drag%20And%20Drop\" title=\"&quot;Drag And Drop&quot; keyword\" class=\"name\">Drag And Drop</a>    \"Circle\"    \"Goal\"\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4247\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Executes a Drag&Drop operation from the element selected by ``selector_from`` to the element selected by ``selector_to``.",
+      doc: '<p>Executes a Drag&amp;Drop operation from the element selected by <code>selector_from</code> to the element selected by <code>selector_to</code>.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector_from</code></td>\n<td>Identifies the element, which center is the start-point.</td>\n</tr>\n<tr>\n<td><code>selector_to</code></td>\n<td>Identifies the element, which center is the end-point.</td>\n</tr>\n<tr>\n<td><code>steps</code></td>\n<td>Defines how many intermediate mouse move events are sent. Often it is necessary to send more than one intermediate event to get the desired result. Defaults to 1.</td>\n</tr>\n</table>\n<p>See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</p>\n<p>First it moves the mouse to the start-point, then presses the left mouse button, then moves to the end-point in specified number of steps, then releases the mouse button.</p>\n<p>Start- and end-point are defined by the center of the elements boundingbox.</p>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>Example</p>\n<pre>\n<a href="#Drag%20And%20Drop" title="&quot;Drag And Drop&quot; keyword" class="name">Drag And Drop</a>    "Circle"    "Goal"\n</pre>\n<p><a href="https://forum.robotframework.org/t//4247">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Executes a Drag&Drop operation from the element selected by ``selector_from`` to the element selected by ``selector_to``.",
       args: [
         {
           name: "selector_from",
@@ -2054,18 +2140,16 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 1099,
     },
     {
       name: "Drag And Drop By Coordinates",
-      doc: "<p>Executes a Drag&amp;Drop operation from a coordinate to another coordinate.</p>\n<p>First it moves the mouse to the start-point, then presses the left mouse button, then moves to the end-point in specified number of steps, then releases the mouse button.</p>\n<p>Start- and end-point are defined by <code>x</code> and <code>y</code> coordinates relative to the top left corner of the pages viewport.</p>\n<table border=\"1\">\n<tr>\n<td><code>from_x</code> &amp; <code>from_y</code></td>\n<td>Identify the start-point on page.</td>\n</tr>\n<tr>\n<td><code>to_x</code> &amp; <code>to_y</code></td>\n<td>Identify the end-point.</td>\n</tr>\n<tr>\n<td><code>steps</code></td>\n<td>Defines how many intermediate mouse move events are sent. Often it is necessary to send more than one intermediate event to get the desired result. Defaults to 1.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href=\"#Drag%20And%20Drop%20By%20Coordinates\" title=\"&quot;Drag And Drop By Coordinates&quot; keyword\" class=\"name\">Drag And Drop By Coordinates</a>\n...    from_x=30    from_y=30\n...    to_x=10    to_y=10    steps=20\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4248\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Executes a Drag&Drop operation from a coordinate to another coordinate.",
+      doc: '<p>Executes a Drag&amp;Drop operation from a coordinate to another coordinate.</p>\n<p>First it moves the mouse to the start-point, then presses the left mouse button, then moves to the end-point in specified number of steps, then releases the mouse button.</p>\n<p>Start- and end-point are defined by <code>x</code> and <code>y</code> coordinates relative to the top left corner of the pages viewport.</p>\n<table border="1">\n<tr>\n<td><code>from_x</code> &amp; <code>from_y</code></td>\n<td>Identify the start-point on page.</td>\n</tr>\n<tr>\n<td><code>to_x</code> &amp; <code>to_y</code></td>\n<td>Identify the end-point.</td>\n</tr>\n<tr>\n<td><code>steps</code></td>\n<td>Defines how many intermediate mouse move events are sent. Often it is necessary to send more than one intermediate event to get the desired result. Defaults to 1.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href="#Drag%20And%20Drop%20By%20Coordinates" title="&quot;Drag And Drop By Coordinates&quot; keyword" class="name">Drag And Drop By Coordinates</a>\n...    from_x=30    from_y=30\n...    to_x=10    to_y=10    steps=20\n</pre>\n<p><a href="https://forum.robotframework.org/t//4248">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Executes a Drag&Drop operation from a coordinate to another coordinate.",
       args: [
         {
           name: "from_x",
@@ -2140,18 +2224,16 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 1144,
     },
     {
       name: "Drag And Drop Relative To",
-      doc: "<p>Executes a Drag&amp;Drop operation from the element selected by <code>selector_from</code> to coordinates relative to the center of that element.</p>\n<p>This keyword can be handy to simulate swipe actions.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector_from</code></td>\n<td>identifies the element, which center is the start-point.</td>\n</tr>\n<tr>\n<td><code>x</code> &amp; <code>y</code></td>\n<td>identifies the end-point which is relative to the start-point.</td>\n</tr>\n<tr>\n<td><code>steps</code></td>\n<td>defines how many intermediate mouse move events are sent. Often it is necessary to send more than one intermediate event to get the desired result. Defaults to 1.</td>\n</tr>\n</table>\n<p>See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</p>\n<p>First it moves the mouse to the start-point (center of boundingbox), then presses the left mouse button, then moves to the relative position with the given intermediate steps, then releases the mouse button.</p>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>Example</p>\n<pre>\n<a href=\"#Drag%20And%20Drop%20Relative%20To\" title=\"&quot;Drag And Drop Relative To&quot; keyword\" class=\"name\">Drag And Drop Relative to</a>    \"Circle\"    -20    0     # Slides the element 20 pixel to the left\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4249\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Executes a Drag&Drop operation from the element selected by ``selector_from`` to coordinates relative to the center of that element.",
+      doc: '<p>Executes a Drag&amp;Drop operation from the element selected by <code>selector_from</code> to coordinates relative to the center of that element.</p>\n<p>This keyword can be handy to simulate swipe actions.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector_from</code></td>\n<td>identifies the element, which center is the start-point.</td>\n</tr>\n<tr>\n<td><code>x</code> &amp; <code>y</code></td>\n<td>identifies the end-point which is relative to the start-point.</td>\n</tr>\n<tr>\n<td><code>steps</code></td>\n<td>defines how many intermediate mouse move events are sent. Often it is necessary to send more than one intermediate event to get the desired result. Defaults to 1.</td>\n</tr>\n</table>\n<p>See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</p>\n<p>First it moves the mouse to the start-point (center of boundingbox), then presses the left mouse button, then moves to the relative position with the given intermediate steps, then releases the mouse button.</p>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>Example</p>\n<pre>\n<a href="#Drag%20And%20Drop%20Relative%20To" title="&quot;Drag And Drop Relative To&quot; keyword" class="name">Drag And Drop Relative to</a>    "Circle"    -20    0     # Slides the element 20 pixel to the left\n</pre>\n<p><a href="https://forum.robotframework.org/t//4249">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Executes a Drag&Drop operation from the element selected by ``selector_from`` to coordinates relative to the center of that element.",
       args: [
         {
           name: "selector_from",
@@ -2212,17 +2294,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 1178,
     },
     {
       name: "Eat All Cookies",
-      doc: "<p>Eat all cookies for all easter.</p>\n<p><a href=\"https://forum.robotframework.org/t//4250\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Eat all cookies for all easter.</p>\n<p><a href="https://forum.robotframework.org/t//4250">Comment &gt;&gt;</a></p>',
       shortdoc: "Eat all cookies for all easter.",
       args: [],
       returnType: null,
@@ -2348,18 +2427,16 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/pdf.py",
       lineno: 152,
     },
     {
       name: "Evaluate JavaScript",
-      doc: "<p>Executes given javascript on the selected element(s) or on page.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector to resolve and pass to the JavaScript function. This will be the first argument the function receives if not <code>${None}</code>. <code>selector</code> is optional and can be omitted. If given a selector, a function is necessary, with an argument to capture the elementHandle. For example <code>(element) =&gt; document.activeElement === element</code> See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>*function</code></td>\n<td>A valid javascript function or a javascript function body. These arguments can be used to write readable multiline JavaScript.</td>\n</tr>\n<tr>\n<td><code>arg</code></td>\n<td>an additional argument that can be handed over to the JavaScript function. This argument must be JSON serializable. ElementHandles are not supported.</td>\n</tr>\n<tr>\n<td><code>all_elements</code></td>\n<td>defines if only the single elementHandle found by <code>selector</code> is handed over to the function or if set to <code>True</code> all found elements are handed over as array.</td>\n</tr>\n</table>\n<p>Example with <code>all_elements=True</code>:</p>\n<pre>\n ${texts}=    Evaluate JavaScript    button\n ...    (elements, arg) =&gt; {\n ...        let text = []\n ...            for (e of elements) {\n ...                console.log(e.innerText)\n ...                text.push(e.innerText)\n ...            }\n ...        text.push(arg)\n ...        return text\n ...    }\n ...    all_elements=True\n ...    arg=Just another Text\n</pre>\n<p>Keyword uses strict mode if <code>all_elements</code> is <code>False</code>. See <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p><a href=\"https://github.com/MarketSquare/robotframework-browser/tree/main/atest/test/06_Examples/js_evaluation.robot\">Usage examples.</a></p>\n<p><a href=\"https://forum.robotframework.org/t//4251\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Executes given javascript on the selected element(s) or on page.",
+      doc: '<p>Executes given javascript on the selected element(s) or on page.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector to resolve and pass to the JavaScript function. This will be the first argument the function receives if not <code>${None}</code>. <code>selector</code> is optional and can be omitted. If given a selector, a function is necessary, with an argument to capture the elementHandle. For example <code>(element) =&gt; document.activeElement === element</code> See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>*function</code></td>\n<td>A valid javascript function or a javascript function body. These arguments can be used to write readable multiline JavaScript.</td>\n</tr>\n<tr>\n<td><code>arg</code></td>\n<td>an additional argument that can be handed over to the JavaScript function. This argument must be JSON serializable. ElementHandles are not supported.</td>\n</tr>\n<tr>\n<td><code>all_elements</code></td>\n<td>defines if only the single elementHandle found by <code>selector</code> is handed over to the function or if set to <code>True</code> all found elements are handed over as array.</td>\n</tr>\n</table>\n<p>Example with <code>all_elements=True</code>:</p>\n<pre>\n ${texts}=    Evaluate JavaScript    button\n ...    (elements, arg) =&gt; {\n ...        let text = []\n ...            for (e of elements) {\n ...                console.log(e.innerText)\n ...                text.push(e.innerText)\n ...            }\n ...        text.push(arg)\n ...        return text\n ...    }\n ...    all_elements=True\n ...    arg=Just another Text\n</pre>\n<p>Keyword uses strict mode if <code>all_elements</code> is <code>False</code>. See <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p><a href="https://github.com/MarketSquare/robotframework-browser/tree/main/atest/test/06_Examples/js_evaluation.robot">Usage examples.</a></p>\n<p><a href="https://forum.robotframework.org/t//4251">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Executes given javascript on the selected element(s) or on page.",
       args: [
         {
           name: "selector",
@@ -2438,19 +2515,16 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Getter",
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["Getter", "PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/evaluation.py",
       lineno: 34,
     },
     {
       name: "Fill Secret",
-      doc: "<p>Fills the given secret from <code>variable_name</code> into the text field found by <code>selector</code>.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n<td></td>\n</tr>\n<tr>\n<td><code>secret</code></td>\n<td>The secret string that should be filled into the text field.</td>\n<td></td>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the text field. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n<td></td>\n</tr>\n<tr>\n<td><code>force</code></td>\n<td>Set to True to skip Playwright's [<a href=\"https://playwright.dev/docs/actionability\">https://playwright.dev/docs/actionability</a></td>\n<td>Actionability checks].</td>\n</tr>\n</table>\n<p>This keyword does not log secret in Robot Framework logs, but if PLaywright debug logs are enabled, secret will be visible as plain text in the Playwright debug logs, regardless of the Robot Framework log level or how <code>secret</code> is resolved.</p>\n<p>This keyword supports Robot Framework 7.4 <a href=\"https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#secret-variables\">Secret</a> variable type, which is the recommended way if you are using Robot Framework 7.4 or newer.</p>\n<p>For older Robot Framework versions keyword support resolving secrets from environment variables and Robot Framework variables in the following ways. Keyword resolves the <code>secret</code> from Robot Framework variable internally, when <code>secret</code> variable is prefixed with <span class=\"name\">$</span>, without the curly braces. Example <span class=\"name\">$Password</span>` will resolve to <code>${Password}</code> Robot Framework variable.</p>\n<p>If <code>secret</code> variable is prefixed with <span class=\"name\">%</span>, library will resolve corresponding environment variable. Example <code>%ENV_PWD</code> will resolve to <code>%{ENV_PWD}</code> environment variable.</p>\n<p><b>Using normal Robot Framework variables like <code>${password}</code> will not work!</b></p>\n<p><b>Normal plain text will not work.</b> If you want to use plain text, use <a href=\"#Fill%20Text\" title=\"&quot;Fill Text&quot; keyword\" class=\"name\">Fill Text</a> keyword instead.</p>\n<p>This keyword will also work with a give cryptographic cipher text, that has been encrypted by Crypto library. See <a href=\"https://github.com/Snooz82/robotframework-crypto\">Crypto Library</a> for more details.</p>\n<p>If <code>enable_playwright_debug</code> is enabled in the library import, secret will be always visible as plain text in the playwright debug logs, regardless of the Robot Framework log level.</p>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>See <a href=\"#Fill%20Text\" title=\"&quot;Fill Text&quot; keyword\" class=\"name\">Fill Text</a> for other details.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#Fill%20Secret\" title=\"&quot;Fill Secret&quot; keyword\" class=\"name\">Fill Secret</a>    input#username_field    ${username}    # Keyword resolves variable value from Robot Framework Secret type variables\n<a href=\"#Fill%20Secret\" title=\"&quot;Fill Secret&quot; keyword\" class=\"name\">Fill Secret</a>    input#username_field    $username      # Keyword resolves variable value from Robot Framework variables\n<a href=\"#Fill%20Secret\" title=\"&quot;Fill Secret&quot; keyword\" class=\"name\">Fill Secret</a>    input#username_field    %username      # Keyword resolves variable value from environment variables\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4253\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Fills the given secret from ``variable_name`` into the text field found by ``selector``.",
+      doc: '<p>Fills the given secret from <code>variable_name</code> into the text field found by <code>selector</code>.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n<td></td>\n</tr>\n<tr>\n<td><code>secret</code></td>\n<td>The secret string that should be filled into the text field.</td>\n<td></td>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the text field. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n<td></td>\n</tr>\n<tr>\n<td><code>force</code></td>\n<td>Set to True to skip Playwright\'s [<a href="https://playwright.dev/docs/actionability">https://playwright.dev/docs/actionability</a></td>\n<td>Actionability checks].</td>\n</tr>\n</table>\n<p>This keyword does not log secret in Robot Framework logs, but if PLaywright debug logs are enabled, secret will be visible as plain text in the Playwright debug logs, regardless of the Robot Framework log level or how <code>secret</code> is resolved.</p>\n<p>This keyword supports Robot Framework 7.4 <a href="https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#secret-variables">Secret</a> variable type, which is the recommended way if you are using Robot Framework 7.4 or newer.</p>\n<p>For older Robot Framework versions keyword support resolving secrets from environment variables and Robot Framework variables in the following ways. Keyword resolves the <code>secret</code> from Robot Framework variable internally, when <code>secret</code> variable is prefixed with <span class="name">$</span>, without the curly braces. Example <span class="name">$Password</span>` will resolve to <code>${Password}</code> Robot Framework variable.</p>\n<p>If <code>secret</code> variable is prefixed with <span class="name">%</span>, library will resolve corresponding environment variable. Example <code>%ENV_PWD</code> will resolve to <code>%{ENV_PWD}</code> environment variable.</p>\n<p><b>Using normal Robot Framework variables like <code>${password}</code> will not work!</b></p>\n<p><b>Normal plain text will not work.</b> If you want to use plain text, use <a href="#Fill%20Text" title="&quot;Fill Text&quot; keyword" class="name">Fill Text</a> keyword instead.</p>\n<p>This keyword will also work with a give cryptographic cipher text, that has been encrypted by Crypto library. See <a href="https://github.com/Snooz82/robotframework-crypto">Crypto Library</a> for more details.</p>\n<p>If <code>enable_playwright_debug</code> is enabled in the library import, secret will be always visible as plain text in the playwright debug logs, regardless of the Robot Framework log level.</p>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>See <a href="#Fill%20Text" title="&quot;Fill Text&quot; keyword" class="name">Fill Text</a> for other details.</p>\n<p>Example:</p>\n<pre>\n<a href="#Fill%20Secret" title="&quot;Fill Secret&quot; keyword" class="name">Fill Secret</a>    input#username_field    ${username}    # Keyword resolves variable value from Robot Framework Secret type variables\n<a href="#Fill%20Secret" title="&quot;Fill Secret&quot; keyword" class="name">Fill Secret</a>    input#username_field    $username      # Keyword resolves variable value from Robot Framework variables\n<a href="#Fill%20Secret" title="&quot;Fill Secret&quot; keyword" class="name">Fill Secret</a>    input#username_field    %username      # Keyword resolves variable value from environment variables\n</pre>\n<p><a href="https://forum.robotframework.org/t//4253">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Fills the given secret from ``variable_name`` into the text field found by ``selector``.",
       args: [
         {
           name: "selector",
@@ -2510,18 +2584,16 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 214,
     },
     {
       name: "Fill Text",
-      doc: "<p>Clears and fills the given <code>txt</code> into the text field found by <code>selector</code>.</p>\n<p>This method waits for an element matching the <code>selector</code> to appear, waits for actionability checks, focuses the element, fills it and triggers an input event after filling.</p>\n<p>If the element matching selector is not an &lt;input&gt;, &lt;textarea&gt; or [contenteditable] element, this method throws an error. Note that you can pass an empty string as <code>txt</code> to clear the input field.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n<td></td>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the text field. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n<td></td>\n</tr>\n<tr>\n<td><code>txt</code></td>\n<td>Text for the text field.</td>\n<td></td>\n</tr>\n<tr>\n<td><code>force</code></td>\n<td>Set to True to skip Playwright's [<a href=\"https://playwright.dev/docs/actionability\">https://playwright.dev/docs/actionability</a></td>\n<td>Actionability checks].</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>See <a href=\"#Type%20Text\" title=\"&quot;Type Text&quot; keyword\" class=\"name\">Type Text</a> for emulating typing text character by character.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#Fill%20Text\" title=\"&quot;Fill Text&quot; keyword\" class=\"name\">Fill Text</a>    css=input#username_field    username\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4254\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Clears and fills the given ``txt`` into the text field found by ``selector``.",
+      doc: '<p>Clears and fills the given <code>txt</code> into the text field found by <code>selector</code>.</p>\n<p>This method waits for an element matching the <code>selector</code> to appear, waits for actionability checks, focuses the element, fills it and triggers an input event after filling.</p>\n<p>If the element matching selector is not an &lt;input&gt;, &lt;textarea&gt; or [contenteditable] element, this method throws an error. Note that you can pass an empty string as <code>txt</code> to clear the input field.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n<td></td>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the text field. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n<td></td>\n</tr>\n<tr>\n<td><code>txt</code></td>\n<td>Text for the text field.</td>\n<td></td>\n</tr>\n<tr>\n<td><code>force</code></td>\n<td>Set to True to skip Playwright\'s [<a href="https://playwright.dev/docs/actionability">https://playwright.dev/docs/actionability</a></td>\n<td>Actionability checks].</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>See <a href="#Type%20Text" title="&quot;Type Text&quot; keyword" class="name">Type Text</a> for emulating typing text character by character.</p>\n<p>Example:</p>\n<pre>\n<a href="#Fill%20Text" title="&quot;Fill Text&quot; keyword" class="name">Fill Text</a>    css=input#username_field    username\n</pre>\n<p><a href="https://forum.robotframework.org/t//4254">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Clears and fills the given ``txt`` into the text field found by ``selector``.",
       args: [
         {
           name: "selector",
@@ -2568,17 +2640,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 89,
     },
     {
       name: "Focus",
-      doc: "<p>Moves focus on to the element found by <code>selector</code>.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the element. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>If there's no element matching selector, the method waits until a matching element appears in the DOM. Timeouts after 10 seconds.</p>\n<p><a href=\"https://forum.robotframework.org/t//4255\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Moves focus on to the element found by <code>selector</code>.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the element. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>If there\'s no element matching selector, the method waits until a matching element appears in the DOM. Timeouts after 10 seconds.</p>\n<p><a href="https://forum.robotframework.org/t//4255">Comment &gt;&gt;</a></p>',
       shortdoc: "Moves focus on to the element found by ``selector``.",
       args: [
         {
@@ -2598,18 +2667,16 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 573,
     },
     {
       name: "Get Aria Snapshot",
-      doc: "<p>Returns the aria snapshot of the element found by <code>selector</code>.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector from which the info is to be retrieved. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>return_type</code></td>\n<td>Defines the return type. Possible values are <code>yaml</code> (default) and <code>dict</code>. If <code>yaml</code> is selected, the returned value is a string in YAML format. If <code>dict</code> is selected, the returned value is a dictionary.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the state</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>Optionally asserts that the state matches the specified assertion. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p>Example:</p>\n<pre>\n${aria} =    <a href=\"#Get%20Aria%20Snapshot\" title=\"&quot;Get Aria Snapshot&quot; keyword\" class=\"name\">Get Aria Snapshot</a>    id=main   # returns YAML string\nLog Many    ${aria}\n${aria_dict} =    <a href=\"#Get%20Aria%20Snapshot\" title=\"&quot;Get Aria Snapshot&quot; keyword\" class=\"name\">Get Aria Snapshot</a>    id=main    dict   # returns dictionary\nLog Many    ${aria_dict}\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4303\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Returns the aria snapshot of the element found by ``selector``.",
+      doc: '<p>Returns the aria snapshot of the element found by <code>selector</code>.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector from which the info is to be retrieved. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>return_type</code></td>\n<td>Defines the return type. Possible values are <code>yaml</code> (default) and <code>dict</code>. If <code>yaml</code> is selected, the returned value is a string in YAML format. If <code>dict</code> is selected, the returned value is a dictionary.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the state</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>Optionally asserts that the state matches the specified assertion. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p>Example:</p>\n<pre>\n${aria} =    <a href="#Get%20Aria%20Snapshot" title="&quot;Get Aria Snapshot&quot; keyword" class="name">Get Aria Snapshot</a>    id=main   # returns YAML string\nLog Many    ${aria}\n${aria_dict} =    <a href="#Get%20Aria%20Snapshot" title="&quot;Get Aria Snapshot&quot; keyword" class="name">Get Aria Snapshot</a>    id=main    dict   # returns dictionary\nLog Many    ${aria_dict}\n</pre>\n<p><a href="https://forum.robotframework.org/t//4303">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Returns the aria snapshot of the element found by ``selector``.",
       args: [
         {
           name: "selector",
@@ -2747,19 +2814,16 @@ const DATA: Libdoc = {
         union: true,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Assertion", "Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 65,
     },
     {
       name: "Get Attribute",
-      doc: "<p>Returns the HTML <code>attribute</code> of the element found by <code>selector</code>.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector from which the info is to be retrieved. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>attribute</code></td>\n<td>Requested attribute name.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the state</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>Optionally asserts that the attribute value matches the expected value. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p>When a attribute is selected that is not present and no assertion operator is set, the keyword fails. If an assertion operator is set and the attribute is not present, the returned value is <code>None</code>. This can be used to assert check the presents or the absents of an attribute.</p>\n<p>Example Element:</p>\n<pre>\n&lt;button class=\"login button active\" id=\"enabled_button\" something&gt;Login&lt;/button&gt;\n</pre>\n<p>Example Code:</p>\n<pre>\n<a href=\"#Get%20Attribute\" title=\"&quot;Get Attribute&quot; keyword\" class=\"name\">Get Attribute</a>   id=enabled_button    disabled                   # FAIL =&gt; \"Attribute 'disabled' not found!\"\n<a href=\"#Get%20Attribute\" title=\"&quot;Get Attribute&quot; keyword\" class=\"name\">Get Attribute</a>   id=enabled_button    disabled     ==    ${None}     # PASS =&gt; returns: None\n<a href=\"#Get%20Attribute\" title=\"&quot;Get Attribute&quot; keyword\" class=\"name\">Get Attribute</a>   id=enabled_button    something    evaluate    value is not None    # PASS =&gt;  returns: True\n<a href=\"#Get%20Attribute\" title=\"&quot;Get Attribute&quot; keyword\" class=\"name\">Get Attribute</a>   id=enabled_button    disabled     evaluate    value is None        # PASS =&gt;  returns: True\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4256\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Returns the HTML ``attribute`` of the element found by ``selector``.",
+      doc: '<p>Returns the HTML <code>attribute</code> of the element found by <code>selector</code>.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector from which the info is to be retrieved. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>attribute</code></td>\n<td>Requested attribute name.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the state</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>Optionally asserts that the attribute value matches the expected value. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p>When a attribute is selected that is not present and no assertion operator is set, the keyword fails. If an assertion operator is set and the attribute is not present, the returned value is <code>None</code>. This can be used to assert check the presents or the absents of an attribute.</p>\n<p>Example Element:</p>\n<pre>\n&lt;button class="login button active" id="enabled_button" something&gt;Login&lt;/button&gt;\n</pre>\n<p>Example Code:</p>\n<pre>\n<a href="#Get%20Attribute" title="&quot;Get Attribute&quot; keyword" class="name">Get Attribute</a>   id=enabled_button    disabled                   # FAIL =&gt; "Attribute \'disabled\' not found!"\n<a href="#Get%20Attribute" title="&quot;Get Attribute&quot; keyword" class="name">Get Attribute</a>   id=enabled_button    disabled     ==    ${None}     # PASS =&gt; returns: None\n<a href="#Get%20Attribute" title="&quot;Get Attribute&quot; keyword" class="name">Get Attribute</a>   id=enabled_button    something    evaluate    value is not None    # PASS =&gt;  returns: True\n<a href="#Get%20Attribute" title="&quot;Get Attribute&quot; keyword" class="name">Get Attribute</a>   id=enabled_button    disabled     evaluate    value is None        # PASS =&gt;  returns: True\n</pre>\n<p><a href="https://forum.robotframework.org/t//4256">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Returns the HTML ``attribute`` of the element found by ``selector``.",
       args: [
         {
           name: "selector",
@@ -2903,18 +2967,14 @@ const DATA: Libdoc = {
         union: true,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Assertion", "Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 367,
     },
     {
       name: "Get Attribute Names",
-      doc: "<p>Returns all HTML attribute names of an element as a list.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector from which the info is to be retrieved. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>*assertion_expected</code></td>\n<td>Expected value for the state</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>Optionally asserts that attribute names do match to the expected value. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p>Available assertions:</p>\n<ul>\n<li><code>==</code> , <code>!=</code> and <code>contains</code> / <code>*=</code> can work with multiple values</li>\n<li><code>validate</code> and <code>evaluate</code> only accepts one single expected value</li>\n</ul>\n<p>Other operators are not allowed.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#Get%20Attribute%20Names\" title=\"&quot;Get Attribute Names&quot; keyword\" class=\"name\">Get Attribute Names</a>    [name=\"readonly_input\"]    ==    type    name    value    readonly    # Has exactly these attribute names.\n<a href=\"#Get%20Attribute%20Names\" title=\"&quot;Get Attribute Names&quot; keyword\" class=\"name\">Get Attribute Names</a>    [name=\"readonly_input\"]    contains    disabled    # Contains at least this attribute name.\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4257\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Returns all HTML attribute names of an element as a list.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector from which the info is to be retrieved. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>*assertion_expected</code></td>\n<td>Expected value for the state</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>Optionally asserts that attribute names do match to the expected value. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p>Available assertions:</p>\n<ul>\n<li><code>==</code> , <code>!=</code> and <code>contains</code> / <code>*=</code> can work with multiple values</li>\n<li><code>validate</code> and <code>evaluate</code> only accepts one single expected value</li>\n</ul>\n<p>Other operators are not allowed.</p>\n<p>Example:</p>\n<pre>\n<a href="#Get%20Attribute%20Names" title="&quot;Get Attribute Names&quot; keyword" class="name">Get Attribute Names</a>    [name="readonly_input"]    ==    type    name    value    readonly    # Has exactly these attribute names.\n<a href="#Get%20Attribute%20Names" title="&quot;Get Attribute Names&quot; keyword" class="name">Get Attribute Names</a>    [name="readonly_input"]    contains    disabled    # Contains at least this attribute name.\n</pre>\n<p><a href="https://forum.robotframework.org/t//4257">Comment &gt;&gt;</a></p>',
       shortdoc: "Returns all HTML attribute names of an element as a list.",
       args: [
         {
@@ -3009,19 +3069,16 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Assertion", "Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 430,
     },
     {
       name: "Get BoundingBox",
-      doc: "<p>Gets elements size and location as an object <code>{x: float, y: float, width: float, height: float}</code>.</p>\n<p>Alternatively you can select a single attribute of the bounding box by setting the <code>key</code> argument.</p>\n<p>If an element is hidden and has no bounding box, the keyword will fail. Depending on the method used to make an element invisible, an element might still have a bounding box which can be retrieved. To allow also hidden elements without a bounding box, set <code>allow_hidden</code> to <code>True</code>, which results in a return value of <a href=\"#type-None\" title=\"&quot;None&quot; type\" class=\"name\">None</a> in case of no bounding box.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector from which shall be retrieved. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>key</code></td>\n<td>Optionally filters the returned values. If keys is set to <code>ALL</code> (default) it will return the BoundingBox as Dictionary, otherwise it will just return the single value selected by the key. Note: If a single value is retrieved, an assertion does <b>not</b> need a <code>validate</code> combined with a cast of <code>value</code>.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the counting</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n<tr>\n<td><code>allow_hidden</code></td>\n<td>(named only) If True, hidden elements are not causing a failure and will return <a href=\"#type-None\" title=\"&quot;None&quot; type\" class=\"name\">None</a>. Otherwise hidden element will fail. Defaults to False.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>Optionally asserts that the value matches the specified assertion. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p>Example use:</p>\n<pre>\n${bounding_box}=    <a href=\"#Get%20BoundingBox\" title=\"&quot;Get BoundingBox&quot; keyword\" class=\"name\">Get BoundingBox</a>    id=element                 # unfiltered\nLog                 ${bounding_box}                                 # {'x': 559.09375, 'y': 75.5, 'width': 188.796875, 'height': 18}\n${x}=               <a href=\"#Get%20BoundingBox\" title=\"&quot;Get BoundingBox&quot; keyword\" class=\"name\">Get BoundingBox</a>    id=element    x            # filtered\nLog                 X: ${x}                                         # X: 559.09375\n# Assertions:\n<a href=\"#Get%20BoundingBox\" title=\"&quot;Get BoundingBox&quot; keyword\" class=\"name\">Get BoundingBox</a>     id=element         width         &gt;    180\n<a href=\"#Get%20BoundingBox\" title=\"&quot;Get BoundingBox&quot; keyword\" class=\"name\">Get BoundingBox</a>     id=element         ALL           validate    value['x'] &gt; value['y']*2\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4258\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Gets elements size and location as an object ``{x: float, y: float, width: float, height: float}``.",
+      doc: '<p>Gets elements size and location as an object <code>{x: float, y: float, width: float, height: float}</code>.</p>\n<p>Alternatively you can select a single attribute of the bounding box by setting the <code>key</code> argument.</p>\n<p>If an element is hidden and has no bounding box, the keyword will fail. Depending on the method used to make an element invisible, an element might still have a bounding box which can be retrieved. To allow also hidden elements without a bounding box, set <code>allow_hidden</code> to <code>True</code>, which results in a return value of <a href="#type-None" title="&quot;None&quot; type" class="name">None</a> in case of no bounding box.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector from which shall be retrieved. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>key</code></td>\n<td>Optionally filters the returned values. If keys is set to <code>ALL</code> (default) it will return the BoundingBox as Dictionary, otherwise it will just return the single value selected by the key. Note: If a single value is retrieved, an assertion does <b>not</b> need a <code>validate</code> combined with a cast of <code>value</code>.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the counting</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n<tr>\n<td><code>allow_hidden</code></td>\n<td>(named only) If True, hidden elements are not causing a failure and will return <a href="#type-None" title="&quot;None&quot; type" class="name">None</a>. Otherwise hidden element will fail. Defaults to False.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>Optionally asserts that the value matches the specified assertion. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p>Example use:</p>\n<pre>\n${bounding_box}=    <a href="#Get%20BoundingBox" title="&quot;Get BoundingBox&quot; keyword" class="name">Get BoundingBox</a>    id=element                 # unfiltered\nLog                 ${bounding_box}                                 # {\'x\': 559.09375, \'y\': 75.5, \'width\': 188.796875, \'height\': 18}\n${x}=               <a href="#Get%20BoundingBox" title="&quot;Get BoundingBox&quot; keyword" class="name">Get BoundingBox</a>    id=element    x            # filtered\nLog                 X: ${x}                                         # X: 559.09375\n# Assertions:\n<a href="#Get%20BoundingBox" title="&quot;Get BoundingBox&quot; keyword" class="name">Get BoundingBox</a>     id=element         width         &gt;    180\n<a href="#Get%20BoundingBox" title="&quot;Get BoundingBox&quot; keyword" class="name">Get BoundingBox</a>     id=element         ALL           validate    value[\'x\'] &gt; value[\'y\']*2\n</pre>\n<p><a href="https://forum.robotframework.org/t//4258">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Gets elements size and location as an object ``{x: float, y: float, width: float, height: float}``.",
       args: [
         {
           name: "selector",
@@ -3188,19 +3245,16 @@ const DATA: Libdoc = {
         union: true,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Assertion", "Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 1222,
     },
     {
       name: "Get Browser Catalog",
-      doc: "<p>Returns all browsers, open contexts in them and open pages in these contexts.</p>\n<p>See <a href=\"#Browser%2C%20Context%20and%20Page\" title=\"&quot;Browser, Context and Page&quot; section\" class=\"name\">Browser, Context and Page</a> for more information about these concepts.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td>assertion_operator</td>\n<td>Optional assertion operator. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for more information.</td>\n</tr>\n<tr>\n<td>assertion_expected</td>\n<td>Optional expected value. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for more information.</td>\n</tr>\n<tr>\n<td>message</td>\n<td>Optional custom message to use on failure. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for more information.</td>\n</tr>\n</table>\n<p>The data is parsed into a python list containing data representing the open Objects.</p>\n<p>On the root level the data contains a list of open browsers.</p>\n<p>Data can be manipulated also with <code>assertion_operator</code> for example to find a specific id based on index or page title with <code>then</code> operator.</p>\n<p>Return value can also be asserted against expected value.</p>\n<p>Sample:</p>\n<pre>\n[\n  {\n    \"type\": \"chromium\",\n    \"id\": \"browser=96207191-8147-44e7-b9ac-5e04f2709c1d\",\n    \"contexts\": [\n      {\n        \"type\": \"context\",\n        \"id\": \"context=525d8e5b-3c4e-4baa-bfd4-dfdbc6e86089\",\n        \"activePage\": \"page=f90c97b8-eaaf-47f2-98b2-ccefd3450f12\",\n        \"pages\": [\n          {\n            \"type\": \"page\",\n            \"title\": \"Robocorp\",\n            \"url\": \"<a href=\"https://robocorp.com/\">https://robocorp.com/</a>\",\n            \"id\": \"page=7ac15782-22d2-48b4-8591-ff17663fa737\",\n            \"timestamp\": 1598607713.858\n          },\n          {\n            \"type\": \"page\",\n            \"title\": \"Home - Reaktor\",\n            \"url\": \"<a href=\"https://www.reaktor.com/\">https://www.reaktor.com/</a>\",\n            \"id\": \"page=f90c97b8-eaaf-47f2-98b2-ccefd3450f12\",\n            \"timestamp\": 1598607714.702\n          }\n        ]\n      }\n    ],\n    \"activeContext\": \"context=525d8e5b-3c4e-4baa-bfd4-dfdbc6e86089\",\n    \"activeBrowser\": false\n  },\n  {\n    \"type\": \"firefox\",\n    \"id\": \"browser=ad99abac-17a9-472b-ac7f-d6352630834e\",\n    \"contexts\": [\n      {\n        \"type\": \"context\",\n        \"id\": \"context=bc64f1ba-5e76-46dd-9735-4bd344afb9c0\",\n        \"activePage\": \"page=8baf2991-5eaf-444d-a318-8045f914e96a\",\n        \"pages\": [\n          {\n            \"type\": \"page\",\n            \"title\": \"Software-Qualitätssicherung und Softwaretest\",\n            \"url\": \"<a href=\"https://www.imbus.de/\">https://www.imbus.de/</a>\",\n            \"id\": \"page=8baf2991-5eaf-444d-a318-8045f914e96a\",\n            \"timestamp\": 1598607716.828\n          }\n        ]\n      }\n    ],\n    \"activeContext\": \"context=bc64f1ba-5e76-46dd-9735-4bd344afb9c0\",\n    \"activeBrowser\": true\n  }\n]\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4259\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Returns all browsers, open contexts in them and open pages in these contexts.",
+      doc: '<p>Returns all browsers, open contexts in them and open pages in these contexts.</p>\n<p>See <a href="#Browser%2C%20Context%20and%20Page" title="&quot;Browser, Context and Page&quot; section" class="name">Browser, Context and Page</a> for more information about these concepts.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td>assertion_operator</td>\n<td>Optional assertion operator. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for more information.</td>\n</tr>\n<tr>\n<td>assertion_expected</td>\n<td>Optional expected value. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for more information.</td>\n</tr>\n<tr>\n<td>message</td>\n<td>Optional custom message to use on failure. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for more information.</td>\n</tr>\n</table>\n<p>The data is parsed into a python list containing data representing the open Objects.</p>\n<p>On the root level the data contains a list of open browsers.</p>\n<p>Data can be manipulated also with <code>assertion_operator</code> for example to find a specific id based on index or page title with <code>then</code> operator.</p>\n<p>Return value can also be asserted against expected value.</p>\n<p>Sample:</p>\n<pre>\n[\n  {\n    "type": "chromium",\n    "id": "browser=96207191-8147-44e7-b9ac-5e04f2709c1d",\n    "contexts": [\n      {\n        "type": "context",\n        "id": "context=525d8e5b-3c4e-4baa-bfd4-dfdbc6e86089",\n        "activePage": "page=f90c97b8-eaaf-47f2-98b2-ccefd3450f12",\n        "pages": [\n          {\n            "type": "page",\n            "title": "Robocorp",\n            "url": "<a href="https://robocorp.com/">https://robocorp.com/</a>",\n            "id": "page=7ac15782-22d2-48b4-8591-ff17663fa737",\n            "timestamp": 1598607713.858\n          },\n          {\n            "type": "page",\n            "title": "Home - Reaktor",\n            "url": "<a href="https://www.reaktor.com/">https://www.reaktor.com/</a>",\n            "id": "page=f90c97b8-eaaf-47f2-98b2-ccefd3450f12",\n            "timestamp": 1598607714.702\n          }\n        ]\n      }\n    ],\n    "activeContext": "context=525d8e5b-3c4e-4baa-bfd4-dfdbc6e86089",\n    "activeBrowser": false\n  },\n  {\n    "type": "firefox",\n    "id": "browser=ad99abac-17a9-472b-ac7f-d6352630834e",\n    "contexts": [\n      {\n        "type": "context",\n        "id": "context=bc64f1ba-5e76-46dd-9735-4bd344afb9c0",\n        "activePage": "page=8baf2991-5eaf-444d-a318-8045f914e96a",\n        "pages": [\n          {\n            "type": "page",\n            "title": "Software-Qualitätssicherung und Softwaretest",\n            "url": "<a href="https://www.imbus.de/">https://www.imbus.de/</a>",\n            "id": "page=8baf2991-5eaf-444d-a318-8045f914e96a",\n            "timestamp": 1598607716.828\n          }\n        ]\n      }\n    ],\n    "activeContext": "context=bc64f1ba-5e76-46dd-9735-4bd344afb9c0",\n    "activeBrowser": true\n  }\n]\n</pre>\n<p><a href="https://forum.robotframework.org/t//4259">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Returns all browsers, open contexts in them and open pages in these contexts.",
       args: [
         {
           name: "assertion_operator",
@@ -3298,19 +3352,16 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "BrowserControl",
-        "Getter",
-      ],
+      tags: ["Assertion", "BrowserControl", "Getter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/playwright_state.py",
       lineno: 1048,
     },
     {
       name: "Get Browser Ids",
-      doc: "<p>Returns a list of ids from open browsers. See <a href=\"#Browser%2C%20Context%20and%20Page\" title=\"&quot;Browser, Context and Page&quot; section\" class=\"name\">Browser, Context and Page</a> for more information about Browser and related concepts.</p>\n<p><code>browser</code> Defaults to <code>ALL</code></p>\n<ul>\n<li><code>ALL</code> / <code>ANY</code> Returns all ids as a list.</li>\n<li><code>ACTIVE</code> / <code>CURRENT</code> Returns the id of the currently active browser as list.</li>\n</ul>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>browser</code></td>\n<td>The browser to get the ids from. <code>ALL</code> for all open browsers, <code>ACTIVE</code> for the currently active browser or the id of the browser to get the ids from.</td>\n</tr>\n</table>\n<p>The ACTIVE browser is a synonym for the CURRENT Browser.</p>\n<p><a href=\"https://forum.robotframework.org/t//4260\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Returns a list of ids from open browsers. See `Browser, Context and Page` for more information about Browser and related concepts.",
+      doc: '<p>Returns a list of ids from open browsers. See <a href="#Browser%2C%20Context%20and%20Page" title="&quot;Browser, Context and Page&quot; section" class="name">Browser, Context and Page</a> for more information about Browser and related concepts.</p>\n<p><code>browser</code> Defaults to <code>ALL</code></p>\n<ul>\n<li><code>ALL</code> / <code>ANY</code> Returns all ids as a list.</li>\n<li><code>ACTIVE</code> / <code>CURRENT</code> Returns the id of the currently active browser as list.</li>\n</ul>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>browser</code></td>\n<td>The browser to get the ids from. <code>ALL</code> for all open browsers, <code>ACTIVE</code> for the currently active browser or the id of the browser to get the ids from.</td>\n</tr>\n</table>\n<p>The ACTIVE browser is a synonym for the CURRENT Browser.</p>\n<p><a href="https://forum.robotframework.org/t//4260">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Returns a list of ids from open browsers. See `Browser, Context and Page` for more information about Browser and related concepts.",
       args: [
         {
           name: "browser",
@@ -3422,18 +3473,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "BrowserControl",
-        "Getter",
-      ],
+      tags: ["Assertion", "BrowserControl", "Getter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/playwright_state.py",
       lineno: 1483,
     },
     {
       name: "Get Checkbox State",
-      doc: "<p>Returns the state of the checkbox found by <code>selector</code>.</p>\n<p>Optionally asserts that the state matches the specified assertion. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector which shall be examined. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td><code>==</code> and <code>!=</code> and equivalent are allowed on boolean values. Other operators are not accepted.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Boolean value of expected state. Strings are interpreted as booleans. All strings are <code>${True}</code> except of the following <span class=\"name\">FALSE, NO, OFF, 0, UNCHECKED, NONE, ${EMPTY}</span>` (case-insensitive). Defaults to unchecked.</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<ul>\n<li><code>checked</code> =&gt; <code>True</code></li>\n<li><code>unchecked</code> =&gt; <code>False</code></li>\n</ul>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#Get%20Checkbox%20State\" title=\"&quot;Get Checkbox State&quot; keyword\" class=\"name\">Get Checkbox State</a>    [name=can_send_email]    ==    checked\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4261\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Returns the state of the checkbox found by <code>selector</code>.</p>\n<p>Optionally asserts that the state matches the specified assertion. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector which shall be examined. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td><code>==</code> and <code>!=</code> and equivalent are allowed on boolean values. Other operators are not accepted.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Boolean value of expected state. Strings are interpreted as booleans. All strings are <code>${True}</code> except of the following <span class="name">FALSE, NO, OFF, 0, UNCHECKED, NONE, ${EMPTY}</span>` (case-insensitive). Defaults to unchecked.</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<ul>\n<li><code>checked</code> =&gt; <code>True</code></li>\n<li><code>unchecked</code> =&gt; <code>False</code></li>\n</ul>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>Example:</p>\n<pre>\n<a href="#Get%20Checkbox%20State" title="&quot;Get Checkbox State&quot; keyword" class="name">Get Checkbox State</a>    [name=can_send_email]    ==    checked\n</pre>\n<p><a href="https://forum.robotframework.org/t//4261">Comment &gt;&gt;</a></p>',
       shortdoc: "Returns the state of the checkbox found by ``selector``.",
       args: [
         {
@@ -3539,18 +3586,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Assertion", "Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 651,
     },
     {
       name: "Get Classes",
-      doc: "<p>Returns all classes of an element as a list.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector from which the info is to be retrieved. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>*assertion_expected</code></td>\n<td>Expected values for the state</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>Optionally asserts that the value matches the specified assertion. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p>Available assertions:</p>\n<ul>\n<li><code>==</code> , <code>!=</code> and <code>contains</code> / <code>*=</code> can work with multiple values</li>\n<li><code>validate</code> and <code>evaluate</code> only accepts one single expected value</li>\n</ul>\n<p>Other operators are not allowed.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#Get%20Classes\" title=\"&quot;Get Classes&quot; keyword\" class=\"name\">Get Classes</a>    id=draggable    ==    react-draggable    box    # Element contains exactly this class name.\n<a href=\"#Get%20Classes\" title=\"&quot;Get Classes&quot; keyword\" class=\"name\">Get Classes</a>    id=draggable    validate    \"react-draggable-dragged\" not in value    # Element does not contain react-draggable-dragged class.\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4262\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Returns all classes of an element as a list.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector from which the info is to be retrieved. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>*assertion_expected</code></td>\n<td>Expected values for the state</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>Optionally asserts that the value matches the specified assertion. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p>Available assertions:</p>\n<ul>\n<li><code>==</code> , <code>!=</code> and <code>contains</code> / <code>*=</code> can work with multiple values</li>\n<li><code>validate</code> and <code>evaluate</code> only accepts one single expected value</li>\n</ul>\n<p>Other operators are not allowed.</p>\n<p>Example:</p>\n<pre>\n<a href="#Get%20Classes" title="&quot;Get Classes&quot; keyword" class="name">Get Classes</a>    id=draggable    ==    react-draggable    box    # Element contains exactly this class name.\n<a href="#Get%20Classes" title="&quot;Get Classes&quot; keyword" class="name">Get Classes</a>    id=draggable    validate    "react-draggable-dragged" not in value    # Element does not contain react-draggable-dragged class.\n</pre>\n<p><a href="https://forum.robotframework.org/t//4262">Comment &gt;&gt;</a></p>',
       shortdoc: "Returns all classes of an element as a list.",
       args: [
         {
@@ -3645,19 +3688,16 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Assertion", "Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 483,
     },
     {
       name: "Get Client Size",
-      doc: "<p>Gets elements or pages client size (<code>clientHeight</code>, <code>clientWidth</code>) as object {width: float, height: float}.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Optional selector from which shall be retrieved. If no selector is given the client size of the page itself is used (<code>document.scrollingElement</code>). See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>key</code></td>\n<td>Optionally filters the returned values. If keys is set to <code>ALL</code> (default) it will return the scroll size as dictionary, otherwise it will just return the single value selected by the key.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the counting</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>Optionally asserts that the value matches the specified assertion. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p>See <a href=\"#Get%20BoundingBox\" title=\"&quot;Get BoundingBox&quot; keyword\" class=\"name\">Get BoundingBox</a> or <a href=\"#Get%20Scroll%20Size\" title=\"&quot;Get Scroll Size&quot; keyword\" class=\"name\">Get Scroll Size</a> for examples.</p>\n<p><a href=\"https://forum.robotframework.org/t//4263\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Gets elements or pages client size (``clientHeight``, ``clientWidth``) as object {width: float, height: float}.",
+      doc: '<p>Gets elements or pages client size (<code>clientHeight</code>, <code>clientWidth</code>) as object {width: float, height: float}.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Optional selector from which shall be retrieved. If no selector is given the client size of the page itself is used (<code>document.scrollingElement</code>). See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>key</code></td>\n<td>Optionally filters the returned values. If keys is set to <code>ALL</code> (default) it will return the scroll size as dictionary, otherwise it will just return the single value selected by the key.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the counting</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>Optionally asserts that the value matches the specified assertion. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p>See <a href="#Get%20BoundingBox" title="&quot;Get BoundingBox&quot; keyword" class="name">Get BoundingBox</a> or <a href="#Get%20Scroll%20Size" title="&quot;Get Scroll Size&quot; keyword" class="name">Get Scroll Size</a> for examples.</p>\n<p><a href="https://forum.robotframework.org/t//4263">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Gets elements or pages client size (``clientHeight``, ``clientWidth``) as object {width: float, height: float}.",
       args: [
         {
           name: "selector",
@@ -3789,18 +3829,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Assertion", "Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 1417,
     },
     {
       name: "Get Console Log",
-      doc: "<p>Returns the console log of the active page.</p>\n<p>If assertions are used and fail, this keyword will fail immediately without retrying.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td>assertion_operator</td>\n<td>Optional assertion operator. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for more information.</td>\n</tr>\n<tr>\n<td>assertion_expected</td>\n<td>Optional expected value. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for more information.</td>\n</tr>\n<tr>\n<td>message</td>\n<td>Optional custom message to use on failure. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for more information.</td>\n</tr>\n<tr>\n<td>full</td>\n<td>If true, returns the full console log. If false, returns only new entries that were added since last time.</td>\n</tr>\n<tr>\n<td>last</td>\n<td>If set, returns only the last n entries. Can be <a href=\"#type-integer\" title=\"&quot;integer&quot; type\" class=\"name\">int</a> for number of entries or <a href=\"#type-timedelta\" title=\"&quot;timedelta&quot; type\" class=\"name\">timedelta</a> for time period.</td>\n</tr>\n</table>\n<p>The returned data is a <a href=\"#type-list\" title=\"&quot;list&quot; type\" class=\"name\">list</a> of log messages.</p>\n<p>A log message is a <a href=\"#type-dictionary\" title=\"&quot;dictionary&quot; type\" class=\"name\">dict</a> with the following structure:</p>\n<pre>\n[{\n  \"type\": str,\n  \"text\": str,\n  \"location\": {\n    \"url\": str,\n    \"lineNumber\": int,\n    \"columnNumber\": int\n  },\n  \"time\": str\n}]\n</pre>\n<p>Example:</p>\n<pre>\n[{\n  'type': 'log',\n  'text': 'Stuff loaded...',\n  'location': {\n    'url': '<a href=\"https://example.com/js/chunk-769742de.6a462276.js\">https://example.com/js/chunk-769742de.6a462276.js</a>',\n    'lineNumber': 60,\n    'columnNumber': 63771\n  },\n  'time': '2023-02-05T17:42:52.064Z'\n}]\n</pre>\n<p>Keys:</p>\n<table border=\"1\">\n<tr>\n<th>Key</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>type</code></td>\n<td>One of the following values: <code>log</code>, <code>debug</code>, <code>info</code>, <code>error</code>, <code>warning</code>, <code>dir</code>, <code>dirxml</code>, <code>table</code>, <code>trace</code>, <code>clear</code>, <code>startGroup</code>, <code>startGroupCollapsed</code>, <code>endGroup</code>, <code>assert</code>, <code>profile</code>, <code>profileEnd</code>, <code>count</code>, <code>timeEnd</code></td>\n</tr>\n<tr>\n<td><code>text</code></td>\n<td>The text of the console message.</td>\n</tr>\n<tr>\n<td><code>location.url</code></td>\n<td>The URL of the resource that generated this message.</td>\n</tr>\n<tr>\n<td><code>location.lineNumber</code></td>\n<td>The line number in the resource that generated this message (0-based).</td>\n</tr>\n<tr>\n<td><code>location.columnNumber</code></td>\n<td>The column number in the resource that generated this message (0-based).</td>\n</tr>\n<tr>\n<td><code>time</code></td>\n<td>The timestamp of the log message as ISO 8601 string.</td>\n</tr>\n</table>\n<p><a href=\"https://forum.robotframework.org/t//5267\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Returns the console log of the active page.</p>\n<p>If assertions are used and fail, this keyword will fail immediately without retrying.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td>assertion_operator</td>\n<td>Optional assertion operator. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for more information.</td>\n</tr>\n<tr>\n<td>assertion_expected</td>\n<td>Optional expected value. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for more information.</td>\n</tr>\n<tr>\n<td>message</td>\n<td>Optional custom message to use on failure. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for more information.</td>\n</tr>\n<tr>\n<td>full</td>\n<td>If true, returns the full console log. If false, returns only new entries that were added since last time.</td>\n</tr>\n<tr>\n<td>last</td>\n<td>If set, returns only the last n entries. Can be <a href="#type-integer" title="&quot;integer&quot; type" class="name">int</a> for number of entries or <a href="#type-timedelta" title="&quot;timedelta&quot; type" class="name">timedelta</a> for time period.</td>\n</tr>\n</table>\n<p>The returned data is a <a href="#type-list" title="&quot;list&quot; type" class="name">list</a> of log messages.</p>\n<p>A log message is a <a href="#type-dictionary" title="&quot;dictionary&quot; type" class="name">dict</a> with the following structure:</p>\n<pre>\n[{\n  "type": str,\n  "text": str,\n  "location": {\n    "url": str,\n    "lineNumber": int,\n    "columnNumber": int\n  },\n  "time": str\n}]\n</pre>\n<p>Example:</p>\n<pre>\n[{\n  \'type\': \'log\',\n  \'text\': \'Stuff loaded...\',\n  \'location\': {\n    \'url\': \'<a href="https://example.com/js/chunk-769742de.6a462276.js">https://example.com/js/chunk-769742de.6a462276.js</a>\',\n    \'lineNumber\': 60,\n    \'columnNumber\': 63771\n  },\n  \'time\': \'2023-02-05T17:42:52.064Z\'\n}]\n</pre>\n<p>Keys:</p>\n<table border="1">\n<tr>\n<th>Key</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>type</code></td>\n<td>One of the following values: <code>log</code>, <code>debug</code>, <code>info</code>, <code>error</code>, <code>warning</code>, <code>dir</code>, <code>dirxml</code>, <code>table</code>, <code>trace</code>, <code>clear</code>, <code>startGroup</code>, <code>startGroupCollapsed</code>, <code>endGroup</code>, <code>assert</code>, <code>profile</code>, <code>profileEnd</code>, <code>count</code>, <code>timeEnd</code></td>\n</tr>\n<tr>\n<td><code>text</code></td>\n<td>The text of the console message.</td>\n</tr>\n<tr>\n<td><code>location.url</code></td>\n<td>The URL of the resource that generated this message.</td>\n</tr>\n<tr>\n<td><code>location.lineNumber</code></td>\n<td>The line number in the resource that generated this message (0-based).</td>\n</tr>\n<tr>\n<td><code>location.columnNumber</code></td>\n<td>The column number in the resource that generated this message (0-based).</td>\n</tr>\n<tr>\n<td><code>time</code></td>\n<td>The timestamp of the log message as ISO 8601 string.</td>\n</tr>\n</table>\n<p><a href="https://forum.robotframework.org/t//5267">Comment &gt;&gt;</a></p>',
       shortdoc: "Returns the console log of the active page.",
       args: [
         {
@@ -3955,19 +3991,16 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "BrowserControl",
-        "Getter",
-      ],
+      tags: ["Assertion", "BrowserControl", "Getter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/playwright_state.py",
       lineno: 1150,
     },
     {
       name: "Get Context Ids",
-      doc: "<p>Returns a list of context ids based on the browser selection. See <a href=\"#Browser%2C%20Context%20and%20Page\" title=\"&quot;Browser, Context and Page&quot; section\" class=\"name\">Browser, Context and Page</a> for more information about Context and related concepts.</p>\n<p><code>ALL</code> and <code>ANY</code> are synonyms. <code>ACTIVE</code> and <code>CURRENT</code> are also synonyms.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>context</code></td>\n<td>The context to get the ids from. <code>ALL</code> will return all ids from selected browser(s), <code>ACTIVE</code> for the one active context of each selected browser.</td>\n</tr>\n<tr>\n<td><code>browser</code></td>\n<td>The browser to get the context ids from. <code>ALL</code> Context ids from all open browsers shall be fetched. <code>ACTIVE</code> Only context ids from the active browser shall be fetched.</td>\n</tr>\n</table>\n<p>The ACTIVE context of the ACTIVE Browser is the <code>Current</code> Context.</p>\n<p><a href=\"https://forum.robotframework.org/t//4264\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Returns a list of context ids based on the browser selection. See `Browser, Context and Page` for more information about Context and related concepts.",
+      doc: '<p>Returns a list of context ids based on the browser selection. See <a href="#Browser%2C%20Context%20and%20Page" title="&quot;Browser, Context and Page&quot; section" class="name">Browser, Context and Page</a> for more information about Context and related concepts.</p>\n<p><code>ALL</code> and <code>ANY</code> are synonyms. <code>ACTIVE</code> and <code>CURRENT</code> are also synonyms.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>context</code></td>\n<td>The context to get the ids from. <code>ALL</code> will return all ids from selected browser(s), <code>ACTIVE</code> for the one active context of each selected browser.</td>\n</tr>\n<tr>\n<td><code>browser</code></td>\n<td>The browser to get the context ids from. <code>ALL</code> Context ids from all open browsers shall be fetched. <code>ACTIVE</code> Only context ids from the active browser shall be fetched.</td>\n</tr>\n</table>\n<p>The ACTIVE context of the ACTIVE Browser is the <code>Current</code> Context.</p>\n<p><a href="https://forum.robotframework.org/t//4264">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Returns a list of context ids based on the browser selection. See `Browser, Context and Page` for more information about Context and related concepts.",
       args: [
         {
           name: "context",
@@ -4099,19 +4132,16 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "BrowserControl",
-        "Getter",
-      ],
+      tags: ["Assertion", "BrowserControl", "Getter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/playwright_state.py",
       lineno: 1515,
     },
     {
       name: "Get Cookie",
-      doc: "<p>Returns information of cookie with <code>name</code> as a Robot Framework dot dictionary or a string.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>cookie</code></td>\n<td>Name of the cookie to be retrieved.</td>\n</tr>\n<tr>\n<td><code>return_type</code></td>\n<td>Type of the return value. Can be either <code>dictionary</code> or <code>string</code>. Defaults to <code>dictionary</code>.</td>\n</tr>\n</table>\n<p>If <code>return_type</code> is <code>dictionary</code> or <code>dict</code> then keyword returns a of Robot Framework <a href=\"https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#accessing-list-and-dictionary-items\">dot dictionary</a> The dictionary contains all possible key value pairs of the cookie. If <code>return_type</code> is <code>string</code> or <code>str</code>, then keyword returns the cookie as a string in format: <code>name1=value1</code>. The return value contains only <code>name</code> and <code>value</code> keys of the cookie.</p>\n<p>If no cookie is found with <code>name</code> keyword fails. The cookie dictionary contains details about the cookie. Keys available in the dictionary are documented in the table below.</p>\n<table border=\"1\">\n<tr>\n<td><b>Value</b></td>\n<td><b>Explanation</b></td>\n</tr>\n<tr>\n<td>name</td>\n<td>The name of a cookie, mandatory.</td>\n</tr>\n<tr>\n<td>value</td>\n<td>Value of the cookie, mandatory.</td>\n</tr>\n<tr>\n<td>url</td>\n<td>Define the scope of the cookie, what URLs the cookies should be sent to.</td>\n</tr>\n<tr>\n<td>domain</td>\n<td>Specifies which hosts are allowed to receive the cookie.</td>\n</tr>\n<tr>\n<td>path</td>\n<td>Indicates a URL path that must exist in the requested URL, for example <span class=\"name\">/</span>.</td>\n</tr>\n<tr>\n<td>expires</td>\n<td>Lifetime of a cookie. Returned as datatime object or None if not valid time received.</td>\n</tr>\n<tr>\n<td>httpOnly</td>\n<td>When true, the cookie is not accessible via JavaScript.</td>\n</tr>\n<tr>\n<td>secure</td>\n<td>When true, the cookie is only used with HTTPS connections.</td>\n</tr>\n<tr>\n<td>sameSite</td>\n<td>Attribute lets servers require that a cookie shouldn't be sent with cross-origin requests.</td>\n</tr>\n</table>\n<p>See <a href=\"https://playwright.dev/docs/api/class-browsercontext#browsercontextaddcookiescookies\">playwright documentation</a> for details about each attribute.</p>\n<p>Example:</p>\n<pre>\n${cookie}=        <a href=\"#Get%20Cookie\" title=\"&quot;Get Cookie&quot; keyword\" class=\"name\">Get Cookie</a>              Foobar\nShould Be Equal   ${cookie.value}           Tidii\nShould Be Equal   ${cookie.expires.year}     ${2020}\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4265\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Returns information of cookie with ``name`` as a Robot Framework dot dictionary or a string.",
+      doc: '<p>Returns information of cookie with <code>name</code> as a Robot Framework dot dictionary or a string.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>cookie</code></td>\n<td>Name of the cookie to be retrieved.</td>\n</tr>\n<tr>\n<td><code>return_type</code></td>\n<td>Type of the return value. Can be either <code>dictionary</code> or <code>string</code>. Defaults to <code>dictionary</code>.</td>\n</tr>\n</table>\n<p>If <code>return_type</code> is <code>dictionary</code> or <code>dict</code> then keyword returns a of Robot Framework <a href="https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#accessing-list-and-dictionary-items">dot dictionary</a> The dictionary contains all possible key value pairs of the cookie. If <code>return_type</code> is <code>string</code> or <code>str</code>, then keyword returns the cookie as a string in format: <code>name1=value1</code>. The return value contains only <code>name</code> and <code>value</code> keys of the cookie.</p>\n<p>If no cookie is found with <code>name</code> keyword fails. The cookie dictionary contains details about the cookie. Keys available in the dictionary are documented in the table below.</p>\n<table border="1">\n<tr>\n<td><b>Value</b></td>\n<td><b>Explanation</b></td>\n</tr>\n<tr>\n<td>name</td>\n<td>The name of a cookie, mandatory.</td>\n</tr>\n<tr>\n<td>value</td>\n<td>Value of the cookie, mandatory.</td>\n</tr>\n<tr>\n<td>url</td>\n<td>Define the scope of the cookie, what URLs the cookies should be sent to.</td>\n</tr>\n<tr>\n<td>domain</td>\n<td>Specifies which hosts are allowed to receive the cookie.</td>\n</tr>\n<tr>\n<td>path</td>\n<td>Indicates a URL path that must exist in the requested URL, for example <span class="name">/</span>.</td>\n</tr>\n<tr>\n<td>expires</td>\n<td>Lifetime of a cookie. Returned as datatime object or None if not valid time received.</td>\n</tr>\n<tr>\n<td>httpOnly</td>\n<td>When true, the cookie is not accessible via JavaScript.</td>\n</tr>\n<tr>\n<td>secure</td>\n<td>When true, the cookie is only used with HTTPS connections.</td>\n</tr>\n<tr>\n<td>sameSite</td>\n<td>Attribute lets servers require that a cookie shouldn\'t be sent with cross-origin requests.</td>\n</tr>\n</table>\n<p>See <a href="https://playwright.dev/docs/api/class-browsercontext#browsercontextaddcookiescookies">playwright documentation</a> for details about each attribute.</p>\n<p>Example:</p>\n<pre>\n${cookie}=        <a href="#Get%20Cookie" title="&quot;Get Cookie&quot; keyword" class="name">Get Cookie</a>              Foobar\nShould Be Equal   ${cookie.value}           Tidii\nShould Be Equal   ${cookie.expires.year}     ${2020}\n</pre>\n<p><a href="https://forum.robotframework.org/t//4265">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Returns information of cookie with ``name`` as a Robot Framework dot dictionary or a string.",
       args: [
         {
           name: "cookie",
@@ -4162,17 +4192,14 @@ const DATA: Libdoc = {
         union: true,
       },
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Getter",
-      ],
+      tags: ["BrowserControl", "Getter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/cookie.py",
       lineno: 180,
     },
     {
       name: "Get Cookies",
-      doc: "<p>Returns cookies from the current active browser context.</p>\n<p>If <code>return_type</code> is <code>dictionary</code> or <code>dict</code> then keyword returns list of Robot Framework <a href=\"https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#accessing-list-and-dictionary-items\">dot dictionaries</a> The dictionary contains all possible key value pairs of the cookie. See <a href=\"#Get%20Cookie\" title=\"&quot;Get Cookie&quot; keyword\" class=\"name\">Get Cookie</a> keyword documentation about the dictionary keys and values.</p>\n<p>If <code>return_type</code> is <code>string</code> or <code>str</code>, then keyword returns the cookie as a string in format: <code>name1=value1; name2=value2; name3=value3</code>. The return value contains only <code>name</code> and <code>value</code> keys of the cookie.</p>\n<p><a href=\"https://forum.robotframework.org/t//4266\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Returns cookies from the current active browser context.</p>\n<p>If <code>return_type</code> is <code>dictionary</code> or <code>dict</code> then keyword returns list of Robot Framework <a href="https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#accessing-list-and-dictionary-items">dot dictionaries</a> The dictionary contains all possible key value pairs of the cookie. See <a href="#Get%20Cookie" title="&quot;Get Cookie&quot; keyword" class="name">Get Cookie</a> keyword documentation about the dictionary keys and values.</p>\n<p>If <code>return_type</code> is <code>string</code> or <code>str</code>, then keyword returns the cookie as a string in format: <code>name1=value1; name2=value2; name3=value3</code>. The return value contains only <code>name</code> and <code>value</code> keys of the cookie.</p>\n<p><a href="https://forum.robotframework.org/t//4266">Comment &gt;&gt;</a></p>',
       shortdoc: "Returns cookies from the current active browser context.",
       args: [
         {
@@ -4217,18 +4244,16 @@ const DATA: Libdoc = {
         union: true,
       },
       returnDoc: "",
-      tags: [
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/cookie.py",
       lineno: 28,
     },
     {
       name: "Get Device",
-      doc: "<p>Get a single device descriptor with name exactly matching name.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>name</code></td>\n<td>Given name of the requested device. See Playwright's <a href=\"https://github.com/microsoft/playwright/blob/master/packages/playwright-core/src/server/deviceDescriptorsSource.json\">deviceDescriptorsSource.json</a> for a formatted list.</td>\n</tr>\n</table>\n<p>Allows a concise syntax to set website testing values to exact matches of specific mobile devices.</p>\n<p>Use by passing to a context. After creating a context with devicedescriptor, before using ensure your active page is on that context. Usage:</p>\n<pre>\n${device}=          <a href=\"#Get%20Device\" title=\"&quot;Get Device&quot; keyword\" class=\"name\">Get Device</a>       iPhone X\n<a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a>         &amp;{device}\n<a href=\"#New%20Page\" title=\"&quot;New Page&quot; keyword\" class=\"name\">New Page</a>\n<a href=\"#Get%20Viewport%20Size\" title=\"&quot;Get Viewport Size&quot; keyword\" class=\"name\">Get Viewport Size</a>   # returns { \"width\": 375, \"height\": 812 }\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4267\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Get a single device descriptor with name exactly matching name.",
+      doc: '<p>Get a single device descriptor with name exactly matching name.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>name</code></td>\n<td>Given name of the requested device. See Playwright\'s <a href="https://github.com/microsoft/playwright/blob/master/packages/playwright-core/src/server/deviceDescriptorsSource.json">deviceDescriptorsSource.json</a> for a formatted list.</td>\n</tr>\n</table>\n<p>Allows a concise syntax to set website testing values to exact matches of specific mobile devices.</p>\n<p>Use by passing to a context. After creating a context with devicedescriptor, before using ensure your active page is on that context. Usage:</p>\n<pre>\n${device}=          <a href="#Get%20Device" title="&quot;Get Device&quot; keyword" class="name">Get Device</a>       iPhone X\n<a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a>         &amp;{device}\n<a href="#New%20Page" title="&quot;New Page&quot; keyword" class="name">New Page</a>\n<a href="#Get%20Viewport%20Size" title="&quot;Get Viewport Size&quot; keyword" class="name">Get Viewport Size</a>   # returns { "width": 375, "height": 812 }\n</pre>\n<p><a href="https://forum.robotframework.org/t//4267">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Get a single device descriptor with name exactly matching name.",
       args: [
         {
           name: "name",
@@ -4252,17 +4277,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Getter",
-      ],
+      tags: ["BrowserControl", "Getter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/device_descriptors.py",
       lineno: 39,
     },
     {
       name: "Get Devices",
-      doc: "<p>Returns a dict of all playwright device descriptors.</p>\n<p>See Playwright's <a href=\"https://github.com/microsoft/playwright/blob/master/packages/playwright-core/src/server/deviceDescriptorsSource.json\">deviceDescriptorsSource.json</a> for a formatted list.</p>\n<p><a href=\"https://forum.robotframework.org/t//4268\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Returns a dict of all playwright device descriptors.</p>\n<p>See Playwright\'s <a href="https://github.com/microsoft/playwright/blob/master/packages/playwright-core/src/server/deviceDescriptorsSource.json">deviceDescriptorsSource.json</a> for a formatted list.</p>\n<p><a href="https://forum.robotframework.org/t//4268">Comment &gt;&gt;</a></p>',
       shortdoc: "Returns a dict of all playwright device descriptors.",
       args: [],
       returnType: {
@@ -4272,17 +4294,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Getter",
-      ],
+      tags: ["BrowserControl", "Getter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/device_descriptors.py",
       lineno: 24,
     },
     {
       name: "Get Download State",
-      doc: "<p>Gets the state of a download.</p>\n<p>Returns a dictionary of type <a href=\"#type-DownloadInfo\" title=\"&quot;DownloadInfo&quot; type\" class=\"name\">DownloadInfo</a> with the following keys:</p>\n<pre>\n{\n  saveAs: str\n  suggestedFilename: str\n  state: str\n  downloadID: Optional[str]\n}\n</pre>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>download</code></td>\n<td><a href=\"#type-DownloadInfo\" title=\"&quot;DownloadInfo&quot; type\" class=\"name\">DownloadInfo</a> dictionary returned from <a href=\"#Promise%20To%20Wait%20For%20Download\" title=\"&quot;Promise To Wait For Download&quot; keyword\" class=\"name\">Promise To Wait For Download</a> or download id as string.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected state of the download. Be aware that the returned value is a dictionary</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p><a href=\"https://forum.robotframework.org/t//6479\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Gets the state of a download.</p>\n<p>Returns a dictionary of type <a href="#type-DownloadInfo" title="&quot;DownloadInfo&quot; type" class="name">DownloadInfo</a> with the following keys:</p>\n<pre>\n{\n  saveAs: str\n  suggestedFilename: str\n  state: str\n  downloadID: Optional[str]\n}\n</pre>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>download</code></td>\n<td><a href="#type-DownloadInfo" title="&quot;DownloadInfo&quot; type" class="name">DownloadInfo</a> dictionary returned from <a href="#Promise%20To%20Wait%20For%20Download" title="&quot;Promise To Wait For Download&quot; keyword" class="name">Promise To Wait For Download</a> or download id as string.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected state of the download. Be aware that the returned value is a dictionary</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p><a href="https://forum.robotframework.org/t//6479">Comment &gt;&gt;</a></p>',
       shortdoc: "Gets the state of a download.",
       args: [
         {
@@ -4401,19 +4420,16 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Assertion", "Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 1553,
     },
     {
       name: "Get Element",
-      doc: "<p>Returns a reference to a Playwright <a href=\"https://playwright.dev/docs/api/class-locator\">Locator</a>.</p>\n<p>The reference can be used in subsequent selectors.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector from which shall be retrieved . See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>Example:</p>\n<pre>\n${element} =    <a href=\"#Get%20Element\" title=\"&quot;Get Element&quot; keyword\" class=\"name\">Get Element</a>    \\#username_field\n${option_value} =    <a href=\"#Get%20Property\" title=\"&quot;Get Property&quot; keyword\" class=\"name\">Get Property</a>    ${element} &gt;&gt; optionOne    value    # Locator is resolved from the page.\n${option_value} =    <a href=\"#Get%20Property\" title=\"&quot;Get Property&quot; keyword\" class=\"name\">Get Property</a>    ${element} &gt;&gt; optionTwo    value    # Locator is resolved again from the page.\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4269\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Returns a reference to a Playwright [https://playwright.dev/docs/api/class-locator|Locator].",
+      doc: '<p>Returns a reference to a Playwright <a href="https://playwright.dev/docs/api/class-locator">Locator</a>.</p>\n<p>The reference can be used in subsequent selectors.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector from which shall be retrieved . See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>Example:</p>\n<pre>\n${element} =    <a href="#Get%20Element" title="&quot;Get Element&quot; keyword" class="name">Get Element</a>    \\#username_field\n${option_value} =    <a href="#Get%20Property" title="&quot;Get Property&quot; keyword" class="name">Get Property</a>    ${element} &gt;&gt; optionOne    value    # Locator is resolved from the page.\n${option_value} =    <a href="#Get%20Property" title="&quot;Get Property&quot; keyword" class="name">Get Property</a>    ${element} &gt;&gt; optionTwo    value    # Locator is resolved again from the page.\n</pre>\n<p><a href="https://forum.robotframework.org/t//4269">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Returns a reference to a Playwright [https://playwright.dev/docs/api/class-locator|Locator].",
       args: [
         {
           name: "selector",
@@ -4437,17 +4453,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 933,
     },
     {
       name: "Get Element By",
-      doc: "<p>Allows locating elements by their features.</p>\n<p>Selection strategies can be several Playwright strategies like AltText or Label. See <a href=\"https://playwright.dev/docs/locators\">Playwright Locators</a> for more information.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>locator_type</code></td>\n<td>SelectionStrategy to be used. Refers to Playwrights <code>page.getBy***</code> functions. See <a href=\"https://playwright.dev/docs/locators\">https://playwright.dev/docs/locators</a></td>\n</tr>\n<tr>\n<td><code>text</code></td>\n<td>Text to locate the element for.</td>\n</tr>\n<tr>\n<td><code>exact</code></td>\n<td>Whether to find an exact match: case-sensitive and whole-string. Default to false. Ignored when locating by a regular expression. Note that exact match still trims whitespace. This has no effect if RegExp is used or if TestID is used as strategy.</td>\n</tr>\n<tr>\n<td><code>all_elements</code></td>\n<td>If True, returns all matched elements as a list.</td>\n</tr>\n</table>\n<p>This keywords implements the following Playwright functions:</p>\n<ul>\n<li><a href=\"https://playwright.dev/docs/api/class-page#page-get-by-alt-text\">page.getByAltText</a></li>\n<li><a href=\"https://playwright.dev/docs/api/class-page#page-get-by-label\">page.getByLabel</a></li>\n<li><a href=\"https://playwright.dev/docs/api/class-page#page-get-by-placeholder\">page.getByPlaceholder</a></li>\n<li><a href=\"https://playwright.dev/docs/api/class-page#page-get-by-test-id\">page.getByTestId</a></li>\n<li><a href=\"https://playwright.dev/docs/api/class-page#page-get-by-text\">page.getByText</a></li>\n<li><a href=\"https://playwright.dev/docs/api/class-page#page-get-by-title\">page.getByTitle</a></li>\n</ul>\n<p><code>page.getByRole</code> is supported by <a href=\"#Get%20Element%20By%20Role\" title=\"&quot;Get Element By Role&quot; keyword\" class=\"name\">Get Element By Role</a> keyword.</p>\n<p>If an element shall be fetched from an iframe, a selector prefix must be set using <a href=\"#Set%20Selector%20Prefix\" title=\"&quot;Set Selector Prefix&quot; keyword\" class=\"name\">Set Selector Prefix</a> keyword including <code>&gt;&gt;&gt;</code> as ending.</p>\n<p><a href=\"https://forum.robotframework.org/t//5937\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Allows locating elements by their features.</p>\n<p>Selection strategies can be several Playwright strategies like AltText or Label. See <a href="https://playwright.dev/docs/locators">Playwright Locators</a> for more information.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>locator_type</code></td>\n<td>SelectionStrategy to be used. Refers to Playwrights <code>page.getBy***</code> functions. See <a href="https://playwright.dev/docs/locators">https://playwright.dev/docs/locators</a></td>\n</tr>\n<tr>\n<td><code>text</code></td>\n<td>Text to locate the element for.</td>\n</tr>\n<tr>\n<td><code>exact</code></td>\n<td>Whether to find an exact match: case-sensitive and whole-string. Default to false. Ignored when locating by a regular expression. Note that exact match still trims whitespace. This has no effect if RegExp is used or if TestID is used as strategy.</td>\n</tr>\n<tr>\n<td><code>all_elements</code></td>\n<td>If True, returns all matched elements as a list.</td>\n</tr>\n</table>\n<p>This keywords implements the following Playwright functions:</p>\n<ul>\n<li><a href="https://playwright.dev/docs/api/class-page#page-get-by-alt-text">page.getByAltText</a></li>\n<li><a href="https://playwright.dev/docs/api/class-page#page-get-by-label">page.getByLabel</a></li>\n<li><a href="https://playwright.dev/docs/api/class-page#page-get-by-placeholder">page.getByPlaceholder</a></li>\n<li><a href="https://playwright.dev/docs/api/class-page#page-get-by-test-id">page.getByTestId</a></li>\n<li><a href="https://playwright.dev/docs/api/class-page#page-get-by-text">page.getByText</a></li>\n<li><a href="https://playwright.dev/docs/api/class-page#page-get-by-title">page.getByTitle</a></li>\n</ul>\n<p><code>page.getByRole</code> is supported by <a href="#Get%20Element%20By%20Role" title="&quot;Get Element By Role&quot; keyword" class="name">Get Element By Role</a> keyword.</p>\n<p>If an element shall be fetched from an iframe, a selector prefix must be set using <a href="#Set%20Selector%20Prefix" title="&quot;Set Selector Prefix&quot; keyword" class="name">Set Selector Prefix</a> keyword including <code>&gt;&gt;&gt;</code> as ending.</p>\n<p><a href="https://forum.robotframework.org/t//5937">Comment &gt;&gt;</a></p>',
       shortdoc: "Allows locating elements by their features.",
       args: [
         {
@@ -4527,18 +4540,16 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 1089,
     },
     {
       name: "Get Element By Role",
-      doc: "<p>Returns a reference to Playwright <a href=\"https://playwright.dev/docs/api/class-locator\">Locator</a> for the matched element by <code>role</code> or a list of references if <code>all_elements</code> is set to <code>True</code>.</p>\n<p>Allows locating elements by their <a href=\"https://www.w3.org/TR/wai-aria-1.2/#roles\">ARIA role</a>, <a href=\"https://www.w3.org/TR/wai-aria-1.2/#aria-attributes\">ARIA attributes</a> and <a href=\"https://w3c.github.io/accname/#dfn-accessible-name\">accessible name</a>.</p>\n<p>Consider the following DOM structure.</p>\n<pre>\n&lt;h3&gt;Sign up&lt;/h3&gt;\n&lt;label&gt;\n  &lt;input type=\"checkbox\" /&gt; Subscribe\n&lt;/label&gt;\n&lt;br/&gt;\n&lt;button&gt;Submit&lt;/button&gt;\n</pre>\n<p>You can locate each element by it's implicit role:</p>\n<pre>\n${heading}    Get Element By Role    heading    name=Sign up\n${checkbox}   Get Element By Role    checkbox    name=Subscribe\n${button}     Get Element By Role    button    name=/submit/i\n</pre>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>all_elements</code></td>\n<td>If True, returns all matched elements as a list.</td>\n</tr>\n<tr>\n<td><code>role</code></td>\n<td>Role from which shall be retrieved.</td>\n</tr>\n<tr>\n<td><code>checked</code></td>\n<td>An attribute that is usually set by aria-checked or native &lt;input type=checkbox&gt; controls.</td>\n</tr>\n<tr>\n<td><code>disabled</code></td>\n<td>An attribute that is usually set by aria-disabled or disabled.</td>\n</tr>\n<tr>\n<td><code>exact</code></td>\n<td>Whether name is matched exactly: case-sensitive and whole-string. Defaults to false. Ignored when name is a regular expression. Note that exact match still trims whitespace.</td>\n</tr>\n<tr>\n<td><code>expanded</code></td>\n<td>An attribute that is usually set by aria-expanded.</td>\n</tr>\n<tr>\n<td><code>include_hidden</code></td>\n<td>Option that controls whether hidden elements are matched. By default, only non-hidden elements, as defined by ARIA, are matched by role selector.</td>\n</tr>\n<tr>\n<td><code>level</code></td>\n<td>A number attribute that is usually present for roles heading, list item, row, treeitem, with default values for &lt;h1&gt;-&lt;h6&gt; elements.</td>\n</tr>\n<tr>\n<td><code>name</code></td>\n<td>Option to match the accessible name. By default, matching is case-insensitive and searches for a substring, use exact to control this behavior.</td>\n</tr>\n<tr>\n<td><code>pressed</code></td>\n<td>An attribute that is usually set by aria-pressed.</td>\n</tr>\n<tr>\n<td><code>selected</code></td>\n<td>An attribute that is usually set by aria-selected.</td>\n</tr>\n</table>\n<p>If an element shall be fetched from an iframe, a selector prefix must be set using <a href=\"#Set%20Selector%20Prefix\" title=\"&quot;Set Selector Prefix&quot; keyword\" class=\"name\">Set Selector Prefix</a> keyword including <code>&gt;&gt;&gt;</code> as ending.</p>\n<p><a href=\"https://forum.robotframework.org/t//5938\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Returns a reference to Playwright [https://playwright.dev/docs/api/class-locator|Locator] for the matched element by ``role`` or a list of references if ``all_elements`` is set to ``True``.",
+      doc: '<p>Returns a reference to Playwright <a href="https://playwright.dev/docs/api/class-locator">Locator</a> for the matched element by <code>role</code> or a list of references if <code>all_elements</code> is set to <code>True</code>.</p>\n<p>Allows locating elements by their <a href="https://www.w3.org/TR/wai-aria-1.2/#roles">ARIA role</a>, <a href="https://www.w3.org/TR/wai-aria-1.2/#aria-attributes">ARIA attributes</a> and <a href="https://w3c.github.io/accname/#dfn-accessible-name">accessible name</a>.</p>\n<p>Consider the following DOM structure.</p>\n<pre>\n&lt;h3&gt;Sign up&lt;/h3&gt;\n&lt;label&gt;\n  &lt;input type="checkbox" /&gt; Subscribe\n&lt;/label&gt;\n&lt;br/&gt;\n&lt;button&gt;Submit&lt;/button&gt;\n</pre>\n<p>You can locate each element by it\'s implicit role:</p>\n<pre>\n${heading}    Get Element By Role    heading    name=Sign up\n${checkbox}   Get Element By Role    checkbox    name=Subscribe\n${button}     Get Element By Role    button    name=/submit/i\n</pre>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>all_elements</code></td>\n<td>If True, returns all matched elements as a list.</td>\n</tr>\n<tr>\n<td><code>role</code></td>\n<td>Role from which shall be retrieved.</td>\n</tr>\n<tr>\n<td><code>checked</code></td>\n<td>An attribute that is usually set by aria-checked or native &lt;input type=checkbox&gt; controls.</td>\n</tr>\n<tr>\n<td><code>disabled</code></td>\n<td>An attribute that is usually set by aria-disabled or disabled.</td>\n</tr>\n<tr>\n<td><code>exact</code></td>\n<td>Whether name is matched exactly: case-sensitive and whole-string. Defaults to false. Ignored when name is a regular expression. Note that exact match still trims whitespace.</td>\n</tr>\n<tr>\n<td><code>expanded</code></td>\n<td>An attribute that is usually set by aria-expanded.</td>\n</tr>\n<tr>\n<td><code>include_hidden</code></td>\n<td>Option that controls whether hidden elements are matched. By default, only non-hidden elements, as defined by ARIA, are matched by role selector.</td>\n</tr>\n<tr>\n<td><code>level</code></td>\n<td>A number attribute that is usually present for roles heading, list item, row, treeitem, with default values for &lt;h1&gt;-&lt;h6&gt; elements.</td>\n</tr>\n<tr>\n<td><code>name</code></td>\n<td>Option to match the accessible name. By default, matching is case-insensitive and searches for a substring, use exact to control this behavior.</td>\n</tr>\n<tr>\n<td><code>pressed</code></td>\n<td>An attribute that is usually set by aria-pressed.</td>\n</tr>\n<tr>\n<td><code>selected</code></td>\n<td>An attribute that is usually set by aria-selected.</td>\n</tr>\n</table>\n<p>If an element shall be fetched from an iframe, a selector prefix must be set using <a href="#Set%20Selector%20Prefix" title="&quot;Set Selector Prefix&quot; keyword" class="name">Set Selector Prefix</a> keyword including <code>&gt;&gt;&gt;</code> as ending.</p>\n<p><a href="https://forum.robotframework.org/t//5938">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Returns a reference to Playwright [https://playwright.dev/docs/api/class-locator|Locator] for the matched element by ``role`` or a list of references if ``all_elements`` is set to ``True``.",
       args: [
         {
           name: "role",
@@ -4834,17 +4845,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 994,
     },
     {
       name: "Get Element Count",
-      doc: "<p>Returns the count of elements found with <code>selector</code>.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector which shall be counted. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the counting</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Optionally asserts that the state matches the specified assertion. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#Get%20Element%20Count\" title=\"&quot;Get Element Count&quot; keyword\" class=\"name\">Get Element Count</a>    label    &gt;    1\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4270\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Returns the count of elements found with <code>selector</code>.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector which shall be counted. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the counting</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Optionally asserts that the state matches the specified assertion. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p>Example:</p>\n<pre>\n<a href="#Get%20Element%20Count" title="&quot;Get Element Count&quot; keyword" class="name">Get Element Count</a>    label    &gt;    1\n</pre>\n<p><a href="https://forum.robotframework.org/t//4270">Comment &gt;&gt;</a></p>',
       shortdoc: "Returns the count of elements found with ``selector``.",
       args: [
         {
@@ -4950,18 +4958,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Assertion", "Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 701,
     },
     {
       name: "Get Element States",
-      doc: "<p>Get the active states from the element found by <code>selector</code>.</p>\n<p>This Keyword returns a list of states that are valid for the selected element.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the corresponding object. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>*assertion_expected</code></td>\n<td>Expected states</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n<tr>\n<td><code>return_names</code></td>\n<td>If set to <code>False</code> the keyword does return an IntFlag object (<a href=\"#type-ElementState\" title=\"&quot;ElementState&quot; type\" class=\"name\">ElementState</a>) instead of a list. <a href=\"#type-ElementState\" title=\"&quot;ElementState&quot; type\" class=\"name\">ElementState</a> may contain multiple states at the same time. Defaults to <code>True</code>.</td>\n</tr>\n</table>\n<p>Optionally asserts that the state matches the specified assertion. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details for the assertion arguments. By default, assertion is not done.</p>\n<p>This keyword internally works with Python IntFlag. Flags can be processed using bitwise operators like &amp; (bitwise AND) and | (bitwise OR). When using the assertion operators <code>then</code>, <code>evaluate</code> or <code>validate</code> the <code>value</code> contain the states as <a href=\"#type-ElementState\" title=\"&quot;ElementState&quot; type\" class=\"name\">ElementState</a>.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#Get%20Element%20States\" title=\"&quot;Get Element States&quot; keyword\" class=\"name\">Get Element States</a>    h1    validate    value &amp; visible   # Fails in case of an invisible element\n<a href=\"#Get%20Element%20States\" title=\"&quot;Get Element States&quot; keyword\" class=\"name\">Get Element States</a>    h1    then    value &amp; (visible | hidden)  # Returns either <code>['visible']</code> or <code>['hidden']</code>\n<a href=\"#Get%20Element%20States\" title=\"&quot;Get Element States&quot; keyword\" class=\"name\">Get Element States</a>    h1    then    bool(value &amp; visible)  # Returns <code>${True}</code> if element is visible\n</pre>\n<p>The most typical use case would be to verify if an element contains a specific state or multiple states.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#Get%20Element%20States\" title=\"&quot;Get Element States&quot; keyword\" class=\"name\">Get Element States</a>    id=checked_elem      *=    checked\n<a href=\"#Get%20Element%20States\" title=\"&quot;Get Element States&quot; keyword\" class=\"name\">Get Element States</a>    id=checked_elem      not contains    checked\n<a href=\"#Get%20Element%20States\" title=\"&quot;Get Element States&quot; keyword\" class=\"name\">Get Element States</a>    id=invisible_elem    contains    hidden    attached\n<a href=\"#Get%20Element%20States\" title=\"&quot;Get Element States&quot; keyword\" class=\"name\">Get Element States</a>    id=disabled_elem     contains    visible    disabled    readonly\n</pre>\n<p>Elements do return the positive and negative values if applicable. As example, a checkbox does return either <code>checked</code> or <code>unchecked</code> while a text input element has none of those two states. Select elements have also either <code>selected</code> or <code>unselected</code>.</p>\n<p>The state of <code>animating</code> will be set if an element is not considered <code>stable</code> within 300 ms.</p>\n<p>If an element is not attached to the dom, so it can not be found within 250ms it is marked as <code>detached</code> as the only state.</p>\n<p><code>stable</code> state is not returned, because it would cause too high delay in that keyword.</p>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p><a href=\"https://forum.robotframework.org/t//4272\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Get the active states from the element found by <code>selector</code>.</p>\n<p>This Keyword returns a list of states that are valid for the selected element.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the corresponding object. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>*assertion_expected</code></td>\n<td>Expected states</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n<tr>\n<td><code>return_names</code></td>\n<td>If set to <code>False</code> the keyword does return an IntFlag object (<a href="#type-ElementState" title="&quot;ElementState&quot; type" class="name">ElementState</a>) instead of a list. <a href="#type-ElementState" title="&quot;ElementState&quot; type" class="name">ElementState</a> may contain multiple states at the same time. Defaults to <code>True</code>.</td>\n</tr>\n</table>\n<p>Optionally asserts that the state matches the specified assertion. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details for the assertion arguments. By default, assertion is not done.</p>\n<p>This keyword internally works with Python IntFlag. Flags can be processed using bitwise operators like &amp; (bitwise AND) and | (bitwise OR). When using the assertion operators <code>then</code>, <code>evaluate</code> or <code>validate</code> the <code>value</code> contain the states as <a href="#type-ElementState" title="&quot;ElementState&quot; type" class="name">ElementState</a>.</p>\n<p>Example:</p>\n<pre>\n<a href="#Get%20Element%20States" title="&quot;Get Element States&quot; keyword" class="name">Get Element States</a>    h1    validate    value &amp; visible   # Fails in case of an invisible element\n<a href="#Get%20Element%20States" title="&quot;Get Element States&quot; keyword" class="name">Get Element States</a>    h1    then    value &amp; (visible | hidden)  # Returns either <code>[\'visible\']</code> or <code>[\'hidden\']</code>\n<a href="#Get%20Element%20States" title="&quot;Get Element States&quot; keyword" class="name">Get Element States</a>    h1    then    bool(value &amp; visible)  # Returns <code>${True}</code> if element is visible\n</pre>\n<p>The most typical use case would be to verify if an element contains a specific state or multiple states.</p>\n<p>Example:</p>\n<pre>\n<a href="#Get%20Element%20States" title="&quot;Get Element States&quot; keyword" class="name">Get Element States</a>    id=checked_elem      *=    checked\n<a href="#Get%20Element%20States" title="&quot;Get Element States&quot; keyword" class="name">Get Element States</a>    id=checked_elem      not contains    checked\n<a href="#Get%20Element%20States" title="&quot;Get Element States&quot; keyword" class="name">Get Element States</a>    id=invisible_elem    contains    hidden    attached\n<a href="#Get%20Element%20States" title="&quot;Get Element States&quot; keyword" class="name">Get Element States</a>    id=disabled_elem     contains    visible    disabled    readonly\n</pre>\n<p>Elements do return the positive and negative values if applicable. As example, a checkbox does return either <code>checked</code> or <code>unchecked</code> while a text input element has none of those two states. Select elements have also either <code>selected</code> or <code>unselected</code>.</p>\n<p>The state of <code>animating</code> will be set if an element is not considered <code>stable</code> within 300 ms.</p>\n<p>If an element is not attached to the dom, so it can not be found within 250ms it is marked as <code>detached</code> as the only state.</p>\n<p><code>stable</code> state is not returned, because it would cause too high delay in that keyword.</p>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p><a href="https://forum.robotframework.org/t//4272">Comment &gt;&gt;</a></p>',
       shortdoc: "Get the active states from the element found by ``selector``.",
       args: [
         {
@@ -5096,19 +5100,16 @@ const DATA: Libdoc = {
         union: true,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Assertion", "Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 1467,
     },
     {
       name: "Get Elements",
-      doc: "<p>Returns a reference to Playwright <a href=\"https://playwright.dev/docs/api/class-locator\">Locator</a> for all matched elements by <code>selector</code>.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector from which shall be retrieved. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n${elements} =    <a href=\"#Get%20Elements\" title=\"&quot;Get Elements&quot; keyword\" class=\"name\">Get Elements</a>\n${elem} =    Get From List    ${elements}    0\n${option_value} =    <a href=\"#Get%20Property\" title=\"&quot;Get Property&quot; keyword\" class=\"name\">Get Property</a>    ${elem} &gt;&gt; option    value\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4273\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Returns a reference to Playwright [https://playwright.dev/docs/api/class-locator|Locator] for all matched elements by ``selector``.",
+      doc: '<p>Returns a reference to Playwright <a href="https://playwright.dev/docs/api/class-locator">Locator</a> for all matched elements by <code>selector</code>.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector from which shall be retrieved. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n${elements} =    <a href="#Get%20Elements" title="&quot;Get Elements&quot; keyword" class="name">Get Elements</a>\n${elem} =    Get From List    ${elements}    0\n${option_value} =    <a href="#Get%20Property" title="&quot;Get Property&quot; keyword" class="name">Get Property</a>    ${elem} &gt;&gt; option    value\n</pre>\n<p><a href="https://forum.robotframework.org/t//4273">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Returns a reference to Playwright [https://playwright.dev/docs/api/class-locator|Locator] for all matched elements by ``selector``.",
       args: [
         {
           name: "selector",
@@ -5139,17 +5140,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 960,
     },
     {
       name: "Get Page Errors",
-      doc: "<p>Returns the page errors of the active page.</p>\n<p>If assertions are used and fail, this keyword will fail immediately without retrying.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td>assertion_operator</td>\n<td>Optional assertion operator. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for more information.</td>\n</tr>\n<tr>\n<td>assertion_expected</td>\n<td>Optional expected value. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for more information.</td>\n</tr>\n<tr>\n<td>message</td>\n<td>Optional custom message to use on failure. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for more information.</td>\n</tr>\n<tr>\n<td>full</td>\n<td>If true, returns the full console log. If false, returns only new entries that were added since last time.</td>\n</tr>\n<tr>\n<td>last</td>\n<td>If set, returns only the last n entries. Can be <a href=\"#type-integer\" title=\"&quot;integer&quot; type\" class=\"name\">int</a> for number of entries or <a href=\"#type-timedelta\" title=\"&quot;timedelta&quot; type\" class=\"name\">timedelta</a> for time period.</td>\n</tr>\n</table>\n<p>The returned data is a <a href=\"#type-list\" title=\"&quot;list&quot; type\" class=\"name\">list</a> of error messages.</p>\n<p>An error message is a <a href=\"#type-dictionary\" title=\"&quot;dictionary&quot; type\" class=\"name\">dict</a> with the following structure:</p>\n<pre>\n{\n  \"name\": str,\n  \"message\": str,\n  \"stack\": str,\n  \"time\": str\n}\n</pre>\n<p>Example:</p>\n<pre>\n[{\n  'name': 'ReferenceError',\n  'message': 'YT is not defined',\n  'stack': 'ReferenceError: YT is not defined\\n    at HTMLIFrameElement.onload (<a href=\"https://example.com/:20:2245\">https://example.com/:20:2245</a>)',\n  'time': '2023-02-05T20:08:48.912Z'\n}]\n</pre>\n<p>Keys:</p>\n<table border=\"1\">\n<tr>\n<th>Key</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>name</code></td>\n<td>The name/type of the error.</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>The human readable error message.</td>\n</tr>\n<tr>\n<td><code>stack</code></td>\n<td>The stack trace of the error, if given.</td>\n</tr>\n<tr>\n<td><code>time</code></td>\n<td>The timestamp of the error as ISO 8601 string.</td>\n</tr>\n</table>\n<p><a href=\"https://forum.robotframework.org/t//5268\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Returns the page errors of the active page.</p>\n<p>If assertions are used and fail, this keyword will fail immediately without retrying.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td>assertion_operator</td>\n<td>Optional assertion operator. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for more information.</td>\n</tr>\n<tr>\n<td>assertion_expected</td>\n<td>Optional expected value. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for more information.</td>\n</tr>\n<tr>\n<td>message</td>\n<td>Optional custom message to use on failure. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for more information.</td>\n</tr>\n<tr>\n<td>full</td>\n<td>If true, returns the full console log. If false, returns only new entries that were added since last time.</td>\n</tr>\n<tr>\n<td>last</td>\n<td>If set, returns only the last n entries. Can be <a href="#type-integer" title="&quot;integer&quot; type" class="name">int</a> for number of entries or <a href="#type-timedelta" title="&quot;timedelta&quot; type" class="name">timedelta</a> for time period.</td>\n</tr>\n</table>\n<p>The returned data is a <a href="#type-list" title="&quot;list&quot; type" class="name">list</a> of error messages.</p>\n<p>An error message is a <a href="#type-dictionary" title="&quot;dictionary&quot; type" class="name">dict</a> with the following structure:</p>\n<pre>\n{\n  "name": str,\n  "message": str,\n  "stack": str,\n  "time": str\n}\n</pre>\n<p>Example:</p>\n<pre>\n[{\n  \'name\': \'ReferenceError\',\n  \'message\': \'YT is not defined\',\n  \'stack\': \'ReferenceError: YT is not defined\\n    at HTMLIFrameElement.onload (<a href="https://example.com/:20:2245">https://example.com/:20:2245</a>)\',\n  \'time\': \'2023-02-05T20:08:48.912Z\'\n}]\n</pre>\n<p>Keys:</p>\n<table border="1">\n<tr>\n<th>Key</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>name</code></td>\n<td>The name/type of the error.</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>The human readable error message.</td>\n</tr>\n<tr>\n<td><code>stack</code></td>\n<td>The stack trace of the error, if given.</td>\n</tr>\n<tr>\n<td><code>time</code></td>\n<td>The timestamp of the error as ISO 8601 string.</td>\n</tr>\n</table>\n<p><a href="https://forum.robotframework.org/t//5268">Comment &gt;&gt;</a></p>',
       shortdoc: "Returns the page errors of the active page.",
       args: [
         {
@@ -5297,19 +5295,16 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "BrowserControl",
-        "Getter",
-      ],
+      tags: ["Assertion", "BrowserControl", "Getter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/playwright_state.py",
       lineno: 1222,
     },
     {
       name: "Get Page Ids",
-      doc: "<p>Returns a list of page ids based on the context and browser selection. See <a href=\"#Browser%2C%20Context%20and%20Page\" title=\"&quot;Browser, Context and Page&quot; section\" class=\"name\">Browser, Context and Page</a> for more information about Page and related concepts.</p>\n<p><code>ALL</code> and <code>ANY</code> are synonyms. <code>ACTIVE</code> and <code>CURRENT</code> are also synonyms.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>page</code></td>\n<td>The page to get the ids from. <code>ALL</code> Returns all page ids as a list. <code>ACTIVE</code> Returns the id of the active page as a list.</td>\n</tr>\n<tr>\n<td><code>context</code></td>\n<td>The context id or selection to get the page ids from. <code>ALL</code> Page ids from all contexts shall be fetched. <code>ACTIVE</code> Only page ids from the active context shall be fetched.</td>\n</tr>\n<tr>\n<td><code>browser</code></td>\n<td>The browser id or selection to get the page ids from. <code>ALL</code> Page ids from all open browsers shall be fetched. <code>ACTIVE</code> Only page ids from the active browser shall be fetched.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\nTest Case\n    <a href=\"#New%20Page\" title=\"&quot;New Page&quot; keyword\" class=\"name\">New Page</a>    <a href=\"https://www.imbus.de\">https://www.imbus.de</a>\n    <a href=\"#New%20Page\" title=\"&quot;New Page&quot; keyword\" class=\"name\">New Page</a>    <a href=\"https://www.reaktor.com\">https://www.reaktor.com</a>\n    ${current_page}=   <a href=\"#Get%20Page%20Ids\" title=\"&quot;Get Page Ids&quot; keyword\" class=\"name\">Get Page IDs</a>    ACTIVE    ACTIVE    ACTIVE\n    Log                Current page ID is: ${current_page}[0]\n    ${all_pages}=      <a href=\"#Get%20Page%20Ids\" title=\"&quot;Get Page Ids&quot; keyword\" class=\"name\">Get Page IDs</a>    CURRENT   CURRENT   ALL\n    Log Many           These are all Page IDs    @{all_pages}\n</pre>\n<p>Example to count open pages of a specific context:</p>\n<pre>\nTest Case\n   <a href=\"#New%20Browser\" title=\"&quot;New Browser&quot; keyword\" class=\"name\">New Browser</a>    firefox\n   ${context}=    <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a>\n   <a href=\"#New%20Page\" title=\"&quot;New Page&quot; keyword\" class=\"name\">New Page</a>    <a href=\"https://www.imbus.de\">https://www.imbus.de</a>\n   <a href=\"#New%20Page\" title=\"&quot;New Page&quot; keyword\" class=\"name\">New Page</a>    <a href=\"https://www.op.fi\">https://www.op.fi</a>\n   <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a>\n   <a href=\"#New%20Page\" title=\"&quot;New Page&quot; keyword\" class=\"name\">New Page</a>    <a href=\"https://www.robocon.io\">https://www.robocon.io</a>\n   ${page_count}=    <a href=\"#Get%20Page%20Ids\" title=\"&quot;Get Page Ids&quot; keyword\" class=\"name\">Get Page IDs</a>    ALL    ${context}    ALL    then    len(value)\n   Should Be Equal As Integers    ${page_count}    2\n</pre>\n<p>The ACTIVE page of the ACTIVE context of the ACTIVE Browser is the <code>Current</code> Page.</p>\n<p><a href=\"https://forum.robotframework.org/t//4274\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Returns a list of page ids based on the context and browser selection. See `Browser, Context and Page` for more information about Page and related concepts.",
+      doc: '<p>Returns a list of page ids based on the context and browser selection. See <a href="#Browser%2C%20Context%20and%20Page" title="&quot;Browser, Context and Page&quot; section" class="name">Browser, Context and Page</a> for more information about Page and related concepts.</p>\n<p><code>ALL</code> and <code>ANY</code> are synonyms. <code>ACTIVE</code> and <code>CURRENT</code> are also synonyms.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>page</code></td>\n<td>The page to get the ids from. <code>ALL</code> Returns all page ids as a list. <code>ACTIVE</code> Returns the id of the active page as a list.</td>\n</tr>\n<tr>\n<td><code>context</code></td>\n<td>The context id or selection to get the page ids from. <code>ALL</code> Page ids from all contexts shall be fetched. <code>ACTIVE</code> Only page ids from the active context shall be fetched.</td>\n</tr>\n<tr>\n<td><code>browser</code></td>\n<td>The browser id or selection to get the page ids from. <code>ALL</code> Page ids from all open browsers shall be fetched. <code>ACTIVE</code> Only page ids from the active browser shall be fetched.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\nTest Case\n    <a href="#New%20Page" title="&quot;New Page&quot; keyword" class="name">New Page</a>    <a href="https://www.imbus.de">https://www.imbus.de</a>\n    <a href="#New%20Page" title="&quot;New Page&quot; keyword" class="name">New Page</a>    <a href="https://www.reaktor.com">https://www.reaktor.com</a>\n    ${current_page}=   <a href="#Get%20Page%20Ids" title="&quot;Get Page Ids&quot; keyword" class="name">Get Page IDs</a>    ACTIVE    ACTIVE    ACTIVE\n    Log                Current page ID is: ${current_page}[0]\n    ${all_pages}=      <a href="#Get%20Page%20Ids" title="&quot;Get Page Ids&quot; keyword" class="name">Get Page IDs</a>    CURRENT   CURRENT   ALL\n    Log Many           These are all Page IDs    @{all_pages}\n</pre>\n<p>Example to count open pages of a specific context:</p>\n<pre>\nTest Case\n   <a href="#New%20Browser" title="&quot;New Browser&quot; keyword" class="name">New Browser</a>    firefox\n   ${context}=    <a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a>\n   <a href="#New%20Page" title="&quot;New Page&quot; keyword" class="name">New Page</a>    <a href="https://www.imbus.de">https://www.imbus.de</a>\n   <a href="#New%20Page" title="&quot;New Page&quot; keyword" class="name">New Page</a>    <a href="https://www.op.fi">https://www.op.fi</a>\n   <a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a>\n   <a href="#New%20Page" title="&quot;New Page&quot; keyword" class="name">New Page</a>    <a href="https://www.robocon.io">https://www.robocon.io</a>\n   ${page_count}=    <a href="#Get%20Page%20Ids" title="&quot;Get Page Ids&quot; keyword" class="name">Get Page IDs</a>    ALL    ${context}    ALL    then    len(value)\n   Should Be Equal As Integers    ${page_count}    2\n</pre>\n<p>The ACTIVE page of the ACTIVE context of the ACTIVE Browser is the <code>Current</code> Page.</p>\n<p><a href="https://forum.robotframework.org/t//4274">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Returns a list of page ids based on the context and browser selection. See `Browser, Context and Page` for more information about Page and related concepts.",
       args: [
         {
           name: "page",
@@ -5468,18 +5463,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "BrowserControl",
-        "Getter",
-      ],
+      tags: ["Assertion", "BrowserControl", "Getter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/playwright_state.py",
       lineno: 1599,
     },
     {
       name: "Get Page Source",
-      doc: "<p>Gets pages HTML source as a string.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the state</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Optionally does a string assertion. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p>If there need to get element html, use <a href=\"#Get%20Property\" title=\"&quot;Get Property&quot; keyword\" class=\"name\">Get Property</a> instead. Example:</p>\n<table border=\"1\">\n<tr>\n<td>${html1} = [ <a href=\"#Get%20Property\" title=\"&quot;Get Property&quot; keyword\" class=\"name\">Get Property</a></td>\n<td>${selector}</td>\n<td>innerHTML</td>\n</tr>\n<tr>\n<td>${html2} = [ <a href=\"#Get%20Property\" title=\"&quot;Get Property&quot; keyword\" class=\"name\">Get Property</a></td>\n<td>${selector}</td>\n<td>outerHTML</td>\n</tr>\n</table>\n<p><a href=\"https://forum.robotframework.org/t//4275\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Gets pages HTML source as a string.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the state</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Optionally does a string assertion. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p>If there need to get element html, use <a href="#Get%20Property" title="&quot;Get Property&quot; keyword" class="name">Get Property</a> instead. Example:</p>\n<table border="1">\n<tr>\n<td>${html1} = [ <a href="#Get%20Property" title="&quot;Get Property&quot; keyword" class="name">Get Property</a></td>\n<td>${selector}</td>\n<td>innerHTML</td>\n</tr>\n<tr>\n<td>${html2} = [ <a href="#Get%20Property" title="&quot;Get Property&quot; keyword" class="name">Get Property</a></td>\n<td>${selector}</td>\n<td>outerHTML</td>\n</tr>\n</table>\n<p><a href="https://forum.robotframework.org/t//4275">Comment &gt;&gt;</a></p>',
       shortdoc: "Gets pages HTML source as a string.",
       args: [
         {
@@ -5590,19 +5581,16 @@ const DATA: Libdoc = {
         union: true,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Assertion", "Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 149,
     },
     {
       name: "Get Property",
-      doc: "<p>Returns the <code>property</code> of the element found by <code>selector</code>.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector from which the info is to be retrieved. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>property</code></td>\n<td>Requested property name.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the state</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>Optionally asserts that the property value matches the expected value. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p>If <code>assertion_operator</code> is set and property is not found, <code>value</code> is <code>None</code> and Keyword does not fail. See <a href=\"#Get%20Attribute\" title=\"&quot;Get Attribute&quot; keyword\" class=\"name\">Get Attribute</a> for examples.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#Get%20Property\" title=\"&quot;Get Property&quot; keyword\" class=\"name\">Get Property</a>    h1    innerText    ==    Login Page\n${property} =    <a href=\"#Get%20Property\" title=\"&quot;Get Property&quot; keyword\" class=\"name\">Get Property</a>    h1    innerText\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4276\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Returns the ``property`` of the element found by ``selector``.",
+      doc: '<p>Returns the <code>property</code> of the element found by <code>selector</code>.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector from which the info is to be retrieved. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>property</code></td>\n<td>Requested property name.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the state</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>Optionally asserts that the property value matches the expected value. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p>If <code>assertion_operator</code> is set and property is not found, <code>value</code> is <code>None</code> and Keyword does not fail. See <a href="#Get%20Attribute" title="&quot;Get Attribute&quot; keyword" class="name">Get Attribute</a> for examples.</p>\n<p>Example:</p>\n<pre>\n<a href="#Get%20Property" title="&quot;Get Property&quot; keyword" class="name">Get Property</a>    h1    innerText    ==    Login Page\n${property} =    <a href="#Get%20Property" title="&quot;Get Property&quot; keyword" class="name">Get Property</a>    h1    innerText\n</pre>\n<p><a href="https://forum.robotframework.org/t//4276">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Returns the ``property`` of the element found by ``selector``.",
       args: [
         {
           name: "selector",
@@ -5721,19 +5709,16 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Assertion", "Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 308,
     },
     {
       name: "Get Scroll Position",
-      doc: "<p>Gets elements or pages current scroll position as object <code>{top: float, left: float, bottom: float, right: float}</code>.</p>\n<p>It describes the rectangle which is visible of the scrollable content of that element. all values are measured from position {top: 0, left: 0}.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Optional selector from which shall be retrieved. If no selector is given the client size of the page itself is used (<code>document.scrollingElement</code>). See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>key</code></td>\n<td>Optionally filters the returned values. If keys is set to <code>ALL</code> (default) it will return the scroll position as dictionary, otherwise it will just return the single value selected by the key.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the counting</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>Optionally asserts that the value matches the specified assertion. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p>See <a href=\"#Get%20BoundingBox\" title=\"&quot;Get BoundingBox&quot; keyword\" class=\"name\">Get BoundingBox</a> or <a href=\"#Get%20Scroll%20Size\" title=\"&quot;Get Scroll Size&quot; keyword\" class=\"name\">Get Scroll Size</a> for examples.</p>\n<p><a href=\"https://forum.robotframework.org/t//4277\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Gets elements or pages current scroll position as object ``{top: float, left: float, bottom: float, right: float}``.",
+      doc: '<p>Gets elements or pages current scroll position as object <code>{top: float, left: float, bottom: float, right: float}</code>.</p>\n<p>It describes the rectangle which is visible of the scrollable content of that element. all values are measured from position {top: 0, left: 0}.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Optional selector from which shall be retrieved. If no selector is given the client size of the page itself is used (<code>document.scrollingElement</code>). See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>key</code></td>\n<td>Optionally filters the returned values. If keys is set to <code>ALL</code> (default) it will return the scroll position as dictionary, otherwise it will just return the single value selected by the key.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the counting</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>Optionally asserts that the value matches the specified assertion. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p>See <a href="#Get%20BoundingBox" title="&quot;Get BoundingBox&quot; keyword" class="name">Get BoundingBox</a> or <a href="#Get%20Scroll%20Size" title="&quot;Get Scroll Size&quot; keyword" class="name">Get Scroll Size</a> for examples.</p>\n<p><a href="https://forum.robotframework.org/t//4277">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Gets elements or pages current scroll position as object ``{top: float, left: float, bottom: float, right: float}``.",
       args: [
         {
           name: "selector",
@@ -5878,19 +5863,16 @@ const DATA: Libdoc = {
         union: true,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Assertion", "Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 1361,
     },
     {
       name: "Get Scroll Size",
-      doc: "<p>Gets elements or pages scrollable size as object <code>{width: float, height: float}</code>.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Optional selector from which shall be retrieved. If no selector is given the scroll size of the page itself is used. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>key</code></td>\n<td>Optionally filters the returned values. If keys is set to <code>ALL</code> (default) it will return the scroll size as dictionary, otherwise it will just return the single value selected by the key.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the counting</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>Optionally asserts that the state matches the specified assertion. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p>See <a href=\"#Get%20BoundingBox\" title=\"&quot;Get BoundingBox&quot; keyword\" class=\"name\">Get BoundingBox</a> for more similar examples.</p>\n<p>Example use:</p>\n<pre>\n${height}=         <a href=\"#Get%20Scroll%20Size\" title=\"&quot;Get Scroll Size&quot; keyword\" class=\"name\">Get Scroll Size</a>    height                          # filtered page by height\nLog                Width: ${height}                                   # Height: 58425\n${scroll_size}=    <a href=\"#Get%20Scroll%20Size\" title=\"&quot;Get Scroll Size&quot; keyword\" class=\"name\">Get Scroll Size</a>    id=keyword-shortcuts-container  # unfiltered element\nLog                ${scroll_size}                                     # {'width': 253, 'height': 3036}\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4278\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Gets elements or pages scrollable size as object ``{width: float, height: float}``.",
+      doc: '<p>Gets elements or pages scrollable size as object <code>{width: float, height: float}</code>.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Optional selector from which shall be retrieved. If no selector is given the scroll size of the page itself is used. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>key</code></td>\n<td>Optionally filters the returned values. If keys is set to <code>ALL</code> (default) it will return the scroll size as dictionary, otherwise it will just return the single value selected by the key.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the counting</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>Optionally asserts that the state matches the specified assertion. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p>See <a href="#Get%20BoundingBox" title="&quot;Get BoundingBox&quot; keyword" class="name">Get BoundingBox</a> for more similar examples.</p>\n<p>Example use:</p>\n<pre>\n${height}=         <a href="#Get%20Scroll%20Size" title="&quot;Get Scroll Size&quot; keyword" class="name">Get Scroll Size</a>    height                          # filtered page by height\nLog                Width: ${height}                                   # Height: 58425\n${scroll_size}=    <a href="#Get%20Scroll%20Size" title="&quot;Get Scroll Size&quot; keyword" class="name">Get Scroll Size</a>    id=keyword-shortcuts-container  # unfiltered element\nLog                ${scroll_size}                                     # {\'width\': 253, \'height\': 3036}\n</pre>\n<p><a href="https://forum.robotframework.org/t//4278">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Gets elements or pages scrollable size as object ``{width: float, height: float}``.",
       args: [
         {
           name: "selector",
@@ -6041,19 +6023,16 @@ const DATA: Libdoc = {
         union: true,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Assertion", "Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 1305,
     },
     {
       name: "Get Select Options",
-      doc: "<p>Returns attributes of options of a <code>select</code> element as a list of dictionaries.</p>\n<p>Returned dictionaries have the following keys and their values \"index\", \"value\", \"label\" and \"selected\".</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector from which the info is to be retrieved. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the state</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>Optionally asserts that these match the specified assertion. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#Get%20Select%20Options\" title=\"&quot;Get Select Options&quot; keyword\" class=\"name\">Get Select Options</a>     //select[2]    validate  [v[\"label\"] for v in value] == [\"Email\", \"Mobile\"]\n<a href=\"#Get%20Select%20Options\" title=\"&quot;Get Select Options&quot; keyword\" class=\"name\">Get Select Options</a>   select#names     validate  any(v[\"label\"] == \"Mikko\" for v in value)\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4279\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Returns attributes of options of a ``select`` element as a list of dictionaries.",
+      doc: '<p>Returns attributes of options of a <code>select</code> element as a list of dictionaries.</p>\n<p>Returned dictionaries have the following keys and their values "index", "value", "label" and "selected".</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector from which the info is to be retrieved. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the state</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>Optionally asserts that these match the specified assertion. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p>Example:</p>\n<pre>\n<a href="#Get%20Select%20Options" title="&quot;Get Select Options&quot; keyword" class="name">Get Select Options</a>     //select[2]    validate  [v["label"] for v in value] == ["Email", "Mobile"]\n<a href="#Get%20Select%20Options" title="&quot;Get Select Options&quot; keyword" class="name">Get Select Options</a>   select#names     validate  any(v["label"] == "Mikko" for v in value)\n</pre>\n<p><a href="https://forum.robotframework.org/t//4279">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Returns attributes of options of a ``select`` element as a list of dictionaries.",
       args: [
         {
           name: "selector",
@@ -6165,19 +6144,16 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Assertion", "Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 530,
     },
     {
       name: "Get Selected Options",
-      doc: "<p>Returns the specified attribute of selected options of the <code>select</code> element.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector from which the info is to be retrieved. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>option_attribute</code></td>\n<td>Which attribute shall be returned/verified. Defaults to label.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>*assertion_expected</code></td>\n<td>Expected value for the state</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>Optionally asserts that these match the specified assertion. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<ul>\n<li><code>==</code> , <code>!=</code> and <code>contains</code> / <code>*=</code> can work with multiple values</li>\n<li><code>validate</code> and <code>evaluate</code> only accepts one single expected value</li>\n</ul>\n<p>Other operators are not allowed.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#Select%20Options%20By\" title=\"&quot;Select Options By&quot; keyword\" class=\"name\">Select Options By</a>      label                    //select[2]    Email      Mobile\n${selected_list}         <a href=\"#Get%20Selected%20Options\" title=\"&quot;Get Selected Options&quot; keyword\" class=\"name\">Get Selected Options</a>   //select[2]                                         # getter\n<a href=\"#Get%20Selected%20Options\" title=\"&quot;Get Selected Options&quot; keyword\" class=\"name\">Get Selected Options</a>   //select[2]              label          <span class=\"name\">==</span>       Mobile             Mail   #assertion content\n<a href=\"#Select%20Options%20By\" title=\"&quot;Select Options By&quot; keyword\" class=\"name\">Select Options By</a>      label                    select#names   2          4\n<a href=\"#Get%20Selected%20Options\" title=\"&quot;Get Selected Options&quot; keyword\" class=\"name\">Get Selected Options</a>   select#names             index          <span class=\"name\">==</span>       2                  4      #assertion index\n<a href=\"#Get%20Selected%20Options\" title=\"&quot;Get Selected Options&quot; keyword\" class=\"name\">Get Selected Options</a>   select#names             label          *=         Mikko                     #assertion contain\n<a href=\"#Get%20Selected%20Options\" title=\"&quot;Get Selected Options&quot; keyword\" class=\"name\">Get Selected Options</a>   select#names             label          validate   len(value) == 3           #assertion length\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4280\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Returns the specified attribute of selected options of the ``select`` element.",
+      doc: '<p>Returns the specified attribute of selected options of the <code>select</code> element.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector from which the info is to be retrieved. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>option_attribute</code></td>\n<td>Which attribute shall be returned/verified. Defaults to label.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>*assertion_expected</code></td>\n<td>Expected value for the state</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>Optionally asserts that these match the specified assertion. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<ul>\n<li><code>==</code> , <code>!=</code> and <code>contains</code> / <code>*=</code> can work with multiple values</li>\n<li><code>validate</code> and <code>evaluate</code> only accepts one single expected value</li>\n</ul>\n<p>Other operators are not allowed.</p>\n<p>Example:</p>\n<pre>\n<a href="#Select%20Options%20By" title="&quot;Select Options By&quot; keyword" class="name">Select Options By</a>      label                    //select[2]    Email      Mobile\n${selected_list}         <a href="#Get%20Selected%20Options" title="&quot;Get Selected Options&quot; keyword" class="name">Get Selected Options</a>   //select[2]                                         # getter\n<a href="#Get%20Selected%20Options" title="&quot;Get Selected Options&quot; keyword" class="name">Get Selected Options</a>   //select[2]              label          <span class="name">==</span>       Mobile             Mail   #assertion content\n<a href="#Select%20Options%20By" title="&quot;Select Options By&quot; keyword" class="name">Select Options By</a>      label                    select#names   2          4\n<a href="#Get%20Selected%20Options" title="&quot;Get Selected Options&quot; keyword" class="name">Get Selected Options</a>   select#names             index          <span class="name">==</span>       2                  4      #assertion index\n<a href="#Get%20Selected%20Options" title="&quot;Get Selected Options&quot; keyword" class="name">Get Selected Options</a>   select#names             label          *=         Mikko                     #assertion contain\n<a href="#Get%20Selected%20Options" title="&quot;Get Selected Options&quot; keyword" class="name">Get Selected Options</a>   select#names             label          validate   len(value) == 3           #assertion length\n</pre>\n<p><a href="https://forum.robotframework.org/t//4280">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Returns the specified attribute of selected options of the ``select`` element.",
       args: [
         {
           name: "selector",
@@ -6298,19 +6274,16 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Assertion", "Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 589,
     },
     {
       name: "Get Style",
-      doc: "<p>Gets the computed style properties of the element selected by <code>selector</code>.</p>\n<p>Optionally matches with any sequence assertion operator.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector from which the style shall be retrieved. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>key</code></td>\n<td>Key of the requested CSS property. Retrieves \"ALL\" styles as dictionary by default. All css settings can be used as keys even if they are not all returned in the dictionary.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the counting</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n<tr>\n<td><code>pseudo_element</code></td>\n<td>Pseudo element to match. Defaults to None. Pseudo elements are special css</td>\n</tr>\n</table>\n<p><a href=\"https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-elements\">Pseudo element</a> is a css fuctionality to add styles. Example <span class=\"name\">::before</span> or <span class=\"name\">::after</span>.</p>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>Optionally asserts that the style matches the specified assertion. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p><a href=\"https://forum.robotframework.org/t//4281\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Gets the computed style properties of the element selected by ``selector``.",
+      doc: '<p>Gets the computed style properties of the element selected by <code>selector</code>.</p>\n<p>Optionally matches with any sequence assertion operator.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector from which the style shall be retrieved. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>key</code></td>\n<td>Key of the requested CSS property. Retrieves "ALL" styles as dictionary by default. All css settings can be used as keys even if they are not all returned in the dictionary.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the counting</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n<tr>\n<td><code>pseudo_element</code></td>\n<td>Pseudo element to match. Defaults to None. Pseudo elements are special css</td>\n</tr>\n</table>\n<p><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-elements">Pseudo element</a> is a css fuctionality to add styles. Example <span class="name">::before</span> or <span class="name">::after</span>.</p>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>Optionally asserts that the style matches the specified assertion. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p><a href="https://forum.robotframework.org/t//4281">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Gets the computed style properties of the element selected by ``selector``.",
       args: [
         {
           name: "selector",
@@ -6507,19 +6480,16 @@ const DATA: Libdoc = {
         union: true,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Assertion", "Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 1151,
     },
     {
       name: "Get Table Cell Element",
-      doc: "<p>Returns the Web Element that has the same column index and same row index as the selected elements.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>table</code></td>\n<td>selector must select the <code>&lt;table&gt;</code> element that contains both selected elements</td>\n</tr>\n<tr>\n<td><code>column</code></td>\n<td>selector can select any <code>&lt;th&gt;</code> or <code>&lt;td&gt;</code> element or one of their descendants.</td>\n</tr>\n<tr>\n<td><code>row</code></td>\n<td>selector can select any <code>&lt;tr&gt;</code> element or one of their descendant like <code>&lt;td&gt;</code> elements.</td>\n</tr>\n</table>\n<p><code>column</code> and <code>row</code> can also consume index numbers instead of selectors. Indexes are starting from <code>0</code> and <code>-1</code> is specific for the last element.</p>\n<p>Selectors for <code>column</code> and <code>row</code> are directly appended to <code>table</code> selector like this: <code>f\"{table} &gt;&gt; {row}\" .</code></p>\n<table border=\"1\">\n<tr>\n<th>GitHub</th>\n<th>Slack</th>\n<th>Real Name</th>\n</tr>\n<tr>\n<td>mkorpela</td>\n<td>@mkorpela</td>\n<td>Mikko Korpela</td>\n</tr>\n<tr>\n<td>aaltat</td>\n<td>@aaltat</td>\n<td>Tatu Aalto</td>\n</tr>\n<tr>\n<td>xylix</td>\n<td>@Kerkko Pelttari</td>\n<td>Kerkko Pelttari</td>\n</tr>\n<tr>\n<td>Snooz82</td>\n<td>@René</td>\n<td>René Rohner</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n${table}=    Set Variable    [id=\"Get Table Cell Element\"] &gt;&gt; div.kw-docs table &gt;&gt; nth=1\n${e}=    <a href=\"#Get%20Table%20Cell%20Element\" title=\"&quot;Get Table Cell Element&quot; keyword\" class=\"name\">Get Table Cell Element</a>    ${table}    \"Real Name\"    \"aaltat\"   # Returns element with text <code>Tatu Aalto</code>\nGet Text    ${e}    ==    Tatu Aalto\n${e}=    <a href=\"#Get%20Table%20Cell%20Element\" title=\"&quot;Get Table Cell Element&quot; keyword\" class=\"name\">Get Table Cell Element</a>    ${table}    \"Slack\"    \"Mikko Korpela\"   # Returns element with text <code>@mkorpela</code>\nGet Text    ${e}    ==    @mkorpela\n${e}=    <a href=\"#Get%20Table%20Cell%20Element\" title=\"&quot;Get Table Cell Element&quot; keyword\" class=\"name\">Get Table Cell Element</a>    ${table}    \"mkorpela\"    \"Kerkko Pelttari\"   # column does not need to be in row 0\nGet Text    ${e}    ==    @mkorpela\n${e}=    <a href=\"#Get%20Table%20Cell%20Element\" title=\"&quot;Get Table Cell Element&quot; keyword\" class=\"name\">Get Table Cell Element</a>    ${table}    2    -1   # Index is also directly possible\nGet Text    ${e}    ==    René Rohner\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4282\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Returns the Web Element that has the same column index and same row index as the selected elements.",
+      doc: '<p>Returns the Web Element that has the same column index and same row index as the selected elements.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>table</code></td>\n<td>selector must select the <code>&lt;table&gt;</code> element that contains both selected elements</td>\n</tr>\n<tr>\n<td><code>column</code></td>\n<td>selector can select any <code>&lt;th&gt;</code> or <code>&lt;td&gt;</code> element or one of their descendants.</td>\n</tr>\n<tr>\n<td><code>row</code></td>\n<td>selector can select any <code>&lt;tr&gt;</code> element or one of their descendant like <code>&lt;td&gt;</code> elements.</td>\n</tr>\n</table>\n<p><code>column</code> and <code>row</code> can also consume index numbers instead of selectors. Indexes are starting from <code>0</code> and <code>-1</code> is specific for the last element.</p>\n<p>Selectors for <code>column</code> and <code>row</code> are directly appended to <code>table</code> selector like this: <code>f"{table} &gt;&gt; {row}" .</code></p>\n<table border="1">\n<tr>\n<th>GitHub</th>\n<th>Slack</th>\n<th>Real Name</th>\n</tr>\n<tr>\n<td>mkorpela</td>\n<td>@mkorpela</td>\n<td>Mikko Korpela</td>\n</tr>\n<tr>\n<td>aaltat</td>\n<td>@aaltat</td>\n<td>Tatu Aalto</td>\n</tr>\n<tr>\n<td>xylix</td>\n<td>@Kerkko Pelttari</td>\n<td>Kerkko Pelttari</td>\n</tr>\n<tr>\n<td>Snooz82</td>\n<td>@René</td>\n<td>René Rohner</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n${table}=    Set Variable    [id="Get Table Cell Element"] &gt;&gt; div.kw-docs table &gt;&gt; nth=1\n${e}=    <a href="#Get%20Table%20Cell%20Element" title="&quot;Get Table Cell Element&quot; keyword" class="name">Get Table Cell Element</a>    ${table}    "Real Name"    "aaltat"   # Returns element with text <code>Tatu Aalto</code>\nGet Text    ${e}    ==    Tatu Aalto\n${e}=    <a href="#Get%20Table%20Cell%20Element" title="&quot;Get Table Cell Element&quot; keyword" class="name">Get Table Cell Element</a>    ${table}    "Slack"    "Mikko Korpela"   # Returns element with text <code>@mkorpela</code>\nGet Text    ${e}    ==    @mkorpela\n${e}=    <a href="#Get%20Table%20Cell%20Element" title="&quot;Get Table Cell Element&quot; keyword" class="name">Get Table Cell Element</a>    ${table}    "mkorpela"    "Kerkko Pelttari"   # column does not need to be in row 0\nGet Text    ${e}    ==    @mkorpela\n${e}=    <a href="#Get%20Table%20Cell%20Element" title="&quot;Get Table Cell Element&quot; keyword" class="name">Get Table Cell Element</a>    ${table}    2    -1   # Index is also directly possible\nGet Text    ${e}    ==    René Rohner\n</pre>\n<p><a href="https://forum.robotframework.org/t//4282">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Returns the Web Element that has the same column index and same row index as the selected elements.",
       args: [
         {
           name: "table",
@@ -6571,17 +6541,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 792,
     },
     {
       name: "Get Table Cell Index",
-      doc: "<p>Returns the index (0 based) of a table cell within its row.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>can select any <code>&lt;th&gt;</code> or <code>&lt;td&gt;</code> element or one of their descendants. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the counting</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n${table}=    Set Variable    id=<a href=\"#Get%20Table%20Cell%20Element\" title=\"&quot;Get Table Cell Element&quot; keyword\" class=\"name\">Get Table Cell Element</a> &gt;&gt; div.kw-docs table   #Table of keyword <a href=\"#Get%20Table%20Cell%20Element\" title=\"&quot;Get Table Cell Element&quot; keyword\" class=\"name\">Get Table Cell Element</a>\n${idx}=    <a href=\"#Get%20Table%20Cell%20Index\" title=\"&quot;Get Table Cell Index&quot; keyword\" class=\"name\">Get Table Cell Index</a>    ${table} &gt;&gt; \"Real Name\"\nShould Be Equal    ${idx}    ${2}\n<a href=\"#Get%20Table%20Cell%20Index\" title=\"&quot;Get Table Cell Index&quot; keyword\" class=\"name\">Get Table Cell Index</a>    ${table} &gt;&gt; \"@aaltat\"    ==    1\n</pre>\n<p>Optionally asserts that the index matches the specified assertion. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p><a href=\"https://forum.robotframework.org/t//4283\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Returns the index (0 based) of a table cell within its row.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>can select any <code>&lt;th&gt;</code> or <code>&lt;td&gt;</code> element or one of their descendants. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the counting</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n${table}=    Set Variable    id=<a href="#Get%20Table%20Cell%20Element" title="&quot;Get Table Cell Element&quot; keyword" class="name">Get Table Cell Element</a> &gt;&gt; div.kw-docs table   #Table of keyword <a href="#Get%20Table%20Cell%20Element" title="&quot;Get Table Cell Element&quot; keyword" class="name">Get Table Cell Element</a>\n${idx}=    <a href="#Get%20Table%20Cell%20Index" title="&quot;Get Table Cell Index&quot; keyword" class="name">Get Table Cell Index</a>    ${table} &gt;&gt; "Real Name"\nShould Be Equal    ${idx}    ${2}\n<a href="#Get%20Table%20Cell%20Index" title="&quot;Get Table Cell Index&quot; keyword" class="name">Get Table Cell Index</a>    ${table} &gt;&gt; "@aaltat"    ==    1\n</pre>\n<p>Optionally asserts that the index matches the specified assertion. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p><a href="https://forum.robotframework.org/t//4283">Comment &gt;&gt;</a></p>',
       shortdoc: "Returns the index (0 based) of a table cell within its row.",
       args: [
         {
@@ -6687,18 +6654,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Assertion", "Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 847,
     },
     {
       name: "Get Table Row Index",
-      doc: "<p>Returns the index (0 based) of a table row.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>can select any <code>&lt;th&gt;</code> or <code>&lt;td&gt;</code> element or one of their descendants. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the counting</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n${table}=    Set Variable    id=<a href=\"#Get%20Table%20Cell%20Element\" title=\"&quot;Get Table Cell Element&quot; keyword\" class=\"name\">Get Table Cell Element</a> &gt;&gt; div.kw-docs table   #Table of keyword <a href=\"#Get%20Table%20Cell%20Element\" title=\"&quot;Get Table Cell Element&quot; keyword\" class=\"name\">Get Table Cell Element</a>\n${idx}=    <a href=\"#Get%20Table%20Row%20Index\" title=\"&quot;Get Table Row Index&quot; keyword\" class=\"name\">Get Table Row Index</a>    ${table} &gt;&gt; \"@René\"\nShould Be Equal    ${idx}    ${4}\n<a href=\"#Get%20Table%20Row%20Index\" title=\"&quot;Get Table Row Index&quot; keyword\" class=\"name\">Get Table Row Index</a>    ${table} &gt;&gt; \"@aaltat\"    ==    2\n</pre>\n<p>Optionally asserts that the index matches the specified assertion. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p><a href=\"https://forum.robotframework.org/t//4284\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Returns the index (0 based) of a table row.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>can select any <code>&lt;th&gt;</code> or <code>&lt;td&gt;</code> element or one of their descendants. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the counting</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n${table}=    Set Variable    id=<a href="#Get%20Table%20Cell%20Element" title="&quot;Get Table Cell Element&quot; keyword" class="name">Get Table Cell Element</a> &gt;&gt; div.kw-docs table   #Table of keyword <a href="#Get%20Table%20Cell%20Element" title="&quot;Get Table Cell Element&quot; keyword" class="name">Get Table Cell Element</a>\n${idx}=    <a href="#Get%20Table%20Row%20Index" title="&quot;Get Table Row Index&quot; keyword" class="name">Get Table Row Index</a>    ${table} &gt;&gt; "@René"\nShould Be Equal    ${idx}    ${4}\n<a href="#Get%20Table%20Row%20Index" title="&quot;Get Table Row Index&quot; keyword" class="name">Get Table Row Index</a>    ${table} &gt;&gt; "@aaltat"    ==    2\n</pre>\n<p>Optionally asserts that the index matches the specified assertion. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p><a href="https://forum.robotframework.org/t//4284">Comment &gt;&gt;</a></p>',
       shortdoc: "Returns the index (0 based) of a table row.",
       args: [
         {
@@ -6804,18 +6767,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Assertion", "Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 890,
     },
     {
       name: "Get Text",
-      doc: "<p>Returns text attribute of the element found by <code>selector</code>.</p>\n<p>Keyword can also return <span class=\"name\">input</span> or <span class=\"name\">textarea</span> value property text. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</p>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode. The <code>text_type</code> argument determines how text is returned. The <code>allInnerTexts</code> and <code>allTextContents</code> will return a list of strings, while other types return a single string.</p>\n<p>Optionally asserts that the text matches the specified assertion. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details for the assertion arguments. By default, assertion is not done.</p>\n<p>Example:</p>\n<pre>\n${text} =    <a href=\"#Get%20Text\" title=\"&quot;Get Text&quot; keyword\" class=\"name\">Get Text</a>    id=important                                # Returns element text without assertion.\n${text} =    <a href=\"#Get%20Text\" title=\"&quot;Get Text&quot; keyword\" class=\"name\">Get Text</a>    id=important    ==    Important text        # Returns element text with assertion.\n${text} =    <a href=\"#Get%20Text\" title=\"&quot;Get Text&quot; keyword\" class=\"name\">Get Text</a>    //input         ==    root                  # Returns input element text with assertion.\n${text} =    <a href=\"#Get%20Text\" title=\"&quot;Get Text&quot; keyword\" class=\"name\">Get Text</a>    id=important    text_type=innerHTML         # Returns element inner HTML.\n${text} =    <a href=\"#Get%20Text\" title=\"&quot;Get Text&quot; keyword\" class=\"name\">Get Text</a>    id=important    text_type=allInnerTexts     # Returns element inner text as list of strings.\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4285\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Returns text attribute of the element found by <code>selector</code>.</p>\n<p>Keyword can also return <span class="name">input</span> or <span class="name">textarea</span> value property text. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</p>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode. The <code>text_type</code> argument determines how text is returned. The <code>allInnerTexts</code> and <code>allTextContents</code> will return a list of strings, while other types return a single string.</p>\n<p>Optionally asserts that the text matches the specified assertion. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details for the assertion arguments. By default, assertion is not done.</p>\n<p>Example:</p>\n<pre>\n${text} =    <a href="#Get%20Text" title="&quot;Get Text&quot; keyword" class="name">Get Text</a>    id=important                                # Returns element text without assertion.\n${text} =    <a href="#Get%20Text" title="&quot;Get Text&quot; keyword" class="name">Get Text</a>    id=important    ==    Important text        # Returns element text with assertion.\n${text} =    <a href="#Get%20Text" title="&quot;Get Text&quot; keyword" class="name">Get Text</a>    //input         ==    root                  # Returns input element text with assertion.\n${text} =    <a href="#Get%20Text" title="&quot;Get Text&quot; keyword" class="name">Get Text</a>    id=important    text_type=innerHTML         # Returns element inner HTML.\n${text} =    <a href="#Get%20Text" title="&quot;Get Text&quot; keyword" class="name">Get Text</a>    id=important    text_type=allInnerTexts     # Returns element inner text as list of strings.\n</pre>\n<p><a href="https://forum.robotframework.org/t//4285">Comment &gt;&gt;</a></p>',
       shortdoc: "Returns text attribute of the element found by ``selector``.",
       args: [
         {
@@ -6834,7 +6793,7 @@ const DATA: Libdoc = {
         },
         {
           name: "assertion_operator",
-          doc: "<p>See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details. Defaults to None.</p>",
+          doc: '<p>See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details. Defaults to None.</p>',
           type: {
             name: "Union",
             typedoc: null,
@@ -6956,7 +6915,8 @@ const DATA: Libdoc = {
         nested: [
           {
             name: "strReallyLongValueWhichDoesNotFitInOneLineInTheTableAndShouldBeWrappedToNextLine",
-            typedoc: "strReallyLongValueWhichDoesNotFitInOneLineInTheTableAndShouldBeWrappedToNextLine",
+            typedoc:
+              "strReallyLongValueWhichDoesNotFitInOneLineInTheTableAndShouldBeWrappedToNextLine",
             nested: [],
             union: false,
           },
@@ -6988,19 +6948,16 @@ const DATA: Libdoc = {
         ],
         union: true,
       },
-      returnDoc: "<p>The text of the element found by <code>selector</code>. If <code>text_type</code> is set to <code>allInnerTexts</code> or <code>allTextContents</code>, a list of strings is returned. Otherwise, a single string is returned.</p>",
-      tags: [
-        "Assertion",
-        "Getter",
-        "PageContent",
-      ],
+      returnDoc:
+        "<p>The text of the element found by <code>selector</code>. If <code>text_type</code> is set to <code>allInnerTexts</code> or <code>allTextContents</code>, a list of strings is returned. Otherwise, a single string is returned.</p>",
+      tags: ["Assertion", "Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 227,
     },
     {
       name: "Get Title",
-      doc: "<p>Returns the title of the current page.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the state</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Optionally asserts that title matches the specified assertion. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p><a href=\"https://forum.robotframework.org/t//4286\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Returns the title of the current page.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the state</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Optionally asserts that title matches the specified assertion. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p><a href="https://forum.robotframework.org/t//4286">Comment &gt;&gt;</a></p>',
       shortdoc: "Returns the title of the current page.",
       args: [
         {
@@ -7111,18 +7068,14 @@ const DATA: Libdoc = {
         union: true,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Assertion", "Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 191,
     },
     {
       name: "Get Url",
-      doc: "<p>Returns the current URL.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the state</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Optionally asserts that it matches the specified assertion. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p><a href=\"https://forum.robotframework.org/t//4287\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Returns the current URL.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the state</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Optionally asserts that it matches the specified assertion. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p><a href="https://forum.robotframework.org/t//4287">Comment &gt;&gt;</a></p>',
       shortdoc: "Returns the current URL.",
       args: [
         {
@@ -7233,18 +7186,14 @@ const DATA: Libdoc = {
         union: true,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Assertion", "Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 119,
     },
     {
       name: "Get Viewport Size",
-      doc: "<p>Returns the current viewport dimensions.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>key</code></td>\n<td>Optionally filters the returned values. If keys is set to <code>ALL</code> (default) it will return the viewport size as dictionary, otherwise it will just return the single value selected by the key. Note: If a single value is retrieved, an assertion does <b>not</b> need a <code>validate</code> combined with a cast of <code>value</code>.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the counting</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Optionally asserts that the state matches the specified assertion. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#Get%20Viewport%20Size\" title=\"&quot;Get Viewport Size&quot; keyword\" class=\"name\">Get Viewport Size</a>    ALL    ==    {'width':1280, 'height':720}\n<a href=\"#Get%20Viewport%20Size\" title=\"&quot;Get Viewport Size&quot; keyword\" class=\"name\">Get Viewport Size</a>    width    &gt;=    1200\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4288\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Returns the current viewport dimensions.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>key</code></td>\n<td>Optionally filters the returned values. If keys is set to <code>ALL</code> (default) it will return the viewport size as dictionary, otherwise it will just return the single value selected by the key. Note: If a single value is retrieved, an assertion does <b>not</b> need a <code>validate</code> combined with a cast of <code>value</code>.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value for the counting</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message for assertion.</td>\n</tr>\n</table>\n<p>Optionally asserts that the state matches the specified assertion. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details for the assertion arguments. By default assertion is not done.</p>\n<p>Example:</p>\n<pre>\n<a href="#Get%20Viewport%20Size" title="&quot;Get Viewport Size&quot; keyword" class="name">Get Viewport Size</a>    ALL    ==    {\'width\':1280, \'height\':720}\n<a href="#Get%20Viewport%20Size" title="&quot;Get Viewport Size&quot; keyword" class="name">Get Viewport Size</a>    width    &gt;=    1200\n</pre>\n<p><a href="https://forum.robotframework.org/t//4288">Comment &gt;&gt;</a></p>',
       shortdoc: "Returns the current viewport dimensions.",
       args: [
         {
@@ -7375,48 +7324,38 @@ const DATA: Libdoc = {
         union: true,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "BrowserControl",
-        "Getter",
-      ],
+      tags: ["Assertion", "BrowserControl", "Getter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/getters.py",
       lineno: 741,
     },
     {
       name: "Go Back",
-      doc: "<p>Navigates to the previous page in history.</p>\n<p><a href=\"https://forum.robotframework.org/t//4289\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Navigates to the previous page in history.</p>\n<p><a href="https://forum.robotframework.org/t//4289">Comment &gt;&gt;</a></p>',
       shortdoc: "Navigates to the previous page in history.",
       args: [],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/browser_control.py",
       lineno: 62,
     },
     {
       name: "Go Forward",
-      doc: "<p>Navigates to the next page in history.</p>\n<p><a href=\"https://forum.robotframework.org/t//4290\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Navigates to the next page in history.</p>\n<p><a href="https://forum.robotframework.org/t//4290">Comment &gt;&gt;</a></p>',
       shortdoc: "Navigates to the next page in history.",
       args: [],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/browser_control.py",
       lineno: 52,
     },
     {
       name: "Go To",
-      doc: "<p>Navigates to the given <code>url</code>.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>url</code></td>\n<td>URL to be navigated to.</td>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>time to wait page to load. If not defined will use the library default timeout.</td>\n</tr>\n<tr>\n<td><code>wait_until</code></td>\n<td>When to consider operation succeeded, defaults to load. Events can be either: <code>domcontentloaded</code> - consider operation to be finished when the DOMContentLoaded event is fired. <code>load</code> - consider operation to be finished when the load event is fired. <code>networkidle</code> - consider operation to be finished when there are no network connections for at least 500 ms. <code>commit</code> - consider operation to be finished when network response is received and the document started loading.</td>\n</tr>\n</table>\n<p>Returns the HTTP status code for the navigation request as integer or 0 if non received.</p>\n<p><a href=\"https://forum.robotframework.org/t//4291\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Navigates to the given <code>url</code>.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>url</code></td>\n<td>URL to be navigated to.</td>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>time to wait page to load. If not defined will use the library default timeout.</td>\n</tr>\n<tr>\n<td><code>wait_until</code></td>\n<td>When to consider operation succeeded, defaults to load. Events can be either: <code>domcontentloaded</code> - consider operation to be finished when the DOMContentLoaded event is fired. <code>load</code> - consider operation to be finished when the load event is fired. <code>networkidle</code> - consider operation to be finished when there are no network connections for at least 500 ms. <code>commit</code> - consider operation to be finished when network response is received and the document started loading.</td>\n</tr>\n</table>\n<p>Returns the HTTP status code for the navigation request as integer or 0 if non received.</p>\n<p><a href="https://forum.robotframework.org/t//4291">Comment &gt;&gt;</a></p>',
       shortdoc: "Navigates to the given ``url``.",
       args: [
         {
@@ -7477,17 +7416,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/browser_control.py",
       lineno: 72,
     },
     {
       name: "Grant Permissions",
-      doc: "<p>Grants permissions to the current context.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>permissions</code></td>\n<td>is a list of permissions to grant. Permissions can be one of the following: geolocation, notifications, camera, microphone,</td>\n</tr>\n<tr>\n<td><code>origin</code></td>\n<td>The origin to grant permissions to, e.g. \"<a href=\"https://example.com\">https://example.com</a>\".</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a>\n<a href=\"#Grant%20Permissions\" title=\"&quot;Grant Permissions&quot; keyword\" class=\"name\">Grant Permissions</a>    geolocation\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4292\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Grants permissions to the current context.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>permissions</code></td>\n<td>is a list of permissions to grant. Permissions can be one of the following: geolocation, notifications, camera, microphone,</td>\n</tr>\n<tr>\n<td><code>origin</code></td>\n<td>The origin to grant permissions to, e.g. "<a href="https://example.com">https://example.com</a>".</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a>\n<a href="#Grant%20Permissions" title="&quot;Grant Permissions&quot; keyword" class="name">Grant Permissions</a>    geolocation\n</pre>\n<p><a href="https://forum.robotframework.org/t//4292">Comment &gt;&gt;</a></p>',
       shortdoc: "Grants permissions to the current context.",
       args: [
         {
@@ -7534,17 +7470,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/browser_control.py",
       lineno: 611,
     },
     {
       name: "Handle Future Dialogs",
-      doc: "<p>Handle next dialog on page with <code>action</code>.</p>\n<p>Dialog can be any of alert, beforeunload, confirm or prompt. Handling dialogue must be called before the action, like example click, that triggers the dialogue.</p>\n<p>If a handler is not set dialogs are dismissed by default.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>action</code></td>\n<td>How to handle the alert. Can be <code>accept</code> or <code>dismiss</code>.</td>\n</tr>\n<tr>\n<td><code>prompt_input</code></td>\n<td>The value to enter into prompt. Only valid if <code>action</code> argument equals <code>accept</code>. Defaults to empty string.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href=\"#Handle%20Future%20Dialogs\" title=\"&quot;Handle Future Dialogs&quot; keyword\" class=\"name\">Handle Future Dialogs</a>    action=accept\n<a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>                    \\#alerts\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4293\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Handle next dialog on page with <code>action</code>.</p>\n<p>Dialog can be any of alert, beforeunload, confirm or prompt. Handling dialogue must be called before the action, like example click, that triggers the dialogue.</p>\n<p>If a handler is not set dialogs are dismissed by default.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>action</code></td>\n<td>How to handle the alert. Can be <code>accept</code> or <code>dismiss</code>.</td>\n</tr>\n<tr>\n<td><code>prompt_input</code></td>\n<td>The value to enter into prompt. Only valid if <code>action</code> argument equals <code>accept</code>. Defaults to empty string.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href="#Handle%20Future%20Dialogs" title="&quot;Handle Future Dialogs&quot; keyword" class="name">Handle Future Dialogs</a>    action=accept\n<a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>                    \\#alerts\n</pre>\n<p><a href="https://forum.robotframework.org/t//4293">Comment &gt;&gt;</a></p>',
       shortdoc: "Handle next dialog on page with ``action``.",
       args: [
         {
@@ -7578,17 +7511,16 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-      ],
+      tags: ["PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 875,
     },
     {
       name: "Highlight Elements",
-      doc: "<p>Adds a highlight to elements matched by the <code>selector</code>. Provides a style adjustment.</p>\n<p>Returns the number of highlighted elements. Keyword does not fail, if <span class=\"name\">locator</span> matched zero elements in the page. Keyword does not scroll elements to viewport and highlighted element might be outside the viewport. Use <a href=\"#Scroll%20To%20Element\" title=\"&quot;Scroll To Element&quot; keyword\" class=\"name\">Scroll To Element</a> keyword to scroll element in viewport.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selectors which shall be highlighted. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>duration</code></td>\n<td>Sets for how long the selector shall be highlighted. Defaults to <code>5s</code> =&gt; 5 seconds. If set to 0 seconds, the highlighting is not deleted.</td>\n</tr>\n<tr>\n<td><code>width</code></td>\n<td>Sets the width of the highlight border. Defaults to 2px.</td>\n</tr>\n<tr>\n<td><code>style</code></td>\n<td>Sets the style of the border. Defaults to dotted.</td>\n</tr>\n<tr>\n<td><code>color</code></td>\n<td>Sets the color of the border. Valid colors i.e. are: <code>red</code>, <code>blue</code>, <code>yellow</code>, <code>pink</code>, <code>black</code></td>\n</tr>\n<tr>\n<td><code>mode</code></td>\n<td>Sets the mode of the highlight. Valid modes are: <code>border</code> (classic mode), <code>playwright</code> (Playwrights native). If <code>playwright</code> is used, <code>width</code>, <code>style</code> and <code>color</code> is ignored and only one highlighting can happen at the same time.</td>\n</tr>\n</table>\n<p>Keyword does not fail if selector resolves to multiple elements.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#Highlight%20Elements\" title=\"&quot;Highlight Elements&quot; keyword\" class=\"name\">Highlight Elements</a>    input#login_button    duration=200ms\n${count} =    <a href=\"#Highlight%20Elements\" title=\"&quot;Highlight Elements&quot; keyword\" class=\"name\">Highlight Elements</a>    input#login_button    duration=200ms    width=4px    style=solid    color=\\#FF00FF\nShould Be Equal    ${count}    ${5}\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4294\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Adds a highlight to elements matched by the ``selector``. Provides a style adjustment.",
+      doc: '<p>Adds a highlight to elements matched by the <code>selector</code>. Provides a style adjustment.</p>\n<p>Returns the number of highlighted elements. Keyword does not fail, if <span class="name">locator</span> matched zero elements in the page. Keyword does not scroll elements to viewport and highlighted element might be outside the viewport. Use <a href="#Scroll%20To%20Element" title="&quot;Scroll To Element&quot; keyword" class="name">Scroll To Element</a> keyword to scroll element in viewport.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selectors which shall be highlighted. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>duration</code></td>\n<td>Sets for how long the selector shall be highlighted. Defaults to <code>5s</code> =&gt; 5 seconds. If set to 0 seconds, the highlighting is not deleted.</td>\n</tr>\n<tr>\n<td><code>width</code></td>\n<td>Sets the width of the highlight border. Defaults to 2px.</td>\n</tr>\n<tr>\n<td><code>style</code></td>\n<td>Sets the style of the border. Defaults to dotted.</td>\n</tr>\n<tr>\n<td><code>color</code></td>\n<td>Sets the color of the border. Valid colors i.e. are: <code>red</code>, <code>blue</code>, <code>yellow</code>, <code>pink</code>, <code>black</code></td>\n</tr>\n<tr>\n<td><code>mode</code></td>\n<td>Sets the mode of the highlight. Valid modes are: <code>border</code> (classic mode), <code>playwright</code> (Playwrights native). If <code>playwright</code> is used, <code>width</code>, <code>style</code> and <code>color</code> is ignored and only one highlighting can happen at the same time.</td>\n</tr>\n</table>\n<p>Keyword does not fail if selector resolves to multiple elements.</p>\n<p>Example:</p>\n<pre>\n<a href="#Highlight%20Elements" title="&quot;Highlight Elements&quot; keyword" class="name">Highlight Elements</a>    input#login_button    duration=200ms\n${count} =    <a href="#Highlight%20Elements" title="&quot;Highlight Elements&quot; keyword" class="name">Highlight Elements</a>    input#login_button    duration=200ms    width=4px    style=solid    color=\\#FF00FF\nShould Be Equal    ${count}    ${5}\n</pre>\n<p><a href="https://forum.robotframework.org/t//4294">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Adds a highlight to elements matched by the ``selector``. Provides a style adjustment.",
       args: [
         {
           name: "selector",
@@ -7686,18 +7618,16 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/evaluation.py",
       lineno: 88,
     },
     {
       name: "Hover",
-      doc: "<p>Moves the virtual mouse and scrolls to the element found by <code>selector</code>.</p>\n<p>This method hovers over an element matching <code>selector</code> by performing the following steps:</p>\n<ul>\n<li>Find an element match matching <code>selector</code>. If there is none, wait until a matching element is attached to the DOM.</li>\n<li>Wait for actionability checks on the matched element, unless <code>force</code> option is set. If the element is detached during the checks, the whole action is retried.</li>\n<li>Scroll the element into view if needed.</li>\n<li>Use <a href=\"#Mouse%20Move\" title=\"&quot;Mouse Move&quot; keyword\" class=\"name\">Mouse Move</a> to hover over the center of the element, or the specified <code>position</code>.</li>\n</ul>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n<td></td>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector element to hover. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n<td></td>\n</tr>\n<tr>\n<td><code>position_x</code> &amp; <code>position_y</code></td>\n<td>A point to hover relative to the top-left corner of element bounding box. If not specified, hovers over some visible point of the element. Only positive values within the bounding-box are allowed.</td>\n<td></td>\n</tr>\n<tr>\n<td><code>force</code></td>\n<td>Set to True to skip Playwright's [<a href=\"https://playwright.dev/docs/actionability\">https://playwright.dev/docs/actionability</a></td>\n<td>Actionability checks].</td>\n</tr>\n<tr>\n<td><code>*modifiers</code></td>\n<td>Modifier keys to press. Ensures that only these modifiers are pressed during the hover, and then restores current modifiers back. If not specified, currently pressed modifiers are used.</td>\n<td></td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#Hover\" title=\"&quot;Hover&quot; keyword\" class=\"name\">Hover</a>    h1\n<a href=\"#Hover\" title=\"&quot;Hover&quot; keyword\" class=\"name\">Hover</a>    h1    10   20    Alt\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4295\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Moves the virtual mouse and scrolls to the element found by ``selector``.",
+      doc: '<p>Moves the virtual mouse and scrolls to the element found by <code>selector</code>.</p>\n<p>This method hovers over an element matching <code>selector</code> by performing the following steps:</p>\n<ul>\n<li>Find an element match matching <code>selector</code>. If there is none, wait until a matching element is attached to the DOM.</li>\n<li>Wait for actionability checks on the matched element, unless <code>force</code> option is set. If the element is detached during the checks, the whole action is retried.</li>\n<li>Scroll the element into view if needed.</li>\n<li>Use <a href="#Mouse%20Move" title="&quot;Mouse Move&quot; keyword" class="name">Mouse Move</a> to hover over the center of the element, or the specified <code>position</code>.</li>\n</ul>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n<td></td>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector element to hover. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n<td></td>\n</tr>\n<tr>\n<td><code>position_x</code> &amp; <code>position_y</code></td>\n<td>A point to hover relative to the top-left corner of element bounding box. If not specified, hovers over some visible point of the element. Only positive values within the bounding-box are allowed.</td>\n<td></td>\n</tr>\n<tr>\n<td><code>force</code></td>\n<td>Set to True to skip Playwright\'s [<a href="https://playwright.dev/docs/actionability">https://playwright.dev/docs/actionability</a></td>\n<td>Actionability checks].</td>\n</tr>\n<tr>\n<td><code>*modifiers</code></td>\n<td>Modifier keys to press. Ensures that only these modifiers are pressed during the hover, and then restores current modifiers back. If not specified, currently pressed modifiers are used.</td>\n<td></td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>Example:</p>\n<pre>\n<a href="#Hover" title="&quot;Hover&quot; keyword" class="name">Hover</a>    h1\n<a href="#Hover" title="&quot;Hover&quot; keyword" class="name">Hover</a>    h1    10   20    Alt\n</pre>\n<p><a href="https://forum.robotframework.org/t//4295">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Moves the virtual mouse and scrolls to the element found by ``selector``.",
       args: [
         {
           name: "selector",
@@ -7798,17 +7728,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 522,
     },
     {
       name: "Http",
-      doc: "<p>Performs an HTTP request in the current browser context</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>url</code></td>\n<td>The request url, e.g. <code>/api/foo</code>.</td>\n</tr>\n<tr>\n<td><code>method</code></td>\n<td>The HTTP method for the request. Defaults to GET.</td>\n</tr>\n<tr>\n<td><code>body</code></td>\n<td>The request body. GET requests cannot have a body. If the body can be parsed as JSON, the <code>Content-Type</code> header for the request will be automatically set to <code>application/json</code>. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>headers</code></td>\n<td>A dictionary of additional request headers. Defaults to None.</td>\n</tr>\n</table>\n<p>The response is a Python dictionary with following attributes:</p>\n<ul>\n<li><code>status</code> &lt;int&gt; The status code of the response.</li>\n<li><code>statusText</code> &lt;str&gt; Status text corresponding to <code>status</code>, e.g OK or INTERNAL SERVER ERROR. This may not be available for all browser.</li>\n<li><code>body</code> &lt;dict&gt; | &lt;str&gt; The response body. If the body can be parsed as a JSON object, it will be returned as Python dictionary, otherwise it is returned as a string.</li>\n<li><code>headers</code> &lt;dict&gt; A dictionary containing all response headers.</li>\n<li><code>ok</code> &lt;bool&gt; Whether the request was successful, i.e. the <code>status</code> is range 200-299.</li>\n</ul>\n<p>Here's an example of using Robot Framework dictionary variables and extended variable syntax to do assertions on the response object:</p>\n<pre>\n&amp;{res}=             <a href=\"#Http\" title=\"&quot;Http&quot; keyword\" class=\"name\">HTTP</a>                       /api/endpoint\nShould Be Equal     ${res.status}              200\nShould Be Equal     ${res.body.some_field}     some value\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4296\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Performs an HTTP request in the current browser context</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>url</code></td>\n<td>The request url, e.g. <code>/api/foo</code>.</td>\n</tr>\n<tr>\n<td><code>method</code></td>\n<td>The HTTP method for the request. Defaults to GET.</td>\n</tr>\n<tr>\n<td><code>body</code></td>\n<td>The request body. GET requests cannot have a body. If the body can be parsed as JSON, the <code>Content-Type</code> header for the request will be automatically set to <code>application/json</code>. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>headers</code></td>\n<td>A dictionary of additional request headers. Defaults to None.</td>\n</tr>\n</table>\n<p>The response is a Python dictionary with following attributes:</p>\n<ul>\n<li><code>status</code> &lt;int&gt; The status code of the response.</li>\n<li><code>statusText</code> &lt;str&gt; Status text corresponding to <code>status</code>, e.g OK or INTERNAL SERVER ERROR. This may not be available for all browser.</li>\n<li><code>body</code> &lt;dict&gt; | &lt;str&gt; The response body. If the body can be parsed as a JSON object, it will be returned as Python dictionary, otherwise it is returned as a string.</li>\n<li><code>headers</code> &lt;dict&gt; A dictionary containing all response headers.</li>\n<li><code>ok</code> &lt;bool&gt; Whether the request was successful, i.e. the <code>status</code> is range 200-299.</li>\n</ul>\n<p>Here\'s an example of using Robot Framework dictionary variables and extended variable syntax to do assertions on the response object:</p>\n<pre>\n&amp;{res}=             <a href="#Http" title="&quot;Http&quot; keyword" class="name">HTTP</a>                       /api/endpoint\nShould Be Equal     ${res.status}              200\nShould Be Equal     ${res.body.some_field}     some value\n</pre>\n<p><a href="https://forum.robotframework.org/t//4296">Comment &gt;&gt;</a></p>',
       shortdoc: "Performs an HTTP request in the current browser context",
       args: [
         {
@@ -7901,16 +7828,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "HTTP",
-      ],
+      tags: ["HTTP"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/network.py",
       lineno: 59,
     },
     {
       name: "Keyboard Input",
-      doc: "<p>Input text into page with virtual keyboard.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>action</code></td>\n<td><code>insertText</code>: Dispatches only input event, does not emit the keydown, keyup or keypress events. <code>type</code>: Sends a keydown, keypress/input, and keyup event for each character in the text.</td>\n</tr>\n<tr>\n<td><code>input</code></td>\n<td>The inputstring to be typed. <i>No special keys possible.</i></td>\n</tr>\n<tr>\n<td><code>delay</code></td>\n<td>Time to wait between key presses in Robot Framework's time format. Defaults to 0.</td>\n</tr>\n</table>\n<p><b>Attention:</b> Argument type <a href=\"#type-integer\" title=\"&quot;integer&quot; type\" class=\"name\">int</a> for 'delay' in milliseconds has been changed to <a href=\"#type-timedelta\" title=\"&quot;timedelta&quot; type\" class=\"name\">timedelta</a> in Browser 14.0.0. Use Robot Framework time format with units instead.</p>\n<p>Note: To press a special key, like Control or ArrowDown, use keyboard.press. Modifier keys DO NOT effect these methods. For testing modifier effects use single key presses with <code>Keyboard Key  press</code></p>\n<p>Example:</p>\n<pre>\n<a href=\"#Keyboard%20Input\" title=\"&quot;Keyboard Input&quot; keyword\" class=\"name\">Keyboard Input</a>    insertText    0123456789\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4297\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Input text into page with virtual keyboard.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>action</code></td>\n<td><code>insertText</code>: Dispatches only input event, does not emit the keydown, keyup or keypress events. <code>type</code>: Sends a keydown, keypress/input, and keyup event for each character in the text.</td>\n</tr>\n<tr>\n<td><code>input</code></td>\n<td>The inputstring to be typed. <i>No special keys possible.</i></td>\n</tr>\n<tr>\n<td><code>delay</code></td>\n<td>Time to wait between key presses in Robot Framework\'s time format. Defaults to 0.</td>\n</tr>\n</table>\n<p><b>Attention:</b> Argument type <a href="#type-integer" title="&quot;integer&quot; type" class="name">int</a> for \'delay\' in milliseconds has been changed to <a href="#type-timedelta" title="&quot;timedelta&quot; type" class="name">timedelta</a> in Browser 14.0.0. Use Robot Framework time format with units instead.</p>\n<p>Note: To press a special key, like Control or ArrowDown, use keyboard.press. Modifier keys DO NOT effect these methods. For testing modifier effects use single key presses with <code>Keyboard Key  press</code></p>\n<p>Example:</p>\n<pre>\n<a href="#Keyboard%20Input" title="&quot;Keyboard Input&quot; keyword" class="name">Keyboard Input</a>    insertText    0123456789\n</pre>\n<p><a href="https://forum.robotframework.org/t//4297">Comment &gt;&gt;</a></p>',
       shortdoc: "Input text into page with virtual keyboard.",
       args: [
         {
@@ -7971,18 +7896,16 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 1340,
     },
     {
       name: "Keyboard Key",
-      doc: "<p>Press a keyboard key on the virtual keyboard or set a key up or down.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>action</code></td>\n<td>Determine whether the key should be released (<code>up</code>), hold (<code>down</code>) or pressed once (<code>press</code>). <code>down</code> or <code>up</code> are useful for combinations i.e. with Shift.</td>\n</tr>\n<tr>\n<td><code>key</code></td>\n<td>The key to be pressed. An example of valid keys are: <code>F1</code> - <code>F12</code>, <code>Digit0</code> - <code>Digit9</code>, <code>KeyA</code> - <code>KeyZ</code>, <code>Backquote</code>, <code>Minus</code>, <code>Equal</code>, <code>Backslash</code>, <code>Backspace</code>, <code>Tab</code>, <code>Delete</code>, <code>Escape</code>, <code>ArrowDown</code>, <code>End</code>, <code>Enter</code>, <code>Home</code>, <code>Insert</code>, <code>PageDown</code>, <code>PageUp</code>, <code>ArrowRight</code>, <code>ArrowUp</code> , etc.</td>\n</tr>\n</table>\n<p>Useful keys for <code>down</code> and <code>up</code> for example are: <code>Shift</code>, <code>Control</code>, <code>Alt</code>, <code>Meta</code>, <code>ShiftLeft</code></p>\n<p>Example execution:</p>\n<pre>\n<a href=\"#Keyboard%20Key\" title=\"&quot;Keyboard Key&quot; keyword\" class=\"name\">Keyboard Key</a>    press    S\n<a href=\"#Keyboard%20Key\" title=\"&quot;Keyboard Key&quot; keyword\" class=\"name\">Keyboard Key</a>    down     Shift\n<a href=\"#Keyboard%20Key\" title=\"&quot;Keyboard Key&quot; keyword\" class=\"name\">Keyboard Key</a>    press    ArrowLeft\n<a href=\"#Keyboard%20Key\" title=\"&quot;Keyboard Key&quot; keyword\" class=\"name\">Keyboard Key</a>    press    Delete\n<a href=\"#Keyboard%20Key\" title=\"&quot;Keyboard Key&quot; keyword\" class=\"name\">Keyboard Key</a>    up       Shift\n</pre>\n<p>Note: Capital letters don't need to be written by the help of Shift. You can type them in directly.</p>\n<p><a href=\"https://forum.robotframework.org/t//4298\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Press a keyboard key on the virtual keyboard or set a key up or down.",
+      doc: '<p>Press a keyboard key on the virtual keyboard or set a key up or down.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>action</code></td>\n<td>Determine whether the key should be released (<code>up</code>), hold (<code>down</code>) or pressed once (<code>press</code>). <code>down</code> or <code>up</code> are useful for combinations i.e. with Shift.</td>\n</tr>\n<tr>\n<td><code>key</code></td>\n<td>The key to be pressed. An example of valid keys are: <code>F1</code> - <code>F12</code>, <code>Digit0</code> - <code>Digit9</code>, <code>KeyA</code> - <code>KeyZ</code>, <code>Backquote</code>, <code>Minus</code>, <code>Equal</code>, <code>Backslash</code>, <code>Backspace</code>, <code>Tab</code>, <code>Delete</code>, <code>Escape</code>, <code>ArrowDown</code>, <code>End</code>, <code>Enter</code>, <code>Home</code>, <code>Insert</code>, <code>PageDown</code>, <code>PageUp</code>, <code>ArrowRight</code>, <code>ArrowUp</code> , etc.</td>\n</tr>\n</table>\n<p>Useful keys for <code>down</code> and <code>up</code> for example are: <code>Shift</code>, <code>Control</code>, <code>Alt</code>, <code>Meta</code>, <code>ShiftLeft</code></p>\n<p>Example execution:</p>\n<pre>\n<a href="#Keyboard%20Key" title="&quot;Keyboard Key&quot; keyword" class="name">Keyboard Key</a>    press    S\n<a href="#Keyboard%20Key" title="&quot;Keyboard Key&quot; keyword" class="name">Keyboard Key</a>    down     Shift\n<a href="#Keyboard%20Key" title="&quot;Keyboard Key&quot; keyword" class="name">Keyboard Key</a>    press    ArrowLeft\n<a href="#Keyboard%20Key" title="&quot;Keyboard Key&quot; keyword" class="name">Keyboard Key</a>    press    Delete\n<a href="#Keyboard%20Key" title="&quot;Keyboard Key&quot; keyword" class="name">Keyboard Key</a>    up       Shift\n</pre>\n<p>Note: Capital letters don\'t need to be written by the help of Shift. You can type them in directly.</p>\n<p><a href="https://forum.robotframework.org/t//4298">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Press a keyboard key on the virtual keyboard or set a key up or down.",
       args: [
         {
           name: "action",
@@ -8015,18 +7938,16 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 1311,
     },
     {
       name: "Launch Browser Server",
-      doc: "<p>Launches a new playwright Browser server with specified options.</p>\n<p>Returns a websocket endpoint (wsEndpoint) string that can be used to connect to the server.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>port</code></td>\n<td>Port to use for the browser server. Defaults to 0, which results in a random free port being assigned.</td>\n</tr>\n<tr>\n<td><code>wsPath</code></td>\n<td>If set, Playwright will listen on the given path in addition to the main port. For security, this defaults to an unguessable string.</td>\n</tr>\n</table>\n<p>Check <a href=\"#New%20Browser\" title=\"&quot;New Browser&quot; keyword\" class=\"name\">New Browser</a> for the other argument docs.</p>\n<p>The launched browser server can be used to connect to it with <a href=\"#Connect%20To%20Browser\" title=\"&quot;Connect To Browser&quot; keyword\" class=\"name\">Connect To Browser</a> keyword. This keyword can also be used from command line with <code>rfbrowser launch-browser-server</code> command.</p>\n<p>see <a href=\"https://playwright.dev/docs/api/class-browserserver#browser-server\">Playwright documentation</a> for more information.</p>\n<p><a href=\"https://forum.robotframework.org/t//4306\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Launches a new playwright Browser server with specified options.",
+      doc: '<p>Launches a new playwright Browser server with specified options.</p>\n<p>Returns a websocket endpoint (wsEndpoint) string that can be used to connect to the server.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>port</code></td>\n<td>Port to use for the browser server. Defaults to 0, which results in a random free port being assigned.</td>\n</tr>\n<tr>\n<td><code>wsPath</code></td>\n<td>If set, Playwright will listen on the given path in addition to the main port. For security, this defaults to an unguessable string.</td>\n</tr>\n</table>\n<p>Check <a href="#New%20Browser" title="&quot;New Browser&quot; keyword" class="name">New Browser</a> for the other argument docs.</p>\n<p>The launched browser server can be used to connect to it with <a href="#Connect%20To%20Browser" title="&quot;Connect To Browser&quot; keyword" class="name">Connect To Browser</a> keyword. This keyword can also be used from command line with <code>rfbrowser launch-browser-server</code> command.</p>\n<p>see <a href="https://playwright.dev/docs/api/class-browserserver#browser-server">Playwright documentation</a> for more information.</p>\n<p><a href="https://forum.robotframework.org/t//4306">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Launches a new playwright Browser server with specified options.",
       args: [
         {
           name: "browser",
@@ -8513,17 +8434,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/playwright_state.py",
       lineno: 494,
     },
     {
       name: "LocalStorage Clear",
-      doc: "<p>Remove all saved data from the local storage.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>frame_selector</code></td>\n<td>If this selector points to an element inside an iframe, the LocalStorage of that frame is used. Example: <code>iframe[name=\"test\"] &gt;&gt;&gt; body</code></td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href=\"#LocalStorage%20Set%20Item\" title=\"&quot;LocalStorage Set Item&quot; keyword\" class=\"name\">Local Storage Set Item</a>      Foo    bar\n<a href=\"#LocalStorage%20Clear\" title=\"&quot;LocalStorage Clear&quot; keyword\" class=\"name\">LocalStorage Clear</a>\n${item} =    <a href=\"#LocalStorage%20Get%20Item\" title=\"&quot;LocalStorage Get Item&quot; keyword\" class=\"name\">Local Storage Get Item</a>    Foo\nShould Be Equal    ${item}    ${None}\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4299\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Remove all saved data from the local storage.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>frame_selector</code></td>\n<td>If this selector points to an element inside an iframe, the LocalStorage of that frame is used. Example: <code>iframe[name="test"] &gt;&gt;&gt; body</code></td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href="#LocalStorage%20Set%20Item" title="&quot;LocalStorage Set Item&quot; keyword" class="name">Local Storage Set Item</a>      Foo    bar\n<a href="#LocalStorage%20Clear" title="&quot;LocalStorage Clear&quot; keyword" class="name">LocalStorage Clear</a>\n${item} =    <a href="#LocalStorage%20Get%20Item" title="&quot;LocalStorage Get Item&quot; keyword" class="name">Local Storage Get Item</a>    Foo\nShould Be Equal    ${item}    ${None}\n</pre>\n<p><a href="https://forum.robotframework.org/t//4299">Comment &gt;&gt;</a></p>',
       shortdoc: "Remove all saved data from the local storage.",
       args: [
         {
@@ -8556,17 +8474,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/webapp_state.py",
       lineno: 124,
     },
     {
       name: "LocalStorage Get Item",
-      doc: "<p>Get saved data from the local storage.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>key</code></td>\n<td>Named key of the item in the storage.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>Assertion operator to use. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for more information.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value to compare with.</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>Custom error message to use.</td>\n</tr>\n<tr>\n<td><code>frame_selector</code></td>\n<td>If this selector points to an element inside an iframe, the LocalStorage of that frame is used. Example: <code>iframe[name=\"test\"] &gt;&gt;&gt; body</code></td>\n</tr>\n</table>\n<p>See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for further details for the assertion arguments. Defaults to None.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#LocalStorage%20Get%20Item\" title=\"&quot;LocalStorage Get Item&quot; keyword\" class=\"name\">Local Storage Get Item</a>    Key    ==    Value    My error\n${value} =    <a href=\"#LocalStorage%20Get%20Item\" title=\"&quot;LocalStorage Get Item&quot; keyword\" class=\"name\">Local Storage Get Item</a>    Key\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4300\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Get saved data from the local storage.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>key</code></td>\n<td>Named key of the item in the storage.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>Assertion operator to use. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for more information.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value to compare with.</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>Custom error message to use.</td>\n</tr>\n<tr>\n<td><code>frame_selector</code></td>\n<td>If this selector points to an element inside an iframe, the LocalStorage of that frame is used. Example: <code>iframe[name="test"] &gt;&gt;&gt; body</code></td>\n</tr>\n</table>\n<p>See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for further details for the assertion arguments. Defaults to None.</p>\n<p>Example:</p>\n<pre>\n<a href="#LocalStorage%20Get%20Item" title="&quot;LocalStorage Get Item&quot; keyword" class="name">Local Storage Get Item</a>    Key    ==    Value    My error\n${value} =    <a href="#LocalStorage%20Get%20Item" title="&quot;LocalStorage Get Item&quot; keyword" class="name">Local Storage Get Item</a>    Key\n</pre>\n<p><a href="https://forum.robotframework.org/t//4300">Comment &gt;&gt;</a></p>',
       shortdoc: "Get saved data from the local storage.",
       args: [
         {
@@ -8699,18 +8614,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Assertion", "Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/webapp_state.py",
       lineno: 42,
     },
     {
       name: "LocalStorage Remove Item",
-      doc: "<p>Remove saved data with key from the local storage.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>key</code></td>\n<td>The name of the item which shall be deleted.</td>\n</tr>\n<tr>\n<td><code>frame_selector</code></td>\n<td>If this selector points to an element inside an iframe, the LocalStorage of that frame is used. Example: <code>iframe[name=\"test\"] &gt;&gt;&gt; body</code></td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href=\"#LocalStorage%20Set%20Item\" title=\"&quot;LocalStorage Set Item&quot; keyword\" class=\"name\">Local Storage Set Item</a>      Foo    bar\n<a href=\"#LocalStorage%20Remove%20Item\" title=\"&quot;LocalStorage Remove Item&quot; keyword\" class=\"name\">LocalStorage Remove Item</a>    Foo\n${item} =    <a href=\"#LocalStorage%20Get%20Item\" title=\"&quot;LocalStorage Get Item&quot; keyword\" class=\"name\">Local Storage Get Item</a>    Foo\nShould Be Equal    ${item}    ${None}\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4301\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Remove saved data with key from the local storage.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>key</code></td>\n<td>The name of the item which shall be deleted.</td>\n</tr>\n<tr>\n<td><code>frame_selector</code></td>\n<td>If this selector points to an element inside an iframe, the LocalStorage of that frame is used. Example: <code>iframe[name="test"] &gt;&gt;&gt; body</code></td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href="#LocalStorage%20Set%20Item" title="&quot;LocalStorage Set Item&quot; keyword" class="name">Local Storage Set Item</a>      Foo    bar\n<a href="#LocalStorage%20Remove%20Item" title="&quot;LocalStorage Remove Item&quot; keyword" class="name">LocalStorage Remove Item</a>    Foo\n${item} =    <a href="#LocalStorage%20Get%20Item" title="&quot;LocalStorage Get Item&quot; keyword" class="name">Local Storage Get Item</a>    Foo\nShould Be Equal    ${item}    ${None}\n</pre>\n<p><a href="https://forum.robotframework.org/t//4301">Comment &gt;&gt;</a></p>',
       shortdoc: "Remove saved data with key from the local storage.",
       args: [
         {
@@ -8757,17 +8668,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/webapp_state.py",
       lineno: 103,
     },
     {
       name: "LocalStorage Set Item",
-      doc: "<p>Save data to the local storage.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>key</code></td>\n<td>The name of the key under which it should be saved.</td>\n</tr>\n<tr>\n<td><code>value</code></td>\n<td>The value which shall be saved as a string.</td>\n</tr>\n<tr>\n<td><code>frame_selector</code></td>\n<td>If this selector points to an element inside an iframe, the LocalStorage of that frame is used. Example: <code>iframe[name=\"test\"] &gt;&gt;&gt; body</code></td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href=\"#LocalStorage%20Set%20Item\" title=\"&quot;LocalStorage Set Item&quot; keyword\" class=\"name\">Local Storage Set Item</a>    Key    Value\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4302\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Save data to the local storage.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>key</code></td>\n<td>The name of the key under which it should be saved.</td>\n</tr>\n<tr>\n<td><code>value</code></td>\n<td>The value which shall be saved as a string.</td>\n</tr>\n<tr>\n<td><code>frame_selector</code></td>\n<td>If this selector points to an element inside an iframe, the LocalStorage of that frame is used. Example: <code>iframe[name="test"] &gt;&gt;&gt; body</code></td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href="#LocalStorage%20Set%20Item" title="&quot;LocalStorage Set Item&quot; keyword" class="name">Local Storage Set Item</a>    Key    Value\n</pre>\n<p><a href="https://forum.robotframework.org/t//4302">Comment &gt;&gt;</a></p>',
       shortdoc: "Save data to the local storage.",
       args: [
         {
@@ -8828,17 +8736,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/webapp_state.py",
       lineno: 81,
     },
     {
       name: "Merge Coverage Reports",
-      doc: "<p>Combines multiple raw coverage reports to single report.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>input_folder</code></td>\n<td>Path to the base folder where the raw coverage reports are located.</td>\n</tr>\n<tr>\n<td><code>output_folder</code></td>\n<td>Path to the folder where the combined report is stored.</td>\n</tr>\n<tr>\n<td><code>config_file</code></td>\n<td>Optional path to <a href=\"https://www.npmjs.com/package/monocart-coverage-reports#options\">options file</a></td>\n</tr>\n<tr>\n<td><code>name</code></td>\n<td>Optional name for the combined report.</td>\n</tr>\n<tr>\n<td><code>reports</code></td>\n<td>Optional report format (default is \"v8\").</td>\n</tr>\n</table>\n<p>The input_folder argument is the base folder where the coverage reports are located. Keyword will look into each subfolder and if the subfolder contains \"raw\" folder, it will use data from the \"raw\" folder for combined reports.</p>\n<p>The output_folder argument is the folder where the combined report is saved. If folder does not exist, it is created. If folder exists, it's content is deleted before report is created.</p>\n<p>The output_folder and input_folder must be full paths to the folders.</p>\n<p>The config_file argument is optional and can be used to provide a path to a monocart-coverage-reports options file. For more details see: <a href=\"https://www.npmjs.com/package/monocart-coverage-reports#config-file\">https://www.npmjs.com/package/monocart-coverage-reports#config-file</a></p>\n<p>The name argument is optional and can be used to provide a name for the combined report.</p>\n<p>The reports argument is optional and can be used to provide a list of reporters to create. Default is 'v8'.</p>\n<p>The keyword combines only the raw reports. To get raw reports, <a href=\"#Start%20Coverage\" title=\"&quot;Start Coverage&quot; keyword\" class=\"name\">Start Coverage</a> keyword must be called with <span class=\"name\">raw=True</span> argument. Keyword should be used when there is a need to combine multiple reports to single report. For example, when tests are run in multiple pages, the example in below demonstrates how to use the keyword.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#New%20Page\" title=\"&quot;New Page&quot; keyword\" class=\"name\">New Page</a>\n<a href=\"#Start%20Coverage\" title=\"&quot;Start Coverage&quot; keyword\" class=\"name\">Start Coverage</a>\n<a href=\"#Go%20To\" title=\"&quot;Go To&quot; keyword\" class=\"name\">Go To</a>    ${LOGIN_URL}\nTest Feature X In The Page\n<a href=\"#Stop%20Coverage\" title=\"&quot;Stop Coverage&quot; keyword\" class=\"name\">Stop Coverage</a>\n<a href=\"#New%20Page\" title=\"&quot;New Page&quot; keyword\" class=\"name\">New Page</a>\n<a href=\"#Start%20Coverage\" title=\"&quot;Start Coverage&quot; keyword\" class=\"name\">Start Coverage</a>\n<a href=\"#Go%20To\" title=\"&quot;Go To&quot; keyword\" class=\"name\">Go To</a>    ${LOGIN_URL}\nTest Feature Y In The Page\n<a href=\"#Stop%20Coverage\" title=\"&quot;Stop Coverage&quot; keyword\" class=\"name\">Stop Coverage</a>\n<a href=\"#Merge%20Coverage%20Reports\" title=\"&quot;Merge Coverage Reports&quot; keyword\" class=\"name\">Merge Coverage Reports</a>    ${OUTPUT_DIR}/browser/coverage    ${OUTPUT_DIR}/browser/combined-coverage\n</pre>",
+      doc: '<p>Combines multiple raw coverage reports to single report.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>input_folder</code></td>\n<td>Path to the base folder where the raw coverage reports are located.</td>\n</tr>\n<tr>\n<td><code>output_folder</code></td>\n<td>Path to the folder where the combined report is stored.</td>\n</tr>\n<tr>\n<td><code>config_file</code></td>\n<td>Optional path to <a href="https://www.npmjs.com/package/monocart-coverage-reports#options">options file</a></td>\n</tr>\n<tr>\n<td><code>name</code></td>\n<td>Optional name for the combined report.</td>\n</tr>\n<tr>\n<td><code>reports</code></td>\n<td>Optional report format (default is "v8").</td>\n</tr>\n</table>\n<p>The input_folder argument is the base folder where the coverage reports are located. Keyword will look into each subfolder and if the subfolder contains "raw" folder, it will use data from the "raw" folder for combined reports.</p>\n<p>The output_folder argument is the folder where the combined report is saved. If folder does not exist, it is created. If folder exists, it\'s content is deleted before report is created.</p>\n<p>The output_folder and input_folder must be full paths to the folders.</p>\n<p>The config_file argument is optional and can be used to provide a path to a monocart-coverage-reports options file. For more details see: <a href="https://www.npmjs.com/package/monocart-coverage-reports#config-file">https://www.npmjs.com/package/monocart-coverage-reports#config-file</a></p>\n<p>The name argument is optional and can be used to provide a name for the combined report.</p>\n<p>The reports argument is optional and can be used to provide a list of reporters to create. Default is \'v8\'.</p>\n<p>The keyword combines only the raw reports. To get raw reports, <a href="#Start%20Coverage" title="&quot;Start Coverage&quot; keyword" class="name">Start Coverage</a> keyword must be called with <span class="name">raw=True</span> argument. Keyword should be used when there is a need to combine multiple reports to single report. For example, when tests are run in multiple pages, the example in below demonstrates how to use the keyword.</p>\n<p>Example:</p>\n<pre>\n<a href="#New%20Page" title="&quot;New Page&quot; keyword" class="name">New Page</a>\n<a href="#Start%20Coverage" title="&quot;Start Coverage&quot; keyword" class="name">Start Coverage</a>\n<a href="#Go%20To" title="&quot;Go To&quot; keyword" class="name">Go To</a>    ${LOGIN_URL}\nTest Feature X In The Page\n<a href="#Stop%20Coverage" title="&quot;Stop Coverage&quot; keyword" class="name">Stop Coverage</a>\n<a href="#New%20Page" title="&quot;New Page&quot; keyword" class="name">New Page</a>\n<a href="#Start%20Coverage" title="&quot;Start Coverage&quot; keyword" class="name">Start Coverage</a>\n<a href="#Go%20To" title="&quot;Go To&quot; keyword" class="name">Go To</a>    ${LOGIN_URL}\nTest Feature Y In The Page\n<a href="#Stop%20Coverage" title="&quot;Stop Coverage&quot; keyword" class="name">Stop Coverage</a>\n<a href="#Merge%20Coverage%20Reports" title="&quot;Merge Coverage Reports&quot; keyword" class="name">Merge Coverage Reports</a>    ${OUTPUT_DIR}/browser/coverage    ${OUTPUT_DIR}/browser/combined-coverage\n</pre>',
       shortdoc: "Combines multiple raw coverage reports to single report.",
       args: [
         {
@@ -8965,17 +8870,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Coverage",
-        "Setter",
-      ],
+      tags: ["Coverage", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/coverage.py",
       lineno: 122,
     },
     {
       name: "Mouse Button",
-      doc: "<p>Clicks, presses or releases a mouse button.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>action</code></td>\n<td>Defines if it is a mouseclick (<code>click</code>), holding down a button (<code>down</code>) or releasing it (<code>up</code>).</td>\n</tr>\n<tr>\n<td><code>x</code>, <code>y</code></td>\n<td>Coordinates to move before action is executed.</td>\n</tr>\n<tr>\n<td><code>button</code></td>\n<td>One of <code>left</code>, <code>middle</code> or <code>up</code>. Defaults to <code>left</code>.</td>\n</tr>\n<tr>\n<td><code>clickCount</code></td>\n<td>Determine how often the button shall be clicked if action is equal to <code>click</code>. Defaults to 1.</td>\n</tr>\n<tr>\n<td><code>delay</code></td>\n<td>Delay in Robot Framework time format between the mousedown and mouseup event. Can only be set if the action is <code>click</code>.</td>\n</tr>\n</table>\n<p><b>Attention:</b> Argument type <a href=\"#type-integer\" title=\"&quot;integer&quot; type\" class=\"name\">int</a> for 'delay' in milliseconds has been changed to <a href=\"#type-timedelta\" title=\"&quot;timedelta&quot; type\" class=\"name\">timedelta</a> in Browser 14.0.0. Use Robot Framework time format instead. For refactoring just add 'ms' after the delay number.</p>\n<p>Delay Example:</p>\n<pre>\n<a href=\"#Mouse%20Button\" title=\"&quot;Mouse Button&quot; keyword\" class=\"name\">Mouse Button</a>    click    100 ms\n<a href=\"#Mouse%20Button\" title=\"&quot;Mouse Button&quot; keyword\" class=\"name\">Mouse Button</a>    click    ${dyn_delay} ms\n</pre>\n<p>Moving the mouse between holding down and releasing it, is possible with <a href=\"#Mouse%20Move\" title=\"&quot;Mouse Move&quot; keyword\" class=\"name\">Mouse Move</a>.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#Hover\" title=\"&quot;Hover&quot; keyword\" class=\"name\">Hover</a>                     \"Obstacle\"           # Move mouse over the element\n<a href=\"#Mouse%20Button\" title=\"&quot;Mouse Button&quot; keyword\" class=\"name\">Mouse Button</a>              down                 # Press mouse button down\n<a href=\"#Mouse%20Move%20Relative%20To\" title=\"&quot;Mouse Move Relative To&quot; keyword\" class=\"name\">Mouse Move Relative To</a>    \"Obstacle\"    500    # Drag mouse\n<a href=\"#Mouse%20Button\" title=\"&quot;Mouse Button&quot; keyword\" class=\"name\">Mouse Button</a>              up                   # Release mouse button\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4303\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Clicks, presses or releases a mouse button.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>action</code></td>\n<td>Defines if it is a mouseclick (<code>click</code>), holding down a button (<code>down</code>) or releasing it (<code>up</code>).</td>\n</tr>\n<tr>\n<td><code>x</code>, <code>y</code></td>\n<td>Coordinates to move before action is executed.</td>\n</tr>\n<tr>\n<td><code>button</code></td>\n<td>One of <code>left</code>, <code>middle</code> or <code>up</code>. Defaults to <code>left</code>.</td>\n</tr>\n<tr>\n<td><code>clickCount</code></td>\n<td>Determine how often the button shall be clicked if action is equal to <code>click</code>. Defaults to 1.</td>\n</tr>\n<tr>\n<td><code>delay</code></td>\n<td>Delay in Robot Framework time format between the mousedown and mouseup event. Can only be set if the action is <code>click</code>.</td>\n</tr>\n</table>\n<p><b>Attention:</b> Argument type <a href="#type-integer" title="&quot;integer&quot; type" class="name">int</a> for \'delay\' in milliseconds has been changed to <a href="#type-timedelta" title="&quot;timedelta&quot; type" class="name">timedelta</a> in Browser 14.0.0. Use Robot Framework time format instead. For refactoring just add \'ms\' after the delay number.</p>\n<p>Delay Example:</p>\n<pre>\n<a href="#Mouse%20Button" title="&quot;Mouse Button&quot; keyword" class="name">Mouse Button</a>    click    100 ms\n<a href="#Mouse%20Button" title="&quot;Mouse Button&quot; keyword" class="name">Mouse Button</a>    click    ${dyn_delay} ms\n</pre>\n<p>Moving the mouse between holding down and releasing it, is possible with <a href="#Mouse%20Move" title="&quot;Mouse Move&quot; keyword" class="name">Mouse Move</a>.</p>\n<p>Example:</p>\n<pre>\n<a href="#Hover" title="&quot;Hover&quot; keyword" class="name">Hover</a>                     "Obstacle"           # Move mouse over the element\n<a href="#Mouse%20Button" title="&quot;Mouse Button&quot; keyword" class="name">Mouse Button</a>              down                 # Press mouse button down\n<a href="#Mouse%20Move%20Relative%20To" title="&quot;Mouse Move Relative To&quot; keyword" class="name">Mouse Move Relative To</a>    "Obstacle"    500    # Drag mouse\n<a href="#Mouse%20Button" title="&quot;Mouse Button&quot; keyword" class="name">Mouse Button</a>              up                   # Release mouse button\n</pre>\n<p><a href="https://forum.robotframework.org/t//4303">Comment &gt;&gt;</a></p>',
       shortdoc: "Clicks, presses or releases a mouse button.",
       args: [
         {
@@ -9104,18 +9006,16 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 1030,
     },
     {
       name: "Mouse Move",
-      doc: "<p>Instead of selectors command mouse with coordinates. The Click commands will leave the virtual mouse on the specified coordinates.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>x</code> &amp; <code>y</code></td>\n<td>Are absolute coordinates starting at the top left of the page.</td>\n</tr>\n<tr>\n<td><code>steps</code></td>\n<td>Number of intermediate steps for the mouse event. Often it is necessary to send more than one intermediate event to get the desired result. Defaults to 1.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href=\"#Mouse%20Move\" title=\"&quot;Mouse Move&quot; keyword\" class=\"name\">Mouse Move</a>    400    400\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4304\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Instead of selectors command mouse with coordinates. The Click commands will leave the virtual mouse on the specified coordinates.",
+      doc: '<p>Instead of selectors command mouse with coordinates. The Click commands will leave the virtual mouse on the specified coordinates.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>x</code> &amp; <code>y</code></td>\n<td>Are absolute coordinates starting at the top left of the page.</td>\n</tr>\n<tr>\n<td><code>steps</code></td>\n<td>Number of intermediate steps for the mouse event. Often it is necessary to send more than one intermediate event to get the desired result. Defaults to 1.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href="#Mouse%20Move" title="&quot;Mouse Move&quot; keyword" class="name">Mouse Move</a>    400    400\n</pre>\n<p><a href="https://forum.robotframework.org/t//4304">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Instead of selectors command mouse with coordinates. The Click commands will leave the virtual mouse on the specified coordinates.",
       args: [
         {
           name: "x",
@@ -9162,17 +9062,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 1271,
     },
     {
       name: "Mouse Move Relative To",
-      doc: "<p>Moves the mouse cursor relative to the selected element.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Identifies the element, which center is the start-point.</td>\n</tr>\n<tr>\n<td><code>x</code> &amp; <code>y</code></td>\n<td>Are relative coordinates to the center of the elements bounding box.</td>\n</tr>\n<tr>\n<td><code>steps</code></td>\n<td>Number of intermediate steps for the mouse event. Often it is necessary to send more than one intermediate event to get the desired result. Defaults to 1.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#Mouse%20Move%20Relative%20To\" title=\"&quot;Mouse Move Relative To&quot; keyword\" class=\"name\">Mouse Move Relative To</a>    id=indicator    -100\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4305\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Moves the mouse cursor relative to the selected element.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Identifies the element, which center is the start-point.</td>\n</tr>\n<tr>\n<td><code>x</code> &amp; <code>y</code></td>\n<td>Are relative coordinates to the center of the elements bounding box.</td>\n</tr>\n<tr>\n<td><code>steps</code></td>\n<td>Number of intermediate steps for the mouse event. Often it is necessary to send more than one intermediate event to get the desired result. Defaults to 1.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>Example:</p>\n<pre>\n<a href="#Mouse%20Move%20Relative%20To" title="&quot;Mouse Move Relative To&quot; keyword" class="name">Mouse Move Relative To</a>    id=indicator    -100\n</pre>\n<p><a href="https://forum.robotframework.org/t//4305">Comment &gt;&gt;</a></p>',
       shortdoc: "Moves the mouse cursor relative to the selected element.",
       args: [
         {
@@ -9234,17 +9131,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 1228,
     },
     {
       name: "Mouse Wheel",
-      doc: "<p>Simulates the user rotation of a mouse wheel.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>deltaX</code> &amp; <code>deltaY</code></td>\n<td>Pixels that are scrolled horizontally &amp; vertically.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n# Before doing a mouse wheel interaction. A mouse needs to be positioned on the browser window.\n<a href=\"#Hover\" title=\"&quot;Hover&quot; keyword\" class=\"name\">Hover</a>    body\n<a href=\"#Mouse%20Wheel\" title=\"&quot;Mouse Wheel&quot; keyword\" class=\"name\">Mouse Wheel</a>    0    250\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//5186\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Simulates the user rotation of a mouse wheel.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>deltaX</code> &amp; <code>deltaY</code></td>\n<td>Pixels that are scrolled horizontally &amp; vertically.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n# Before doing a mouse wheel interaction. A mouse needs to be positioned on the browser window.\n<a href="#Hover" title="&quot;Hover&quot; keyword" class="name">Hover</a>    body\n<a href="#Mouse%20Wheel" title="&quot;Mouse Wheel&quot; keyword" class="name">Mouse Wheel</a>    0    250\n</pre>\n<p><a href="https://forum.robotframework.org/t//5186">Comment &gt;&gt;</a></p>',
       shortdoc: "Simulates the user rotation of a mouse wheel.",
       args: [
         {
@@ -9278,17 +9172,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 1291,
     },
     {
       name: "New Browser",
-      doc: "<p>Create a new playwright Browser with specified options.</p>\n<p>See <a href=\"#Browser%2C%20Context%20and%20Page\" title=\"&quot;Browser, Context and Page&quot; section\" class=\"name\">Browser, Context and Page</a> for more information about Browser and related concepts.</p>\n<p>Returns a stable identifier for the created browser.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>browser</code></td>\n<td>Opens the specified <a href=\"#type-SupportedBrowsers\">browser</a>. Defaults to chromium.</td>\n</tr>\n<tr>\n<td><code>headless</code></td>\n<td>Set to False if you want a GUI. Defaults to True.</td>\n</tr>\n<tr>\n<td><code>args</code></td>\n<td>Additional arguments to pass to the browser instance. The list of Chromium flags can be found <a href=\"http://peter.sh/experiments/chromium-command-line-switches/\">here</a>. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>channel</code></td>\n<td>Allows to operate against the stock Google Chrome and Microsoft Edge browsers. For more details see: <a href=\"https://playwright.dev/docs/browsers#google-chrome--microsoft-edge\">Playwright documentation</a>.</td>\n</tr>\n<tr>\n<td><code>chromiumSandbox</code></td>\n<td>Enable Chromium sandboxing. Defaults to False.</td>\n</tr>\n<tr>\n<td><code>devtools</code></td>\n<td>Chromium-only Whether to auto-open a Developer Tools panel for each tab.</td>\n</tr>\n<tr>\n<td><code>downloadsPath</code></td>\n<td>If specified, accepted downloads are downloaded into this folder. Otherwise, temporary folder is created and is deleted when browser is closed. Regarding file deletion, see the docs of <a href=\"#Download\" title=\"&quot;Download&quot; keyword\" class=\"name\">Download</a> and <a href=\"#Promise%20To%20Wait%20For%20Download\" title=\"&quot;Promise To Wait For Download&quot; keyword\" class=\"name\">Promise To Wait For Download</a>.</td>\n</tr>\n<tr>\n<td><code>env</code></td>\n<td>Specifies environment variables that will be visible to the browser. Dictionary keys are variable names, values are the content. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>executablePath</code></td>\n<td>Path to a browser executable to run instead of the bundled one. If executablePath is a relative path, then it is resolved relative to current working directory. Note that Playwright only works with the bundled Chromium, Firefox or WebKit, use at your own risk. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>firefoxUserPrefs</code> |Firefox user preferences. Learn more about the Firefox user preferences at <a href=\"https://support.mozilla.org/en-US/kb/about-config-editor-firefox\">about:config</a>.</td>\n<td></td>\n</tr>\n<tr>\n<td><code>handleSIGHUP</code></td>\n<td>Close the browser process on SIGHUP. Defaults to True.</td>\n</tr>\n<tr>\n<td><code>handleSIGINT</code></td>\n<td>Close the browser process on Ctrl-C. Defaults to True.</td>\n</tr>\n<tr>\n<td><code>handleSIGTERM</code></td>\n<td>Close the browser process on SIGTERM. Defaults to True.</td>\n</tr>\n<tr>\n<td><code>ignoreDefaultArgs</code></td>\n<td>If True, Playwright does not pass its own configurations args and only uses the ones from args. If a list is given, then filters out the given default arguments. Dangerous option; use with care. Defaults to False.</td>\n</tr>\n</table>\n<pre>\n<code>proxy</code> | Network <a href=\"#type-Proxy\">Proxy</a> settings. Structure: <code>{'server': &lt;str&gt;, 'bypass': &lt;Optional[str]&gt;, 'username': &lt;Optional[str]&gt;, 'password': &lt;Optional[str]&gt;}</code>. Robot Framework 7.4 Secret type is supported.|\n<code>reuse_existing</code> | If set to True, an existing browser instance, that matches the same arguments, will be reused. If no same configured Browser exist, a new one is started. Defaults to True. |\n<code>slowMo</code> | Slows down Playwright operations by the specified amount of seconds or <a href=\"#type-timedelta\" title=\"&quot;timedelta&quot; type\" class=\"name\">timedelta</a>. Useful so that you can see what is going on. Defaults to no delay. |\n<code>timeout</code> | Maximum time in Robot Framework time format to wait for the browser instance to start. Defaults to 30 seconds. Pass 0 to disable timeout. |\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4306\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Create a new playwright Browser with specified options.</p>\n<p>See <a href="#Browser%2C%20Context%20and%20Page" title="&quot;Browser, Context and Page&quot; section" class="name">Browser, Context and Page</a> for more information about Browser and related concepts.</p>\n<p>Returns a stable identifier for the created browser.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>browser</code></td>\n<td>Opens the specified <a href="#type-SupportedBrowsers">browser</a>. Defaults to chromium.</td>\n</tr>\n<tr>\n<td><code>headless</code></td>\n<td>Set to False if you want a GUI. Defaults to True.</td>\n</tr>\n<tr>\n<td><code>args</code></td>\n<td>Additional arguments to pass to the browser instance. The list of Chromium flags can be found <a href="http://peter.sh/experiments/chromium-command-line-switches/">here</a>. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>channel</code></td>\n<td>Allows to operate against the stock Google Chrome and Microsoft Edge browsers. For more details see: <a href="https://playwright.dev/docs/browsers#google-chrome--microsoft-edge">Playwright documentation</a>.</td>\n</tr>\n<tr>\n<td><code>chromiumSandbox</code></td>\n<td>Enable Chromium sandboxing. Defaults to False.</td>\n</tr>\n<tr>\n<td><code>devtools</code></td>\n<td>Chromium-only Whether to auto-open a Developer Tools panel for each tab.</td>\n</tr>\n<tr>\n<td><code>downloadsPath</code></td>\n<td>If specified, accepted downloads are downloaded into this folder. Otherwise, temporary folder is created and is deleted when browser is closed. Regarding file deletion, see the docs of <a href="#Download" title="&quot;Download&quot; keyword" class="name">Download</a> and <a href="#Promise%20To%20Wait%20For%20Download" title="&quot;Promise To Wait For Download&quot; keyword" class="name">Promise To Wait For Download</a>.</td>\n</tr>\n<tr>\n<td><code>env</code></td>\n<td>Specifies environment variables that will be visible to the browser. Dictionary keys are variable names, values are the content. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>executablePath</code></td>\n<td>Path to a browser executable to run instead of the bundled one. If executablePath is a relative path, then it is resolved relative to current working directory. Note that Playwright only works with the bundled Chromium, Firefox or WebKit, use at your own risk. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>firefoxUserPrefs</code> |Firefox user preferences. Learn more about the Firefox user preferences at <a href="https://support.mozilla.org/en-US/kb/about-config-editor-firefox">about:config</a>.</td>\n<td></td>\n</tr>\n<tr>\n<td><code>handleSIGHUP</code></td>\n<td>Close the browser process on SIGHUP. Defaults to True.</td>\n</tr>\n<tr>\n<td><code>handleSIGINT</code></td>\n<td>Close the browser process on Ctrl-C. Defaults to True.</td>\n</tr>\n<tr>\n<td><code>handleSIGTERM</code></td>\n<td>Close the browser process on SIGTERM. Defaults to True.</td>\n</tr>\n<tr>\n<td><code>ignoreDefaultArgs</code></td>\n<td>If True, Playwright does not pass its own configurations args and only uses the ones from args. If a list is given, then filters out the given default arguments. Dangerous option; use with care. Defaults to False.</td>\n</tr>\n</table>\n<pre>\n<code>proxy</code> | Network <a href="#type-Proxy">Proxy</a> settings. Structure: <code>{\'server\': &lt;str&gt;, \'bypass\': &lt;Optional[str]&gt;, \'username\': &lt;Optional[str]&gt;, \'password\': &lt;Optional[str]&gt;}</code>. Robot Framework 7.4 Secret type is supported.|\n<code>reuse_existing</code> | If set to True, an existing browser instance, that matches the same arguments, will be reused. If no same configured Browser exist, a new one is started. Defaults to True. |\n<code>slowMo</code> | Slows down Playwright operations by the specified amount of seconds or <a href="#type-timedelta" title="&quot;timedelta&quot; type" class="name">timedelta</a>. Useful so that you can see what is going on. Defaults to no delay. |\n<code>timeout</code> | Maximum time in Robot Framework time format to wait for the browser instance to start. Defaults to 30 seconds. Pass 0 to disable timeout. |\n</pre>\n<p><a href="https://forum.robotframework.org/t//4306">Comment &gt;&gt;</a></p>',
       shortdoc: "Create a new playwright Browser with specified options.",
       args: [
         {
@@ -9722,17 +9613,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/playwright_state.py",
       lineno: 423,
     },
     {
       name: "New Context",
-      doc: "<p>Create a new BrowserContext with specified options.</p>\n<p>See <a href=\"#Browser%2C%20Context%20and%20Page\" title=\"&quot;Browser, Context and Page&quot; section\" class=\"name\">Browser, Context and Page</a> for more information about BrowserContext.</p>\n<p>Returns a stable identifier for the created context that can be used in <a href=\"#Switch%20Context\" title=\"&quot;Switch Context&quot; keyword\" class=\"name\">Switch Context</a>.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>acceptDownloads</code></td>\n<td>Whether to automatically download all the attachments. Defaults to True where all the downloads are accepted.</td>\n</tr>\n<tr>\n<td><code>baseURL</code></td>\n<td>When using <a href=\"#Go%20To\" title=\"&quot;Go To&quot; keyword\" class=\"name\">Go To</a>, <a href=\"#Wait%20For%20Request\" title=\"&quot;Wait For Request&quot; keyword\" class=\"name\">Wait For Request</a>, <a href=\"#Wait%20For%20Response\" title=\"&quot;Wait For Response&quot; keyword\" class=\"name\">Wait For Response</a> or <a href=\"#Wait%20For%20Navigation\" title=\"&quot;Wait For Navigation&quot; keyword\" class=\"name\">Wait For Navigation</a> it takes the base URL in consideration by using the URL() constructor for building the corresponding URL. Unset by default. Examples: <code>baseURL=http://localhost:3000</code> and navigating to <code>/bar.html</code> results in <code>http://localhost:3000/bar.html</code>. <code>baseURL=http://localhost:3000/foo/</code> and navigating to <code>./bar.html</code> results in <code>http://localhost:3000/foo/bar.html</code>. <code>baseURL=http://localhost:3000/foo</code> (without trailing slash) and navigating to <code>./bar.html</code> results in <code>http://localhost:3000/bar.html</code>.</td>\n</tr>\n<tr>\n<td><code>bypassCSP</code></td>\n<td>Toggles bypassing page's Content-Security-Policy. Defaults to False.</td>\n</tr>\n<tr>\n<td><code>clientCertificates</code></td>\n<td>Specifies a client certificate for mTLS authentication, for example <code>clientCertificates=[{'origin': '<a href=\"https://playwright.dev\">https://playwright.dev</a>', 'pfxPath': 'certificate.p12', 'passphrase': 'password'}]</code>. <b>NOTE:</b> The origin needs to be exact whithout any path.</td>\n</tr>\n<tr>\n<td><code>colorScheme</code></td>\n<td>Emulates <span class=\"name\">'prefers-colors-scheme'</span> media feature, supported values are <span class=\"name\">'light'</span>, <span class=\"name\">'dark'</span>, <span class=\"name\">'no-preference'</span>.</td>\n</tr>\n<tr>\n<td><code>defaultBrowserType</code></td>\n<td>If no browser is open and <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a> opens a new browser with defaults, it now uses this setting. Very useful together with <a href=\"#Get%20Device\" title=\"&quot;Get Device&quot; keyword\" class=\"name\">Get Device</a> keyword.</td>\n</tr>\n<tr>\n<td><code>deviceScaleFactor</code></td>\n<td>Specify device scale factor (can be thought of as dpr). Defaults to <code>1</code>.</td>\n</tr>\n<tr>\n<td><code>extraHTTPHeaders</code></td>\n<td>A dictionary containing additional HTTP headers to be sent with every request. All header values must be strings.</td>\n</tr>\n<tr>\n<td><code>forcedColors</code></td>\n<td>Emulates <span class=\"name\">forced-colors</span> media feature, supported values are <span class=\"name\">active</span> and <a href=\"#type-None\" title=\"&quot;None&quot; type\" class=\"name\">none</a>.</td>\n</tr>\n<tr>\n<td><code>geolocation</code></td>\n<td>A dictionary containing <code>latitude</code> and <code>longitude</code> or <code>accuracy</code> to emulate. If <code>latitude</code> or <code>longitude</code> is not specified, the device geolocation won't be overriden.</td>\n</tr>\n<tr>\n<td><code>hasTouch</code></td>\n<td>Specifies if viewport supports touch events. Defaults to False.</td>\n</tr>\n<tr>\n<td><code>httpCredentials</code></td>\n<td>Credentials for <a href=\"https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication\">HTTP authentication</a>.</td>\n</tr>\n<tr>\n<td><code>ignoreHTTPSErrors</code></td>\n<td>Whether to ignore HTTPS errors during navigation. Defaults to False.</td>\n</tr>\n<tr>\n<td><code>isMobile</code></td>\n<td>Whether the meta viewport tag is taken into account and touch events are enabled. Defaults to False.</td>\n</tr>\n<tr>\n<td><code>javaScriptEnabled</code></td>\n<td>Whether or not to enable JavaScript in the context. Defaults to True.</td>\n</tr>\n<tr>\n<td><code>locale</code></td>\n<td>Specify user locale, for example <code>en-GB</code>, <code>de-DE</code>, etc.</td>\n</tr>\n<tr>\n<td><code>offline</code></td>\n<td>Toggles browser's offline mode. Defaults to False.</td>\n</tr>\n<tr>\n<td><code>permissions</code></td>\n<td>A list containing permissions to grant to all pages in this context. All permissions that are not listed here will be automatically denied.</td>\n</tr>\n<tr>\n<td><code>proxy</code></td>\n<td>Network proxy settings to use with this context. Defaults to None. <b>NOTE:</b> For Chromium on Windows the browser needs to be launched with the global proxy for this option to work. If all contexts override the proxy, global proxy will be never used and can be any string, for example <code>proxy={ server: '<a href=\"http://per-context\">http://per-context</a>' }</code>.</td>\n</tr>\n<tr>\n<td><code>recordHar</code></td>\n<td>Enables <a href=\"http://www.softwareishard.com/blog/har-12-spec/\">HAR</a> recording for all pages into to a file. Must be path to file, example ${OUTPUT_DIR}/har.file. If not specified, the HAR is not recorded. Make sure to await context to close for the to be saved.</td>\n</tr>\n<tr>\n<td><code>recordVideo</code></td>\n<td>Enables video recording for all pages into a folder. If not specified videos are not recorded. Make sure to close context for videos to be saved. Video is not support in remote browsers.</td>\n</tr>\n<tr>\n<td><code>reduceMotion</code></td>\n<td>Emulates <span class=\"name\">prefers-reduced-motion</span> media feature, supported values are <span class=\"name\">reduce</span>, <span class=\"name\">no-preference</span>.</td>\n</tr>\n<tr>\n<td><code>screen</code></td>\n<td>Emulates consistent window screen size available inside web page via window.screen. Is only used when the viewport is set. Example {'width': 414, 'height': 896}</td>\n</tr>\n<tr>\n<td><code>serviceWorkers</code></td>\n<td>Whether to allow sites to register Service workers. Defaults to 'allow'.</td>\n</tr>\n<tr>\n<td><code>storageState</code></td>\n<td>Restores the storage stated created by the <a href=\"#Save%20Storage%20State\" title=\"&quot;Save Storage State&quot; keyword\" class=\"name\">Save Storage State</a> keyword. Must be full path to the file.</td>\n</tr>\n<tr>\n<td><code>timezoneId</code></td>\n<td>Changes the timezone of the context. See <a href=\"https://source.chromium.org/chromium/chromium/src/+/master:third_party/icu/source/data/misc/metaZones.txt\">ICU`s metaZones.txt</a> for a list of supported timezone IDs.</td>\n</tr>\n<tr>\n<td><code>tracing</code></td>\n<td>Boolean <code>True</code> (recommendation) or file path or directory where the <a href=\"https://playwright.dev/docs/api/class-tracing/\">tracing</a> file is saved. The string <span class=\"name\">{contextid}</span> will be replaces with the context id. Path to *.zip files can be absolute or relative to ${OUTPUT_DIR}. Path to folders can be absolute or relative to ${OUTPUT_DIR}/browser/traces. If boolean <code>True</code> or a directory is given, the trace file will automatically be named <code>trace_{contextid}.tip</code>. Temporary trace files will be saved to ${OUTPUT_DIR}/Browser/traces/temp. Tracing is automatically closed when context is closed. Temporary trace files will be automatically deleted at start of each test execution. Trace file can be opened after the test execution by running command from shell: <code>rfbrowser show-trace /path/to/trace.zip</code>. Tracing can also be enables by setting a Robot Framework variable or environment variable <code>ROBOT_FRAMEWORK_BROWSER_TRACING</code> to <code>True</code>.</td>\n</tr>\n<tr>\n<td><code>userAgent</code></td>\n<td>Specific user agent to use in this context.</td>\n</tr>\n<tr>\n<td><code>viewport</code></td>\n<td>A dictionary containing <code>width</code> and <code>height</code>. Emulates consistent viewport for each page. Defaults to 1280x720. null disables the default viewport. If <code>width</code> and <code>height</code> is  <code>0</code>, the viewport will scale with the window.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\nTest an iPhone\n    ${device}=    <a href=\"#Get%20Device\" title=\"&quot;Get Device&quot; keyword\" class=\"name\">Get Device</a>    iPhone X\n    <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a>    &amp;{device}        # unpacking here with &amp;\n    <a href=\"#New%20Page\" title=\"&quot;New Page&quot; keyword\" class=\"name\">New Page</a>    <a href=\"http://example.com\">http://example.com</a>\n</pre>\n<p>A BrowserContext is the Playwright object that controls a single browser profile. Within a context caches and cookies are shared. See <a href=\"https://playwright.dev/docs/api/class-browser#browsernewcontextoptions\">Playwright browser.newContext</a> for a list of supported options.</p>\n<p>If there's no open Browser this keyword will open one. Does not create pages.</p>\n<p>The httpCredentials and proxy arguments do support Robot Framework 7.4 Secret type. If Secret is used, the dictionary structure must be created before hand, example with Robot Framework's VAR syntax:</p>\n<pre>\n${user}   ${password} =    Get Secrets    # Returns username and password as Robot Framework Secret type\nVAR    &amp;{httpCredentials} =    username=${user}    password=${password}\nNew Context    httpCredentials=${httpCredentials}\n</pre>\n<p>Using dictionary literals with Robot Framework 7.4 Secret type is not supported, for example this will fail on variable conversion on Robot Framework side:</p>\n<pre>\n${user}   ${password} =    Get Secrets    # Returns username and password as Robot Framework Secret type\nNew Context    httpCredentials={'username': ${secret}, 'password': ${secret}}    # This will fail\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4307\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Create a new BrowserContext with specified options.</p>\n<p>See <a href="#Browser%2C%20Context%20and%20Page" title="&quot;Browser, Context and Page&quot; section" class="name">Browser, Context and Page</a> for more information about BrowserContext.</p>\n<p>Returns a stable identifier for the created context that can be used in <a href="#Switch%20Context" title="&quot;Switch Context&quot; keyword" class="name">Switch Context</a>.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>acceptDownloads</code></td>\n<td>Whether to automatically download all the attachments. Defaults to True where all the downloads are accepted.</td>\n</tr>\n<tr>\n<td><code>baseURL</code></td>\n<td>When using <a href="#Go%20To" title="&quot;Go To&quot; keyword" class="name">Go To</a>, <a href="#Wait%20For%20Request" title="&quot;Wait For Request&quot; keyword" class="name">Wait For Request</a>, <a href="#Wait%20For%20Response" title="&quot;Wait For Response&quot; keyword" class="name">Wait For Response</a> or <a href="#Wait%20For%20Navigation" title="&quot;Wait For Navigation&quot; keyword" class="name">Wait For Navigation</a> it takes the base URL in consideration by using the URL() constructor for building the corresponding URL. Unset by default. Examples: <code>baseURL=http://localhost:3000</code> and navigating to <code>/bar.html</code> results in <code>http://localhost:3000/bar.html</code>. <code>baseURL=http://localhost:3000/foo/</code> and navigating to <code>./bar.html</code> results in <code>http://localhost:3000/foo/bar.html</code>. <code>baseURL=http://localhost:3000/foo</code> (without trailing slash) and navigating to <code>./bar.html</code> results in <code>http://localhost:3000/bar.html</code>.</td>\n</tr>\n<tr>\n<td><code>bypassCSP</code></td>\n<td>Toggles bypassing page\'s Content-Security-Policy. Defaults to False.</td>\n</tr>\n<tr>\n<td><code>clientCertificates</code></td>\n<td>Specifies a client certificate for mTLS authentication, for example <code>clientCertificates=[{\'origin\': \'<a href="https://playwright.dev">https://playwright.dev</a>\', \'pfxPath\': \'certificate.p12\', \'passphrase\': \'password\'}]</code>. <b>NOTE:</b> The origin needs to be exact whithout any path.</td>\n</tr>\n<tr>\n<td><code>colorScheme</code></td>\n<td>Emulates <span class="name">\'prefers-colors-scheme\'</span> media feature, supported values are <span class="name">\'light\'</span>, <span class="name">\'dark\'</span>, <span class="name">\'no-preference\'</span>.</td>\n</tr>\n<tr>\n<td><code>defaultBrowserType</code></td>\n<td>If no browser is open and <a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a> opens a new browser with defaults, it now uses this setting. Very useful together with <a href="#Get%20Device" title="&quot;Get Device&quot; keyword" class="name">Get Device</a> keyword.</td>\n</tr>\n<tr>\n<td><code>deviceScaleFactor</code></td>\n<td>Specify device scale factor (can be thought of as dpr). Defaults to <code>1</code>.</td>\n</tr>\n<tr>\n<td><code>extraHTTPHeaders</code></td>\n<td>A dictionary containing additional HTTP headers to be sent with every request. All header values must be strings.</td>\n</tr>\n<tr>\n<td><code>forcedColors</code></td>\n<td>Emulates <span class="name">forced-colors</span> media feature, supported values are <span class="name">active</span> and <a href="#type-None" title="&quot;None&quot; type" class="name">none</a>.</td>\n</tr>\n<tr>\n<td><code>geolocation</code></td>\n<td>A dictionary containing <code>latitude</code> and <code>longitude</code> or <code>accuracy</code> to emulate. If <code>latitude</code> or <code>longitude</code> is not specified, the device geolocation won\'t be overriden.</td>\n</tr>\n<tr>\n<td><code>hasTouch</code></td>\n<td>Specifies if viewport supports touch events. Defaults to False.</td>\n</tr>\n<tr>\n<td><code>httpCredentials</code></td>\n<td>Credentials for <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication">HTTP authentication</a>.</td>\n</tr>\n<tr>\n<td><code>ignoreHTTPSErrors</code></td>\n<td>Whether to ignore HTTPS errors during navigation. Defaults to False.</td>\n</tr>\n<tr>\n<td><code>isMobile</code></td>\n<td>Whether the meta viewport tag is taken into account and touch events are enabled. Defaults to False.</td>\n</tr>\n<tr>\n<td><code>javaScriptEnabled</code></td>\n<td>Whether or not to enable JavaScript in the context. Defaults to True.</td>\n</tr>\n<tr>\n<td><code>locale</code></td>\n<td>Specify user locale, for example <code>en-GB</code>, <code>de-DE</code>, etc.</td>\n</tr>\n<tr>\n<td><code>offline</code></td>\n<td>Toggles browser\'s offline mode. Defaults to False.</td>\n</tr>\n<tr>\n<td><code>permissions</code></td>\n<td>A list containing permissions to grant to all pages in this context. All permissions that are not listed here will be automatically denied.</td>\n</tr>\n<tr>\n<td><code>proxy</code></td>\n<td>Network proxy settings to use with this context. Defaults to None. <b>NOTE:</b> For Chromium on Windows the browser needs to be launched with the global proxy for this option to work. If all contexts override the proxy, global proxy will be never used and can be any string, for example <code>proxy={ server: \'<a href="http://per-context">http://per-context</a>\' }</code>.</td>\n</tr>\n<tr>\n<td><code>recordHar</code></td>\n<td>Enables <a href="http://www.softwareishard.com/blog/har-12-spec/">HAR</a> recording for all pages into to a file. Must be path to file, example ${OUTPUT_DIR}/har.file. If not specified, the HAR is not recorded. Make sure to await context to close for the to be saved.</td>\n</tr>\n<tr>\n<td><code>recordVideo</code></td>\n<td>Enables video recording for all pages into a folder. If not specified videos are not recorded. Make sure to close context for videos to be saved. Video is not support in remote browsers.</td>\n</tr>\n<tr>\n<td><code>reduceMotion</code></td>\n<td>Emulates <span class="name">prefers-reduced-motion</span> media feature, supported values are <span class="name">reduce</span>, <span class="name">no-preference</span>.</td>\n</tr>\n<tr>\n<td><code>screen</code></td>\n<td>Emulates consistent window screen size available inside web page via window.screen. Is only used when the viewport is set. Example {\'width\': 414, \'height\': 896}</td>\n</tr>\n<tr>\n<td><code>serviceWorkers</code></td>\n<td>Whether to allow sites to register Service workers. Defaults to \'allow\'.</td>\n</tr>\n<tr>\n<td><code>storageState</code></td>\n<td>Restores the storage stated created by the <a href="#Save%20Storage%20State" title="&quot;Save Storage State&quot; keyword" class="name">Save Storage State</a> keyword. Must be full path to the file.</td>\n</tr>\n<tr>\n<td><code>timezoneId</code></td>\n<td>Changes the timezone of the context. See <a href="https://source.chromium.org/chromium/chromium/src/+/master:third_party/icu/source/data/misc/metaZones.txt">ICU`s metaZones.txt</a> for a list of supported timezone IDs.</td>\n</tr>\n<tr>\n<td><code>tracing</code></td>\n<td>Boolean <code>True</code> (recommendation) or file path or directory where the <a href="https://playwright.dev/docs/api/class-tracing/">tracing</a> file is saved. The string <span class="name">{contextid}</span> will be replaces with the context id. Path to *.zip files can be absolute or relative to ${OUTPUT_DIR}. Path to folders can be absolute or relative to ${OUTPUT_DIR}/browser/traces. If boolean <code>True</code> or a directory is given, the trace file will automatically be named <code>trace_{contextid}.tip</code>. Temporary trace files will be saved to ${OUTPUT_DIR}/Browser/traces/temp. Tracing is automatically closed when context is closed. Temporary trace files will be automatically deleted at start of each test execution. Trace file can be opened after the test execution by running command from shell: <code>rfbrowser show-trace /path/to/trace.zip</code>. Tracing can also be enables by setting a Robot Framework variable or environment variable <code>ROBOT_FRAMEWORK_BROWSER_TRACING</code> to <code>True</code>.</td>\n</tr>\n<tr>\n<td><code>userAgent</code></td>\n<td>Specific user agent to use in this context.</td>\n</tr>\n<tr>\n<td><code>viewport</code></td>\n<td>A dictionary containing <code>width</code> and <code>height</code>. Emulates consistent viewport for each page. Defaults to 1280x720. null disables the default viewport. If <code>width</code> and <code>height</code> is  <code>0</code>, the viewport will scale with the window.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\nTest an iPhone\n    ${device}=    <a href="#Get%20Device" title="&quot;Get Device&quot; keyword" class="name">Get Device</a>    iPhone X\n    <a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a>    &amp;{device}        # unpacking here with &amp;\n    <a href="#New%20Page" title="&quot;New Page&quot; keyword" class="name">New Page</a>    <a href="http://example.com">http://example.com</a>\n</pre>\n<p>A BrowserContext is the Playwright object that controls a single browser profile. Within a context caches and cookies are shared. See <a href="https://playwright.dev/docs/api/class-browser#browsernewcontextoptions">Playwright browser.newContext</a> for a list of supported options.</p>\n<p>If there\'s no open Browser this keyword will open one. Does not create pages.</p>\n<p>The httpCredentials and proxy arguments do support Robot Framework 7.4 Secret type. If Secret is used, the dictionary structure must be created before hand, example with Robot Framework\'s VAR syntax:</p>\n<pre>\n${user}   ${password} =    Get Secrets    # Returns username and password as Robot Framework Secret type\nVAR    &amp;{httpCredentials} =    username=${user}    password=${password}\nNew Context    httpCredentials=${httpCredentials}\n</pre>\n<p>Using dictionary literals with Robot Framework 7.4 Secret type is not supported, for example this will fail on variable conversion on Robot Framework side:</p>\n<pre>\n${user}   ${password} =    Get Secrets    # Returns username and password as Robot Framework Secret type\nNew Context    httpCredentials={\'username\': ${secret}, \'password\': ${secret}}    # This will fail\n</pre>\n<p><a href="https://forum.robotframework.org/t//4307">Comment &gt;&gt;</a></p>',
       shortdoc: "Create a new BrowserContext with specified options.",
       args: [
         {
@@ -10490,17 +10378,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/playwright_state.py",
       lineno: 581,
     },
     {
       name: "New Page",
-      doc: "<p>Open a new Page.</p>\n<p>A Page is the Playwright equivalent to a tab. See <a href=\"#Browser%2C%20Context%20and%20Page\" title=\"&quot;Browser, Context and Page&quot; section\" class=\"name\">Browser, Context and Page</a> for more information about Page concept.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>url</code></td>\n<td>Optional URL to navigate the page to. The url should include protocol, e.g. <span class=\"name\">https://</span></td>\n</tr>\n<tr>\n<td><code>wait_until</code></td>\n<td>When to consider operation succeeded, defaults to load. Events can be either: <code>domcontentloaded</code> - consider operation to be finished when the DOMContentLoaded event is fired. <code>load</code> - consider operation to be finished when the load event is fired. <code>networkidle</code> - consider operation to be finished when there are no network connections for at least 500 ms. <code>commit</code> - consider operation to be finished when network response is received and the document started loading.</td>\n</tr>\n</table>\n<p>Returns <a href=\"#type-NewPageDetails\" title=\"&quot;NewPageDetails&quot; type\" class=\"name\">NewPageDetails</a> as dictionary for created page. <a href=\"#type-NewPageDetails\" title=\"&quot;NewPageDetails&quot; type\" class=\"name\">NewPageDetails</a> (dict) contains the keys <code>page_id</code> and <code>video_path</code>. <code>page_id</code> is a stable identifier for the created page. <code>video_path</code> is path to the created video or empty if video is not created.</p>\n<p>When a <a href=\"#New%20Page\" title=\"&quot;New Page&quot; keyword\" class=\"name\">New Page</a> is called without an open browser, <a href=\"#New%20Browser\" title=\"&quot;New Browser&quot; keyword\" class=\"name\">New Browser</a> and <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a> are executed with default values first.</p>\n<p><a href=\"https://forum.robotframework.org/t//4308\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Open a new Page.</p>\n<p>A Page is the Playwright equivalent to a tab. See <a href="#Browser%2C%20Context%20and%20Page" title="&quot;Browser, Context and Page&quot; section" class="name">Browser, Context and Page</a> for more information about Page concept.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>url</code></td>\n<td>Optional URL to navigate the page to. The url should include protocol, e.g. <span class="name">https://</span></td>\n</tr>\n<tr>\n<td><code>wait_until</code></td>\n<td>When to consider operation succeeded, defaults to load. Events can be either: <code>domcontentloaded</code> - consider operation to be finished when the DOMContentLoaded event is fired. <code>load</code> - consider operation to be finished when the load event is fired. <code>networkidle</code> - consider operation to be finished when there are no network connections for at least 500 ms. <code>commit</code> - consider operation to be finished when network response is received and the document started loading.</td>\n</tr>\n</table>\n<p>Returns <a href="#type-NewPageDetails" title="&quot;NewPageDetails&quot; type" class="name">NewPageDetails</a> as dictionary for created page. <a href="#type-NewPageDetails" title="&quot;NewPageDetails&quot; type" class="name">NewPageDetails</a> (dict) contains the keys <code>page_id</code> and <code>video_path</code>. <code>page_id</code> is a stable identifier for the created page. <code>video_path</code> is path to the created video or empty if video is not created.</p>\n<p>When a <a href="#New%20Page" title="&quot;New Page&quot; keyword" class="name">New Page</a> is called without an open browser, <a href="#New%20Browser" title="&quot;New Browser&quot; keyword" class="name">New Browser</a> and <a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a> are executed with default values first.</p>\n<p><a href="https://forum.robotframework.org/t//4308">Comment &gt;&gt;</a></p>',
       shortdoc: "Open a new Page.",
       args: [
         {
@@ -10552,18 +10437,16 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/playwright_state.py",
       lineno: 976,
     },
     {
       name: "New Persistent Context",
-      doc: "<p>Open a new <a href=\"https://playwright.dev/docs/api/class-browsertype#browser-type-launch-persistent-context\">persistent context</a>.</p>\n<p><a href=\"#New%20Persistent%20Context\" title=\"&quot;New Persistent Context&quot; keyword\" class=\"name\">New Persistent Context</a> does basically executes <a href=\"#New%20Browser\" title=\"&quot;New Browser&quot; keyword\" class=\"name\">New Browser</a>, <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a> and <a href=\"#New%20Page\" title=\"&quot;New Page&quot; keyword\" class=\"name\">New Page</a> in one step with setting a profile at the same time.</p>\n<p>This keyword returns a tuple of browser id, context id and page details. (New in Browser 15.0.0)</p>\n<table border=\"1\">\n<tr>\n<th>Argument</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>userDataDir</code></td>\n<td>Path to a User Data Directory, which stores browser session data like cookies and local storage. More details for Chromium and Firefox. Note that Chromium's user data directory is the parent directory of the \"Profile Path\" seen at <a href=\"chrome://version\">chrome://version</a>. Pass an empty string to use a temporary directory instead.</td>\n</tr>\n<tr>\n<td><code>browser</code></td>\n<td>Browser type to use. Default is Chromium.</td>\n</tr>\n<tr>\n<td><code>headless</code></td>\n<td>Whether to run browser in headless mode. Defaults to <code>True</code>.</td>\n</tr>\n<tr>\n<td>other arguments</td>\n<td>Please see <a href=\"#New%20Browser\" title=\"&quot;New Browser&quot; keyword\" class=\"name\">New Browser</a>, <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a> and <a href=\"#New%20Page\" title=\"&quot;New Page&quot; keyword\" class=\"name\">New Page</a> for more information about the other arguments.</td>\n</tr>\n</table>\n<p>If you want to use extensions you need to download the extension as a .zip, enable loading the extension, and load the extensions using chromium arguments like below. Extensions only work with chromium and with a headful browser.</p>\n<pre>\n${launch_args}=  Set Variable  [\"--disable-extensions-except=./ublock/uBlock0.chromium\", \"--load-extension=./ublock/uBlock0.chromium\"]\n${browserId}  ${contextId}  ${pageDetails}=  <a href=\"#New%20Persistent%20Context\" title=\"&quot;New Persistent Context&quot; keyword\" class=\"name\">New Persistent Context</a>  browser=chromium  headless=False  url=https://robocon,io  args=${launch_args}\n</pre>\n<p>Check <a href=\"#New%20Browser\" title=\"&quot;New Browser&quot; keyword\" class=\"name\">New Browser</a>, <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a> and <a href=\"#New%20Page\" title=\"&quot;New Page&quot; keyword\" class=\"name\">New Page</a> for the specific argument docs.</p>\n<p><a href=\"https://forum.robotframework.org/t//4309\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Open a new [https://playwright.dev/docs/api/class-browsertype#browser-type-launch-persistent-context | persistent context].",
+      doc: '<p>Open a new <a href="https://playwright.dev/docs/api/class-browsertype#browser-type-launch-persistent-context">persistent context</a>.</p>\n<p><a href="#New%20Persistent%20Context" title="&quot;New Persistent Context&quot; keyword" class="name">New Persistent Context</a> does basically executes <a href="#New%20Browser" title="&quot;New Browser&quot; keyword" class="name">New Browser</a>, <a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a> and <a href="#New%20Page" title="&quot;New Page&quot; keyword" class="name">New Page</a> in one step with setting a profile at the same time.</p>\n<p>This keyword returns a tuple of browser id, context id and page details. (New in Browser 15.0.0)</p>\n<table border="1">\n<tr>\n<th>Argument</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>userDataDir</code></td>\n<td>Path to a User Data Directory, which stores browser session data like cookies and local storage. More details for Chromium and Firefox. Note that Chromium\'s user data directory is the parent directory of the "Profile Path" seen at <a href="chrome://version">chrome://version</a>. Pass an empty string to use a temporary directory instead.</td>\n</tr>\n<tr>\n<td><code>browser</code></td>\n<td>Browser type to use. Default is Chromium.</td>\n</tr>\n<tr>\n<td><code>headless</code></td>\n<td>Whether to run browser in headless mode. Defaults to <code>True</code>.</td>\n</tr>\n<tr>\n<td>other arguments</td>\n<td>Please see <a href="#New%20Browser" title="&quot;New Browser&quot; keyword" class="name">New Browser</a>, <a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a> and <a href="#New%20Page" title="&quot;New Page&quot; keyword" class="name">New Page</a> for more information about the other arguments.</td>\n</tr>\n</table>\n<p>If you want to use extensions you need to download the extension as a .zip, enable loading the extension, and load the extensions using chromium arguments like below. Extensions only work with chromium and with a headful browser.</p>\n<pre>\n${launch_args}=  Set Variable  ["--disable-extensions-except=./ublock/uBlock0.chromium", "--load-extension=./ublock/uBlock0.chromium"]\n${browserId}  ${contextId}  ${pageDetails}=  <a href="#New%20Persistent%20Context" title="&quot;New Persistent Context&quot; keyword" class="name">New Persistent Context</a>  browser=chromium  headless=False  url=https://robocon,io  args=${launch_args}\n</pre>\n<p>Check <a href="#New%20Browser" title="&quot;New Browser&quot; keyword" class="name">New Browser</a>, <a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a> and <a href="#New%20Page" title="&quot;New Page&quot; keyword" class="name">New Page</a> for the specific argument docs.</p>\n<p><a href="https://forum.robotframework.org/t//4309">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Open a new [https://playwright.dev/docs/api/class-browsertype#browser-type-launch-persistent-context | persistent context].",
       args: [
         {
           name: "userDataDir",
@@ -11610,8 +11493,9 @@ const DATA: Libdoc = {
     },
     {
       name: "Open Browser",
-      doc: "<p>Opens a new browser instance. Use this keyword for quick experiments or debugging sessions.</p>\n<p>Use <a href=\"#New%20Page\" title=\"&quot;New Page&quot; keyword\" class=\"name\">New Page</a> directly instead of <a href=\"#Open%20Browser\" title=\"&quot;Open Browser&quot; keyword\" class=\"name\">Open Browser</a> for production and automated execution. See <a href=\"#Browser%2C%20Context%20and%20Page\" title=\"&quot;Browser, Context and Page&quot; section\" class=\"name\">Browser, Context and Page</a> for more information about Browser and related concepts.</p>\n<p>Creates a new browser, context and page with specified settings.</p>\n<table border=\"1\">\n<tr>\n<th>Argument</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>url</code></td>\n<td>Navigates to URL if provided. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>browser</code></td>\n<td>Specifies which browser to use. The supported browsers are listed in the table below.</td>\n</tr>\n<tr>\n<td><code>headless</code></td>\n<td>If set to False, a GUI is provided otherwise it is hidden. Defaults to False.</td>\n</tr>\n<tr>\n<td><code>pause_on_failure</code></td>\n<td>Stop execution when failure detected and leave browser open. Defaults to True.</td>\n</tr>\n<tr>\n<td><code>bypassCSP</code></td>\n<td>Defaults to bypassing CSP and enabling custom script attach to the page.</td>\n</tr>\n</table>\n<p>Browsers:</p>\n<table border=\"1\">\n<tr>\n<th>Value</th>\n<th>Name(s)</th>\n</tr>\n<tr>\n<td><code>firefox</code></td>\n<td><a href=\"https://www.mozilla.org/en-US/firefox/new\">Firefox</a></td>\n</tr>\n<tr>\n<td><code>chromium</code></td>\n<td><a href=\"https://www.chromium.org/Home\">Chromium</a></td>\n</tr>\n<tr>\n<td><code>webkit</code></td>\n<td><a href=\"https://webkit.org/\">webkit</a></td>\n</tr>\n</table>\n<p><a href=\"https://forum.robotframework.org/t//4310\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Opens a new browser instance. Use this keyword for quick experiments or debugging sessions.",
+      doc: '<p>Opens a new browser instance. Use this keyword for quick experiments or debugging sessions.</p>\n<p>Use <a href="#New%20Page" title="&quot;New Page&quot; keyword" class="name">New Page</a> directly instead of <a href="#Open%20Browser" title="&quot;Open Browser&quot; keyword" class="name">Open Browser</a> for production and automated execution. See <a href="#Browser%2C%20Context%20and%20Page" title="&quot;Browser, Context and Page&quot; section" class="name">Browser, Context and Page</a> for more information about Browser and related concepts.</p>\n<p>Creates a new browser, context and page with specified settings.</p>\n<table border="1">\n<tr>\n<th>Argument</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>url</code></td>\n<td>Navigates to URL if provided. Defaults to None.</td>\n</tr>\n<tr>\n<td><code>browser</code></td>\n<td>Specifies which browser to use. The supported browsers are listed in the table below.</td>\n</tr>\n<tr>\n<td><code>headless</code></td>\n<td>If set to False, a GUI is provided otherwise it is hidden. Defaults to False.</td>\n</tr>\n<tr>\n<td><code>pause_on_failure</code></td>\n<td>Stop execution when failure detected and leave browser open. Defaults to True.</td>\n</tr>\n<tr>\n<td><code>bypassCSP</code></td>\n<td>Defaults to bypassing CSP and enabling custom script attach to the page.</td>\n</tr>\n</table>\n<p>Browsers:</p>\n<table border="1">\n<tr>\n<th>Value</th>\n<th>Name(s)</th>\n</tr>\n<tr>\n<td><code>firefox</code></td>\n<td><a href="https://www.mozilla.org/en-US/firefox/new">Firefox</a></td>\n</tr>\n<tr>\n<td><code>chromium</code></td>\n<td><a href="https://www.chromium.org/Home">Chromium</a></td>\n</tr>\n<tr>\n<td><code>webkit</code></td>\n<td><a href="https://webkit.org/">webkit</a></td>\n</tr>\n</table>\n<p><a href="https://forum.robotframework.org/t//4310">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Opens a new browser instance. Use this keyword for quick experiments or debugging sessions.",
       args: [
         {
           name: "url",
@@ -11694,18 +11578,16 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/playwright_state.py",
       lineno: 75,
     },
     {
       name: "Pause At",
-      doc: "<p>Advance the clock by jumping forward in time and pause the time.</p>\n<table border=\"1\">\n<tr>\n<td>Argument</td>\n<td>Description</td>\n</tr>\n<tr>\n<td>time</td>\n<td>The time to pause the clock at.</td>\n</tr>\n</table>\n<p>Only fires due timers at most once. This is equivalent to user closing the laptop lid for a while and reopening it at the specified time and pausing. Pause can not move clock backwards.</p>\n<p>Example:</p>\n<table border=\"1\">\n<tr>\n<td><a href=\"#Set%20Time\" title=\"&quot;Set Time&quot; keyword\" class=\"name\">Set Time</a></td>\n<td>2024-10-31 17:34:00</td>\n<td># Set the clock to a specific time</td>\n</tr>\n<tr>\n<td>Do Something</td>\n<td># Implement this in your keyword</td>\n<td></td>\n</tr>\n<tr>\n<td><a href=\"#Pause%20At\" title=\"&quot;Pause At&quot; keyword\" class=\"name\">Pause At</a></td>\n<td>2024-10-31 18:34:00</td>\n<td># Pause the clock at a specific time</td>\n</tr>\n<tr>\n<td>Check Something</td>\n<td># Also this is implemented in your keyword</td>\n<td></td>\n</tr>\n<tr>\n<td><a href=\"#Resume%20Clock\" title=\"&quot;Resume Clock&quot; keyword\" class=\"name\">Resume Clock</a></td>\n<td># Resume the clock</td>\n<td></td>\n</tr>\n<tr>\n<td>Do Something Else</td>\n<td># Do something after clock runs normally</td>\n<td></td>\n</tr>\n</table>",
-      shortdoc: "Advance the clock by jumping forward in time and pause the time.",
+      doc: '<p>Advance the clock by jumping forward in time and pause the time.</p>\n<table border="1">\n<tr>\n<td>Argument</td>\n<td>Description</td>\n</tr>\n<tr>\n<td>time</td>\n<td>The time to pause the clock at.</td>\n</tr>\n</table>\n<p>Only fires due timers at most once. This is equivalent to user closing the laptop lid for a while and reopening it at the specified time and pausing. Pause can not move clock backwards.</p>\n<p>Example:</p>\n<table border="1">\n<tr>\n<td><a href="#Set%20Time" title="&quot;Set Time&quot; keyword" class="name">Set Time</a></td>\n<td>2024-10-31 17:34:00</td>\n<td># Set the clock to a specific time</td>\n</tr>\n<tr>\n<td>Do Something</td>\n<td># Implement this in your keyword</td>\n<td></td>\n</tr>\n<tr>\n<td><a href="#Pause%20At" title="&quot;Pause At&quot; keyword" class="name">Pause At</a></td>\n<td>2024-10-31 18:34:00</td>\n<td># Pause the clock at a specific time</td>\n</tr>\n<tr>\n<td>Check Something</td>\n<td># Also this is implemented in your keyword</td>\n<td></td>\n</tr>\n<tr>\n<td><a href="#Resume%20Clock" title="&quot;Resume Clock&quot; keyword" class="name">Resume Clock</a></td>\n<td># Resume the clock</td>\n<td></td>\n</tr>\n<tr>\n<td>Do Something Else</td>\n<td># Do something after clock runs normally</td>\n<td></td>\n</tr>\n</table>',
+      shortdoc:
+        "Advance the clock by jumping forward in time and pause the time.",
       args: [
         {
           name: "time",
@@ -11724,18 +11606,16 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "Clock",
-        "Setter",
-      ],
+      tags: ["Clock", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/clock.py",
       lineno: 69,
     },
     {
       name: "Press Keys",
-      doc: "<p>Types the given key combination into element found by <code>selector</code>.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the text field. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>*keys</code></td>\n<td>Keys to be press after each other. Using + to chain combine modifiers with a single keypress <code>Control+Shift+T</code> is supported.</td>\n</tr>\n<tr>\n<td><code>press_duration</code></td>\n<td>Delay between keydown and keyup of each key. Can be given as seconds (float) or as Robot Framework time string. Defaults to <code>0 ms</code>. Example: <code>50 ms</code></td>\n</tr>\n<tr>\n<td><code>key_delay</code></td>\n<td>Delay between key presses. Can be given as seconds (float) or as Robot Framework time string. Defaults to <code>0 ms</code>. Example: <code>50 ms</code></td>\n</tr>\n</table>\n<p>Supports values like \"a, b\" which will be automatically typed.</p>\n<p>Also supports identifiers for keys like <code>ArrowLeft</code> or <code>Backspace</code>.</p>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>See playwright's documentation for a more comprehensive list of supported input keys. <a href=\"https://playwright.dev/docs/api/class-page#page-press\">Playwright docs for press.</a></p>\n<p>Example:</p>\n<pre>\n# Keyword         Selector                    *Keys\n<a href=\"#Press%20Keys\" title=\"&quot;Press Keys&quot; keyword\" class=\"name\">Press Keys</a>      //*[@id=\"username_field\"]    h    e   l   o   ArrowLeft   l\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4311\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Types the given key combination into element found by ``selector``.",
+      doc: '<p>Types the given key combination into element found by <code>selector</code>.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the text field. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>*keys</code></td>\n<td>Keys to be press after each other. Using + to chain combine modifiers with a single keypress <code>Control+Shift+T</code> is supported.</td>\n</tr>\n<tr>\n<td><code>press_duration</code></td>\n<td>Delay between keydown and keyup of each key. Can be given as seconds (float) or as Robot Framework time string. Defaults to <code>0 ms</code>. Example: <code>50 ms</code></td>\n</tr>\n<tr>\n<td><code>key_delay</code></td>\n<td>Delay between key presses. Can be given as seconds (float) or as Robot Framework time string. Defaults to <code>0 ms</code>. Example: <code>50 ms</code></td>\n</tr>\n</table>\n<p>Supports values like "a, b" which will be automatically typed.</p>\n<p>Also supports identifiers for keys like <code>ArrowLeft</code> or <code>Backspace</code>.</p>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>See playwright\'s documentation for a more comprehensive list of supported input keys. <a href="https://playwright.dev/docs/api/class-page#page-press">Playwright docs for press.</a></p>\n<p>Example:</p>\n<pre>\n# Keyword         Selector                    *Keys\n<a href="#Press%20Keys" title="&quot;Press Keys&quot; keyword" class="name">Press Keys</a>      //*[@id="username_field"]    h    e   l   o   ArrowLeft   l\n</pre>\n<p><a href="https://forum.robotframework.org/t//4311">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Types the given key combination into element found by ``selector``.",
       args: [
         {
           name: "selector",
@@ -11796,17 +11676,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 283,
     },
     {
       name: "Promise To",
-      doc: "<p>Wrap a Browser library keyword and make it a promise.</p>\n<p>Promised keyword is executed and started on background. Test execution continues without waiting for <code>kw</code> to finish.</p>\n<p>Returns reference to the promised keyword.</p>\n<p><code>kw</code> Keyword that will work async on background.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>kw</code></td>\n<td>Keyword that will work async on background.</td>\n</tr>\n<tr>\n<td><code>*args</code></td>\n<td>Keyword arguments as normally used.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n${promise}=     <a href=\"#Promise%20To\" title=\"&quot;Promise To&quot; keyword\" class=\"name\">Promise To</a>            Wait For Response     matcher=     timeout=3\n<a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>           \\#delayed_request\n${body}=        <a href=\"#Wait%20For\" title=\"&quot;Wait For&quot; keyword\" class=\"name\">Wait For</a>              ${promise}\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4312\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Wrap a Browser library keyword and make it a promise.</p>\n<p>Promised keyword is executed and started on background. Test execution continues without waiting for <code>kw</code> to finish.</p>\n<p>Returns reference to the promised keyword.</p>\n<p><code>kw</code> Keyword that will work async on background.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>kw</code></td>\n<td>Keyword that will work async on background.</td>\n</tr>\n<tr>\n<td><code>*args</code></td>\n<td>Keyword arguments as normally used.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n${promise}=     <a href="#Promise%20To" title="&quot;Promise To&quot; keyword" class="name">Promise To</a>            Wait For Response     matcher=     timeout=3\n<a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>           \\#delayed_request\n${body}=        <a href="#Wait%20For" title="&quot;Wait For&quot; keyword" class="name">Wait For</a>              ${promise}\n</pre>\n<p><a href="https://forum.robotframework.org/t//4312">Comment &gt;&gt;</a></p>',
       shortdoc: "Wrap a Browser library keyword and make it a promise.",
       args: [
         {
@@ -11840,17 +11717,16 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Wait",
-      ],
+      tags: ["Wait"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/promises.py",
       lineno: 39,
     },
     {
       name: "Promise To Upload File",
-      doc: "<p>Returns a promise that resolves when file from <code>path</code> has been uploaded.</p>\n<p>Fails if the upload has not happened during timeout.</p>\n<p>Upload file from <code>path</code> into next file chooser dialog on page.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>path</code></td>\n<td>Path to file to be uploaded.</td>\n</tr>\n</table>\n<p>Example use:</p>\n<pre>\n${promise}=    <a href=\"#Promise%20To%20Upload%20File\" title=\"&quot;Promise To Upload File&quot; keyword\" class=\"name\">Promise To Upload File</a>    ${CURDIR}/test_upload_file.txt\n<a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>          id=open_file_chooser_button\n${upload_result}=    <a href=\"#Wait%20For\" title=\"&quot;Wait For&quot; keyword\" class=\"name\">Wait For</a>    ${promise}\n</pre>\n<p>Alternatively, you can use <a href=\"#Upload%20File%20By%20Selector\" title=\"&quot;Upload File By Selector&quot; keyword\" class=\"name\">Upload File By Selector</a> keyword.</p>\n<p><a href=\"https://forum.robotframework.org/t//4313\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Returns a promise that resolves when file from ``path`` has been uploaded.",
+      doc: '<p>Returns a promise that resolves when file from <code>path</code> has been uploaded.</p>\n<p>Fails if the upload has not happened during timeout.</p>\n<p>Upload file from <code>path</code> into next file chooser dialog on page.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>path</code></td>\n<td>Path to file to be uploaded.</td>\n</tr>\n</table>\n<p>Example use:</p>\n<pre>\n${promise}=    <a href="#Promise%20To%20Upload%20File" title="&quot;Promise To Upload File&quot; keyword" class="name">Promise To Upload File</a>    ${CURDIR}/test_upload_file.txt\n<a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>          id=open_file_chooser_button\n${upload_result}=    <a href="#Wait%20For" title="&quot;Wait For&quot; keyword" class="name">Wait For</a>    ${promise}\n</pre>\n<p>Alternatively, you can use <a href="#Upload%20File%20By%20Selector" title="&quot;Upload File By Selector&quot; keyword" class="name">Upload File By Selector</a> keyword.</p>\n<p><a href="https://forum.robotframework.org/t//4313">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Returns a promise that resolves when file from ``path`` has been uploaded.",
       args: [
         {
           name: "path",
@@ -11874,17 +11750,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/promises.py",
       lineno: 268,
     },
     {
       name: "Promise To Wait For Download",
-      doc: "<p>Returns a promise that waits for next download event on page.</p>\n<p>To enable downloads context's <code>acceptDownloads</code> needs to be true.</p>\n<p>With default filepath downloaded files are deleted when Context the download happened in is closed.</p>\n<p>If browser is connected remotely with <a href=\"#Connect%20To%20Browser\" title=\"&quot;Connect To Browser&quot; keyword\" class=\"name\">Connect To Browser</a> then <code>saveAs</code> must be set to store it locally where the browser runs!</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>saveAs</code></td>\n<td>Defines path where the file is saved persistently. File will also temporarily be saved in playwright context's default download location. If empty, generated unique path (GUID) is used and file is deleted when the context is closed.</td>\n</tr>\n<tr>\n<td><code>wait_for_finished</code></td>\n<td>If true, promise will wait for download to finish. If false, promise will resolve immediately after download has started.</td>\n</tr>\n<tr>\n<td><code>download_timeout</code></td>\n<td>Maximum time to wait for download to finish, if <code>wait_for_finished</code> is set to <code>True</code>. If download is not finished during this time, keyword will be fail.</td>\n</tr>\n</table>\n<p>Keyword returns dictionary of type <a href=\"#type-DownloadInfo\" title=\"&quot;DownloadInfo&quot; type\" class=\"name\">DownloadInfo</a> which contains downloaded file path and suggested filename as well as state and downloadID. Example:</p>\n<pre>\n{\n  \"saveAs\": \"/tmp/robotframework-browser/downloads/2f1b3b7c-1b1b-4b1b-9b1b-1b1b1b1b1b1b\",\n  \"suggestedFilename\": \"downloaded_file.txt\"\n}\n</pre>\n<p>The keyword <a href=\"#New%20Browser\" title=\"&quot;New Browser&quot; keyword\" class=\"name\">New Browser</a> has a <code>downloadsPath</code> setting which can be used to set the default download directory. If <span class=\"name\">saveAs</span> is set to a relative path, the file will be saved relative to the browser's <code>downloadsPath</code> setting or if that is not set, relative to the Playwright's working directory. If <code>saveAs</code> is set to an absolute path, the file will be saved to that absolute path independent of <code>downloadsPath</code>.</p>\n<p>If the URL for the file to download shall be used, <a href=\"#Download\" title=\"&quot;Download&quot; keyword\" class=\"name\">Download</a> keyword may be a simpler alternative way to download the file.</p>\n<p>Waited promise returns a dictionary which contains saveAs and suggestedFilename as keys. The saveAs contains where the file is downloaded and suggestedFilename contains the name suggested name for the download. The suggestedFilename is typically computed by the browser from the Content-Disposition response header or the download attribute. See the spec on <a href=\"https://html.spec.whatwg.org/#downloading-resources\">whatwg</a>. Different browsers can use different logic for computing it.</p>\n<p>Example usage:</p>\n<pre>\n<a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a>            acceptDownloads=True\n<a href=\"#New%20Page\" title=\"&quot;New Page&quot; keyword\" class=\"name\">New Page</a>               ${LOGIN_URL}\n${dl_promise}          <a href=\"#Promise%20To%20Wait%20For%20Download\" title=\"&quot;Promise To Wait For Download&quot; keyword\" class=\"name\">Promise To Wait For Download</a>    /path/to/download/file.name\n<a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>                  id=file_download\n${file_obj}=           <a href=\"#Wait%20For\" title=\"&quot;Wait For&quot; keyword\" class=\"name\">Wait For</a>    ${dl_promise}\nFile Should Exist      ${file_obj}[saveAs]\nShould Be True         ${file_obj.suggestedFilename}\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4314\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Returns a promise that waits for next download event on page.</p>\n<p>To enable downloads context\'s <code>acceptDownloads</code> needs to be true.</p>\n<p>With default filepath downloaded files are deleted when Context the download happened in is closed.</p>\n<p>If browser is connected remotely with <a href="#Connect%20To%20Browser" title="&quot;Connect To Browser&quot; keyword" class="name">Connect To Browser</a> then <code>saveAs</code> must be set to store it locally where the browser runs!</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>saveAs</code></td>\n<td>Defines path where the file is saved persistently. File will also temporarily be saved in playwright context\'s default download location. If empty, generated unique path (GUID) is used and file is deleted when the context is closed.</td>\n</tr>\n<tr>\n<td><code>wait_for_finished</code></td>\n<td>If true, promise will wait for download to finish. If false, promise will resolve immediately after download has started.</td>\n</tr>\n<tr>\n<td><code>download_timeout</code></td>\n<td>Maximum time to wait for download to finish, if <code>wait_for_finished</code> is set to <code>True</code>. If download is not finished during this time, keyword will be fail.</td>\n</tr>\n</table>\n<p>Keyword returns dictionary of type <a href="#type-DownloadInfo" title="&quot;DownloadInfo&quot; type" class="name">DownloadInfo</a> which contains downloaded file path and suggested filename as well as state and downloadID. Example:</p>\n<pre>\n{\n  "saveAs": "/tmp/robotframework-browser/downloads/2f1b3b7c-1b1b-4b1b-9b1b-1b1b1b1b1b1b",\n  "suggestedFilename": "downloaded_file.txt"\n}\n</pre>\n<p>The keyword <a href="#New%20Browser" title="&quot;New Browser&quot; keyword" class="name">New Browser</a> has a <code>downloadsPath</code> setting which can be used to set the default download directory. If <span class="name">saveAs</span> is set to a relative path, the file will be saved relative to the browser\'s <code>downloadsPath</code> setting or if that is not set, relative to the Playwright\'s working directory. If <code>saveAs</code> is set to an absolute path, the file will be saved to that absolute path independent of <code>downloadsPath</code>.</p>\n<p>If the URL for the file to download shall be used, <a href="#Download" title="&quot;Download&quot; keyword" class="name">Download</a> keyword may be a simpler alternative way to download the file.</p>\n<p>Waited promise returns a dictionary which contains saveAs and suggestedFilename as keys. The saveAs contains where the file is downloaded and suggestedFilename contains the name suggested name for the download. The suggestedFilename is typically computed by the browser from the Content-Disposition response header or the download attribute. See the spec on <a href="https://html.spec.whatwg.org/#downloading-resources">whatwg</a>. Different browsers can use different logic for computing it.</p>\n<p>Example usage:</p>\n<pre>\n<a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a>            acceptDownloads=True\n<a href="#New%20Page" title="&quot;New Page&quot; keyword" class="name">New Page</a>               ${LOGIN_URL}\n${dl_promise}          <a href="#Promise%20To%20Wait%20For%20Download" title="&quot;Promise To Wait For Download&quot; keyword" class="name">Promise To Wait For Download</a>    /path/to/download/file.name\n<a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>                  id=file_download\n${file_obj}=           <a href="#Wait%20For" title="&quot;Wait For&quot; keyword" class="name">Wait For</a>    ${dl_promise}\nFile Should Exist      ${file_obj}[saveAs]\nShould Be True         ${file_obj.suggestedFilename}\n</pre>\n<p><a href="https://forum.robotframework.org/t//4314">Comment &gt;&gt;</a></p>',
       shortdoc: "Returns a promise that waits for next download event on page.",
       args: [
         {
@@ -11950,17 +11823,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Wait",
-      ],
+      tags: ["BrowserControl", "Wait"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/promises.py",
       lineno: 140,
     },
     {
       name: "Record Selector",
-      doc: "<p>Record the selector that is under mouse.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>label</code></td>\n<td>text to show when on the box in the page while recording.</td>\n</tr>\n</table>\n<p>Focus on the page and move mouse over the element you want to select.</p>\n<p>Example:</p>\n<pre>\n${selector} =    <a href=\"#Record%20Selector\" title=\"&quot;Record Selector&quot; keyword\" class=\"name\">Record Selector</a>   Button\n<a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>  ${selector}\n${selector2} =    <a href=\"#Record%20Selector\" title=\"&quot;Record Selector&quot; keyword\" class=\"name\">Record Selector</a>  Page header\n<a href=\"#Get%20Text\" title=\"&quot;Get Text&quot; keyword\" class=\"name\">Get Text</a>  ${selector2}  ==  Expected text\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4315\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Record the selector that is under mouse.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>label</code></td>\n<td>text to show when on the box in the page while recording.</td>\n</tr>\n</table>\n<p>Focus on the page and move mouse over the element you want to select.</p>\n<p>Example:</p>\n<pre>\n${selector} =    <a href="#Record%20Selector" title="&quot;Record Selector&quot; keyword" class="name">Record Selector</a>   Button\n<a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>  ${selector}\n${selector2} =    <a href="#Record%20Selector" title="&quot;Record Selector&quot; keyword" class="name">Record Selector</a>  Page header\n<a href="#Get%20Text" title="&quot;Get Text&quot; keyword" class="name">Get Text</a>  ${selector2}  ==  Expected text\n</pre>\n<p><a href="https://forum.robotframework.org/t//4315">Comment &gt;&gt;</a></p>',
       shortdoc: "Record the selector that is under mouse.",
       args: [
         {
@@ -11993,16 +11863,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-      ],
+      tags: ["PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 492,
     },
     {
       name: "Register Keyword To Run On Failure",
-      doc: "<p>Sets the keyword to execute, when a Browser keyword fails.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>keyword</code></td>\n<td>The name of a keyword that will be executed if a Browser keyword fails. It is possible to use any available keyword, including user keywords or keywords from other libraries.</td>\n</tr>\n<tr>\n<td><code>*args</code></td>\n<td>The arguments to the keyword if any.</td>\n</tr>\n<tr>\n<td><code>scope</code></td>\n<td>Scope defines the live time of this setting. Available values are <code>Global</code>, <code>Suite</code> or <code>Test</code> / <code>Task</code>. See <span class=\"name\">Scope Settings</span> for more details.</td>\n</tr>\n</table>\n<p>The initial keyword to use is set when <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">importing</a> the library, and the keyword that is used by default is <a href=\"#Take%20Screenshot\" title=\"&quot;Take Screenshot&quot; keyword\" class=\"name\">Take Screenshot</a>. Taking a screenshot when something failed is a very useful feature, but notice that it can slow down the execution.</p>\n<p>It is possible to use string <code>NONE</code> or any other robot falsy name, case-insensitively, as well as Python <code>None</code> to disable this feature altogether.</p>\n<p>This keyword returns an object which contains the the previously registered failure keyword. The return value can be always used to restore the original value later. The returned object contains keyword name and the possible arguments used to for the keyword.</p>\n<p>If <a href=\"#Take%20Screenshot\" title=\"&quot;Take Screenshot&quot; keyword\" class=\"name\">Take Screenshot</a> keyword, without arguments, is register as run on failure keyword, then filename argument default value is not used as screenshot file name. Instead, ${TEST NAME}_FAILURE_SCREENSHOT_{index} is used as file name. If there is need to use the filename argument default value, use robotframework-browser-screenshot-{index} as filename argument value.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#Register%20Keyword%20To%20Run%20On%20Failure\" title=\"&quot;Register Keyword To Run On Failure&quot; keyword\" class=\"name\">Register Keyword To Run On Failure</a>    Take Screenshot    # Uses ${TEST NAME}_FAILURE_SCREENSHOT_{index} as filename\n<a href=\"#Register%20Keyword%20To%20Run%20On%20Failure\" title=\"&quot;Register Keyword To Run On Failure&quot; keyword\" class=\"name\">Register Keyword To Run On Failure</a>    Take Screenshot    robotframework-browser-screenshot-{index}    # Uses robotframework-browser-screenshot-{index} as filename\n${previous kw}=    <a href=\"#Register%20Keyword%20To%20Run%20On%20Failure\" title=\"&quot;Register Keyword To Run On Failure&quot; keyword\" class=\"name\">Register Keyword To Run On Failure</a>    NONE    # Disables run on failure functionality.\n<a href=\"#Register%20Keyword%20To%20Run%20On%20Failure\" title=\"&quot;Register Keyword To Run On Failure&quot; keyword\" class=\"name\">Register Keyword To Run On Failure</a>    ${previous kw}\n<a href=\"#Register%20Keyword%20To%20Run%20On%20Failure\" title=\"&quot;Register Keyword To Run On Failure&quot; keyword\" class=\"name\">Register Keyword To Run On Failure</a>    Take Screenshot    fullPage=True\n<a href=\"#Register%20Keyword%20To%20Run%20On%20Failure\" title=\"&quot;Register Keyword To Run On Failure&quot; keyword\" class=\"name\">Register Keyword To Run On Failure</a>    Take Screenshot    failure-{index}    fullPage=True\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4316\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Sets the keyword to execute, when a Browser keyword fails.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>keyword</code></td>\n<td>The name of a keyword that will be executed if a Browser keyword fails. It is possible to use any available keyword, including user keywords or keywords from other libraries.</td>\n</tr>\n<tr>\n<td><code>*args</code></td>\n<td>The arguments to the keyword if any.</td>\n</tr>\n<tr>\n<td><code>scope</code></td>\n<td>Scope defines the live time of this setting. Available values are <code>Global</code>, <code>Suite</code> or <code>Test</code> / <code>Task</code>. See <span class="name">Scope Settings</span> for more details.</td>\n</tr>\n</table>\n<p>The initial keyword to use is set when <a href="#Importing" title="&quot;Importing&quot; section" class="name">importing</a> the library, and the keyword that is used by default is <a href="#Take%20Screenshot" title="&quot;Take Screenshot&quot; keyword" class="name">Take Screenshot</a>. Taking a screenshot when something failed is a very useful feature, but notice that it can slow down the execution.</p>\n<p>It is possible to use string <code>NONE</code> or any other robot falsy name, case-insensitively, as well as Python <code>None</code> to disable this feature altogether.</p>\n<p>This keyword returns an object which contains the the previously registered failure keyword. The return value can be always used to restore the original value later. The returned object contains keyword name and the possible arguments used to for the keyword.</p>\n<p>If <a href="#Take%20Screenshot" title="&quot;Take Screenshot&quot; keyword" class="name">Take Screenshot</a> keyword, without arguments, is register as run on failure keyword, then filename argument default value is not used as screenshot file name. Instead, ${TEST NAME}_FAILURE_SCREENSHOT_{index} is used as file name. If there is need to use the filename argument default value, use robotframework-browser-screenshot-{index} as filename argument value.</p>\n<p>Example:</p>\n<pre>\n<a href="#Register%20Keyword%20To%20Run%20On%20Failure" title="&quot;Register Keyword To Run On Failure&quot; keyword" class="name">Register Keyword To Run On Failure</a>    Take Screenshot    # Uses ${TEST NAME}_FAILURE_SCREENSHOT_{index} as filename\n<a href="#Register%20Keyword%20To%20Run%20On%20Failure" title="&quot;Register Keyword To Run On Failure&quot; keyword" class="name">Register Keyword To Run On Failure</a>    Take Screenshot    robotframework-browser-screenshot-{index}    # Uses robotframework-browser-screenshot-{index} as filename\n${previous kw}=    <a href="#Register%20Keyword%20To%20Run%20On%20Failure" title="&quot;Register Keyword To Run On Failure&quot; keyword" class="name">Register Keyword To Run On Failure</a>    NONE    # Disables run on failure functionality.\n<a href="#Register%20Keyword%20To%20Run%20On%20Failure" title="&quot;Register Keyword To Run On Failure&quot; keyword" class="name">Register Keyword To Run On Failure</a>    ${previous kw}\n<a href="#Register%20Keyword%20To%20Run%20On%20Failure" title="&quot;Register Keyword To Run On Failure&quot; keyword" class="name">Register Keyword To Run On Failure</a>    Take Screenshot    fullPage=True\n<a href="#Register%20Keyword%20To%20Run%20On%20Failure" title="&quot;Register Keyword To Run On Failure&quot; keyword" class="name">Register Keyword To Run On Failure</a>    Take Screenshot    failure-{index}    fullPage=True\n</pre>\n<p><a href="https://forum.robotframework.org/t//4316">Comment &gt;&gt;</a></p>',
       shortdoc: "Sets the keyword to execute, when a Browser keyword fails.",
       args: [
         {
@@ -12068,16 +11936,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Config",
-      ],
+      tags: ["Config"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/runonfailure.py",
       lineno: 29,
     },
     {
       name: "Reload",
-      doc: "<p>Reloads current active page.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>Maximum time for the reload to succeed.</td>\n</tr>\n<tr>\n<td><code>waitUntil</code></td>\n<td>When to consider operation succeeded, defaults to <span class=\"name\">load</span>.</td>\n</tr>\n</table>\n<p>waitUntill events can be either: <code>domcontentloaded</code> - consider operation to be finished when the DOMContentLoaded event is fired. <code>load</code> - consider operation to be finished when the load event is fired. <code>networkidle</code> - consider operation to be finished when there are no network connections for at least 500 ms. <code>commit</code> - consider operation to be finished when network response is received and the document started loading. |</p>\n<p><a href=\"https://forum.robotframework.org/t//4317\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Reloads current active page.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>Maximum time for the reload to succeed.</td>\n</tr>\n<tr>\n<td><code>waitUntil</code></td>\n<td>When to consider operation succeeded, defaults to <span class="name">load</span>.</td>\n</tr>\n</table>\n<p>waitUntill events can be either: <code>domcontentloaded</code> - consider operation to be finished when the DOMContentLoaded event is fired. <code>load</code> - consider operation to be finished when the load event is fired. <code>networkidle</code> - consider operation to be finished when there are no network connections for at least 500 ms. <code>commit</code> - consider operation to be finished when network response is received and the document started loading. |</p>\n<p><a href="https://forum.robotframework.org/t//4317">Comment &gt;&gt;</a></p>',
       shortdoc: "Reloads current active page.",
       args: [
         {
@@ -12124,10 +11990,7 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/browser_control.py",
       lineno: 584,
@@ -12154,10 +12017,7 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/locator_handler.py",
       lineno: 89,
@@ -12169,17 +12029,14 @@ const DATA: Libdoc = {
       args: [],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "Clock",
-        "Setter",
-      ],
+      tags: ["Clock", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/clock.py",
       lineno: 57,
     },
     {
       name: "Save Page As Pdf",
-      doc: "<p>Saves page as PDF.</p>\n<p>Saving a pdf is currently only supported in Chromium headless.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>path</code></td>\n<td>Where pdf is saved, if not full path, will be saved to ${OUTPUT_DIR}</td>\n</tr>\n<tr>\n<td><code>displayHeaderFooter</code></td>\n<td>Display header and footer. Defaults to False.</td>\n</tr>\n<tr>\n<td><code>footerTemplate</code></td>\n<td>HTML template for the print footer. Should use the same format as the <code>headerTemplate</code>.</td>\n</tr>\n<tr>\n<td><code>format</code></td>\n<td>Paper format. If set, takes priority over width or height options. Defaults to 'Letter'.</td>\n</tr>\n<tr>\n<td><code>headerTemplate</code></td>\n<td>HTML template for the print header.  See detailed explanation in below</td>\n</tr>\n<tr>\n<td><code>height</code></td>\n<td>Paper height, accepts values labeled with units.</td>\n</tr>\n<tr>\n<td><code>landscape</code></td>\n<td>Paper orientation. Defaults to false.</td>\n</tr>\n<tr>\n<td><code>margin</code></td>\n<td>Defines pdf margins, see <a href=\"#type-PdfMarging\" title=\"&quot;PdfMarging&quot; type\" class=\"name\">PdfMarging</a> for more details</td>\n</tr>\n<tr>\n<td><code>outline</code></td>\n<td>Whether or not to embed the document outline into the PDF. Defaults to false.</td>\n</tr>\n<tr>\n<td><code>pageRanges</code></td>\n<td>Paper ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which means print all pages.</td>\n</tr>\n<tr>\n<td><code>preferCSSPageSize</code></td>\n<td>Give any CSS @page size declared in the page priority over what is declared in width and height or format options. Defaults to false, which will scale the content to fit the paper size.</td>\n</tr>\n<tr>\n<td><code>printBackground</code></td>\n<td>Print background graphics. Defaults to false.</td>\n</tr>\n<tr>\n<td><code>scale</code></td>\n<td>Scale of the webpage rendering. Defaults to 1. Scale amount must be between 0.1 and 2.</td>\n</tr>\n<tr>\n<td><code>tagged</code></td>\n<td>Whether or not to generate tagged (accessible) PDF. Defaults to false.</td>\n</tr>\n<tr>\n<td><code>width</code></td>\n<td>Paper width, accepts values labeled with units.</td>\n</tr>\n</table>\n<p><code>headerTemplate</code> and <code>footerTemplate</code> Should be valid HTML markup with following classes used to inject printing values into them:</p>\n<ul>\n<li><span class=\"name\">date</span> formatted print date</li>\n<li><span class=\"name\">title</span> document title</li>\n<li><span class=\"name\">url</span> document location</li>\n<li><span class=\"name\">pageNumber</span> current page number</li>\n<li><span class=\"name\">totalPages</span> total pages in the document</li>\n</ul>\n<p>All possible units are:</p>\n<ul>\n<li><span class=\"name\">px</span> - pixel</li>\n<li><span class=\"name\">in</span> - inch</li>\n<li><span class=\"name\">cm</span> - centimeter</li>\n<li><span class=\"name\">mm</span> - millimeter</li>\n</ul>\n<p>headerTemplate and footerTemplate markup have the following limitations: &gt; 1. Script tags inside templates are not evaluated. &gt; 2. Page styles are not visible inside templates.</p>\n<p>Returns the path to the saved PDF file.</p>\n<p>More details can be found from <a href=\"https://playwright.dev/docs/api/class-page#page-pdf\">Playwright pdf documentation</a></p>\n<p>Example:</p>\n<table border=\"1\">\n<tr>\n<td><a href=\"#New%20Browser\" title=\"&quot;New Browser&quot; keyword\" class=\"name\">New Browser</a></td>\n<td>Chromium</td>\n<td>headless=True</td>\n</tr>\n<tr>\n<td><a href=\"#New%20Page\" title=\"&quot;New Page&quot; keyword\" class=\"name\">New Page</a></td>\n<td>${URL}</td>\n<td></td>\n</tr>\n<tr>\n<td><a href=\"#Emulate%20Media\" title=\"&quot;Emulate Media&quot; keyword\" class=\"name\">Emulate Media</a></td>\n<td>media=screen</td>\n<td></td>\n</tr>\n<tr>\n<td>${pdf_path} =</td>\n<td><a href=\"#Save%20Page%20As%20Pdf\" title=\"&quot;Save Page As Pdf&quot; keyword\" class=\"name\">Save Page As Pdf</a></td>\n<td>page.pdf</td>\n</tr>\n<tr>\n<td>Should Be Equal</td>\n<td>${pdf_path}</td>\n<td>${OUTPUT_DIR}${/}page.pdf</td>\n</tr>\n</table>",
+      doc: '<p>Saves page as PDF.</p>\n<p>Saving a pdf is currently only supported in Chromium headless.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>path</code></td>\n<td>Where pdf is saved, if not full path, will be saved to ${OUTPUT_DIR}</td>\n</tr>\n<tr>\n<td><code>displayHeaderFooter</code></td>\n<td>Display header and footer. Defaults to False.</td>\n</tr>\n<tr>\n<td><code>footerTemplate</code></td>\n<td>HTML template for the print footer. Should use the same format as the <code>headerTemplate</code>.</td>\n</tr>\n<tr>\n<td><code>format</code></td>\n<td>Paper format. If set, takes priority over width or height options. Defaults to \'Letter\'.</td>\n</tr>\n<tr>\n<td><code>headerTemplate</code></td>\n<td>HTML template for the print header.  See detailed explanation in below</td>\n</tr>\n<tr>\n<td><code>height</code></td>\n<td>Paper height, accepts values labeled with units.</td>\n</tr>\n<tr>\n<td><code>landscape</code></td>\n<td>Paper orientation. Defaults to false.</td>\n</tr>\n<tr>\n<td><code>margin</code></td>\n<td>Defines pdf margins, see <a href="#type-PdfMarging" title="&quot;PdfMarging&quot; type" class="name">PdfMarging</a> for more details</td>\n</tr>\n<tr>\n<td><code>outline</code></td>\n<td>Whether or not to embed the document outline into the PDF. Defaults to false.</td>\n</tr>\n<tr>\n<td><code>pageRanges</code></td>\n<td>Paper ranges to print, e.g., \'1-5, 8, 11-13\'. Defaults to the empty string, which means print all pages.</td>\n</tr>\n<tr>\n<td><code>preferCSSPageSize</code></td>\n<td>Give any CSS @page size declared in the page priority over what is declared in width and height or format options. Defaults to false, which will scale the content to fit the paper size.</td>\n</tr>\n<tr>\n<td><code>printBackground</code></td>\n<td>Print background graphics. Defaults to false.</td>\n</tr>\n<tr>\n<td><code>scale</code></td>\n<td>Scale of the webpage rendering. Defaults to 1. Scale amount must be between 0.1 and 2.</td>\n</tr>\n<tr>\n<td><code>tagged</code></td>\n<td>Whether or not to generate tagged (accessible) PDF. Defaults to false.</td>\n</tr>\n<tr>\n<td><code>width</code></td>\n<td>Paper width, accepts values labeled with units.</td>\n</tr>\n</table>\n<p><code>headerTemplate</code> and <code>footerTemplate</code> Should be valid HTML markup with following classes used to inject printing values into them:</p>\n<ul>\n<li><span class="name">date</span> formatted print date</li>\n<li><span class="name">title</span> document title</li>\n<li><span class="name">url</span> document location</li>\n<li><span class="name">pageNumber</span> current page number</li>\n<li><span class="name">totalPages</span> total pages in the document</li>\n</ul>\n<p>All possible units are:</p>\n<ul>\n<li><span class="name">px</span> - pixel</li>\n<li><span class="name">in</span> - inch</li>\n<li><span class="name">cm</span> - centimeter</li>\n<li><span class="name">mm</span> - millimeter</li>\n</ul>\n<p>headerTemplate and footerTemplate markup have the following limitations: &gt; 1. Script tags inside templates are not evaluated. &gt; 2. Page styles are not visible inside templates.</p>\n<p>Returns the path to the saved PDF file.</p>\n<p>More details can be found from <a href="https://playwright.dev/docs/api/class-page#page-pdf">Playwright pdf documentation</a></p>\n<p>Example:</p>\n<table border="1">\n<tr>\n<td><a href="#New%20Browser" title="&quot;New Browser&quot; keyword" class="name">New Browser</a></td>\n<td>Chromium</td>\n<td>headless=True</td>\n</tr>\n<tr>\n<td><a href="#New%20Page" title="&quot;New Page&quot; keyword" class="name">New Page</a></td>\n<td>${URL}</td>\n<td></td>\n</tr>\n<tr>\n<td><a href="#Emulate%20Media" title="&quot;Emulate Media&quot; keyword" class="name">Emulate Media</a></td>\n<td>media=screen</td>\n<td></td>\n</tr>\n<tr>\n<td>${pdf_path} =</td>\n<td><a href="#Save%20Page%20As%20Pdf" title="&quot;Save Page As Pdf&quot; keyword" class="name">Save Page As Pdf</a></td>\n<td>page.pdf</td>\n</tr>\n<tr>\n<td>Should Be Equal</td>\n<td>${pdf_path}</td>\n<td>${OUTPUT_DIR}${/}page.pdf</td>\n</tr>\n</table>',
       shortdoc: "Saves page as PDF.",
       args: [
         {
@@ -12298,7 +12155,8 @@ const DATA: Libdoc = {
             nested: [],
             union: false,
           },
-          defaultValue: "{'top': '0px', 'right': '0px', 'bottom': '0px', 'left': '0px'}",
+          defaultValue:
+            "{'top': '0px', 'right': '0px', 'bottom': '0px', 'left': '0px'}",
           kind: "NAMED_ONLY",
           required: false,
           repr: "margin: PdfMarging = {'top': '0px', 'right': '0px', 'bottom': '0px', 'left': '0px'}",
@@ -12409,17 +12267,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/pdf.py",
       lineno: 42,
     },
     {
       name: "Save Storage State",
-      doc: "<p>Saves the current active context storage state to a file.</p>\n<p>Web apps use cookie-based or token-based authentication, where authenticated state is stored as <a href=\"https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies\">cookies</a> or in <a href=\"https://developer.mozilla.org/en-US/docs/Web/API/Storage\">local storage</a>. Keyword retrieves the storage state from authenticated contexts and save it to disk. Then <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a> can be created with prepopulated state.</p>\n<p>Please note state file may contains secrets and should not be shared with people outside of your organisation.</p>\n<p>The file is created in ${OUTPUTDIR}/browser/state folder and file(s) are automatically deleted when new test execution starts. File path is returned by the keyword.</p>\n<p>Example:</p>\n<pre>\nTest Case\n    <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New context</a>\n    <a href=\"#New%20Page\" title=\"&quot;New Page&quot; keyword\" class=\"name\">New Page</a>    <a href=\"https://login.page.html\">https://login.page.html</a>\n    #  Perform login\n    VAR    ${username}    %{USERNAME}    # Convert environment variable to secret\n    VAR    ${password}    %{PASSWORD}    # Convert environment variable to secret\n    <a href=\"#Fill%20Secret\" title=\"&quot;Fill Secret&quot; keyword\" class=\"name\">Fill Secret</a>    id=username    ${username}\n    <a href=\"#Fill%20Secret\" title=\"&quot;Fill Secret&quot; keyword\" class=\"name\">Fill Secret</a>    id=password    ${password}\n    <a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>    id=button\n    <a href=\"#Get%20Text\" title=\"&quot;Get Text&quot; keyword\" class=\"name\">Get Text</a>    id=header    ==    Something\n    #  Save storage to disk\n    ${state_file} =    <a href=\"#Save%20Storage%20State\" title=\"&quot;Save Storage State&quot; keyword\" class=\"name\">Save Storage State</a>\n    #  Create new context with saved state\n    <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New context</a>    storageState=${state_file}\n    <a href=\"#New%20Page\" title=\"&quot;New Page&quot; keyword\" class=\"name\">New Page</a>    <a href=\"https://login.page.html\">https://login.page.html</a>\n    #  Login is not needed because authentication is read from state file\n    <a href=\"#Get%20Text\" title=\"&quot;Get Text&quot; keyword\" class=\"name\">Get Text</a>    id=header    ==    Something\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4318\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Saves the current active context storage state to a file.</p>\n<p>Web apps use cookie-based or token-based authentication, where authenticated state is stored as <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies">cookies</a> or in <a href="https://developer.mozilla.org/en-US/docs/Web/API/Storage">local storage</a>. Keyword retrieves the storage state from authenticated contexts and save it to disk. Then <a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a> can be created with prepopulated state.</p>\n<p>Please note state file may contains secrets and should not be shared with people outside of your organisation.</p>\n<p>The file is created in ${OUTPUTDIR}/browser/state folder and file(s) are automatically deleted when new test execution starts. File path is returned by the keyword.</p>\n<p>Example:</p>\n<pre>\nTest Case\n    <a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New context</a>\n    <a href="#New%20Page" title="&quot;New Page&quot; keyword" class="name">New Page</a>    <a href="https://login.page.html">https://login.page.html</a>\n    #  Perform login\n    VAR    ${username}    %{USERNAME}    # Convert environment variable to secret\n    VAR    ${password}    %{PASSWORD}    # Convert environment variable to secret\n    <a href="#Fill%20Secret" title="&quot;Fill Secret&quot; keyword" class="name">Fill Secret</a>    id=username    ${username}\n    <a href="#Fill%20Secret" title="&quot;Fill Secret&quot; keyword" class="name">Fill Secret</a>    id=password    ${password}\n    <a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>    id=button\n    <a href="#Get%20Text" title="&quot;Get Text&quot; keyword" class="name">Get Text</a>    id=header    ==    Something\n    #  Save storage to disk\n    ${state_file} =    <a href="#Save%20Storage%20State" title="&quot;Save Storage State&quot; keyword" class="name">Save Storage State</a>\n    #  Create new context with saved state\n    <a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New context</a>    storageState=${state_file}\n    <a href="#New%20Page" title="&quot;New Page&quot; keyword" class="name">New Page</a>    <a href="https://login.page.html">https://login.page.html</a>\n    #  Login is not needed because authentication is read from state file\n    <a href="#Get%20Text" title="&quot;Get Text&quot; keyword" class="name">Get Text</a>    id=header    ==    Something\n</pre>\n<p><a href="https://forum.robotframework.org/t//4318">Comment &gt;&gt;</a></p>',
       shortdoc: "Saves the current active context storage state to a file.",
       args: [],
       returnType: {
@@ -12429,18 +12284,16 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Getter",
-      ],
+      tags: ["BrowserControl", "Getter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/playwright_state.py",
       lineno: 1668,
     },
     {
       name: "Scroll By",
-      doc: "<p>Scrolls an element or the page relative from current position by the given values.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the element. If the selector is <code>${None}</code> or <code>${Empty}</code> the page itself is scrolled. To ensure an element is in view use <a href=\"#Hover\" title=\"&quot;Hover&quot; keyword\" class=\"name\">Hover</a> instead. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>vertical</code></td>\n<td>defines how far and in which direction to scroll vertically. It can be a positive or negative number. Positive scrolls down, like <code>50</code>, negative scrolls up, like <code>-50</code>. It can be a percentage value of the absolute scrollable size, like <code>9.95%</code> or negative like <code>-10%</code>. It can be the string <code>height</code> to defining to scroll exactly one visible height down or up with <code>-height</code>. <i>Be aware that some pages do lazy loading and load more content once you scroll down.</i> The percentage of the current scrollable height is used and may change.</td>\n</tr>\n<tr>\n<td><code>horizontal</code></td>\n<td>defines where to scroll horizontally. Works same as vertical but defines positive values for right and negative values for left. <code>width</code> defines to scroll exactly one visible range to the right.</td>\n</tr>\n<tr>\n<td><code>behavior</code></td>\n<td>defines whether the scroll happens directly or it scrolls smoothly.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p><a href=\"https://forum.robotframework.org/t//4319\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Scrolls an element or the page relative from current position by the given values.",
+      doc: '<p>Scrolls an element or the page relative from current position by the given values.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the element. If the selector is <code>${None}</code> or <code>${Empty}</code> the page itself is scrolled. To ensure an element is in view use <a href="#Hover" title="&quot;Hover&quot; keyword" class="name">Hover</a> instead. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>vertical</code></td>\n<td>defines how far and in which direction to scroll vertically. It can be a positive or negative number. Positive scrolls down, like <code>50</code>, negative scrolls up, like <code>-50</code>. It can be a percentage value of the absolute scrollable size, like <code>9.95%</code> or negative like <code>-10%</code>. It can be the string <code>height</code> to defining to scroll exactly one visible height down or up with <code>-height</code>. <i>Be aware that some pages do lazy loading and load more content once you scroll down.</i> The percentage of the current scrollable height is used and may change.</td>\n</tr>\n<tr>\n<td><code>horizontal</code></td>\n<td>defines where to scroll horizontally. Works same as vertical but defines positive values for right and negative values for left. <code>width</code> defines to scroll exactly one visible range to the right.</td>\n</tr>\n<tr>\n<td><code>behavior</code></td>\n<td>defines whether the scroll happens directly or it scrolls smoothly.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p><a href="https://forum.robotframework.org/t//4319">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Scrolls an element or the page relative from current position by the given values.",
       args: [
         {
           name: "selector",
@@ -12514,18 +12367,16 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 634,
     },
     {
       name: "Scroll To",
-      doc: "<p>Scrolls an element or the page to an absolute position based on given coordinates.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n<td></td>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the element. If the selector is <code>${None}</code> or <code>${Empty}</code> the page itself is scrolled. To ensure an element is in view use <a href=\"#Hover\" title=\"&quot;Hover&quot; keyword\" class=\"name\">Hover</a> instead. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n<td></td>\n</tr>\n<tr>\n<td><code>vertical</code></td>\n<td>defines where to scroll vertically. It can be a positive number, like <code>300</code>. It can be a percentage value of the absolute scrollable size, like <code>50%</code>. It can be a string defining that top or the bottom of the scroll area. &lt; <code>top</code></td>\n<td><code>bottom</code> &gt; <i>Be aware that some pages do lazy loading and load more content once you scroll down.</i> Bottom defines the current known bottom coordinate.</td>\n</tr>\n<tr>\n<td><code>horizontal</code></td>\n<td>defines where to scroll horizontally. Works same as vertical but defines &lt; <code>left</code></td>\n<td><code>right</code> &gt; as start and end.</td>\n</tr>\n<tr>\n<td><code>behavior</code></td>\n<td>defines whether the scroll happens directly or it scrolls smoothly.</td>\n<td></td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p><a href=\"https://forum.robotframework.org/t//4320\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Scrolls an element or the page to an absolute position based on given coordinates.",
+      doc: '<p>Scrolls an element or the page to an absolute position based on given coordinates.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n<td></td>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the element. If the selector is <code>${None}</code> or <code>${Empty}</code> the page itself is scrolled. To ensure an element is in view use <a href="#Hover" title="&quot;Hover&quot; keyword" class="name">Hover</a> instead. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n<td></td>\n</tr>\n<tr>\n<td><code>vertical</code></td>\n<td>defines where to scroll vertically. It can be a positive number, like <code>300</code>. It can be a percentage value of the absolute scrollable size, like <code>50%</code>. It can be a string defining that top or the bottom of the scroll area. &lt; <code>top</code></td>\n<td><code>bottom</code> &gt; <i>Be aware that some pages do lazy loading and load more content once you scroll down.</i> Bottom defines the current known bottom coordinate.</td>\n</tr>\n<tr>\n<td><code>horizontal</code></td>\n<td>defines where to scroll horizontally. Works same as vertical but defines &lt; <code>left</code></td>\n<td><code>right</code> &gt; as start and end.</td>\n</tr>\n<tr>\n<td><code>behavior</code></td>\n<td>defines whether the scroll happens directly or it scrolls smoothly.</td>\n<td></td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p><a href="https://forum.robotframework.org/t//4320">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Scrolls an element or the page to an absolute position based on given coordinates.",
       args: [
         {
           name: "selector",
@@ -12599,18 +12450,16 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 594,
     },
     {
       name: "Scroll To Element",
-      doc: "<p>This method waits for actionability checks, then tries to scroll element into view, unless it is completely visible.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the checkbox. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>Does nothing if the element is already visible.</p>\n<p><a href=\"https://forum.robotframework.org/t//4321\">Comment &gt;&gt;</a></p>",
-      shortdoc: "This method waits for actionability checks, then tries to scroll element into view, unless it is completely visible.",
+      doc: '<p>This method waits for actionability checks, then tries to scroll element into view, unless it is completely visible.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the checkbox. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>Does nothing if the element is already visible.</p>\n<p><a href="https://forum.robotframework.org/t//4321">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "This method waits for actionability checks, then tries to scroll element into view, unless it is completely visible.",
       args: [
         {
           name: "selector",
@@ -12629,17 +12478,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 674,
     },
     {
       name: "Select Options By",
-      doc: "<p>Selects options from select element found by <code>selector</code>.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the <code>&lt;select&gt;</code> tag. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>attribute</code></td>\n<td>Attribute to select options by. Can be <code>value</code>, <code>label</code>, <code>text</code> or <code>index</code>. Where <code>label</code> and <code>text</code> are same.</td>\n</tr>\n<tr>\n<td><code>*values</code></td>\n<td>Values to select.</td>\n</tr>\n</table>\n<p>Returns list of options which keyword was able to select. The type of list item matches to <code>attribute</code> definition. Example if <code>attribute</code> equals to <span class=\"name\">label</span> returned list contains label values. Or in case of <span class=\"name\">index</span> it contains list of selected indexes.</p>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>If no values to select are passed will deselect options in element.</p>\n<p>Example:</p>\n<pre>\n${selected} =    <a href=\"#Select%20Options%20By\" title=\"&quot;Select Options By&quot; keyword\" class=\"name\">Select Options By</a>    select[name=preferred_channel]    label    Direct mail\nList Should Contain Value    ${selected}    Direct mail\n${selected} =    <a href=\"#Select%20Options%20By\" title=\"&quot;Select Options By&quot; keyword\" class=\"name\">Select Options By</a>    select[name=interests]    value    males    females    others\nList Should Contain Value    ${selected}    males\nList Should Contain Value    ${selected}    females\nList Should Contain Value    ${selected}    others\nLength Should Be    ${selected}    3\n${selected} =    <a href=\"#Select%20Options%20By\" title=\"&quot;Select Options By&quot; keyword\" class=\"name\">Select Options By</a>    select[name=possible_channels]    index    0    2\nList Should Contain Value    ${selected}    0\nList Should Contain Value    ${selected}    2\n${selected} =    <a href=\"#Select%20Options%20By\" title=\"&quot;Select Options By&quot; keyword\" class=\"name\">Select Options By</a>    select[name=interests]    text     Males    Females\nList Should Contain Value    ${selected}    Males\nList Should Contain Value    ${selected}    Females\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4322\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Selects options from select element found by <code>selector</code>.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the <code>&lt;select&gt;</code> tag. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>attribute</code></td>\n<td>Attribute to select options by. Can be <code>value</code>, <code>label</code>, <code>text</code> or <code>index</code>. Where <code>label</code> and <code>text</code> are same.</td>\n</tr>\n<tr>\n<td><code>*values</code></td>\n<td>Values to select.</td>\n</tr>\n</table>\n<p>Returns list of options which keyword was able to select. The type of list item matches to <code>attribute</code> definition. Example if <code>attribute</code> equals to <span class="name">label</span> returned list contains label values. Or in case of <span class="name">index</span> it contains list of selected indexes.</p>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>If no values to select are passed will deselect options in element.</p>\n<p>Example:</p>\n<pre>\n${selected} =    <a href="#Select%20Options%20By" title="&quot;Select Options By&quot; keyword" class="name">Select Options By</a>    select[name=preferred_channel]    label    Direct mail\nList Should Contain Value    ${selected}    Direct mail\n${selected} =    <a href="#Select%20Options%20By" title="&quot;Select Options By&quot; keyword" class="name">Select Options By</a>    select[name=interests]    value    males    females    others\nList Should Contain Value    ${selected}    males\nList Should Contain Value    ${selected}    females\nList Should Contain Value    ${selected}    others\nLength Should Be    ${selected}    3\n${selected} =    <a href="#Select%20Options%20By" title="&quot;Select Options By&quot; keyword" class="name">Select Options By</a>    select[name=possible_channels]    index    0    2\nList Should Contain Value    ${selected}    0\nList Should Contain Value    ${selected}    2\n${selected} =    <a href="#Select%20Options%20By" title="&quot;Select Options By&quot; keyword" class="name">Select Options By</a>    select[name=interests]    text     Males    Females\nList Should Contain Value    ${selected}    Males\nList Should Contain Value    ${selected}    Females\n</pre>\n<p><a href="https://forum.robotframework.org/t//4322">Comment &gt;&gt;</a></p>',
       shortdoc: "Selects options from select element found by ``selector``.",
       args: [
         {
@@ -12694,17 +12540,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 741,
     },
     {
       name: "SessionStorage Clear",
-      doc: "<p>Remove all saved data from the session storage.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>frame_selector</code></td>\n<td>If this selector points to an element inside an iframe, the SessionStorage of that frame is used. Example: <code>iframe[name=\"test\"] &gt;&gt;&gt; body</code></td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href=\"#SessionStorage%20Set%20Item\" title=\"&quot;SessionStorage Set Item&quot; keyword\" class=\"name\">SessionStorage Set Item</a>    mykey3    myvalue3\n <a href=\"#SessionStorage%20Clear\" title=\"&quot;SessionStorage Clear&quot; keyword\" class=\"name\">SessionStorage Clear</a>\n<a href=\"#SessionStorage%20Get%20Item\" title=\"&quot;SessionStorage Get Item&quot; keyword\" class=\"name\">SessionStorage Get Item</a>    mykey3    ==    ${None}\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4323\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Remove all saved data from the session storage.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>frame_selector</code></td>\n<td>If this selector points to an element inside an iframe, the SessionStorage of that frame is used. Example: <code>iframe[name="test"] &gt;&gt;&gt; body</code></td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href="#SessionStorage%20Set%20Item" title="&quot;SessionStorage Set Item&quot; keyword" class="name">SessionStorage Set Item</a>    mykey3    myvalue3\n <a href="#SessionStorage%20Clear" title="&quot;SessionStorage Clear&quot; keyword" class="name">SessionStorage Clear</a>\n<a href="#SessionStorage%20Get%20Item" title="&quot;SessionStorage Get Item&quot; keyword" class="name">SessionStorage Get Item</a>    mykey3    ==    ${None}\n</pre>\n<p><a href="https://forum.robotframework.org/t//4323">Comment &gt;&gt;</a></p>',
       shortdoc: "Remove all saved data from the session storage.",
       args: [
         {
@@ -12737,17 +12580,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/webapp_state.py",
       lineno: 227,
     },
     {
       name: "SessionStorage Get Item",
-      doc: "<p>Get saved data from from session storage.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>key</code></td>\n<td>Named key of the item in the storage.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>Assertion operator to use. See <a href=\"#Assertions\" title=\"&quot;Assertions&quot; section\" class=\"name\">Assertions</a> for more information.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value to compare with.</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>Custom error message to use.</td>\n</tr>\n<tr>\n<td><code>frame_selector</code></td>\n<td>If this selector points to an element inside an iframe, the SessionStorage of that frame is used. Example: <code>iframe[name=\"test\"] &gt;&gt;&gt; body</code></td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href=\"#SessionStorage%20Set%20Item\" title=\"&quot;SessionStorage Set Item&quot; keyword\" class=\"name\">SessionStorage Set Item</a>    key2    value2\n${item} =    <a href=\"#SessionStorage%20Get%20Item\" title=\"&quot;SessionStorage Get Item&quot; keyword\" class=\"name\">SessionStorage Get Item</a>    key1\nShould Be Equal    ${item}    value2\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4324\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Get saved data from from session storage.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>key</code></td>\n<td>Named key of the item in the storage.</td>\n</tr>\n<tr>\n<td><code>assertion_operator</code></td>\n<td>Assertion operator to use. See <a href="#Assertions" title="&quot;Assertions&quot; section" class="name">Assertions</a> for more information.</td>\n</tr>\n<tr>\n<td><code>assertion_expected</code></td>\n<td>Expected value to compare with.</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>Custom error message to use.</td>\n</tr>\n<tr>\n<td><code>frame_selector</code></td>\n<td>If this selector points to an element inside an iframe, the SessionStorage of that frame is used. Example: <code>iframe[name="test"] &gt;&gt;&gt; body</code></td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href="#SessionStorage%20Set%20Item" title="&quot;SessionStorage Set Item&quot; keyword" class="name">SessionStorage Set Item</a>    key2    value2\n${item} =    <a href="#SessionStorage%20Get%20Item" title="&quot;SessionStorage Get Item&quot; keyword" class="name">SessionStorage Get Item</a>    key1\nShould Be Equal    ${item}    value2\n</pre>\n<p><a href="https://forum.robotframework.org/t//4324">Comment &gt;&gt;</a></p>',
       shortdoc: "Get saved data from from session storage.",
       args: [
         {
@@ -12880,18 +12720,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Assertion",
-        "Getter",
-        "PageContent",
-      ],
+      tags: ["Assertion", "Getter", "PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/webapp_state.py",
       lineno: 146,
     },
     {
       name: "SessionStorage Remove Item",
-      doc: "<p>Remove saved data with key from the session storage.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>key</code></td>\n<td>The name of the item which shall be deleted.</td>\n</tr>\n<tr>\n<td><code>frame_selector</code></td>\n<td>If this selector points to an element inside an iframe, the SessionStorage of that frame is used. Example: <code>iframe[name=\"test\"] &gt;&gt;&gt; body</code></td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href=\"#SessionStorage%20Set%20Item\" title=\"&quot;SessionStorage Set Item&quot; keyword\" class=\"name\">SessionStorage Set Item</a>       mykey2    myvalue2\n<a href=\"#SessionStorage%20Remove%20Item\" title=\"&quot;SessionStorage Remove Item&quot; keyword\" class=\"name\">SessionStorage Remove Item</a>    mykey2\n<a href=\"#SessionStorage%20Get%20Item\" title=\"&quot;SessionStorage Get Item&quot; keyword\" class=\"name\">SessionStorage Get Item</a>       mykey2    ==    ${None}\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4325\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Remove saved data with key from the session storage.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>key</code></td>\n<td>The name of the item which shall be deleted.</td>\n</tr>\n<tr>\n<td><code>frame_selector</code></td>\n<td>If this selector points to an element inside an iframe, the SessionStorage of that frame is used. Example: <code>iframe[name="test"] &gt;&gt;&gt; body</code></td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href="#SessionStorage%20Set%20Item" title="&quot;SessionStorage Set Item&quot; keyword" class="name">SessionStorage Set Item</a>       mykey2    myvalue2\n<a href="#SessionStorage%20Remove%20Item" title="&quot;SessionStorage Remove Item&quot; keyword" class="name">SessionStorage Remove Item</a>    mykey2\n<a href="#SessionStorage%20Get%20Item" title="&quot;SessionStorage Get Item&quot; keyword" class="name">SessionStorage Get Item</a>       mykey2    ==    ${None}\n</pre>\n<p><a href="https://forum.robotframework.org/t//4325">Comment &gt;&gt;</a></p>',
       shortdoc: "Remove saved data with key from the session storage.",
       args: [
         {
@@ -12938,17 +12774,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/webapp_state.py",
       lineno: 206,
     },
     {
       name: "SessionStorage Set Item",
-      doc: "<p>Save data to session storage.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>key</code></td>\n<td>The name of the key under which it should be saved.</td>\n</tr>\n<tr>\n<td><code>value</code></td>\n<td>The value which shall be saved as a string.</td>\n</tr>\n<tr>\n<td><code>frame_selector</code></td>\n<td>If this selector points to an element inside an iframe, the SessionStorage of that frame is used. Example: <code>iframe[name=\"test\"] &gt;&gt;&gt; body</code></td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href=\"#SessionStorage%20Set%20Item\" title=\"&quot;SessionStorage Set Item&quot; keyword\" class=\"name\">SessionStorage Set Item</a>    key2    value2\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4326\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Save data to session storage.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>key</code></td>\n<td>The name of the key under which it should be saved.</td>\n</tr>\n<tr>\n<td><code>value</code></td>\n<td>The value which shall be saved as a string.</td>\n</tr>\n<tr>\n<td><code>frame_selector</code></td>\n<td>If this selector points to an element inside an iframe, the SessionStorage of that frame is used. Example: <code>iframe[name="test"] &gt;&gt;&gt; body</code></td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href="#SessionStorage%20Set%20Item" title="&quot;SessionStorage Set Item&quot; keyword" class="name">SessionStorage Set Item</a>    key2    value2\n</pre>\n<p><a href="https://forum.robotframework.org/t//4326">Comment &gt;&gt;</a></p>',
       shortdoc: "Save data to session storage.",
       args: [
         {
@@ -13009,17 +12842,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/webapp_state.py",
       lineno: 185,
     },
     {
       name: "Set Assertion Formatters",
-      doc: "<p>Set keywords formatters for assertions.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>formatters</code></td>\n<td>Dictionary of keywords and formatters, where key is the keyword name where formatters are applied. Dictionary value is a list of formatter which are applied. Formatters for a defined keyword are always overwritten. An empty list will clear all formatters for the keyword. If <code>formatters</code> is empty dictionary, then all formatters are cleared from all keywords.</td>\n</tr>\n<tr>\n<td><code>scope</code></td>\n<td>Defines the lifetime of the formatter, possible values are Global, Suite and Test.</td>\n</tr>\n</table>\n<p>See type documentation of <span class=\"name\">FormatterTypes</span> for more information.</p>\n<p>It is possible to define own formatters as lambda functions.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#Set%20Assertion%20Formatters\" title=\"&quot;Set Assertion Formatters&quot; keyword\" class=\"name\">Set Assertion Formatters</a>    {\"Get Text\": [\"strip\", \"normalize spaces\"]}  # This will convert all kind of spaces to single space and removes spaces from start and end of the string.\n<a href=\"#Set%20Assertion%20Formatters\" title=\"&quot;Set Assertion Formatters&quot; keyword\" class=\"name\">Set Assertion Formatters</a>    {\"Get Title\": [\"apply to expected\",\"lambda x: x.replace(' ', '')\"]}  # This will remove all spaces from the string.\n${value} =    <a href=\"#Get%20Text\" title=\"&quot;Get Text&quot; keyword\" class=\"name\">Get Text</a>    //div    ==    ${SPACE}Expected${SPACE * 2}Text\nShould Be Equal    ${value}    Expected Text\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4327\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Set keywords formatters for assertions.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>formatters</code></td>\n<td>Dictionary of keywords and formatters, where key is the keyword name where formatters are applied. Dictionary value is a list of formatter which are applied. Formatters for a defined keyword are always overwritten. An empty list will clear all formatters for the keyword. If <code>formatters</code> is empty dictionary, then all formatters are cleared from all keywords.</td>\n</tr>\n<tr>\n<td><code>scope</code></td>\n<td>Defines the lifetime of the formatter, possible values are Global, Suite and Test.</td>\n</tr>\n</table>\n<p>See type documentation of <span class="name">FormatterTypes</span> for more information.</p>\n<p>It is possible to define own formatters as lambda functions.</p>\n<p>Example:</p>\n<pre>\n<a href="#Set%20Assertion%20Formatters" title="&quot;Set Assertion Formatters&quot; keyword" class="name">Set Assertion Formatters</a>    {"Get Text": ["strip", "normalize spaces"]}  # This will convert all kind of spaces to single space and removes spaces from start and end of the string.\n<a href="#Set%20Assertion%20Formatters" title="&quot;Set Assertion Formatters&quot; keyword" class="name">Set Assertion Formatters</a>    {"Get Title": ["apply to expected","lambda x: x.replace(\' \', \'\')"]}  # This will remove all spaces from the string.\n${value} =    <a href="#Get%20Text" title="&quot;Get Text&quot; keyword" class="name">Get Text</a>    //div    ==    ${SPACE}Expected${SPACE * 2}Text\nShould Be Equal    ${value}    Expected Text\n</pre>\n<p><a href="https://forum.robotframework.org/t//4327">Comment &gt;&gt;</a></p>',
       shortdoc: "Set keywords formatters for assertions.",
       args: [
         {
@@ -13111,16 +12941,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Config",
-      ],
+      tags: ["Config"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/assertion_formatter.py",
       lineno: 98,
     },
     {
       name: "Set Browser Timeout",
-      doc: "<p>Sets the timeout used by most input and getter keywords.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>Timeout of it is for current playwright context and for new contexts. Supports Robot Framework <a href=\"https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#time-format\">time format</a> . Returns the previous value of the timeout.</td>\n</tr>\n<tr>\n<td><code>scope</code></td>\n<td>Scope defines the live time of that setting. Available values are <code>Global</code>, <code>Suite</code> or <code>Test</code> / <code>Task</code>. See <span class=\"name\">Scope Settings</span> for more details.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n${old_timeout} =    <a href=\"#Set%20Browser%20Timeout\" title=\"&quot;Set Browser Timeout&quot; keyword\" class=\"name\">Set Browser Timeout</a>    1m 30 seconds\nClick     //button\n<a href=\"#Set%20Browser%20Timeout\" title=\"&quot;Set Browser Timeout&quot; keyword\" class=\"name\">Set Browser Timeout</a>    ${old_timeout}\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4328\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Sets the timeout used by most input and getter keywords.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>Timeout of it is for current playwright context and for new contexts. Supports Robot Framework <a href="https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#time-format">time format</a> . Returns the previous value of the timeout.</td>\n</tr>\n<tr>\n<td><code>scope</code></td>\n<td>Scope defines the live time of that setting. Available values are <code>Global</code>, <code>Suite</code> or <code>Test</code> / <code>Task</code>. See <span class="name">Scope Settings</span> for more details.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n${old_timeout} =    <a href="#Set%20Browser%20Timeout" title="&quot;Set Browser Timeout&quot; keyword" class="name">Set Browser Timeout</a>    1m 30 seconds\nClick     //button\n<a href="#Set%20Browser%20Timeout" title="&quot;Set Browser Timeout&quot; keyword" class="name">Set Browser Timeout</a>    ${old_timeout}\n</pre>\n<p><a href="https://forum.robotframework.org/t//4328">Comment &gt;&gt;</a></p>',
       shortdoc: "Sets the timeout used by most input and getter keywords.",
       args: [
         {
@@ -13159,18 +12987,16 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Config",
-        "Setter",
-      ],
+      tags: ["Config", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/browser_control.py",
       lineno: 368,
     },
     {
       name: "Set Default Run Before Unload",
-      doc: "<p>Set default runBeforeUnload value when <a href=\"#Close%20Page\" title=\"&quot;Close Page&quot; keyword\" class=\"name\">Close Page</a> is called indirectly.</p>\n<p>Close Page is called indirectly when <a href=\"https://marketsquare.github.io/robotframework-browser/Browser.html#Automatic%20page%20and%20context%20closing\">automatic page closing</a> is done. The default value is false and this keyword can be used to change value. Returns the old runBeforeUnload value.</p>\n<p><a href=\"https://forum.robotframework.org/t/6203\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Set default runBeforeUnload value when `Close Page` is called indirectly.",
+      doc: '<p>Set default runBeforeUnload value when <a href="#Close%20Page" title="&quot;Close Page&quot; keyword" class="name">Close Page</a> is called indirectly.</p>\n<p>Close Page is called indirectly when <a href="https://marketsquare.github.io/robotframework-browser/Browser.html#Automatic%20page%20and%20context%20closing">automatic page closing</a> is done. The default value is false and this keyword can be used to change value. Returns the old runBeforeUnload value.</p>\n<p><a href="https://forum.robotframework.org/t/6203">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Set default runBeforeUnload value when `Close Page` is called indirectly.",
       args: [
         {
           name: "runBeforeUnload",
@@ -13194,17 +13020,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/playwright_state.py",
       lineno: 364,
     },
     {
       name: "Set Geolocation",
-      doc: "<p>Updated the correct Context's geolocation.</p>\n<p>Latitude can be between -90 and 90 and longitude can be between -180 and 180. Accuracy of the location must be positive number and defaults to 0. When creating context, grant <code>geolocation</code> permission for pages to read its geolocation.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>latitude</code></td>\n<td>Latitude between -90 and 90.</td>\n</tr>\n<tr>\n<td><code>longitude</code></td>\n<td>Longitude between -180 and 180.</td>\n</tr>\n<tr>\n<td><code>accuracy</code></td>\n<td>Non-negative accuracy value. Defaults to 0.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n${permissions} =    Create List    geolocation\n<a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a>    permissions=${permissions}\n<a href=\"#Set%20Geolocation\" title=\"&quot;Set Geolocation&quot; keyword\" class=\"name\">Set Geolocation</a>    60.173708    24.982263    3    # Points to Korkeasaari in Helsinki.\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4329\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Updated the correct Context\'s geolocation.</p>\n<p>Latitude can be between -90 and 90 and longitude can be between -180 and 180. Accuracy of the location must be positive number and defaults to 0. When creating context, grant <code>geolocation</code> permission for pages to read its geolocation.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>latitude</code></td>\n<td>Latitude between -90 and 90.</td>\n</tr>\n<tr>\n<td><code>longitude</code></td>\n<td>Longitude between -180 and 180.</td>\n</tr>\n<tr>\n<td><code>accuracy</code></td>\n<td>Non-negative accuracy value. Defaults to 0.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n${permissions} =    Create List    geolocation\n<a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a>    permissions=${permissions}\n<a href="#Set%20Geolocation" title="&quot;Set Geolocation&quot; keyword" class="name">Set Geolocation</a>    60.173708    24.982263    3    # Points to Korkeasaari in Helsinki.\n</pre>\n<p><a href="https://forum.robotframework.org/t//4329">Comment &gt;&gt;</a></p>',
       shortdoc: "Updated the correct Context's geolocation.",
       args: [
         {
@@ -13265,17 +13088,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/browser_control.py",
       lineno: 553,
     },
     {
       name: "Set Highlight On Failure",
-      doc: "<p>Controls if the element is highlighted on failure.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>highlight</code></td>\n<td>If <span class=\"name\">True</span> element is highlighted on failure during a screenshot is taken. If <span class=\"name\">False</span> element is not highlighted in the screenshot.</td>\n</tr>\n<tr>\n<td><code>scope</code></td>\n<td>Scope defines the live time of that setting. Available values are <code>Global</code>, <code>Suite</code> or <code>Test</code> / <code>Task</code>. See <a href=\"#type-Scope\" title=\"&quot;Scope&quot; type\" class=\"name\">Scope</a> for more details.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href=\"#Set%20Highlight%20On%20Failure\" title=\"&quot;Set Highlight On Failure&quot; keyword\" class=\"name\">Set Highlight On Failure</a>    True\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4740\">Comment &gt;&gt;</a> #TODO add real link</p>",
+      doc: '<p>Controls if the element is highlighted on failure.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>highlight</code></td>\n<td>If <span class="name">True</span> element is highlighted on failure during a screenshot is taken. If <span class="name">False</span> element is not highlighted in the screenshot.</td>\n</tr>\n<tr>\n<td><code>scope</code></td>\n<td>Scope defines the live time of that setting. Available values are <code>Global</code>, <code>Suite</code> or <code>Test</code> / <code>Task</code>. See <a href="#type-Scope" title="&quot;Scope&quot; type" class="name">Scope</a> for more details.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n<a href="#Set%20Highlight%20On%20Failure" title="&quot;Set Highlight On Failure&quot; keyword" class="name">Set Highlight On Failure</a>    True\n</pre>\n<p><a href="https://forum.robotframework.org/t//4740">Comment &gt;&gt;</a> #TODO add real link</p>',
       shortdoc: "Controls if the element is highlighted on failure.",
       args: [
         {
@@ -13314,17 +13134,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Config",
-        "Setter",
-      ],
+      tags: ["Config", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/browser_control.py",
       lineno: 464,
     },
     {
       name: "Set Offline",
-      doc: "<p>Toggles current Context's offline emulation.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>offline</code></td>\n<td>Toggles the offline mode. Set to False to switch back to online mode. Defaults to True.</td>\n</tr>\n</table>\n<p><a href=\"https://forum.robotframework.org/t//4330\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Toggles current Context\'s offline emulation.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>offline</code></td>\n<td>Toggles the offline mode. Set to False to switch back to online mode. Defaults to True.</td>\n</tr>\n</table>\n<p><a href="https://forum.robotframework.org/t//4330">Comment &gt;&gt;</a></p>',
       shortdoc: "Toggles current Context's offline emulation.",
       args: [
         {
@@ -13344,18 +13161,16 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/browser_control.py",
       lineno: 540,
     },
     {
       name: "Set Presenter Mode",
-      doc: "<p>Sets presenter mode for element highlighting during test execution.</p>\n<p>Presenter mode highlights elements found by keywords, which is useful for test debugging and demonstration. When enabled, elements are highlighted with a border for a duration to visually show what the keyword found.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>mode</code></td>\n<td>When set to <code>True</code>, enables presenter mode with default settings. When set to <code>False</code>, disables presenter mode. Can also be a dictionary containing all highlighting configuration options as defined in <code>HighLightElement</code>. All fields in the dictionary are required.</td>\n</tr>\n</table>\n<p>The keyword returns the previous presenter mode value, allowing you to restore it later.</p>\n<p>Example:</p>\n<pre>\n${old_mode} =    Set Presenter Mode    True\nClick    //button                            # Element will be highlighted\nSet Presenter Mode    ${old_mode}            # Restore previous mode\n\n# With custom highlighting configuration (all fields required)\nVAR    &amp;{config}\n...    duration=5 seconds\n...    width=3px\n...    style=dotted\n...    color=red\nSet Presenter Mode    ${config}\nGet Text    //input                          # Will use custom highlight settings\nSet Presenter Mode    False                  # Turn off highlighting\n</pre>",
-      shortdoc: "Sets presenter mode for element highlighting during test execution.",
+      doc: '<p>Sets presenter mode for element highlighting during test execution.</p>\n<p>Presenter mode highlights elements found by keywords, which is useful for test debugging and demonstration. When enabled, elements are highlighted with a border for a duration to visually show what the keyword found.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>mode</code></td>\n<td>When set to <code>True</code>, enables presenter mode with default settings. When set to <code>False</code>, disables presenter mode. Can also be a dictionary containing all highlighting configuration options as defined in <code>HighLightElement</code>. All fields in the dictionary are required.</td>\n</tr>\n</table>\n<p>The keyword returns the previous presenter mode value, allowing you to restore it later.</p>\n<p>Example:</p>\n<pre>\n${old_mode} =    Set Presenter Mode    True\nClick    //button                            # Element will be highlighted\nSet Presenter Mode    ${old_mode}            # Restore previous mode\n\n# With custom highlighting configuration (all fields required)\nVAR    &amp;{config}\n...    duration=5 seconds\n...    width=3px\n...    style=dotted\n...    color=red\nSet Presenter Mode    ${config}\nGet Text    //input                          # Will use custom highlight settings\nSet Presenter Mode    False                  # Turn off highlighting\n</pre>',
+      shortdoc:
+        "Sets presenter mode for element highlighting during test execution.",
       args: [
         {
           name: "mode",
@@ -13405,17 +13220,14 @@ const DATA: Libdoc = {
         union: true,
       },
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/browser_control.py",
       lineno: 643,
     },
     {
       name: "Set Retry Assertions For",
-      doc: "<p>Sets the timeout used in retrying assertions when they fail.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>Assertion retry timeout will determine how long Browser library will retry an assertion to be true.</td>\n</tr>\n<tr>\n<td><code>scope</code></td>\n<td>Scope defines the live time of that setting. Available values are <code>Global</code>, <code>Suite</code> or <code>Test</code> / <code>Task</code>. See <a href=\"#type-Scope\" title=\"&quot;Scope&quot; type\" class=\"name\">Scope</a> for more details.</td>\n</tr>\n</table>\n<p>The other keyword <a href=\"#Set%20Browser%20Timeout\" title=\"&quot;Set Browser Timeout&quot; keyword\" class=\"name\">Set Browser timeout</a> controls how long Playwright will perform waiting in the node side for Elements to fulfill the requirements of the specific keyword.</p>\n<p>Returns the previous value of the assertion retry timeout.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#Set%20Browser%20Timeout\" title=\"&quot;Set Browser Timeout&quot; keyword\" class=\"name\">Set Browser Timeout</a>    10 seconds\n${old} =    <a href=\"#Set%20Retry%20Assertions%20For\" title=\"&quot;Set Retry Assertions For&quot; keyword\" class=\"name\">Set Retry Assertions For</a>    30s\n<a href=\"#Get%20Title\" title=\"&quot;Get Title&quot; keyword\" class=\"name\">Get Title</a>    ==    Login Page\n<a href=\"#Set%20Retry%20Assertions%20For\" title=\"&quot;Set Retry Assertions For&quot; keyword\" class=\"name\">Set Retry Assertions For</a>    ${old}\n</pre>\n<p>Example waits 10 seconds on Playwright to get the page title and library will retry 30 seconds to make sure that title is correct.</p>\n<p><a href=\"https://forum.robotframework.org/t//4331\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Sets the timeout used in retrying assertions when they fail.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>Assertion retry timeout will determine how long Browser library will retry an assertion to be true.</td>\n</tr>\n<tr>\n<td><code>scope</code></td>\n<td>Scope defines the live time of that setting. Available values are <code>Global</code>, <code>Suite</code> or <code>Test</code> / <code>Task</code>. See <a href="#type-Scope" title="&quot;Scope&quot; type" class="name">Scope</a> for more details.</td>\n</tr>\n</table>\n<p>The other keyword <a href="#Set%20Browser%20Timeout" title="&quot;Set Browser Timeout&quot; keyword" class="name">Set Browser timeout</a> controls how long Playwright will perform waiting in the node side for Elements to fulfill the requirements of the specific keyword.</p>\n<p>Returns the previous value of the assertion retry timeout.</p>\n<p>Example:</p>\n<pre>\n<a href="#Set%20Browser%20Timeout" title="&quot;Set Browser Timeout&quot; keyword" class="name">Set Browser Timeout</a>    10 seconds\n${old} =    <a href="#Set%20Retry%20Assertions%20For" title="&quot;Set Retry Assertions For&quot; keyword" class="name">Set Retry Assertions For</a>    30s\n<a href="#Get%20Title" title="&quot;Get Title&quot; keyword" class="name">Get Title</a>    ==    Login Page\n<a href="#Set%20Retry%20Assertions%20For" title="&quot;Set Retry Assertions For&quot; keyword" class="name">Set Retry Assertions For</a>    ${old}\n</pre>\n<p>Example waits 10 seconds on Playwright to get the page title and library will retry 30 seconds to make sure that title is correct.</p>\n<p><a href="https://forum.robotframework.org/t//4331">Comment &gt;&gt;</a></p>',
       shortdoc: "Sets the timeout used in retrying assertions when they fail.",
       args: [
         {
@@ -13454,17 +13266,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Config",
-        "Setter",
-      ],
+      tags: ["Config", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/browser_control.py",
       lineno: 400,
     },
     {
       name: "Set Selector Prefix",
-      doc: "<p>Sets the prefix for all selectors in the given scope.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>prefix</code></td>\n<td>Prefix for all selectors. Prefix and selector will be separated by a single space. Use <code>${None}</code> or <code>${EMPTY}</code> to disable the prefix.</td>\n</tr>\n<tr>\n<td><code>scope</code></td>\n<td>Scope defines the live time of that setting. Available values are <code>Global</code>, <code>Suite</code> or <code>Test</code> / <code>Task</code>. See <a href=\"#type-Scope\" title=\"&quot;Scope&quot; type\" class=\"name\">Scope</a> for more details.</td>\n</tr>\n</table>\n<p>Returns the previous value of the prefix.</p>\n<p>Example:</p>\n<pre>\n${old} =    <a href=\"#Set%20Selector%20Prefix\" title=\"&quot;Set Selector Prefix&quot; keyword\" class=\"name\">Set Selector Prefix</a>    iframe#embedded_page &gt;&gt;&gt;\n<a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>    button#login_btn       # Clicks on button inside iframe with the selector <code>iframe#embedded_page &gt;&gt;&gt; button#login_btn</code>\n<a href=\"#Set%20Selector%20Prefix\" title=\"&quot;Set Selector Prefix&quot; keyword\" class=\"name\">Set Selector Prefix</a>    ${old}\n</pre>\n<p>Example will click on button with id <code>login_btn</code> inside iframe with id <code>embedded_page</code>. The resulting selector will be <code>iframe#embedded_page &gt;&gt;&gt; button#login_btn</code>.</p>\n<p>The effect of this prefix can be disable by prefixing any selector with <code>!prefix </code>, with a trailing space, for single keyword calls. i.e. <code>!prefix id=btn_outside_a_frame</code></p>\n<p><a href=\"#Get%20Element\" title=\"&quot;Get Element&quot; keyword\" class=\"name\">Get Element</a>, <a href=\"#Get%20Elements\" title=\"&quot;Get Elements&quot; keyword\" class=\"name\">Get Elements</a>, <a href=\"#Get%20Element%20By\" title=\"&quot;Get Element By&quot; keyword\" class=\"name\">Get Element By</a> and <a href=\"#Get%20Element%20By%20Role\" title=\"&quot;Get Element By Role&quot; keyword\" class=\"name\">Get Element By Role</a> do automatically prefix the returned selector with <code>!prefix </code> so that it is possible to use them directly without setting the prefix to <code>${None}</code> before usage.</p>\n<p><a href=\"https://forum.robotframework.org/t//4741\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Sets the prefix for all selectors in the given scope.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>prefix</code></td>\n<td>Prefix for all selectors. Prefix and selector will be separated by a single space. Use <code>${None}</code> or <code>${EMPTY}</code> to disable the prefix.</td>\n</tr>\n<tr>\n<td><code>scope</code></td>\n<td>Scope defines the live time of that setting. Available values are <code>Global</code>, <code>Suite</code> or <code>Test</code> / <code>Task</code>. See <a href="#type-Scope" title="&quot;Scope&quot; type" class="name">Scope</a> for more details.</td>\n</tr>\n</table>\n<p>Returns the previous value of the prefix.</p>\n<p>Example:</p>\n<pre>\n${old} =    <a href="#Set%20Selector%20Prefix" title="&quot;Set Selector Prefix&quot; keyword" class="name">Set Selector Prefix</a>    iframe#embedded_page &gt;&gt;&gt;\n<a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>    button#login_btn       # Clicks on button inside iframe with the selector <code>iframe#embedded_page &gt;&gt;&gt; button#login_btn</code>\n<a href="#Set%20Selector%20Prefix" title="&quot;Set Selector Prefix&quot; keyword" class="name">Set Selector Prefix</a>    ${old}\n</pre>\n<p>Example will click on button with id <code>login_btn</code> inside iframe with id <code>embedded_page</code>. The resulting selector will be <code>iframe#embedded_page &gt;&gt;&gt; button#login_btn</code>.</p>\n<p>The effect of this prefix can be disable by prefixing any selector with <code>!prefix </code>, with a trailing space, for single keyword calls. i.e. <code>!prefix id=btn_outside_a_frame</code></p>\n<p><a href="#Get%20Element" title="&quot;Get Element&quot; keyword" class="name">Get Element</a>, <a href="#Get%20Elements" title="&quot;Get Elements&quot; keyword" class="name">Get Elements</a>, <a href="#Get%20Element%20By" title="&quot;Get Element By&quot; keyword" class="name">Get Element By</a> and <a href="#Get%20Element%20By%20Role" title="&quot;Get Element By Role&quot; keyword" class="name">Get Element By Role</a> do automatically prefix the returned selector with <code>!prefix </code> so that it is possible to use them directly without setting the prefix to <code>${None}</code> before usage.</p>\n<p><a href="https://forum.robotframework.org/t//4741">Comment &gt;&gt;</a></p>',
       shortdoc: "Sets the prefix for all selectors in the given scope.",
       args: [
         {
@@ -13516,17 +13325,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Config",
-        "Setter",
-      ],
+      tags: ["Config", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/browser_control.py",
       lineno: 431,
     },
     {
       name: "Set Strict Mode",
-      doc: "<p>Controls library strict mode.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>mode</code></td>\n<td>When set to <code>True</code>, keywords that are searching elements will use Playwright <a href=\"https://playwright.dev/docs/api/class-page#page-query-selector\">strict mode</a>. Keyword changes library strict mode value and keyword also return the previous strict mode value.</td>\n</tr>\n<tr>\n<td><code>scope</code></td>\n<td>Scope defines the live time of that setting. Available values are <code>Global</code>, <code>Suite</code> or <code>Test</code> / <code>Task</code>. See <a href=\"#type-Scope\" title=\"&quot;Scope&quot; type\" class=\"name\">Scope</a> for more details.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n${old_mode} =      Set Strict Mode    False\nGet Text           //input            # Does not fail if selector points to one or more elements\nSet Strict Mode    ${old_mode}\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4332\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Controls library strict mode.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>mode</code></td>\n<td>When set to <code>True</code>, keywords that are searching elements will use Playwright <a href="https://playwright.dev/docs/api/class-page#page-query-selector">strict mode</a>. Keyword changes library strict mode value and keyword also return the previous strict mode value.</td>\n</tr>\n<tr>\n<td><code>scope</code></td>\n<td>Scope defines the live time of that setting. Available values are <code>Global</code>, <code>Suite</code> or <code>Test</code> / <code>Task</code>. See <a href="#type-Scope" title="&quot;Scope&quot; type" class="name">Scope</a> for more details.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n${old_mode} =      Set Strict Mode    False\nGet Text           //input            # Does not fail if selector points to one or more elements\nSet Strict Mode    ${old_mode}\n</pre>\n<p><a href="https://forum.robotframework.org/t//4332">Comment &gt;&gt;</a></p>',
       shortdoc: "Controls library strict mode.",
       args: [
         {
@@ -13560,17 +13366,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/strict_mode.py",
       lineno: 20,
     },
     {
       name: "Set Time",
-      doc: "<p>Sets the time of the browser's internal clock.</p>\n<table border=\"1\">\n<tr>\n<td>Argument</td>\n<td>Description</td>\n</tr>\n<tr>\n<td>time</td>\n<td>The time to set. Supports Robot Framework date and time format</td>\n</tr>\n<tr>\n<td>clock_type</td>\n<td>The clock type to set. Default is <span class=\"name\">install</span>.</td>\n</tr>\n</table>\n<p>The fixed makes Date.now and new Date() return fixed fake time at all times, keeps all the timers running.</p>\n<p>The system sets current system time but does not trigger any timers.</p>\n<p>The install fake timers are used to manually control the flow of time in tests. They allow you to advance time, fire timers, and control the behavior of time-dependent functions.</p>\n<p>How to use clock related keywords, see <a href=\"https://playwright.dev/docs/clock\">Playwright clock documentation</a>. Also reviewing the Playwright <a href=\"https://playwright.dev/docs/api/class-clock\">Clock API</a> is recommended.</p>",
+      doc: '<p>Sets the time of the browser\'s internal clock.</p>\n<table border="1">\n<tr>\n<td>Argument</td>\n<td>Description</td>\n</tr>\n<tr>\n<td>time</td>\n<td>The time to set. Supports Robot Framework date and time format</td>\n</tr>\n<tr>\n<td>clock_type</td>\n<td>The clock type to set. Default is <span class="name">install</span>.</td>\n</tr>\n</table>\n<p>The fixed makes Date.now and new Date() return fixed fake time at all times, keeps all the timers running.</p>\n<p>The system sets current system time but does not trigger any timers.</p>\n<p>The install fake timers are used to manually control the flow of time in tests. They allow you to advance time, fire timers, and control the behavior of time-dependent functions.</p>\n<p>How to use clock related keywords, see <a href="https://playwright.dev/docs/clock">Playwright clock documentation</a>. Also reviewing the Playwright <a href="https://playwright.dev/docs/api/class-clock">Clock API</a> is recommended.</p>',
       shortdoc: "Sets the time of the browser's internal clock.",
       args: [
         {
@@ -13604,17 +13407,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "Clock",
-        "Setter",
-      ],
+      tags: ["Clock", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/clock.py",
       lineno: 23,
     },
     {
       name: "Set Viewport Size",
-      doc: "<p>Sets current Pages viewport size to specified dimensions.</p>\n<p>In the case of multiple pages in a single browser, each page can have its own viewport size. However, <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a> allows to set viewport size (and more) for all later opened pages in the context at once.</p>\n<p><a href=\"#Set%20Viewport%20Size\" title=\"&quot;Set Viewport Size&quot; keyword\" class=\"name\">Set Viewport Size</a> will resize the page. A lot of websites don't expect phones to change size, so you should set the viewport size before navigating to the page with <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a> before opening the page itself.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>width</code></td>\n<td>Sets the width size.</td>\n</tr>\n<tr>\n<td><code>height</code></td>\n<td>Sets the height size.</td>\n</tr>\n</table>\n<p><a href=\"https://forum.robotframework.org/t//4333\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Sets current Pages viewport size to specified dimensions.</p>\n<p>In the case of multiple pages in a single browser, each page can have its own viewport size. However, <a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a> allows to set viewport size (and more) for all later opened pages in the context at once.</p>\n<p><a href="#Set%20Viewport%20Size" title="&quot;Set Viewport Size&quot; keyword" class="name">Set Viewport Size</a> will resize the page. A lot of websites don\'t expect phones to change size, so you should set the viewport size before navigating to the page with <a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a> before opening the page itself.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>width</code></td>\n<td>Sets the width size.</td>\n</tr>\n<tr>\n<td><code>height</code></td>\n<td>Sets the height size.</td>\n</tr>\n</table>\n<p><a href="https://forum.robotframework.org/t//4333">Comment &gt;&gt;</a></p>',
       shortdoc: "Sets current Pages viewport size to specified dimensions.",
       args: [
         {
@@ -13648,17 +13448,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/browser_control.py",
       lineno: 514,
     },
     {
       name: "Show Keyword Banner",
-      doc: "<p>Controls if the keyword banner is shown on page or not.</p>\n<p>Keyword call banner is a css overlay that shows the currently executed keyword directly on page. This is useful for debugging and for showing the test execution on video recordings. By default, the banner is not shown on page except when running in presenter mode.</p>\n<p>The banner can be controlled by an import setting of Browser library. (see <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">Importing</a> section)</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>show</code></td>\n<td>If <span class=\"name\">True</span> banner is shown on page. If <span class=\"name\">False</span> banner is not shown on page. If <a href=\"#type-None\" title=\"&quot;None&quot; type\" class=\"name\">None</a> banner is shown on page only when running in presenter mode.</td>\n</tr>\n<tr>\n<td><code>style</code></td>\n<td>Additional css styles to be applied to the banner. These styles are css settings and may override the existing ones for the banner.</td>\n</tr>\n<tr>\n<td><code>scope</code></td>\n<td>Scope defines the live time of that setting. Available values are <code>Global</code>, <code>Suite</code> or <code>Test</code> / <code>Task</code>. See <a href=\"#type-Scope\" title=\"&quot;Scope&quot; type\" class=\"name\">Scope</a> for more details.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\nShow Keyword Banner     True    top: 5px; bottom: auto; left: 5px; background-color: #00909077; font-size: 9px; color: black;   # Show banner on top left corner with custom styles\nShow Keyword Banner     False   # Hide banner\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4716\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Controls if the keyword banner is shown on page or not.</p>\n<p>Keyword call banner is a css overlay that shows the currently executed keyword directly on page. This is useful for debugging and for showing the test execution on video recordings. By default, the banner is not shown on page except when running in presenter mode.</p>\n<p>The banner can be controlled by an import setting of Browser library. (see <a href="#Importing" title="&quot;Importing&quot; section" class="name">Importing</a> section)</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>show</code></td>\n<td>If <span class="name">True</span> banner is shown on page. If <span class="name">False</span> banner is not shown on page. If <a href="#type-None" title="&quot;None&quot; type" class="name">None</a> banner is shown on page only when running in presenter mode.</td>\n</tr>\n<tr>\n<td><code>style</code></td>\n<td>Additional css styles to be applied to the banner. These styles are css settings and may override the existing ones for the banner.</td>\n</tr>\n<tr>\n<td><code>scope</code></td>\n<td>Scope defines the live time of that setting. Available values are <code>Global</code>, <code>Suite</code> or <code>Test</code> / <code>Task</code>. See <a href="#type-Scope" title="&quot;Scope&quot; type" class="name">Scope</a> for more details.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\nShow Keyword Banner     True    top: 5px; bottom: auto; left: 5px; background-color: #00909077; font-size: 9px; color: black;   # Show banner on top left corner with custom styles\nShow Keyword Banner     False   # Hide banner\n</pre>\n<p><a href="https://forum.robotframework.org/t//4716">Comment &gt;&gt;</a></p>',
       shortdoc: "Controls if the keyword banner is shown on page or not.",
       args: [
         {
@@ -13743,17 +13540,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Config",
-        "Setter",
-      ],
+      tags: ["Config", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/browser_control.py",
       lineno: 483,
     },
     {
       name: "Start Coverage",
-      doc: "<p>Starts the coverage for the current page.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>config_file</code></td>\n<td>Optional path to <a href=\"https://www.npmjs.com/package/monocart-coverage-reports#options\">options file</a></td>\n</tr>\n<tr>\n<td><code>coverage_type</code></td>\n<td>Type of coverage to start. Default is <span class=\"name\">all</span>.</td>\n</tr>\n<tr>\n<td><code>path</code></td>\n<td>Absolute or relative directory path (relative to <code>${OUTPUT_DIR}/browser/coverage/</code>) where the coverage is store in a directory with the page id name.</td>\n</tr>\n<tr>\n<td><code>raw</code></td>\n<td>Whether to save raw coverage data. Default is <span class=\"name\">False</span>.</td>\n</tr>\n<tr>\n<td><code>reportAnonymousScripts</code></td>\n<td>Whether to report anonymous scripts. Default is <span class=\"name\">False</span>. Only valid for JS coverage.</td>\n</tr>\n<tr>\n<td><code>resetOnNavigation</code></td>\n<td>Whether to reset coverage on navigation. Default is <span class=\"name\">True</span>.</td>\n</tr>\n</table>\n<p>The <span class=\"name\">coverage_type</span> can be one of the following:</p>\n<ul>\n<li><code>all</code>: Both <a href=\"https://playwright.dev/docs/api/class-coverage/#coverage-start-css-coverage\">CSS</a> and <a href=\"https://playwright.dev/docs/api/class-coverage/#coverage-start-js-coverage\">JS</a>.</li>\n<li><code>css</code>: <a href=\"https://playwright.dev/docs/api/class-coverage/#coverage-start-css-coverage\">CSS</a>.</li>\n<li><code>js</code>: <a href=\"https://playwright.dev/docs/api/class-coverage/#coverage-start-js-coverage\">JS</a>.</li>\n</ul>\n<p>Coverage must started when page is open and before any action is performed on the page. Coverage will be stored when calling <a href=\"#Stop%20Coverage\" title=\"&quot;Stop Coverage&quot; keyword\" class=\"name\">Stop Coverage</a> keyword or page or context is closed. This is done automatically when using the auto closing.</p>\n<p>The <span class=\"name\">raw</span> argument saves the raw coverage data in the coverage folder. The raw data is needed to combine multiple coverage reports to single report. Singel report can be created with <span class=\"name\">rfbrowser coverage /path/to/basefolder/ /path/to/outputfolder/</span> command. Pleaee note that the <span class=\"name\">raw</span> argument is ignored if the <span class=\"name\">config_file</span> is defined. In this case user is responsible to also set the raw reporter in the config file. To see more details about combining coverage data, run: <span class=\"name\">rfbrowser coverage --help</span> command.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#New%20Page\" title=\"&quot;New Page&quot; keyword\" class=\"name\">New Page</a>\n<a href=\"#Start%20Coverage\" title=\"&quot;Start Coverage&quot; keyword\" class=\"name\">Start Coverage</a>\n<a href=\"#Go%20To\" title=\"&quot;Go To&quot; keyword\" class=\"name\">Go To</a>    ${LOGIN_URL}\nDo Something In The Page\n<a href=\"#Stop%20Coverage\" title=\"&quot;Stop Coverage&quot; keyword\" class=\"name\">Stop Coverage</a>\n</pre>",
+      doc: '<p>Starts the coverage for the current page.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>config_file</code></td>\n<td>Optional path to <a href="https://www.npmjs.com/package/monocart-coverage-reports#options">options file</a></td>\n</tr>\n<tr>\n<td><code>coverage_type</code></td>\n<td>Type of coverage to start. Default is <span class="name">all</span>.</td>\n</tr>\n<tr>\n<td><code>path</code></td>\n<td>Absolute or relative directory path (relative to <code>${OUTPUT_DIR}/browser/coverage/</code>) where the coverage is store in a directory with the page id name.</td>\n</tr>\n<tr>\n<td><code>raw</code></td>\n<td>Whether to save raw coverage data. Default is <span class="name">False</span>.</td>\n</tr>\n<tr>\n<td><code>reportAnonymousScripts</code></td>\n<td>Whether to report anonymous scripts. Default is <span class="name">False</span>. Only valid for JS coverage.</td>\n</tr>\n<tr>\n<td><code>resetOnNavigation</code></td>\n<td>Whether to reset coverage on navigation. Default is <span class="name">True</span>.</td>\n</tr>\n</table>\n<p>The <span class="name">coverage_type</span> can be one of the following:</p>\n<ul>\n<li><code>all</code>: Both <a href="https://playwright.dev/docs/api/class-coverage/#coverage-start-css-coverage">CSS</a> and <a href="https://playwright.dev/docs/api/class-coverage/#coverage-start-js-coverage">JS</a>.</li>\n<li><code>css</code>: <a href="https://playwright.dev/docs/api/class-coverage/#coverage-start-css-coverage">CSS</a>.</li>\n<li><code>js</code>: <a href="https://playwright.dev/docs/api/class-coverage/#coverage-start-js-coverage">JS</a>.</li>\n</ul>\n<p>Coverage must started when page is open and before any action is performed on the page. Coverage will be stored when calling <a href="#Stop%20Coverage" title="&quot;Stop Coverage&quot; keyword" class="name">Stop Coverage</a> keyword or page or context is closed. This is done automatically when using the auto closing.</p>\n<p>The <span class="name">raw</span> argument saves the raw coverage data in the coverage folder. The raw data is needed to combine multiple coverage reports to single report. Singel report can be created with <span class="name">rfbrowser coverage /path/to/basefolder/ /path/to/outputfolder/</span> command. Pleaee note that the <span class="name">raw</span> argument is ignored if the <span class="name">config_file</span> is defined. In this case user is responsible to also set the raw reporter in the config file. To see more details about combining coverage data, run: <span class="name">rfbrowser coverage --help</span> command.</p>\n<p>Example:</p>\n<pre>\n<a href="#New%20Page" title="&quot;New Page&quot; keyword" class="name">New Page</a>\n<a href="#Start%20Coverage" title="&quot;Start Coverage&quot; keyword" class="name">Start Coverage</a>\n<a href="#Go%20To" title="&quot;Go To&quot; keyword" class="name">Go To</a>    ${LOGIN_URL}\nDo Something In The Page\n<a href="#Stop%20Coverage" title="&quot;Stop Coverage&quot; keyword" class="name">Stop Coverage</a>\n</pre>',
       shortdoc: "Starts the coverage for the current page.",
       args: [
         {
@@ -13870,18 +13664,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "Coverage",
-        "Experimental",
-        "Setter",
-      ],
+      tags: ["Coverage", "Experimental", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/coverage.py",
       lineno: 28,
     },
     {
       name: "Stop Coverage",
-      doc: "<p>Stops the coverage for the current page.</p>\n<p>Creates a coverage report by using <a href=\"https://www.npmjs.com/package/monocart-coverage-reports\">monocart-coverage-reports</a> To see the default and all possible options, see <a href=\"https://github.com/cenfun/monocart-coverage-reports/blob/HEAD/lib/default/options.js\">options.js</a> file for more details. Returns the path to the folder where coverage reported if coverage was started, otherwise returns <a href=\"#type-None\" title=\"&quot;None&quot; type\" class=\"name\">None</a>.</p>",
+      doc: '<p>Stops the coverage for the current page.</p>\n<p>Creates a coverage report by using <a href="https://www.npmjs.com/package/monocart-coverage-reports">monocart-coverage-reports</a> To see the default and all possible options, see <a href="https://github.com/cenfun/monocart-coverage-reports/blob/HEAD/lib/default/options.js">options.js</a> file for more details. Returns the path to the folder where coverage reported if coverage was started, otherwise returns <a href="#type-None" title="&quot;None&quot; type" class="name">None</a>.</p>',
       shortdoc: "Stops the coverage for the current page.",
       args: [],
       returnType: {
@@ -13904,18 +13694,16 @@ const DATA: Libdoc = {
         union: true,
       },
       returnDoc: "",
-      tags: [
-        "Coverage",
-        "Getter",
-      ],
+      tags: ["Coverage", "Getter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/coverage.py",
       lineno: 90,
     },
     {
       name: "Switch Browser",
-      doc: "<p>Switches the currently active Browser to another open Browser.</p>\n<p>Returns a stable identifier for the previous browser. See <a href=\"#Browser%2C%20Context%20and%20Page\" title=\"&quot;Browser, Context and Page&quot; section\" class=\"name\">Browser, Context and Page</a> for more information about Browser and related concepts.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td>id</td>\n<td>The id of the browser to switch to. Example: <code>browser=96207191-8147-44e7-b9ac-5e04f2709c1d</code>. A browser id is returned by <a href=\"#New%20Browser\" title=\"&quot;New Browser&quot; keyword\" class=\"name\">New Browser</a> when it is started or can be fetched from the browser catalog when returned by <a href=\"#Get%20Browser%20Catalog\" title=\"&quot;Get Browser Catalog&quot; keyword\" class=\"name\">Get Browser Catalog</a>.</td>\n</tr>\n</table>\n<p><a href=\"https://forum.robotframework.org/t//4334\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Switches the currently active Browser to another open Browser.",
+      doc: '<p>Switches the currently active Browser to another open Browser.</p>\n<p>Returns a stable identifier for the previous browser. See <a href="#Browser%2C%20Context%20and%20Page" title="&quot;Browser, Context and Page&quot; section" class="name">Browser, Context and Page</a> for more information about Browser and related concepts.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td>id</td>\n<td>The id of the browser to switch to. Example: <code>browser=96207191-8147-44e7-b9ac-5e04f2709c1d</code>. A browser id is returned by <a href="#New%20Browser" title="&quot;New Browser&quot; keyword" class="name">New Browser</a> when it is started or can be fetched from the browser catalog when returned by <a href="#Get%20Browser%20Catalog" title="&quot;Get Browser Catalog&quot; keyword" class="name">Get Browser Catalog</a>.</td>\n</tr>\n</table>\n<p><a href="https://forum.robotframework.org/t//4334">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Switches the currently active Browser to another open Browser.",
       args: [
         {
           name: "id",
@@ -13939,17 +13727,14 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/playwright_state.py",
       lineno: 1298,
     },
     {
       name: "Switch Context",
-      doc: "<p>Switches the active BrowserContext to another open context.</p>\n<p>Returns a stable identifier for the previous context. See <a href=\"#Browser%2C%20Context%20and%20Page\" title=\"&quot;Browser, Context and Page&quot; section\" class=\"name\">Browser, Context and Page</a> for more information about Context and related concepts.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>id</code></td>\n<td>The id of the context to switch to. Example: <code>context=525d8e5b-3c4e-4baa-bfd4-dfdbc6e86089</code>. A context id is returned by <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a> when it is started or can be fetched from the browser catalog when returned by <a href=\"#Get%20Browser%20Catalog\" title=\"&quot;Get Browser Catalog&quot; keyword\" class=\"name\">Get Browser Catalog</a>.</td>\n</tr>\n<tr>\n<td><code>browser</code></td>\n<td>The browser in which to search for that context. <code>CURRENT</code> for the currently active browser, <code>ALL</code> to search in all open browsers or the id of the browser where to switch context.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n${first_context} =     <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a>\n<a href=\"#New%20Page\" title=\"&quot;New Page&quot; keyword\" class=\"name\">New Page</a>             ${URL1}\n${second_context} =    <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a>\n<a href=\"#New%20Page\" title=\"&quot;New Page&quot; keyword\" class=\"name\">New Page</a>             ${URL2}\n<a href=\"#Switch%20Context\" title=\"&quot;Switch Context&quot; keyword\" class=\"name\">Switch Context</a>       ${first_context}    # Switches back to first context and page.\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4335\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Switches the active BrowserContext to another open context.</p>\n<p>Returns a stable identifier for the previous context. See <a href="#Browser%2C%20Context%20and%20Page" title="&quot;Browser, Context and Page&quot; section" class="name">Browser, Context and Page</a> for more information about Context and related concepts.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>id</code></td>\n<td>The id of the context to switch to. Example: <code>context=525d8e5b-3c4e-4baa-bfd4-dfdbc6e86089</code>. A context id is returned by <a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a> when it is started or can be fetched from the browser catalog when returned by <a href="#Get%20Browser%20Catalog" title="&quot;Get Browser Catalog&quot; keyword" class="name">Get Browser Catalog</a>.</td>\n</tr>\n<tr>\n<td><code>browser</code></td>\n<td>The browser in which to search for that context. <code>CURRENT</code> for the currently active browser, <code>ALL</code> to search in all open browsers or the id of the browser where to switch context.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n${first_context} =     <a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a>\n<a href="#New%20Page" title="&quot;New Page&quot; keyword" class="name">New Page</a>             ${URL1}\n${second_context} =    <a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a>\n<a href="#New%20Page" title="&quot;New Page&quot; keyword" class="name">New Page</a>             ${URL2}\n<a href="#Switch%20Context" title="&quot;Switch Context&quot; keyword" class="name">Switch Context</a>       ${first_context}    # Switches back to first context and page.\n</pre>\n<p><a href="https://forum.robotframework.org/t//4335">Comment &gt;&gt;</a></p>',
       shortdoc: "Switches the active BrowserContext to another open context.",
       args: [
         {
@@ -14001,18 +13786,16 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/playwright_state.py",
       lineno: 1331,
     },
     {
       name: "Switch Page",
-      doc: "<p>Switches the active browser page to another open page by <code>id</code> or <code>NEW</code>.</p>\n<p>Returns a stable identifier <code>id</code> for the previous page. See <a href=\"#Browser%2C%20Context%20and%20Page\" title=\"&quot;Browser, Context and Page&quot; section\" class=\"name\">Browser, Context and Page</a> for more information about Page and related concepts.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>id</code></td>\n<td>The id or alias of the page to switch to. Example: <code>page=8baf2991-5eaf-444d-a318-8045f914e96a</code> or <code>NEW</code>. Can be a string or a dictionary returned by <a href=\"#New%20Page\" title=\"&quot;New Page&quot; keyword\" class=\"name\">New Page</a> Keyword. A page id can be fetched from the browser catalog when returned by <a href=\"#Get%20Browser%20Catalog\" title=\"&quot;Get Browser Catalog&quot; keyword\" class=\"name\">Get Browser Catalog</a>. <code>NEW</code> can be used to switch to a pop-up that just has been opened by the webpage, <code>CURRENT</code> can be used to switch to the active page of a different context or browser, identified by their id.</td>\n</tr>\n<tr>\n<td><code>context</code></td>\n<td>The context in which to search for that page. <code>CURRENT</code> for the currently active context, <code>ALL</code> to search in all open contexts or the id of the context where to switch page.</td>\n</tr>\n<tr>\n<td><code>browser</code></td>\n<td>The browser in which to search for that page. <code>CURRENT</code> for the currently active browser, <code>ALL</code> to search in all open browsers or the id of the browser where to switch page.</td>\n</tr>\n</table>\n<p><code>New</code> may timeout if no new pages exists before library timeout.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>           button#pops_up    # Open new page\n${previous} =    <a href=\"#Switch%20Page\" title=\"&quot;Switch Page&quot; keyword\" class=\"name\">Switch Page</a>      NEW\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4336\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Switches the active browser page to another open page by ``id`` or ``NEW``.",
+      doc: '<p>Switches the active browser page to another open page by <code>id</code> or <code>NEW</code>.</p>\n<p>Returns a stable identifier <code>id</code> for the previous page. See <a href="#Browser%2C%20Context%20and%20Page" title="&quot;Browser, Context and Page&quot; section" class="name">Browser, Context and Page</a> for more information about Page and related concepts.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>id</code></td>\n<td>The id or alias of the page to switch to. Example: <code>page=8baf2991-5eaf-444d-a318-8045f914e96a</code> or <code>NEW</code>. Can be a string or a dictionary returned by <a href="#New%20Page" title="&quot;New Page&quot; keyword" class="name">New Page</a> Keyword. A page id can be fetched from the browser catalog when returned by <a href="#Get%20Browser%20Catalog" title="&quot;Get Browser Catalog&quot; keyword" class="name">Get Browser Catalog</a>. <code>NEW</code> can be used to switch to a pop-up that just has been opened by the webpage, <code>CURRENT</code> can be used to switch to the active page of a different context or browser, identified by their id.</td>\n</tr>\n<tr>\n<td><code>context</code></td>\n<td>The context in which to search for that page. <code>CURRENT</code> for the currently active context, <code>ALL</code> to search in all open contexts or the id of the context where to switch page.</td>\n</tr>\n<tr>\n<td><code>browser</code></td>\n<td>The browser in which to search for that page. <code>CURRENT</code> for the currently active browser, <code>ALL</code> to search in all open browsers or the id of the browser where to switch page.</td>\n</tr>\n</table>\n<p><code>New</code> may timeout if no new pages exists before library timeout.</p>\n<p>Example:</p>\n<pre>\n<a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>           button#pops_up    # Open new page\n${previous} =    <a href="#Switch%20Page" title="&quot;Switch Page&quot; keyword" class="name">Switch Page</a>      NEW\n</pre>\n<p><a href="https://forum.robotframework.org/t//4336">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Switches the active browser page to another open page by ``id`` or ``NEW``.",
       args: [
         {
           name: "id",
@@ -14109,18 +13892,16 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "BrowserControl",
-        "Setter",
-      ],
+      tags: ["BrowserControl", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/playwright_state.py",
       lineno: 1384,
     },
     {
       name: "Take Screenshot",
-      doc: "<p>Takes a screenshot of the current window or element and saves it to disk.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>filename</code></td>\n<td>Filename into which to save. The file will be saved into the robot framework  ${OUTPUTDIR}/browser/screenshot directory by default, but it can be overwritten by providing custom path or filename. String <code>{index}</code> in filename will be replaced with a rolling number. Use this to not override filenames. If filename equals to UUID, then filename is created by Python uuid; <a href=\"https://docs.python.org/3/library/uuid.html\">https://docs.python.org/3/library/uuid.html</a>. If filename equals to EMBED (case insensitive) or ${NONE},  then screenshot is embedded as Base64 image to the log.html. The image is saved temporally to the disk and warning is displayed if removing the temporary file fails. The ${OUTPUTDIR}/browser/ is removed at the first suite startup.</td>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Take a screenshot of the element matched by selector. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors. If not provided take a screenshot of current viewport.</td>\n</tr>\n<tr>\n<td><code>crop</code></td>\n<td>Crops the taken screenshot to the given box. It takes same dictionary as returned from <a href=\"#Get%20BoundingBox\" title=\"&quot;Get BoundingBox&quot; keyword\" class=\"name\">Get BoundingBox</a>. Cropping only works on page screenshot, so if no selector is given.</td>\n</tr>\n<tr>\n<td><code>disableAnimations</code></td>\n<td>When set to <code>True</code>, stops CSS animations, CSS transitions and Web Animations. Animations get different treatment depending on their duration:  - finite animations are fast-forwarded to completion, so they'll fire transitionend event.  - infinite animations are canceled to initial state, and then played over after the screenshot.</td>\n</tr>\n<tr>\n<td><code>fileType</code></td>\n<td><code>png</code> or <code>jpeg</code> Specify screenshot type, defaults to <code>png</code> .</td>\n</tr>\n<tr>\n<td><code>fullPage</code></td>\n<td>When True, takes a screenshot of the full scrollable page, instead of the currently visible viewport. Defaults to False.</td>\n</tr>\n<tr>\n<td><code>highlight_selector</code></td>\n<td>Highlights elements while taking the screenshot. Highlight method is <code>playwright</code>. This highlighting also automatically happens if the Robot Framework variable <code>${ROBOT_FRAMEWORK_BROWSER_FAILING_SELECTOR}</code> is set to a selector string and is available on page. This is the case if <code>highlight_on_failure</code> has been set to <code>True</code> when importing Browser library.</td>\n</tr>\n<tr>\n<td><code>log_screenshot</code></td>\n<td>When set to <code>False</code> the screenshot is taken but not logged into log.html.</td>\n</tr>\n<tr>\n<td><code>mask</code></td>\n<td>Specify selectors that should be masked when the screenshot is taken. Masked elements will be overlayed with a pink box <code>#FF00FF</code> that completely covers its bounding box. Argument can take a single selector string or a list of selector strings if multiple different elements should be masked.</td>\n</tr>\n<tr>\n<td><code>maskColor</code></td>\n<td>Specify the color of the overlay box for masked elements, in CSS color format. Default color is pink #FF00FF.</td>\n</tr>\n<tr>\n<td><code>omitBackground</code></td>\n<td>Hides default white background and allows capturing screenshots with transparency. Not applicable to jpeg images.</td>\n</tr>\n<tr>\n<td><code>quality</code></td>\n<td>The quality of the image, between 0-100. Not applicable to png images.</td>\n</tr>\n<tr>\n<td><code>scale</code></td>\n<td><code>css</code> or <code>device</code>. <code>css</code> will reduce the image size and <code>device</code> keeps image in original size. Defaults to <code>device</code>.</td>\n</tr>\n<tr>\n<td><code>return_as</code></td>\n<td>Defines what this keyword returns. Possible values are documented in <a href=\"#type-ScreenshotReturnType\" title=\"&quot;ScreenshotReturnType&quot; type\" class=\"name\">ScreenshotReturnType</a>. It can be either a path to the screenshot file as string or Path object, or the image data as bytes or base64 encoded string.</td>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>Maximum time how long taking screenshot can last, defaults to library timeout. Supports Robot Framework time format, like 10s or 1 min, pass 0 to disable timeout. The default value can be changed by using the <a href=\"#Set%20Browser%20Timeout\" title=\"&quot;Set Browser Timeout&quot; keyword\" class=\"name\">Set Browser Timeout</a> keyword.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode if selector is defined. See <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>Example</p>\n<pre>\n<a href=\"#Take%20Screenshot\" title=\"&quot;Take Screenshot&quot; keyword\" class=\"name\">Take Screenshot</a>                                 # Takes screenshot from page with default filename\n<a href=\"#Take%20Screenshot\" title=\"&quot;Take Screenshot&quot; keyword\" class=\"name\">Take Screenshot</a>   selector=id=username_field    # Captures element in image\n# Takes screenshot with jpeg extension, defines image quality and timeout how long taking screenshot should last\n<a href=\"#Take%20Screenshot\" title=\"&quot;Take Screenshot&quot; keyword\" class=\"name\">Take Screenshot</a>   fullPage=True    fileType=jpeg    quality=50    timeout=10s\n<a href=\"#Take%20Screenshot\" title=\"&quot;Take Screenshot&quot; keyword\" class=\"name\">Take Screenshot</a>   EMBED                         # Screenshot is embedded as Base64 image to the log.html.\n<a href=\"#Take%20Screenshot\" title=\"&quot;Take Screenshot&quot; keyword\" class=\"name\">Take Screenshot</a>   UUID                          # Takes screenshot from page with filename generated by: <a href=\"https://docs.python.org/3/library/uuid.html\">https://docs.python.org/3/library/uuid.html</a>.\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4337\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Takes a screenshot of the current window or element and saves it to disk.",
+      doc: '<p>Takes a screenshot of the current window or element and saves it to disk.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>filename</code></td>\n<td>Filename into which to save. The file will be saved into the robot framework  ${OUTPUTDIR}/browser/screenshot directory by default, but it can be overwritten by providing custom path or filename. String <code>{index}</code> in filename will be replaced with a rolling number. Use this to not override filenames. If filename equals to UUID, then filename is created by Python uuid; <a href="https://docs.python.org/3/library/uuid.html">https://docs.python.org/3/library/uuid.html</a>. If filename equals to EMBED (case insensitive) or ${NONE},  then screenshot is embedded as Base64 image to the log.html. The image is saved temporally to the disk and warning is displayed if removing the temporary file fails. The ${OUTPUTDIR}/browser/ is removed at the first suite startup.</td>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Take a screenshot of the element matched by selector. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors. If not provided take a screenshot of current viewport.</td>\n</tr>\n<tr>\n<td><code>crop</code></td>\n<td>Crops the taken screenshot to the given box. It takes same dictionary as returned from <a href="#Get%20BoundingBox" title="&quot;Get BoundingBox&quot; keyword" class="name">Get BoundingBox</a>. Cropping only works on page screenshot, so if no selector is given.</td>\n</tr>\n<tr>\n<td><code>disableAnimations</code></td>\n<td>When set to <code>True</code>, stops CSS animations, CSS transitions and Web Animations. Animations get different treatment depending on their duration:  - finite animations are fast-forwarded to completion, so they\'ll fire transitionend event.  - infinite animations are canceled to initial state, and then played over after the screenshot.</td>\n</tr>\n<tr>\n<td><code>fileType</code></td>\n<td><code>png</code> or <code>jpeg</code> Specify screenshot type, defaults to <code>png</code> .</td>\n</tr>\n<tr>\n<td><code>fullPage</code></td>\n<td>When True, takes a screenshot of the full scrollable page, instead of the currently visible viewport. Defaults to False.</td>\n</tr>\n<tr>\n<td><code>highlight_selector</code></td>\n<td>Highlights elements while taking the screenshot. Highlight method is <code>playwright</code>. This highlighting also automatically happens if the Robot Framework variable <code>${ROBOT_FRAMEWORK_BROWSER_FAILING_SELECTOR}</code> is set to a selector string and is available on page. This is the case if <code>highlight_on_failure</code> has been set to <code>True</code> when importing Browser library.</td>\n</tr>\n<tr>\n<td><code>log_screenshot</code></td>\n<td>When set to <code>False</code> the screenshot is taken but not logged into log.html.</td>\n</tr>\n<tr>\n<td><code>mask</code></td>\n<td>Specify selectors that should be masked when the screenshot is taken. Masked elements will be overlayed with a pink box <code>#FF00FF</code> that completely covers its bounding box. Argument can take a single selector string or a list of selector strings if multiple different elements should be masked.</td>\n</tr>\n<tr>\n<td><code>maskColor</code></td>\n<td>Specify the color of the overlay box for masked elements, in CSS color format. Default color is pink #FF00FF.</td>\n</tr>\n<tr>\n<td><code>omitBackground</code></td>\n<td>Hides default white background and allows capturing screenshots with transparency. Not applicable to jpeg images.</td>\n</tr>\n<tr>\n<td><code>quality</code></td>\n<td>The quality of the image, between 0-100. Not applicable to png images.</td>\n</tr>\n<tr>\n<td><code>scale</code></td>\n<td><code>css</code> or <code>device</code>. <code>css</code> will reduce the image size and <code>device</code> keeps image in original size. Defaults to <code>device</code>.</td>\n</tr>\n<tr>\n<td><code>return_as</code></td>\n<td>Defines what this keyword returns. Possible values are documented in <a href="#type-ScreenshotReturnType" title="&quot;ScreenshotReturnType&quot; type" class="name">ScreenshotReturnType</a>. It can be either a path to the screenshot file as string or Path object, or the image data as bytes or base64 encoded string.</td>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>Maximum time how long taking screenshot can last, defaults to library timeout. Supports Robot Framework time format, like 10s or 1 min, pass 0 to disable timeout. The default value can be changed by using the <a href="#Set%20Browser%20Timeout" title="&quot;Set Browser Timeout&quot; keyword" class="name">Set Browser Timeout</a> keyword.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode if selector is defined. See <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>Example</p>\n<pre>\n<a href="#Take%20Screenshot" title="&quot;Take Screenshot&quot; keyword" class="name">Take Screenshot</a>                                 # Takes screenshot from page with default filename\n<a href="#Take%20Screenshot" title="&quot;Take Screenshot&quot; keyword" class="name">Take Screenshot</a>   selector=id=username_field    # Captures element in image\n# Takes screenshot with jpeg extension, defines image quality and timeout how long taking screenshot should last\n<a href="#Take%20Screenshot" title="&quot;Take Screenshot&quot; keyword" class="name">Take Screenshot</a>   fullPage=True    fileType=jpeg    quality=50    timeout=10s\n<a href="#Take%20Screenshot" title="&quot;Take Screenshot&quot; keyword" class="name">Take Screenshot</a>   EMBED                         # Screenshot is embedded as Base64 image to the log.html.\n<a href="#Take%20Screenshot" title="&quot;Take Screenshot&quot; keyword" class="name">Take Screenshot</a>   UUID                          # Takes screenshot from page with filename generated by: <a href="https://docs.python.org/3/library/uuid.html">https://docs.python.org/3/library/uuid.html</a>.\n</pre>\n<p><a href="https://forum.robotframework.org/t//4337">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Takes a screenshot of the current window or element and saves it to disk.",
       args: [
         {
           name: "filename",
@@ -14498,16 +14279,14 @@ const DATA: Libdoc = {
         union: true,
       },
       returnDoc: "",
-      tags: [
-        "PageContent",
-      ],
+      tags: ["PageContent"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/browser_control.py",
       lineno: 137,
     },
     {
       name: "Tap",
-      doc: "<p>Simulates tap on the element found by <code>selector</code>.</p>\n<p>Requires that the <code>hasTouch</code> option of the <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a> be set to true. This method taps the element by performing the following steps:</p>\n<ul>\n<li>Wait for actionability checks on the element, unless force option is set.</li>\n<li>Scroll the element into view if needed.</li>\n<li>Use page.touchscreen to tap the center of the element, or the specified position.</li>\n<li>Wait for initiated navigations to either succeed or fail, unless noWaitAfter option is set.</li>\n</ul>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector element to click. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>*modifiers</code></td>\n<td>Modifier keys to press. Ensures that only these modifiers are pressed during the click, and then restores current modifiers back. If not specified, currently pressed modifiers are used. Modifiers can be specified in any order, and multiple modifiers can be specified. Valid modifier keys are <code>Control</code>, <code>Alt</code>, <code>Shift</code> and <code>Meta</code>.</td>\n</tr>\n<tr>\n<td><code>force</code></td>\n<td>Whether to bypass the actionability checks. Defaults to false.</td>\n</tr>\n<tr>\n<td><code>noWaitAfter</code></td>\n<td>Deprecated. This option has no effect. Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to <code>False</code>.</td>\n</tr>\n<tr>\n<td><code>position_x</code> <code>position_y</code></td>\n<td>A point to click relative to the top-left corner of element bounding-box. Only positive values within the bounding-box are allowed. If not specified, clicks to some visible point of the element.</td>\n</tr>\n<tr>\n<td><code>trial</code></td>\n<td>When set, this method only performs the actionability checks and skips the action. Defaults to <code>False</code>.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\nNew Context    hasTouch=${False}\nNew Page    ${URL}\nTap    css=input#login_button\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//5939\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Simulates tap on the element found by <code>selector</code>.</p>\n<p>Requires that the <code>hasTouch</code> option of the <a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a> be set to true. This method taps the element by performing the following steps:</p>\n<ul>\n<li>Wait for actionability checks on the element, unless force option is set.</li>\n<li>Scroll the element into view if needed.</li>\n<li>Use page.touchscreen to tap the center of the element, or the specified position.</li>\n<li>Wait for initiated navigations to either succeed or fail, unless noWaitAfter option is set.</li>\n</ul>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector element to click. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>*modifiers</code></td>\n<td>Modifier keys to press. Ensures that only these modifiers are pressed during the click, and then restores current modifiers back. If not specified, currently pressed modifiers are used. Modifiers can be specified in any order, and multiple modifiers can be specified. Valid modifier keys are <code>Control</code>, <code>Alt</code>, <code>Shift</code> and <code>Meta</code>.</td>\n</tr>\n<tr>\n<td><code>force</code></td>\n<td>Whether to bypass the actionability checks. Defaults to false.</td>\n</tr>\n<tr>\n<td><code>noWaitAfter</code></td>\n<td>Deprecated. This option has no effect. Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to <code>False</code>.</td>\n</tr>\n<tr>\n<td><code>position_x</code> <code>position_y</code></td>\n<td>A point to click relative to the top-left corner of element bounding-box. Only positive values within the bounding-box are allowed. If not specified, clicks to some visible point of the element.</td>\n</tr>\n<tr>\n<td><code>trial</code></td>\n<td>When set, this method only performs the actionability checks and skips the action. Defaults to <code>False</code>.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\nNew Context    hasTouch=${False}\nNew Page    ${URL}\nTap    css=input#login_button\n</pre>\n<p><a href="https://forum.robotframework.org/t//5939">Comment &gt;&gt;</a></p>',
       shortdoc: "Simulates tap on the element found by ``selector``.",
       args: [
         {
@@ -14637,18 +14416,16 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 436,
     },
     {
       name: "Type Secret",
-      doc: "<p>Types the given secret from <code>variable_name</code> into the text field found by <code>selector</code>.</p>\n<p>This keyword does not log secret in Robot Framework logs, if keyword resolves the variable value internally. If <code>enable_playwright_debug</code> is enabled in the library import, secret will be always visible as plain text in the playwright debug logs, regardless of the Robot Framework log level.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the text field. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>secret</code></td>\n<td>Supports Robot Framework 7.4 Secret type as normal variable (with curly braces). Also environment variable name with % prefix or a local variable with $ prefix that has the secret text value (without curly braces).</td>\n</tr>\n<tr>\n<td><code>delay</code></td>\n<td>Delay between the single key strokes. It may be either a number or a Robot Framework time string. Time strings are fully explained in an appendix of Robot Framework User Guide. Defaults to <code>0 ms</code>. Example: <code>50 ms</code></td>\n</tr>\n<tr>\n<td><code>clear</code></td>\n<td>Set to false, if the field shall not be cleared before typing. Defaults to true.</td>\n</tr>\n</table>\n<p>This keyword does not log secret in Robot Framework logs, but if PLaywright debug logs are enabled, secret will be visible as plain text in the Playwright debug logs, regardless of the Robot Framework log level or how <code>secret</code> is resolved.</p>\n<p>This keyword supports Robot Framework 7.4 <a href=\"https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#secret-variables\">Secret</a> variable type, which is the recommended way if you are using Robot Framework 7.4 or newer.</p>\n<p>For older Robot Framework versions keyword support resolving secrets from environment variables and Robot Framework variables in the following ways. Keyword resolves the <code>secret</code> from Robot Framework variable internally, when <code>secret</code> variable is prefixed with <span class=\"name\">$</span>, without the curly braces. Example <span class=\"name\">$Password</span>` will resolve to <code>${Password}</code> Robot Framework variable.</p>\n<p>If <code>secret</code> variable is prefixed with <span class=\"name\">%</span>, library will resolve corresponding environment variable. Example <code>%ENV_PWD</code> will resolve to <code>%{ENV_PWD}</code> environment variable.</p>\n<p><b>Using normal Robot Framework variables like <code>${password}</code> will not work!</b></p>\n<p><b>Normal plain text will not work.</b> If you want to use plain text, use <a href=\"#Type%20Text\" title=\"&quot;Type Text&quot; keyword\" class=\"name\">Type Text</a> keyword instead.</p>\n<p>This keyword will also work with a give cryptographic cipher text, that has been encrypted by Crypto library. See <a href=\"https://github.com/Snooz82/robotframework-crypto\">Crypto Library</a> for more details.</p>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>See <a href=\"#Type%20Text\" title=\"&quot;Type Text&quot; keyword\" class=\"name\">Type Text</a> for details.</p>\n<p>Example</p>\n<pre>\n<a href=\"#Type%20Secret\" title=\"&quot;Type Secret&quot; keyword\" class=\"name\">Type Secret</a>    input#username_field    ${username}    # Keyword resolves ${username} variable value from Robot Framework Secret type variable\n<a href=\"#Type%20Secret\" title=\"&quot;Type Secret&quot; keyword\" class=\"name\">Type Secret</a>    input#username_field    $username      # Keyword resolves ${username} variable value from Robot Framework variables\n<a href=\"#Type%20Secret\" title=\"&quot;Type Secret&quot; keyword\" class=\"name\">Type Secret</a>    input#username_field    %username      # Keyword resolves $USERNAME/%USERNAME% variable value from environment variables\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4338\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Types the given secret from ``variable_name`` into the text field found by ``selector``.",
+      doc: '<p>Types the given secret from <code>variable_name</code> into the text field found by <code>selector</code>.</p>\n<p>This keyword does not log secret in Robot Framework logs, if keyword resolves the variable value internally. If <code>enable_playwright_debug</code> is enabled in the library import, secret will be always visible as plain text in the playwright debug logs, regardless of the Robot Framework log level.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the text field. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>secret</code></td>\n<td>Supports Robot Framework 7.4 Secret type as normal variable (with curly braces). Also environment variable name with % prefix or a local variable with $ prefix that has the secret text value (without curly braces).</td>\n</tr>\n<tr>\n<td><code>delay</code></td>\n<td>Delay between the single key strokes. It may be either a number or a Robot Framework time string. Time strings are fully explained in an appendix of Robot Framework User Guide. Defaults to <code>0 ms</code>. Example: <code>50 ms</code></td>\n</tr>\n<tr>\n<td><code>clear</code></td>\n<td>Set to false, if the field shall not be cleared before typing. Defaults to true.</td>\n</tr>\n</table>\n<p>This keyword does not log secret in Robot Framework logs, but if PLaywright debug logs are enabled, secret will be visible as plain text in the Playwright debug logs, regardless of the Robot Framework log level or how <code>secret</code> is resolved.</p>\n<p>This keyword supports Robot Framework 7.4 <a href="https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#secret-variables">Secret</a> variable type, which is the recommended way if you are using Robot Framework 7.4 or newer.</p>\n<p>For older Robot Framework versions keyword support resolving secrets from environment variables and Robot Framework variables in the following ways. Keyword resolves the <code>secret</code> from Robot Framework variable internally, when <code>secret</code> variable is prefixed with <span class="name">$</span>, without the curly braces. Example <span class="name">$Password</span>` will resolve to <code>${Password}</code> Robot Framework variable.</p>\n<p>If <code>secret</code> variable is prefixed with <span class="name">%</span>, library will resolve corresponding environment variable. Example <code>%ENV_PWD</code> will resolve to <code>%{ENV_PWD}</code> environment variable.</p>\n<p><b>Using normal Robot Framework variables like <code>${password}</code> will not work!</b></p>\n<p><b>Normal plain text will not work.</b> If you want to use plain text, use <a href="#Type%20Text" title="&quot;Type Text&quot; keyword" class="name">Type Text</a> keyword instead.</p>\n<p>This keyword will also work with a give cryptographic cipher text, that has been encrypted by Crypto library. See <a href="https://github.com/Snooz82/robotframework-crypto">Crypto Library</a> for more details.</p>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>See <a href="#Type%20Text" title="&quot;Type Text&quot; keyword" class="name">Type Text</a> for details.</p>\n<p>Example</p>\n<pre>\n<a href="#Type%20Secret" title="&quot;Type Secret&quot; keyword" class="name">Type Secret</a>    input#username_field    ${username}    # Keyword resolves ${username} variable value from Robot Framework Secret type variable\n<a href="#Type%20Secret" title="&quot;Type Secret&quot; keyword" class="name">Type Secret</a>    input#username_field    $username      # Keyword resolves ${username} variable value from Robot Framework variables\n<a href="#Type%20Secret" title="&quot;Type Secret&quot; keyword" class="name">Type Secret</a>    input#username_field    %username      # Keyword resolves $USERNAME/%USERNAME% variable value from environment variables\n</pre>\n<p><a href="https://forum.robotframework.org/t//4338">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Types the given secret from ``variable_name`` into the text field found by ``selector``.",
       args: [
         {
           name: "selector",
@@ -14722,18 +14499,16 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 137,
     },
     {
       name: "Type Text",
-      doc: "<p>Types the given <code>txt</code> into the text field found by <code>selector</code>.</p>\n<p>Sends a <code>keydown</code>, <code>keypress/input</code>, and <code>keyup</code> event for each character in the text.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the text field. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>txt</code></td>\n<td>Text for the text field.</td>\n</tr>\n<tr>\n<td><code>delay</code></td>\n<td>Delay between the single key strokes. It may be either a number or a Robot Framework time string. Time strings are fully explained in an appendix of Robot Framework User Guide. Defaults to <code>0 ms</code>. Example: <code>50 ms</code></td>\n</tr>\n<tr>\n<td><code>clear</code></td>\n<td>Set to false, if the field shall not be cleared before typing. Defaults to true.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>See <a href=\"#Fill%20Text\" title=\"&quot;Fill Text&quot; keyword\" class=\"name\">Fill Text</a> for direct filling of the full text at once.</p>\n<p>Example</p>\n<pre>\n<a href=\"#Type%20Text\" title=\"&quot;Type Text&quot; keyword\" class=\"name\">Type Text</a>    input#username_field    user\n<a href=\"#Type%20Text\" title=\"&quot;Type Text&quot; keyword\" class=\"name\">Type Text</a>    input#username_field    user    delay=10 ms    clear=No\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4339\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Types the given ``txt`` into the text field found by ``selector``.",
+      doc: '<p>Types the given <code>txt</code> into the text field found by <code>selector</code>.</p>\n<p>Sends a <code>keydown</code>, <code>keypress/input</code>, and <code>keyup</code> event for each character in the text.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the text field. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>txt</code></td>\n<td>Text for the text field.</td>\n</tr>\n<tr>\n<td><code>delay</code></td>\n<td>Delay between the single key strokes. It may be either a number or a Robot Framework time string. Time strings are fully explained in an appendix of Robot Framework User Guide. Defaults to <code>0 ms</code>. Example: <code>50 ms</code></td>\n</tr>\n<tr>\n<td><code>clear</code></td>\n<td>Set to false, if the field shall not be cleared before typing. Defaults to true.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>See <a href="#Fill%20Text" title="&quot;Fill Text&quot; keyword" class="name">Fill Text</a> for direct filling of the full text at once.</p>\n<p>Example</p>\n<pre>\n<a href="#Type%20Text" title="&quot;Type Text&quot; keyword" class="name">Type Text</a>    input#username_field    user\n<a href="#Type%20Text" title="&quot;Type Text&quot; keyword" class="name">Type Text</a>    input#username_field    user    delay=10 ms    clear=No\n</pre>\n<p><a href="https://forum.robotframework.org/t//4339">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Types the given ``txt`` into the text field found by ``selector``.",
       args: [
         {
           name: "selector",
@@ -14794,17 +14569,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 51,
     },
     {
       name: "Uncheck Checkbox",
-      doc: "<p>Unchecks the checkbox found by <code>selector</code>.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n<td></td>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the checkbox. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n<td></td>\n</tr>\n<tr>\n<td><code>force</code></td>\n<td>Set to True to skip Playwright's [<a href=\"https://playwright.dev/docs/actionability\">https://playwright.dev/docs/actionability</a></td>\n<td>Actionability checks].</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>Does nothing if the element is not checked/selected.</p>\n<p><a href=\"https://forum.robotframework.org/t//4340\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Unchecks the checkbox found by <code>selector</code>.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n<td></td>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the checkbox. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n<td></td>\n</tr>\n<tr>\n<td><code>force</code></td>\n<td>Set to True to skip Playwright\'s [<a href="https://playwright.dev/docs/actionability">https://playwright.dev/docs/actionability</a></td>\n<td>Actionability checks].</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>Does nothing if the element is not checked/selected.</p>\n<p><a href="https://forum.robotframework.org/t//4340">Comment &gt;&gt;</a></p>',
       shortdoc: "Unchecks the checkbox found by ``selector``.",
       args: [
         {
@@ -14838,18 +14610,16 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 718,
     },
     {
       name: "Upload File By Selector",
-      doc: "<p>Uploads file from <code>path</code> to file input element matched by selector.</p>\n<p>Fails if upload is not done before library timeout. Therefor it may be necessary to increase the timeout with <a href=\"#Set%20Browser%20Timeout\" title=\"&quot;Set Browser Timeout&quot; keyword\" class=\"name\">Set Browser Timeout</a>. It is possible to upload multiple files or folder by defining additional paths or folders. in <span class=\"name\">extra_paths</span>.</p>\n<p>If path is a directory, it will be uploaded all files from the directory. Subdirectories are not included. It is possible to upload files and directories with the same keyword.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Identifies the file input element.</td>\n</tr>\n<tr>\n<td><code>path</code></td>\n<td>Path to the file or folder to be uploaded. Path can  FileUploadBuffer dictionary</td>\n</tr>\n<tr>\n<td><code>extra_paths</code></td>\n<td>Additional paths to files or folders to be uploaded.</td>\n</tr>\n</table>\n<p>if <code>path</code> is  <a href=\"#type-FileUploadBuffer\" title=\"&quot;FileUploadBuffer&quot; type\" class=\"name\">FileUploadBuffer</a> dictionary, then structure should be:</p>\n<pre>\n{\n  'name': <a href=\"#type-string\" title=\"&quot;string&quot; type\" class=\"name\">str</a>,\n  'mimeType': <a href=\"#type-string\" title=\"&quot;string&quot; type\" class=\"name\">str</a>,\n  'buffer': <a href=\"#type-string\" title=\"&quot;string&quot; type\" class=\"name\">str</a>\n}\n</pre>\n<p>If <code>path</code> argument is <a href=\"#type-FileUploadBuffer\" title=\"&quot;FileUploadBuffer&quot; type\" class=\"name\">FileUploadBuffer</a>, then <code>extra_paths</code> argument is not supported and using it will raise an error.</p>\n<p>Upload single file example:</p>\n<pre>\n<a href=\"#Upload%20File%20By%20Selector\" title=\"&quot;Upload File By Selector&quot; keyword\" class=\"name\">Upload File By Selector</a>    //input[@type='file']    big_file.zip\n</pre>\n<p>Upload many files example:</p>\n<pre>\n<a href=\"#Upload%20File%20By%20Selector\" title=\"&quot;Upload File By Selector&quot; keyword\" class=\"name\">Upload File By Selector</a>    //input[@type='file']    file1.zip    file2.zip    file3.zip\n</pre>\n<p>Upload folder example:</p>\n<pre>\n<a href=\"#Upload%20File%20By%20Selector\" title=\"&quot;Upload File By Selector&quot; keyword\" class=\"name\">Upload File By Selector</a>    //input[@type='file']    /path/to/folder\n</pre>\n<p>Upload as buffer example:</p>\n<pre>\n${text} =    Get File    /path/to/file    # Read file from disk\nVAR    &amp;{buffer}    name=not_here.txt    mimeType=text/plain    buffer=${text}    # Create buffer dictionary\n<a href=\"#Upload%20File%20By%20Selector\" title=\"&quot;Upload File By Selector&quot; keyword\" class=\"name\">Upload File By Selector</a>    id=file_chooser    ${buffer}    # Upload buffer\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4341\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Uploads file from ``path`` to file input element matched by selector.",
+      doc: '<p>Uploads file from <code>path</code> to file input element matched by selector.</p>\n<p>Fails if upload is not done before library timeout. Therefor it may be necessary to increase the timeout with <a href="#Set%20Browser%20Timeout" title="&quot;Set Browser Timeout&quot; keyword" class="name">Set Browser Timeout</a>. It is possible to upload multiple files or folder by defining additional paths or folders. in <span class="name">extra_paths</span>.</p>\n<p>If path is a directory, it will be uploaded all files from the directory. Subdirectories are not included. It is possible to upload files and directories with the same keyword.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Identifies the file input element.</td>\n</tr>\n<tr>\n<td><code>path</code></td>\n<td>Path to the file or folder to be uploaded. Path can  FileUploadBuffer dictionary</td>\n</tr>\n<tr>\n<td><code>extra_paths</code></td>\n<td>Additional paths to files or folders to be uploaded.</td>\n</tr>\n</table>\n<p>if <code>path</code> is  <a href="#type-FileUploadBuffer" title="&quot;FileUploadBuffer&quot; type" class="name">FileUploadBuffer</a> dictionary, then structure should be:</p>\n<pre>\n{\n  \'name\': <a href="#type-string" title="&quot;string&quot; type" class="name">str</a>,\n  \'mimeType\': <a href="#type-string" title="&quot;string&quot; type" class="name">str</a>,\n  \'buffer\': <a href="#type-string" title="&quot;string&quot; type" class="name">str</a>\n}\n</pre>\n<p>If <code>path</code> argument is <a href="#type-FileUploadBuffer" title="&quot;FileUploadBuffer&quot; type" class="name">FileUploadBuffer</a>, then <code>extra_paths</code> argument is not supported and using it will raise an error.</p>\n<p>Upload single file example:</p>\n<pre>\n<a href="#Upload%20File%20By%20Selector" title="&quot;Upload File By Selector&quot; keyword" class="name">Upload File By Selector</a>    //input[@type=\'file\']    big_file.zip\n</pre>\n<p>Upload many files example:</p>\n<pre>\n<a href="#Upload%20File%20By%20Selector" title="&quot;Upload File By Selector&quot; keyword" class="name">Upload File By Selector</a>    //input[@type=\'file\']    file1.zip    file2.zip    file3.zip\n</pre>\n<p>Upload folder example:</p>\n<pre>\n<a href="#Upload%20File%20By%20Selector" title="&quot;Upload File By Selector&quot; keyword" class="name">Upload File By Selector</a>    //input[@type=\'file\']    /path/to/folder\n</pre>\n<p>Upload as buffer example:</p>\n<pre>\n${text} =    Get File    /path/to/file    # Read file from disk\nVAR    &amp;{buffer}    name=not_here.txt    mimeType=text/plain    buffer=${text}    # Create buffer dictionary\n<a href="#Upload%20File%20By%20Selector" title="&quot;Upload File By Selector&quot; keyword" class="name">Upload File By Selector</a>    id=file_chooser    ${buffer}    # Upload buffer\n</pre>\n<p><a href="https://forum.robotframework.org/t//4341">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Uploads file from ``path`` to file input element matched by selector.",
       args: [
         {
           name: "selector",
@@ -14909,17 +14679,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Setter",
-      ],
+      tags: ["PageContent", "Setter"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 1388,
     },
     {
       name: "Wait For",
-      doc: "<p>Waits for promises to finish and returns results from them.</p>\n<p>Returns one result if one promise waited. Otherwise returns an array of results. If one fails, then this keyword will fail.</p>\n<p>See <a href=\"#Promise%20To\" title=\"&quot;Promise To&quot; keyword\" class=\"name\">Promise To</a> for more information about promises.</p>\n<p>For general waiting of elements please see <a href=\"#Implicit%20waiting\" title=\"&quot;Implicit waiting&quot; section\" class=\"name\">Implicit waiting</a>.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>promises</code></td>\n<td>Promises to wait for.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n${promise}=    <a href=\"#Promise%20To\" title=\"&quot;Promise To&quot; keyword\" class=\"name\">Promise To</a>            <a href=\"#Wait%20For%20Response\" title=\"&quot;Wait For Response&quot; keyword\" class=\"name\">Wait For Response</a>     matcher=     timeout=3\n<a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>         \\#delayed_request\n${body}=       <a href=\"#Wait%20For\" title=\"&quot;Wait For&quot; keyword\" class=\"name\">Wait For</a>              ${promise}\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4342\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Waits for promises to finish and returns results from them.</p>\n<p>Returns one result if one promise waited. Otherwise returns an array of results. If one fails, then this keyword will fail.</p>\n<p>See <a href="#Promise%20To" title="&quot;Promise To&quot; keyword" class="name">Promise To</a> for more information about promises.</p>\n<p>For general waiting of elements please see <a href="#Implicit%20waiting" title="&quot;Implicit waiting&quot; section" class="name">Implicit waiting</a>.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>promises</code></td>\n<td>Promises to wait for.</td>\n</tr>\n</table>\n<p>Example:</p>\n<pre>\n${promise}=    <a href="#Promise%20To" title="&quot;Promise To&quot; keyword" class="name">Promise To</a>            <a href="#Wait%20For%20Response" title="&quot;Wait For Response&quot; keyword" class="name">Wait For Response</a>     matcher=     timeout=3\n<a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>         \\#delayed_request\n${body}=       <a href="#Wait%20For" title="&quot;Wait For&quot; keyword" class="name">Wait For</a>              ${promise}\n</pre>\n<p><a href="https://forum.robotframework.org/t//4342">Comment &gt;&gt;</a></p>',
       shortdoc: "Waits for promises to finish and returns results from them.",
       args: [
         {
@@ -14939,17 +14706,16 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "Wait",
-      ],
+      tags: ["Wait"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/promises.py",
       lineno: 227,
     },
     {
       name: "Wait For Alert",
-      doc: "<p>Returns a promise to wait for next dialog on page, handles it with <code>action</code> and optionally verifies the dialogs text.</p>\n<p>Dialog/alert can be any of alert, beforeunload, confirm or prompt.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>action</code></td>\n<td>How to handle the alert. Can be <code>accept</code> or <code>dismiss</code>.</td>\n</tr>\n<tr>\n<td><code>prompt_input</code></td>\n<td>The value to enter into prompt. Only valid if <code>action</code> argument equals <code>accept</code>. Defaults to empty string.</td>\n</tr>\n<tr>\n<td><code>text</code></td>\n<td>Optional text to verify the dialogs text.</td>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>Optional timeout in Robot Framework time format.</td>\n</tr>\n</table>\n<p>The main difference between this keyword and <a href=\"#Handle%20Future%20Dialogs\" title=\"&quot;Handle Future Dialogs&quot; keyword\" class=\"name\">Handle Future Dialogs</a> is that <a href=\"#Handle%20Future%20Dialogs\" title=\"&quot;Handle Future Dialogs&quot; keyword\" class=\"name\">Handle Future Dialogs</a> keyword is automatically set as promise. But this keyword must be called as argument to <a href=\"#Promise%20To\" title=\"&quot;Promise To&quot; keyword\" class=\"name\">Promise To</a> keyword. Also this keyword can optionally verify the dialogue text and return it. If <code>text</code> is argument <code>None</code> or is not set, dialogue text is not verified.</p>\n<p>Example with returning text:</p>\n<pre>\n${promise} =         <a href=\"#Promise%20To\" title=\"&quot;Promise To&quot; keyword\" class=\"name\">Promise To</a>    <a href=\"#Wait%20For%20Alert\" title=\"&quot;Wait For Alert&quot; keyword\" class=\"name\">Wait For Alert</a>    action=accept\n<a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>               id=alerts\n${text} =            <a href=\"#Wait%20For\" title=\"&quot;Wait For&quot; keyword\" class=\"name\">Wait For</a>      ${promise}\nShould Be Equal      ${text}         Am an alert\n</pre>\n<p>Example with text verify:</p>\n<pre>\n${promise} =       <a href=\"#Promise%20To\" title=\"&quot;Promise To&quot; keyword\" class=\"name\">Promise To</a>    Wait For Alert    action=accept    text=Am an alert\nClick              id=alerts\n${text} =          <a href=\"#Wait%20For\" title=\"&quot;Wait For&quot; keyword\" class=\"name\">Wait For</a>      ${promise}\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4343\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Returns a promise to wait for next dialog on page, handles it with ``action`` and optionally verifies the dialogs text.",
+      doc: '<p>Returns a promise to wait for next dialog on page, handles it with <code>action</code> and optionally verifies the dialogs text.</p>\n<p>Dialog/alert can be any of alert, beforeunload, confirm or prompt.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>action</code></td>\n<td>How to handle the alert. Can be <code>accept</code> or <code>dismiss</code>.</td>\n</tr>\n<tr>\n<td><code>prompt_input</code></td>\n<td>The value to enter into prompt. Only valid if <code>action</code> argument equals <code>accept</code>. Defaults to empty string.</td>\n</tr>\n<tr>\n<td><code>text</code></td>\n<td>Optional text to verify the dialogs text.</td>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>Optional timeout in Robot Framework time format.</td>\n</tr>\n</table>\n<p>The main difference between this keyword and <a href="#Handle%20Future%20Dialogs" title="&quot;Handle Future Dialogs&quot; keyword" class="name">Handle Future Dialogs</a> is that <a href="#Handle%20Future%20Dialogs" title="&quot;Handle Future Dialogs&quot; keyword" class="name">Handle Future Dialogs</a> keyword is automatically set as promise. But this keyword must be called as argument to <a href="#Promise%20To" title="&quot;Promise To&quot; keyword" class="name">Promise To</a> keyword. Also this keyword can optionally verify the dialogue text and return it. If <code>text</code> is argument <code>None</code> or is not set, dialogue text is not verified.</p>\n<p>Example with returning text:</p>\n<pre>\n${promise} =         <a href="#Promise%20To" title="&quot;Promise To&quot; keyword" class="name">Promise To</a>    <a href="#Wait%20For%20Alert" title="&quot;Wait For Alert&quot; keyword" class="name">Wait For Alert</a>    action=accept\n<a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>               id=alerts\n${text} =            <a href="#Wait%20For" title="&quot;Wait For&quot; keyword" class="name">Wait For</a>      ${promise}\nShould Be Equal      ${text}         Am an alert\n</pre>\n<p>Example with text verify:</p>\n<pre>\n${promise} =       <a href="#Promise%20To" title="&quot;Promise To&quot; keyword" class="name">Promise To</a>    Wait For Alert    action=accept    text=Am an alert\nClick              id=alerts\n${text} =          <a href="#Wait%20For" title="&quot;Wait For&quot; keyword" class="name">Wait For</a>      ${promise}\n</pre>\n<p><a href="https://forum.robotframework.org/t//4343">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Returns a promise to wait for next dialog on page, handles it with ``action`` and optionally verifies the dialogs text.",
       args: [
         {
           name: "action",
@@ -15036,17 +14802,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Wait",
-      ],
+      tags: ["PageContent", "Wait"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 904,
     },
     {
       name: "Wait For Alerts",
-      doc: "<p>Returns a promise to wait for multiple dialog on a page.</p>\n<p>Handles each alert/dialog with <code>actions</code> and optionally verifies the dialogs texts. Dialog/alert can be any of alert, beforeunload, confirm or prompt.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>actions</code></td>\n<td>List of how to handle the alerts. Can be <code>accept</code> or <code>dismiss</code>.</td>\n</tr>\n<tr>\n<td><code>prompt_inputs</code></td>\n<td>List of the values to enter into prompt. Only valid if <code>action</code> argument equals <code>accept</code>. Defaults to empty string. IF input not preset, use None</td>\n</tr>\n<tr>\n<td><code>texts</code></td>\n<td>List of optional text to verify the dialogs text. Use None if text verification should be disabled.</td>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>Optional timeout in Robot Framework time format.</td>\n</tr>\n</table>\n<p>There must be equal amount of items in <code>actions</code>, <code>prompt_inputs</code> and <code>texts</code>  lists. Use None if texts and/or prompt_inputs are not needed.</p>\n<p>This keyword works in same way as <a href=\"#Wait%20For%20Alert\" title=\"&quot;Wait For Alert&quot; keyword\" class=\"name\">Wait For Alert</a> but can handle multiple alerts with one promise. Lie <a href=\"#Wait%20For%20Alert\" title=\"&quot;Wait For Alert&quot; keyword\" class=\"name\">Wait For Alert</a> keyword, this keyword must be called as argument to <a href=\"#Promise%20To\" title=\"&quot;Promise To&quot; keyword\" class=\"name\">Promise To</a> keyword.</p>\n<p>Example to handle two alerts, first one is accepted and second one is dismissed:</p>\n<pre>\n${promise} =    Promise To\n...    Wait For Alerts\n...    [\"accept\", \"dismiss\"]\n...    [None, None]\n...    [None, None]\nClick    id=alerts\n${texts} =    Wait For    ${promise}\n</pre>\n<p>Example to handle confirm and prompt alert. Example assumes that the first is a confirm and second one is prompt:</p>\n<pre>\n${promise} =    Promise To\n...    Wait For Alerts\n...    [\"dismiss\", \"accept\"]\n...    [None, \"I am a prompt\"]\n...    [\"First alert accepted?\", None]\nClick    id=confirmAndPrompt\n${texts} =    Wait For    ${promise}\n</pre>\n<p><a href=\"https://forum.robotframework.org/t/7887\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Returns a promise to wait for multiple dialog on a page.</p>\n<p>Handles each alert/dialog with <code>actions</code> and optionally verifies the dialogs texts. Dialog/alert can be any of alert, beforeunload, confirm or prompt.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>actions</code></td>\n<td>List of how to handle the alerts. Can be <code>accept</code> or <code>dismiss</code>.</td>\n</tr>\n<tr>\n<td><code>prompt_inputs</code></td>\n<td>List of the values to enter into prompt. Only valid if <code>action</code> argument equals <code>accept</code>. Defaults to empty string. IF input not preset, use None</td>\n</tr>\n<tr>\n<td><code>texts</code></td>\n<td>List of optional text to verify the dialogs text. Use None if text verification should be disabled.</td>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>Optional timeout in Robot Framework time format.</td>\n</tr>\n</table>\n<p>There must be equal amount of items in <code>actions</code>, <code>prompt_inputs</code> and <code>texts</code>  lists. Use None if texts and/or prompt_inputs are not needed.</p>\n<p>This keyword works in same way as <a href="#Wait%20For%20Alert" title="&quot;Wait For Alert&quot; keyword" class="name">Wait For Alert</a> but can handle multiple alerts with one promise. Lie <a href="#Wait%20For%20Alert" title="&quot;Wait For Alert&quot; keyword" class="name">Wait For Alert</a> keyword, this keyword must be called as argument to <a href="#Promise%20To" title="&quot;Promise To&quot; keyword" class="name">Promise To</a> keyword.</p>\n<p>Example to handle two alerts, first one is accepted and second one is dismissed:</p>\n<pre>\n${promise} =    Promise To\n...    Wait For Alerts\n...    ["accept", "dismiss"]\n...    [None, None]\n...    [None, None]\nClick    id=alerts\n${texts} =    Wait For    ${promise}\n</pre>\n<p>Example to handle confirm and prompt alert. Example assumes that the first is a confirm and second one is prompt:</p>\n<pre>\n${promise} =    Promise To\n...    Wait For Alerts\n...    ["dismiss", "accept"]\n...    [None, "I am a prompt"]\n...    ["First alert accepted?", None]\nClick    id=confirmAndPrompt\n${texts} =    Wait For    ${promise}\n</pre>\n<p><a href="https://forum.robotframework.org/t/7887">Comment &gt;&gt;</a></p>',
       shortdoc: "Returns a promise to wait for multiple dialog on a page.",
       args: [
         {
@@ -15180,32 +14943,28 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Wait",
-      ],
+      tags: ["PageContent", "Wait"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/interaction.py",
       lineno: 954,
     },
     {
       name: "Wait For All Promises",
-      doc: "<p>Waits for all promises to finish.</p>\n<p>If one promises fails, then this keyword will fail.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#Promise%20To\" title=\"&quot;Promise To&quot; keyword\" class=\"name\">Promise To</a>               Wait For Response     matcher=     timeout=3\n<a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>                    \\#delayed_request\n<a href=\"#Wait%20For%20All%20Promises\" title=\"&quot;Wait For All Promises&quot; keyword\" class=\"name\">Wait For All Promises</a>\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4344\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Waits for all promises to finish.</p>\n<p>If one promises fails, then this keyword will fail.</p>\n<p>Example:</p>\n<pre>\n<a href="#Promise%20To" title="&quot;Promise To&quot; keyword" class="name">Promise To</a>               Wait For Response     matcher=     timeout=3\n<a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>                    \\#delayed_request\n<a href="#Wait%20For%20All%20Promises" title="&quot;Wait For All Promises&quot; keyword" class="name">Wait For All Promises</a>\n</pre>\n<p><a href="https://forum.robotframework.org/t//4344">Comment &gt;&gt;</a></p>',
       shortdoc: "Waits for all promises to finish.",
       args: [],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "Wait",
-      ],
+      tags: ["Wait"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/promises.py",
       lineno: 253,
     },
     {
       name: "Wait For Condition",
-      doc: "<p>Waits for a condition, defined with Browser getter keywords to become True.</p>\n<p>This Keyword is basically just a wrapper around our assertion keywords, but with a timeout. It can be used to wait for anything that also can be asserted with our keywords.</p>\n<p>In comparison to Robot Frameworks <span class=\"name\">Wait Until Keywords Succeeds</span> this keyword is more readable and easier to use but is limited to Browser libraries assertion keywords.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>condition</code></td>\n<td>A condition, defined with Browser getter keywords, without the word <code>Get</code>.</td>\n</tr>\n<tr>\n<td><code>*args</code></td>\n<td>Arguments to pass to the condition keyword.</td>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>Timeout to wait for the condition to become True. Uses default timeout of the library if not set. As the other assertion keywords this timeout only influences the time the assertion is retried. The browser timeout is used to wait for the element to be found.</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>Overrides the default error message.</td>\n</tr>\n</table>\n<p>The easiest way to use this keyword is first starting with an assertion keyword with assertion like: <a href=\"#Get%20Text\" title=\"&quot;Get Text&quot; keyword\" class=\"name\">Get Text</a></p>\n<p>Start:</p>\n<pre>\n<a href=\"#Get%20Text\" title=\"&quot;Get Text&quot; keyword\" class=\"name\">Get Text</a>    id=status_bar   contains    Done\n</pre>\n<p>Then you replace the word <span class=\"name\">Get</span> with <a href=\"#Wait%20For%20Condition\" title=\"&quot;Wait For Condition&quot; keyword\" class=\"name\">Wait For Condition    </a> and if necessary add the timeout argument.</p>\n<p>End:</p>\n<pre>\n<a href=\"#Wait%20For%20Condition\" title=\"&quot;Wait For Condition&quot; keyword\" class=\"name\">Wait For Condition</a>    Text    id=status_bar   contains    Done\n</pre>\n<p>Example usage:</p>\n<pre>\n<a href=\"#Wait%20For%20Condition\" title=\"&quot;Wait For Condition&quot; keyword\" class=\"name\">Wait For Condition</a>    Element States    id=cdk-overlay-0    ==    detached\n<a href=\"#Wait%20For%20Condition\" title=\"&quot;Wait For Condition&quot; keyword\" class=\"name\">Wait For Condition</a>    Element States     //h1    contains    visible    editable    enabled    timeout=2 s\n<a href=\"#Wait%20For%20Condition\" title=\"&quot;Wait For Condition&quot; keyword\" class=\"name\">Wait For Condition</a>    Title    should start with    Robot\n<a href=\"#Wait%20For%20Condition\" title=\"&quot;Wait For Condition&quot; keyword\" class=\"name\">Wait For Condition</a>    Url    should end with    robotframework.org\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//5269\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Waits for a condition, defined with Browser getter keywords to become True.",
+      doc: '<p>Waits for a condition, defined with Browser getter keywords to become True.</p>\n<p>This Keyword is basically just a wrapper around our assertion keywords, but with a timeout. It can be used to wait for anything that also can be asserted with our keywords.</p>\n<p>In comparison to Robot Frameworks <span class="name">Wait Until Keywords Succeeds</span> this keyword is more readable and easier to use but is limited to Browser libraries assertion keywords.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>condition</code></td>\n<td>A condition, defined with Browser getter keywords, without the word <code>Get</code>.</td>\n</tr>\n<tr>\n<td><code>*args</code></td>\n<td>Arguments to pass to the condition keyword.</td>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>Timeout to wait for the condition to become True. Uses default timeout of the library if not set. As the other assertion keywords this timeout only influences the time the assertion is retried. The browser timeout is used to wait for the element to be found.</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>Overrides the default error message.</td>\n</tr>\n</table>\n<p>The easiest way to use this keyword is first starting with an assertion keyword with assertion like: <a href="#Get%20Text" title="&quot;Get Text&quot; keyword" class="name">Get Text</a></p>\n<p>Start:</p>\n<pre>\n<a href="#Get%20Text" title="&quot;Get Text&quot; keyword" class="name">Get Text</a>    id=status_bar   contains    Done\n</pre>\n<p>Then you replace the word <span class="name">Get</span> with <a href="#Wait%20For%20Condition" title="&quot;Wait For Condition&quot; keyword" class="name">Wait For Condition    </a> and if necessary add the timeout argument.</p>\n<p>End:</p>\n<pre>\n<a href="#Wait%20For%20Condition" title="&quot;Wait For Condition&quot; keyword" class="name">Wait For Condition</a>    Text    id=status_bar   contains    Done\n</pre>\n<p>Example usage:</p>\n<pre>\n<a href="#Wait%20For%20Condition" title="&quot;Wait For Condition&quot; keyword" class="name">Wait For Condition</a>    Element States    id=cdk-overlay-0    ==    detached\n<a href="#Wait%20For%20Condition" title="&quot;Wait For Condition&quot; keyword" class="name">Wait For Condition</a>    Element States     //h1    contains    visible    editable    enabled    timeout=2 s\n<a href="#Wait%20For%20Condition" title="&quot;Wait For Condition&quot; keyword" class="name">Wait For Condition</a>    Title    should start with    Robot\n<a href="#Wait%20For%20Condition" title="&quot;Wait For Condition&quot; keyword" class="name">Wait For Condition</a>    Url    should end with    robotframework.org\n</pre>\n<p><a href="https://forum.robotframework.org/t//5269">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Waits for a condition, defined with Browser getter keywords to become True.",
       args: [
         {
           name: "condition",
@@ -15297,18 +15056,16 @@ const DATA: Libdoc = {
         union: false,
       },
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Wait",
-      ],
+      tags: ["PageContent", "Wait"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/waiter.py",
       lineno: 238,
     },
     {
       name: "Wait For Elements State",
-      doc: "<p>Waits for the element found by <code>selector</code> to satisfy state option.</p>\n<p>Note that Browser library has <a href=\"#Implicit%20waiting\" title=\"&quot;Implicit waiting&quot; section\" class=\"name\">Implicit waiting</a> mechanisms. Depending on the situation you might not need to use <a href=\"#Wait%20For%20Elements%20State\" title=\"&quot;Wait For Elements State&quot; keyword\" class=\"name\">Wait for Elements State</a>.</p>\n<p>If users experience reliability issues with this keyword, consider using <a href=\"#Wait%20For%20Condition\" title=\"&quot;Wait For Condition&quot; keyword\" class=\"name\">Wait for Condition</a> with <a href=\"#Get%20Element%20States\" title=\"&quot;Get Element States&quot; keyword\" class=\"name\">Get Element States</a> keyword instead. <a href=\"#Wait%20For%20Elements%20State\" title=\"&quot;Wait For Elements State&quot; keyword\" class=\"name\">Wait For Elements State</a> uses features of Playwright to wait for element states. However, in some situations these features might not work as expected. <a href=\"#Wait%20For%20Condition\" title=\"&quot;Wait For Condition&quot; keyword\" class=\"name\">Wait for Condition</a> with <a href=\"#Get%20Element%20States\" title=\"&quot;Get Element States&quot; keyword\" class=\"name\">Get Element States</a> is more robust as it uses Browser library's own waiting mechanisms that actively polls the state of an element.</p>\n<p>State options could be either appear/disappear from dom, or become visible/hidden. If at the moment of calling the keyword, the selector already satisfies the condition, the keyword will return immediately.</p>\n<p>If the selector doesn't satisfy the condition within the timeout the keyword will FAIL.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the corresponding object. See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>state</code></td>\n<td>See <a href=\"#type-ElementState\" title=\"&quot;ElementState&quot; type\" class=\"name\">ElementState</a> for explanation.</td>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>uses default timeout from library if not set.</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message. The <code>message</code> argument accepts <span class=\"name\">{selector}</span>, <span class=\"name\">{function}</span>, and <span class=\"name\">{timeout}</span> <a href=\"https://docs.python.org/3/library/stdtypes.html#str.format\">format</a> options. The <span class=\"name\">{function}</span> formatter is same <code>state</code> argument value.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#Wait%20For%20Elements%20State\" title=\"&quot;Wait For Elements State&quot; keyword\" class=\"name\">Wait For Elements State</a>    //h1    visible    timeout=2 s\n<a href=\"#Wait%20For%20Elements%20State\" title=\"&quot;Wait For Elements State&quot; keyword\" class=\"name\">Wait For Elements State</a>    //hi    focused    1s\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4345\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Waits for the element found by ``selector`` to satisfy state option.",
+      doc: '<p>Waits for the element found by <code>selector</code> to satisfy state option.</p>\n<p>Note that Browser library has <a href="#Implicit%20waiting" title="&quot;Implicit waiting&quot; section" class="name">Implicit waiting</a> mechanisms. Depending on the situation you might not need to use <a href="#Wait%20For%20Elements%20State" title="&quot;Wait For Elements State&quot; keyword" class="name">Wait for Elements State</a>.</p>\n<p>If users experience reliability issues with this keyword, consider using <a href="#Wait%20For%20Condition" title="&quot;Wait For Condition&quot; keyword" class="name">Wait for Condition</a> with <a href="#Get%20Element%20States" title="&quot;Get Element States&quot; keyword" class="name">Get Element States</a> keyword instead. <a href="#Wait%20For%20Elements%20State" title="&quot;Wait For Elements State&quot; keyword" class="name">Wait For Elements State</a> uses features of Playwright to wait for element states. However, in some situations these features might not work as expected. <a href="#Wait%20For%20Condition" title="&quot;Wait For Condition&quot; keyword" class="name">Wait for Condition</a> with <a href="#Get%20Element%20States" title="&quot;Get Element States&quot; keyword" class="name">Get Element States</a> is more robust as it uses Browser library\'s own waiting mechanisms that actively polls the state of an element.</p>\n<p>State options could be either appear/disappear from dom, or become visible/hidden. If at the moment of calling the keyword, the selector already satisfies the condition, the keyword will return immediately.</p>\n<p>If the selector doesn\'t satisfy the condition within the timeout the keyword will FAIL.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector of the corresponding object. See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>state</code></td>\n<td>See <a href="#type-ElementState" title="&quot;ElementState&quot; type" class="name">ElementState</a> for explanation.</td>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>uses default timeout from library if not set.</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message. The <code>message</code> argument accepts <span class="name">{selector}</span>, <span class="name">{function}</span>, and <span class="name">{timeout}</span> <a href="https://docs.python.org/3/library/stdtypes.html#str.format">format</a> options. The <span class="name">{function}</span> formatter is same <code>state</code> argument value.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>Example:</p>\n<pre>\n<a href="#Wait%20For%20Elements%20State" title="&quot;Wait For Elements State&quot; keyword" class="name">Wait For Elements State</a>    //h1    visible    timeout=2 s\n<a href="#Wait%20For%20Elements%20State" title="&quot;Wait For Elements State&quot; keyword" class="name">Wait For Elements State</a>    //hi    focused    1s\n</pre>\n<p><a href="https://forum.robotframework.org/t//4345">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Waits for the element found by ``selector`` to satisfy state option.",
       args: [
         {
           name: "selector",
@@ -15395,18 +15152,16 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Wait",
-      ],
+      tags: ["PageContent", "Wait"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/waiter.py",
       lineno: 39,
     },
     {
       name: "Wait For Function",
-      doc: "<p>Polls JavaScript expression or function in browser until it returns a (JavaScript) truthy value.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>function</code></td>\n<td>A valid javascript function or a javascript function body. For example <code>() =&gt; true</code> and <code>true</code> will behave similarly.</td>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector to resolve and pass to the JavaScript function. This will be the first argument the function receives. If given a selector a function is necessary, with an argument to capture the elementhandle. For example <code>(element) =&gt; document.activeElement === element</code> See the <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>polling</code></td>\n<td>Default polling value of \"raf\" polls in a callback for <code>requestAnimationFrame</code>. Any other value for polling will be parsed as a robot framework time for interval between polls.</td>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>Uses default timeout of the library if not set.</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message. The <code>message</code> argument accepts <span class=\"name\">{selector}</span>, <span class=\"name\">{function}</span>, and <span class=\"name\">{timeout}</span> <a href=\"https://docs.python.org/3/library/stdtypes.html#str.format\">format</a> options.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href=\"#Finding%20elements\" title=\"&quot;Finding elements&quot; section\" class=\"name\">Finding elements</a> for more details about strict mode.</p>\n<p>Example usage:</p>\n<pre>\n${promise}      <a href=\"#Promise%20To\" title=\"&quot;Promise To&quot; keyword\" class=\"name\">Promise To</a>      <a href=\"#Wait%20For%20Function\" title=\"&quot;Wait For Function&quot; keyword\" class=\"name\">Wait For Function</a>    element =&gt; element.style.width==\"100%\"    selector=\\#progress_bar    timeout=4s\n<a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>         \\#progress_bar\n<a href=\"#Wait%20For\" title=\"&quot;Wait For&quot; keyword\" class=\"name\">Wait For</a>      ${promise}\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4346\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Polls JavaScript expression or function in browser until it returns a (JavaScript) truthy value.",
+      doc: '<p>Polls JavaScript expression or function in browser until it returns a (JavaScript) truthy value.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>function</code></td>\n<td>A valid javascript function or a javascript function body. For example <code>() =&gt; true</code> and <code>true</code> will behave similarly.</td>\n</tr>\n<tr>\n<td><code>selector</code></td>\n<td>Selector to resolve and pass to the JavaScript function. This will be the first argument the function receives. If given a selector a function is necessary, with an argument to capture the elementhandle. For example <code>(element) =&gt; document.activeElement === element</code> See the <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> section for details about the selectors.</td>\n</tr>\n<tr>\n<td><code>polling</code></td>\n<td>Default polling value of "raf" polls in a callback for <code>requestAnimationFrame</code>. Any other value for polling will be parsed as a robot framework time for interval between polls.</td>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>Uses default timeout of the library if not set.</td>\n</tr>\n<tr>\n<td><code>message</code></td>\n<td>overrides the default error message. The <code>message</code> argument accepts <span class="name">{selector}</span>, <span class="name">{function}</span>, and <span class="name">{timeout}</span> <a href="https://docs.python.org/3/library/stdtypes.html#str.format">format</a> options.</td>\n</tr>\n</table>\n<p>Keyword uses strict mode, see <a href="#Finding%20elements" title="&quot;Finding elements&quot; section" class="name">Finding elements</a> for more details about strict mode.</p>\n<p>Example usage:</p>\n<pre>\n${promise}      <a href="#Promise%20To" title="&quot;Promise To&quot; keyword" class="name">Promise To</a>      <a href="#Wait%20For%20Function" title="&quot;Wait For Function&quot; keyword" class="name">Wait For Function</a>    element =&gt; element.style.width=="100%"    selector=\\#progress_bar    timeout=4s\n<a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>         \\#progress_bar\n<a href="#Wait%20For" title="&quot;Wait For&quot; keyword" class="name">Wait For</a>      ${promise}\n</pre>\n<p><a href="https://forum.robotframework.org/t//4346">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Polls JavaScript expression or function in browser until it returns a (JavaScript) truthy value.",
       args: [
         {
           name: "function",
@@ -15520,17 +15275,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Wait",
-      ],
+      tags: ["PageContent", "Wait"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/waiter.py",
       lineno: 162,
     },
     {
       name: "Wait For Load State",
-      doc: "<p>Waits that the page reaches the required load state.</p>\n<p>This resolves when the page reaches a required load state, load by default. The navigation must have been committed when this method is called. If current document has already reached the required state, resolves immediately.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>state</code></td>\n<td>State to wait for, defaults to <span class=\"name\">load</span>. Possible values are <span class=\"name\">load|domcontentloaded|networkidle</span></td>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>Timeout supports Robot Framework time format. Uses browser timeout if not set.</td>\n</tr>\n</table>\n<p>If the state has been already reached while loading current document, the underlying Playwright will resolve immediately. Can be one of:</p>\n<pre>\n'load' - wait for the load event to be fired.\n'domcontentloaded' - wait for the DOMContentLoaded event to be fired.\n'networkidle' - DISCOURAGED wait until there are no network connections for at least 500 ms.\n</pre>\n<p>Example:</p>\n<pre>\n<a href=\"#Go%20To\" title=\"&quot;Go To&quot; keyword\" class=\"name\">Go To</a>                         ${URL}\n<a href=\"#Wait%20For%20Load%20State\" title=\"&quot;Wait For Load State&quot; keyword\" class=\"name\">Wait For Load State</a>    domcontentloaded    timeout=3s\n</pre>",
+      doc: '<p>Waits that the page reaches the required load state.</p>\n<p>This resolves when the page reaches a required load state, load by default. The navigation must have been committed when this method is called. If current document has already reached the required state, resolves immediately.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>state</code></td>\n<td>State to wait for, defaults to <span class="name">load</span>. Possible values are <span class="name">load|domcontentloaded|networkidle</span></td>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>Timeout supports Robot Framework time format. Uses browser timeout if not set.</td>\n</tr>\n</table>\n<p>If the state has been already reached while loading current document, the underlying Playwright will resolve immediately. Can be one of:</p>\n<pre>\n\'load\' - wait for the load event to be fired.\n\'domcontentloaded\' - wait for the DOMContentLoaded event to be fired.\n\'networkidle\' - DISCOURAGED wait until there are no network connections for at least 500 ms.\n</pre>\n<p>Example:</p>\n<pre>\n<a href="#Go%20To" title="&quot;Go To&quot; keyword" class="name">Go To</a>                         ${URL}\n<a href="#Wait%20For%20Load%20State" title="&quot;Wait For Load State&quot; keyword" class="name">Wait For Load State</a>    domcontentloaded    timeout=3s\n</pre>',
       shortdoc: "Waits that the page reaches the required load state.",
       args: [
         {
@@ -15577,17 +15329,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "PageContent",
-        "Wait",
-      ],
+      tags: ["PageContent", "Wait"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/waiter.py",
       lineno: 307,
     },
     {
       name: "Wait For Navigation",
-      doc: "<p>Waits until page has navigated to given <code>url</code>.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>url</code></td>\n<td>Expected navigation target address either the exact match or a JavaScript-like regex wrapped in <code>/</code> symbols.</td>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>Timeout supports Robot Framework time format. Uses default timeout if not set.</td>\n</tr>\n<tr>\n<td><code>wait_until</code></td>\n<td>When to consider operation succeeded, defaults to load. Events can be either: <code>domcontentloaded</code> - consider operation to be finished when the DOMContentLoaded event is fired. <code>load</code> - consider operation to be finished when the load event is fired. <code>networkidle</code> - consider operation to be finished when there are no network connections for at least 500 ms. <code>commit</code> - consider operation to be finished when network response is received and the document started loading.</td>\n</tr>\n</table>\n<p>Keyword works only when page is loaded and does not work if URL fragment changes. Example if <a href=\"https://marketsquare.github.io/robotframework-browser/Browser.html\">https://marketsquare.github.io/robotframework-browser/Browser.html</a> changes to <a href=\"https://marketsquare.github.io/robotframework-browser/Browser.html#Wait%20For%20Navigation\">https://marketsquare.github.io/robotframework-browser/Browser.html#Wait%20For%20Navigation</a> keyword will fail.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#Go%20To\" title=\"&quot;Go To&quot; keyword\" class=\"name\">Go To</a>                  ${ROOT_URL}/redirector.html\n<a href=\"#Wait%20For%20Navigation\" title=\"&quot;Wait For Navigation&quot; keyword\" class=\"name\">Wait for navigation</a>    ${ROOT_URL}/posted.html    wait_until=${wait_until}\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4347\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Waits until page has navigated to given <code>url</code>.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>url</code></td>\n<td>Expected navigation target address either the exact match or a JavaScript-like regex wrapped in <code>/</code> symbols.</td>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>Timeout supports Robot Framework time format. Uses default timeout if not set.</td>\n</tr>\n<tr>\n<td><code>wait_until</code></td>\n<td>When to consider operation succeeded, defaults to load. Events can be either: <code>domcontentloaded</code> - consider operation to be finished when the DOMContentLoaded event is fired. <code>load</code> - consider operation to be finished when the load event is fired. <code>networkidle</code> - consider operation to be finished when there are no network connections for at least 500 ms. <code>commit</code> - consider operation to be finished when network response is received and the document started loading.</td>\n</tr>\n</table>\n<p>Keyword works only when page is loaded and does not work if URL fragment changes. Example if <a href="https://marketsquare.github.io/robotframework-browser/Browser.html">https://marketsquare.github.io/robotframework-browser/Browser.html</a> changes to <a href="https://marketsquare.github.io/robotframework-browser/Browser.html#Wait%20For%20Navigation">https://marketsquare.github.io/robotframework-browser/Browser.html#Wait%20For%20Navigation</a> keyword will fail.</p>\n<p>Example:</p>\n<pre>\n<a href="#Go%20To" title="&quot;Go To&quot; keyword" class="name">Go To</a>                  ${ROOT_URL}/redirector.html\n<a href="#Wait%20For%20Navigation" title="&quot;Wait For Navigation&quot; keyword" class="name">Wait for navigation</a>    ${ROOT_URL}/posted.html    wait_until=${wait_until}\n</pre>\n<p><a href="https://forum.robotframework.org/t//4347">Comment &gt;&gt;</a></p>',
       shortdoc: "Waits until page has navigated to given ``url``.",
       args: [
         {
@@ -15661,17 +15410,14 @@ const DATA: Libdoc = {
       ],
       returnType: null,
       returnDoc: "",
-      tags: [
-        "HTTP",
-        "Wait",
-      ],
+      tags: ["HTTP", "Wait"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/network.py",
       lineno: 263,
     },
     {
       name: "Wait For Request",
-      doc: "<p>Waits for request matching matcher to be made.</p>\n<p>The returned object is a dictionary with keys: <code>url</code>, <code>method</code>, <code>headers</code> and <code>postData</code>. <code>headers</code> is a dictionary of request headers. <code>postData</code> is <code>None</code> if body is empty or the request body.</p>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>matcher</code></td>\n<td>Request URL matcher. Can be a string (Glob-Pattern), JavaScript RegExp (encapsulated in / with following flags) or JavaScript arrow-function that receives the <a href=\"https://playwright.dev/docs/api/class-request\">Request</a> object and returns a boolean. By default (with empty string) matches first available request. For additional information, see the Playwright <a href=\"https://playwright.dev/docs/api/class-page#page-wait-for-request\">waitForRequest</a> documentation.</td>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>Timeout supports Robot Framework time format. Uses default timeout if not set.</td>\n</tr>\n</table>\n<p>See <a href=\"#Wait%20For%20Response\" title=\"&quot;Wait For Response&quot; keyword\" class=\"name\">Wait For Response</a> for more details.</p>\n<p><b>CAUTION:</b> Before Browser library 17.0.0, the <code>matcher</code> argument was always either a regex or JS function. But the regex did not needed to be in slashes. The most simple way to migrate to the new syntax is to add slashes around the matcher. So <code>/api/get/json</code> becomes <code>//api/get/json/</code>.</p>\n<p><a href=\"https://forum.robotframework.org/t//4348\">Comment &gt;&gt;</a></p>",
+      doc: '<p>Waits for request matching matcher to be made.</p>\n<p>The returned object is a dictionary with keys: <code>url</code>, <code>method</code>, <code>headers</code> and <code>postData</code>. <code>headers</code> is a dictionary of request headers. <code>postData</code> is <code>None</code> if body is empty or the request body.</p>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>matcher</code></td>\n<td>Request URL matcher. Can be a string (Glob-Pattern), JavaScript RegExp (encapsulated in / with following flags) or JavaScript arrow-function that receives the <a href="https://playwright.dev/docs/api/class-request">Request</a> object and returns a boolean. By default (with empty string) matches first available request. For additional information, see the Playwright <a href="https://playwright.dev/docs/api/class-page#page-wait-for-request">waitForRequest</a> documentation.</td>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>Timeout supports Robot Framework time format. Uses default timeout if not set.</td>\n</tr>\n</table>\n<p>See <a href="#Wait%20For%20Response" title="&quot;Wait For Response&quot; keyword" class="name">Wait For Response</a> for more details.</p>\n<p><b>CAUTION:</b> Before Browser library 17.0.0, the <code>matcher</code> argument was always either a regex or JS function. But the regex did not needed to be in slashes. The most simple way to migrate to the new syntax is to add slashes around the matcher. So <code>/api/get/json</code> becomes <code>//api/get/json/</code>.</p>\n<p><a href="https://forum.robotframework.org/t//4348">Comment &gt;&gt;</a></p>',
       shortdoc: "Waits for request matching matcher to be made.",
       args: [
         {
@@ -15749,18 +15495,16 @@ const DATA: Libdoc = {
         union: true,
       },
       returnDoc: "",
-      tags: [
-        "HTTP",
-        "Wait",
-      ],
+      tags: ["HTTP", "Wait"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/network.py",
       lineno: 148,
     },
     {
       name: "Wait For Response",
-      doc: "<p>Waits for response matching matcher and returns the response as robot dict.</p>\n<p>The response, which is returned by this keyword, is a robot dictionary with following attributes:</p>\n<ul>\n<li><code>status</code> &lt;int&gt; The status code of the response.</li>\n<li><code>statusText</code> &lt;str&gt; Status text corresponding to <code>status</code>, e.g OK or INTERNAL SERVER ERROR. This may not be available for all browser.</li>\n<li><code>body</code> &lt;dict | str&gt; The response body. If the body can be parsed as a JSON object, it will be returned as Python dictionary, otherwise it is returned as a string.</li>\n<li><code>headers</code> &lt;dict&gt; A dictionary containing all response headers.</li>\n<li><code>ok</code> &lt;bool&gt; Whether the request was successful, i.e. the <code>status</code> is range 200-299.</li>\n<li><code>request</code> &lt;dict&gt; containing <code>method</code> &lt;str&gt;, <code>headers</code> &lt;dict&gt; and <code>postData</code> &lt;dict&gt; | &lt;str&gt;</li>\n<li><code>url</code> &lt;str&gt; url of the request.</li>\n</ul>\n<table border=\"1\">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>matcher</code></td>\n<td>Request URL matcher. Can be a string (Glob-Pattern), JavaScript RegExp (encapsulated in / with following flags) or JavaScript arrow-function that receives the Response object and returns a boolean. By default (with empty string) matches first available request. For additional information, see the Playwright <a href=\"https://playwright.dev/docs/api/class-page#page-wait-for-response\">page.waitForResponse</a> documentation.</td>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>Timeout supports Robot Framework time format. Uses default timeout if not set.</td>\n</tr>\n</table>\n<p><b>CAUTION:</b> Before Browser library 17.0.0, the <code>matcher</code> argument was always either a regex or JS function. But the regex did not needed to be in slashes. The most simple way to migrate to the new syntax is to add slashes around the matcher. So <code>/api/get/json</code> becomes <code>//api/get/json/</code>.</p>\n<h3 id=\"Matcher Examples:\">Matcher Examples:</h3>\n<h4 id=\"Glob-Pattern:\">Glob-Pattern:</h4>\n<p>Glob-Patterns are strings that can contain wildcards. The following wildcards are supported:</p>\n<p>Possible wildcards/patterns are:</p>\n<ul>\n<li><code>*</code> matches any number of characters, except <code>/</code></li>\n<li><code>**</code> matches any number of characters, including <code>/</code></li>\n<li><code>?</code> matches one character, except <code>/</code></li>\n<li><code>[abc]</code> matches one character in the brackets (in this example <code>a</code>, <code>b</code> or <code>c</code>)</li>\n<li><code>[a-z]</code> matches one character in the range (in this example <code>a</code> to <code>z</code>)</li>\n<li><code>{foo,bar,baz}</code> matches one of the strings in the braces (in this example <code>foo</code>, <code>bar</code> or <code>baz</code>)</li>\n</ul>\n<p>Example:</p>\n<pre>\n<a href=\"#Wait%20For%20Response\" title=\"&quot;Wait For Response&quot; keyword\" class=\"name\">Wait For Response</a>    **/api/get/text    # matches any request with url ending with /api/get/text. example: <a href=\"https://browser.fi/api/get/text\">https://browser.fi/api/get/text</a>\n</pre>\n<h4 id=\"RegExp:\">RegExp:</h4>\n<p>Regular Expressions are JavaScript regular expressions encapsulated in <code>/</code> with optional following flags: Be aware that backslashes need to be escaped in Robot Framework, e.g. <code>\\\\w</code> instead of <code>\\w</code>. See <a href=\"https://regex101.com\">regex101</a> for more information on Regular Expressions.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#Wait%20For%20Response\" title=\"&quot;Wait For Response&quot; keyword\" class=\"name\">Wait For Response</a>    /http://\\\\w+:\\\\d+/api/get/text/i    # matches any request with url ending with /api/get/text and containing http:// followed by any word and port. example: <a href=\"http://localhost:8080/api/get/text\">http://localhost:8080/api/get/text</a>\n</pre>\n<h4 id=\"JavaScript Arrow-Function:\">JavaScript Arrow-Function:</h4>\n<p>JavaScript Arrow-Functions are anonymous JavaScript functions that receive the <a href=\"https://playwright.dev/docs/api/class-response\">Response</a> object and return a boolean.</p>\n<p>Example:</p>\n<pre>\n<a href=\"#Wait%20For%20Response\" title=\"&quot;Wait For Response&quot; keyword\" class=\"name\">Wait For Response</a>    response =&gt; response.url() === '<a href=\"http://localhost/api/post\">http://localhost/api/post</a>' &amp;&amp; response.status() === 200    # matches any response with url <a href=\"http://localhost/api/post\">http://localhost/api/post</a> and status code 200\n</pre>\n<h3 id=\"Robot Examples:\">Robot Examples:</h3>\n<p>Synchronous Example:</p>\n<pre>\n<a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>                \\#delayed_request    # Creates response which should be waited before next actions\n<a href=\"#Wait%20For%20Response\" title=\"&quot;Wait For Response&quot; keyword\" class=\"name\">Wait For Response</a>    matcher=/http://\\\\w+:\\\\d+/api/get/text/i\n<a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>                \\#save\n</pre>\n<p>Asynchronous Example:</p>\n<pre>\n${promise} =    <a href=\"#Promise%20To\" title=\"&quot;Promise To&quot; keyword\" class=\"name\">Promise To</a>    <a href=\"#Wait%20For%20Response\" title=\"&quot;Wait For Response&quot; keyword\" class=\"name\">Wait For Response</a>    timeout=60s\n<a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>           \\#delayed_request    # Creates response which should be waited before pressing save.\n<a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>           \\#next\n<a href=\"#Wait%20For\" title=\"&quot;Wait For&quot; keyword\" class=\"name\">Wait For</a>        ${promise}            # Waits for the response\n<a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>           \\#save\n</pre>\n<p>JavaScript Function Example:</p>\n<pre>\n<a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>               \\#delayed_request    # Creates response which should be waited before pressing save.\n<a href=\"#Wait%20For%20Response\" title=\"&quot;Wait For Response&quot; keyword\" class=\"name\">Wait For Response</a>   <a href=\"https://playwright.dev/docs/api/class-response/\">response</a> =&gt; response.url().endsWith('json') &amp;&amp; response.request().method() === 'GET'\n</pre>\n<p><a href=\"https://forum.robotframework.org/t//4349\">Comment &gt;&gt;</a></p>",
-      shortdoc: "Waits for response matching matcher and returns the response as robot dict.",
+      doc: '<p>Waits for response matching matcher and returns the response as robot dict.</p>\n<p>The response, which is returned by this keyword, is a robot dictionary with following attributes:</p>\n<ul>\n<li><code>status</code> &lt;int&gt; The status code of the response.</li>\n<li><code>statusText</code> &lt;str&gt; Status text corresponding to <code>status</code>, e.g OK or INTERNAL SERVER ERROR. This may not be available for all browser.</li>\n<li><code>body</code> &lt;dict | str&gt; The response body. If the body can be parsed as a JSON object, it will be returned as Python dictionary, otherwise it is returned as a string.</li>\n<li><code>headers</code> &lt;dict&gt; A dictionary containing all response headers.</li>\n<li><code>ok</code> &lt;bool&gt; Whether the request was successful, i.e. the <code>status</code> is range 200-299.</li>\n<li><code>request</code> &lt;dict&gt; containing <code>method</code> &lt;str&gt;, <code>headers</code> &lt;dict&gt; and <code>postData</code> &lt;dict&gt; | &lt;str&gt;</li>\n<li><code>url</code> &lt;str&gt; url of the request.</li>\n</ul>\n<table border="1">\n<tr>\n<th>Arguments</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>matcher</code></td>\n<td>Request URL matcher. Can be a string (Glob-Pattern), JavaScript RegExp (encapsulated in / with following flags) or JavaScript arrow-function that receives the Response object and returns a boolean. By default (with empty string) matches first available request. For additional information, see the Playwright <a href="https://playwright.dev/docs/api/class-page#page-wait-for-response">page.waitForResponse</a> documentation.</td>\n</tr>\n<tr>\n<td><code>timeout</code></td>\n<td>Timeout supports Robot Framework time format. Uses default timeout if not set.</td>\n</tr>\n</table>\n<p><b>CAUTION:</b> Before Browser library 17.0.0, the <code>matcher</code> argument was always either a regex or JS function. But the regex did not needed to be in slashes. The most simple way to migrate to the new syntax is to add slashes around the matcher. So <code>/api/get/json</code> becomes <code>//api/get/json/</code>.</p>\n<h3 id="Matcher Examples:">Matcher Examples:</h3>\n<h4 id="Glob-Pattern:">Glob-Pattern:</h4>\n<p>Glob-Patterns are strings that can contain wildcards. The following wildcards are supported:</p>\n<p>Possible wildcards/patterns are:</p>\n<ul>\n<li><code>*</code> matches any number of characters, except <code>/</code></li>\n<li><code>**</code> matches any number of characters, including <code>/</code></li>\n<li><code>?</code> matches one character, except <code>/</code></li>\n<li><code>[abc]</code> matches one character in the brackets (in this example <code>a</code>, <code>b</code> or <code>c</code>)</li>\n<li><code>[a-z]</code> matches one character in the range (in this example <code>a</code> to <code>z</code>)</li>\n<li><code>{foo,bar,baz}</code> matches one of the strings in the braces (in this example <code>foo</code>, <code>bar</code> or <code>baz</code>)</li>\n</ul>\n<p>Example:</p>\n<pre>\n<a href="#Wait%20For%20Response" title="&quot;Wait For Response&quot; keyword" class="name">Wait For Response</a>    **/api/get/text    # matches any request with url ending with /api/get/text. example: <a href="https://browser.fi/api/get/text">https://browser.fi/api/get/text</a>\n</pre>\n<h4 id="RegExp:">RegExp:</h4>\n<p>Regular Expressions are JavaScript regular expressions encapsulated in <code>/</code> with optional following flags: Be aware that backslashes need to be escaped in Robot Framework, e.g. <code>\\\\w</code> instead of <code>\\w</code>. See <a href="https://regex101.com">regex101</a> for more information on Regular Expressions.</p>\n<p>Example:</p>\n<pre>\n<a href="#Wait%20For%20Response" title="&quot;Wait For Response&quot; keyword" class="name">Wait For Response</a>    /http://\\\\w+:\\\\d+/api/get/text/i    # matches any request with url ending with /api/get/text and containing http:// followed by any word and port. example: <a href="http://localhost:8080/api/get/text">http://localhost:8080/api/get/text</a>\n</pre>\n<h4 id="JavaScript Arrow-Function:">JavaScript Arrow-Function:</h4>\n<p>JavaScript Arrow-Functions are anonymous JavaScript functions that receive the <a href="https://playwright.dev/docs/api/class-response">Response</a> object and return a boolean.</p>\n<p>Example:</p>\n<pre>\n<a href="#Wait%20For%20Response" title="&quot;Wait For Response&quot; keyword" class="name">Wait For Response</a>    response =&gt; response.url() === \'<a href="http://localhost/api/post">http://localhost/api/post</a>\' &amp;&amp; response.status() === 200    # matches any response with url <a href="http://localhost/api/post">http://localhost/api/post</a> and status code 200\n</pre>\n<h3 id="Robot Examples:">Robot Examples:</h3>\n<p>Synchronous Example:</p>\n<pre>\n<a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>                \\#delayed_request    # Creates response which should be waited before next actions\n<a href="#Wait%20For%20Response" title="&quot;Wait For Response&quot; keyword" class="name">Wait For Response</a>    matcher=/http://\\\\w+:\\\\d+/api/get/text/i\n<a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>                \\#save\n</pre>\n<p>Asynchronous Example:</p>\n<pre>\n${promise} =    <a href="#Promise%20To" title="&quot;Promise To&quot; keyword" class="name">Promise To</a>    <a href="#Wait%20For%20Response" title="&quot;Wait For Response&quot; keyword" class="name">Wait For Response</a>    timeout=60s\n<a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>           \\#delayed_request    # Creates response which should be waited before pressing save.\n<a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>           \\#next\n<a href="#Wait%20For" title="&quot;Wait For&quot; keyword" class="name">Wait For</a>        ${promise}            # Waits for the response\n<a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>           \\#save\n</pre>\n<p>JavaScript Function Example:</p>\n<pre>\n<a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>               \\#delayed_request    # Creates response which should be waited before pressing save.\n<a href="#Wait%20For%20Response" title="&quot;Wait For Response&quot; keyword" class="name">Wait For Response</a>   <a href="https://playwright.dev/docs/api/class-response/">response</a> =&gt; response.url().endsWith(\'json\') &amp;&amp; response.request().method() === \'GET\'\n</pre>\n<p><a href="https://forum.robotframework.org/t//4349">Comment &gt;&gt;</a></p>',
+      shortdoc:
+        "Waits for response matching matcher and returns the response as robot dict.",
       args: [
         {
           name: "matcher",
@@ -15837,10 +15581,7 @@ const DATA: Libdoc = {
         union: true,
       },
       returnDoc: "",
-      tags: [
-        "HTTP",
-        "Wait",
-      ],
+      tags: ["HTTP", "Wait"],
       source:
         "/Users/jth/Code/robotframework/.venv/lib/python3.11/site-packages/Browser/keywords/network.py",
       lineno: 177,
@@ -15882,20 +15623,14 @@ const DATA: Libdoc = {
         "Wait For Request",
         "Wait For Response",
       ],
-      accepts: [
-        "Any",
-      ],
+      accepts: ["Any"],
     },
     {
       type: "Enum",
       name: "AreaFields",
       doc: "<p>Enumeration that defines which coordinates of an area should be selected.</p>\n<p><code>ALL</code> defines that all fields are selected and a dictionary with all information is returned.</p>",
-      usages: [
-        "Get Scroll Position",
-      ],
-      accepts: [
-        "string",
-      ],
+      usages: ["Get Scroll Position"],
+      accepts: ["string"],
       members: [
         {
           name: "top",
@@ -15922,13 +15657,9 @@ const DATA: Libdoc = {
     {
       type: "Enum",
       name: "AriaSnapshotReturnType",
-      doc: "<p>Defines the return type of the AriaSnapshot.</p>\n<table border=\"1\">\n<tr>\n<th>Value</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>dict</code></td>\n<td>returns the snapshot as a dictionary.</td>\n</tr>\n<tr>\n<td><code>yaml</code></td>\n<td>returns the snapshot as a yaml string.</td>\n</tr>\n</table>",
-      usages: [
-        "Get Aria Snapshot",
-      ],
-      accepts: [
-        "string",
-      ],
+      doc: '<p>Defines the return type of the AriaSnapshot.</p>\n<table border="1">\n<tr>\n<th>Value</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>dict</code></td>\n<td>returns the snapshot as a dictionary.</td>\n</tr>\n<tr>\n<td><code>yaml</code></td>\n<td>returns the snapshot as a yaml string.</td>\n</tr>\n</table>',
+      usages: ["Get Aria Snapshot"],
+      accepts: ["string"],
       members: [
         {
           name: "dict",
@@ -15943,7 +15674,7 @@ const DATA: Libdoc = {
     {
       type: "Enum",
       name: "AssertionOperator",
-      doc: "<p>Currently supported assertion operators are:</p>\n<table border=\"1\">\n<tr>\n<th>Operator</th>\n<th>Alternative Operators</th>\n<th>Description</th>\n<th>Validate Equivalent</th>\n</tr>\n<tr>\n<td><code>==</code></td>\n<td><code>equal</code>, <code>equals</code>, <code>should be</code></td>\n<td>Checks if returned value is equal to expected value.</td>\n<td><code>value == expected</code></td>\n</tr>\n<tr>\n<td><code>!=</code></td>\n<td><code>inequal</code>, <code>should not be</code></td>\n<td>Checks if returned value is not equal to expected value.</td>\n<td><code>value != expected</code></td>\n</tr>\n<tr>\n<td><code>&gt;</code></td>\n<td><code>greater than</code></td>\n<td>Checks if returned value is greater than expected value.</td>\n<td><code>value &gt; expected</code></td>\n</tr>\n<tr>\n<td><code>&gt;=</code></td>\n<td></td>\n<td>Checks if returned value is greater than or equal to expected value.</td>\n<td><code>value &gt;= expected</code></td>\n</tr>\n<tr>\n<td><code>&lt;</code></td>\n<td><code>less than</code></td>\n<td>Checks if returned value is less than expected value.</td>\n<td><code>value &lt; expected</code></td>\n</tr>\n<tr>\n<td><code>&lt;=</code></td>\n<td></td>\n<td>Checks if returned value is less than or equal to expected value.</td>\n<td><code>value &lt;= expected</code></td>\n</tr>\n<tr>\n<td><code>*=</code></td>\n<td><code>contains</code></td>\n<td>Checks if returned value contains expected value as substring.</td>\n<td><code>expected in value</code></td>\n</tr>\n<tr>\n<td></td>\n<td><code>not contains</code></td>\n<td>Checks if returned value does not contain expected value as substring.</td>\n<td><code>expected in value</code></td>\n</tr>\n<tr>\n<td><code>^=</code></td>\n<td><code>should start with</code>, <code>starts</code></td>\n<td>Checks if returned value starts with expected value.</td>\n<td><code>re.search(f\"^{expected}\", value)</code></td>\n</tr>\n<tr>\n<td><code>$=</code></td>\n<td><code>should end with</code>, <code>ends</code></td>\n<td>Checks if returned value ends with expected value.</td>\n<td><code>re.search(f\"{expected}$\", value)</code></td>\n</tr>\n<tr>\n<td><code>matches</code></td>\n<td></td>\n<td>Checks if given RegEx matches minimum once in returned value.</td>\n<td><code>re.search(expected, value)</code></td>\n</tr>\n<tr>\n<td><code>validate</code></td>\n<td></td>\n<td>Checks if given Python expression evaluates to <code>True</code>.</td>\n<td></td>\n</tr>\n<tr>\n<td><code>evaluate</code></td>\n<td><code>then</code></td>\n<td>When using this operator, the keyword does return the evaluated Python expression.</td>\n<td></td>\n</tr>\n</table>\n<p>There are three different possibilities what keyword returns when <span class=\"name\">matches</span> operator is used: string, tuple or dictionary. What keyword returns depends on how the RegEx is formed. If RegEx does not contain group(s), then keyword will return the string without modifications. If RegEx contains groups, meaning (...), then keyword will return a tuple. Each tuple item contains the text which is matched by the group. If there is group and group has a name, (?P&lt;name&gt;...) syntax, then keyword returns a dictionary. In this case dictionary key is the group name and value contains the matched text. If there mix of groups and groups with names, then tuple is returned.</p>\n<p>Currently supported formatters for assertions are:</p>\n<table border=\"1\">\n<tr>\n<th>Formatter</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>normalize spaces</code></td>\n<td>Substitutes multiple spaces to single space from the value</td>\n</tr>\n<tr>\n<td><code>strip</code></td>\n<td>Removes spaces from the beginning and end of the value</td>\n</tr>\n<tr>\n<td><code>case insensitive</code></td>\n<td>Converts value to lower case before comparing</td>\n</tr>\n<tr>\n<td><code>apply to expected</code></td>\n<td>Applies rules also for the expected value</td>\n</tr>\n</table>\n<p>Formatters are applied to the value before assertion is performed and keywords returns a value where rule is applied. Formatter is only applied to the value which keyword returns and not all rules are valid for all assertion operators. If <code>apply to expected</code> formatter is defined, then formatters are then formatter are also applied to expected value.</p>",
+      doc: '<p>Currently supported assertion operators are:</p>\n<table border="1">\n<tr>\n<th>Operator</th>\n<th>Alternative Operators</th>\n<th>Description</th>\n<th>Validate Equivalent</th>\n</tr>\n<tr>\n<td><code>==</code></td>\n<td><code>equal</code>, <code>equals</code>, <code>should be</code></td>\n<td>Checks if returned value is equal to expected value.</td>\n<td><code>value == expected</code></td>\n</tr>\n<tr>\n<td><code>!=</code></td>\n<td><code>inequal</code>, <code>should not be</code></td>\n<td>Checks if returned value is not equal to expected value.</td>\n<td><code>value != expected</code></td>\n</tr>\n<tr>\n<td><code>&gt;</code></td>\n<td><code>greater than</code></td>\n<td>Checks if returned value is greater than expected value.</td>\n<td><code>value &gt; expected</code></td>\n</tr>\n<tr>\n<td><code>&gt;=</code></td>\n<td></td>\n<td>Checks if returned value is greater than or equal to expected value.</td>\n<td><code>value &gt;= expected</code></td>\n</tr>\n<tr>\n<td><code>&lt;</code></td>\n<td><code>less than</code></td>\n<td>Checks if returned value is less than expected value.</td>\n<td><code>value &lt; expected</code></td>\n</tr>\n<tr>\n<td><code>&lt;=</code></td>\n<td></td>\n<td>Checks if returned value is less than or equal to expected value.</td>\n<td><code>value &lt;= expected</code></td>\n</tr>\n<tr>\n<td><code>*=</code></td>\n<td><code>contains</code></td>\n<td>Checks if returned value contains expected value as substring.</td>\n<td><code>expected in value</code></td>\n</tr>\n<tr>\n<td></td>\n<td><code>not contains</code></td>\n<td>Checks if returned value does not contain expected value as substring.</td>\n<td><code>expected in value</code></td>\n</tr>\n<tr>\n<td><code>^=</code></td>\n<td><code>should start with</code>, <code>starts</code></td>\n<td>Checks if returned value starts with expected value.</td>\n<td><code>re.search(f"^{expected}", value)</code></td>\n</tr>\n<tr>\n<td><code>$=</code></td>\n<td><code>should end with</code>, <code>ends</code></td>\n<td>Checks if returned value ends with expected value.</td>\n<td><code>re.search(f"{expected}$", value)</code></td>\n</tr>\n<tr>\n<td><code>matches</code></td>\n<td></td>\n<td>Checks if given RegEx matches minimum once in returned value.</td>\n<td><code>re.search(expected, value)</code></td>\n</tr>\n<tr>\n<td><code>validate</code></td>\n<td></td>\n<td>Checks if given Python expression evaluates to <code>True</code>.</td>\n<td></td>\n</tr>\n<tr>\n<td><code>evaluate</code></td>\n<td><code>then</code></td>\n<td>When using this operator, the keyword does return the evaluated Python expression.</td>\n<td></td>\n</tr>\n</table>\n<p>There are three different possibilities what keyword returns when <span class="name">matches</span> operator is used: string, tuple or dictionary. What keyword returns depends on how the RegEx is formed. If RegEx does not contain group(s), then keyword will return the string without modifications. If RegEx contains groups, meaning (...), then keyword will return a tuple. Each tuple item contains the text which is matched by the group. If there is group and group has a name, (?P&lt;name&gt;...) syntax, then keyword returns a dictionary. In this case dictionary key is the group name and value contains the matched text. If there mix of groups and groups with names, then tuple is returned.</p>\n<p>Currently supported formatters for assertions are:</p>\n<table border="1">\n<tr>\n<th>Formatter</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>normalize spaces</code></td>\n<td>Substitutes multiple spaces to single space from the value</td>\n</tr>\n<tr>\n<td><code>strip</code></td>\n<td>Removes spaces from the beginning and end of the value</td>\n</tr>\n<tr>\n<td><code>case insensitive</code></td>\n<td>Converts value to lower case before comparing</td>\n</tr>\n<tr>\n<td><code>apply to expected</code></td>\n<td>Applies rules also for the expected value</td>\n</tr>\n</table>\n<p>Formatters are applied to the value before assertion is performed and keywords returns a value where rule is applied. Formatter is only applied to the value which keyword returns and not all rules are valid for all assertion operators. If <code>apply to expected</code> formatter is defined, then formatters are then formatter are also applied to expected value.</p>',
       usages: [
         "Get Aria Snapshot",
         "Get Attribute",
@@ -15977,9 +15708,7 @@ const DATA: Libdoc = {
         "LocalStorage Get Item",
         "SessionStorage Get Item",
       ],
-      accepts: [
-        "string",
-      ],
+      accepts: ["string"],
       members: [
         {
           name: "equal",
@@ -16090,13 +15819,9 @@ const DATA: Libdoc = {
     {
       type: "Enum",
       name: "AutoClosingLevel",
-      doc: "<p>Controls when contexts and pages are closed during the test execution.</p>\n<p>If automatic closing level is <span class=\"name\">TEST</span>, contexts and pages that are created during a single test are automatically closed when the test ends. Contexts and pages that are created during suite setup are closed when the suite teardown ends.</p>\n<p>If automatic closing level is <span class=\"name\">SUITE</span>, all contexts and pages that are created during the test suite are closed when the suite teardown ends.</p>\n<p>If automatic closing level is <span class=\"name\">MANUAL</span>, nothing is closed automatically while the test execution is ongoing. All browsers, context and pages are automatically closed when test execution ends.</p>\n<p>If automatic closing level is <span class=\"name\">KEEP</span>, nothing is closed automatically while the test execution is ongoing. Also, nothing is closed when test execution ends, including the node process. Therefore, it is users responsibility to close all browsers, context and pages and ensure that all process that are left running after the test execution end are closed. This level is only intended for test case development and must not be used when running tests in CI or similar environments.</p>\n<p>Automatic closing can be configured or switched off with the auto_closing_level library import parameter.</p>\n<p>See: <a href=\"#Importing\" title=\"&quot;Importing&quot; section\" class=\"name\">Importing</a></p>",
-      usages: [
-        "__init__",
-      ],
-      accepts: [
-        "string",
-      ],
+      doc: '<p>Controls when contexts and pages are closed during the test execution.</p>\n<p>If automatic closing level is <span class="name">TEST</span>, contexts and pages that are created during a single test are automatically closed when the test ends. Contexts and pages that are created during suite setup are closed when the suite teardown ends.</p>\n<p>If automatic closing level is <span class="name">SUITE</span>, all contexts and pages that are created during the test suite are closed when the suite teardown ends.</p>\n<p>If automatic closing level is <span class="name">MANUAL</span>, nothing is closed automatically while the test execution is ongoing. All browsers, context and pages are automatically closed when test execution ends.</p>\n<p>If automatic closing level is <span class="name">KEEP</span>, nothing is closed automatically while the test execution is ongoing. Also, nothing is closed when test execution ends, including the node process. Therefore, it is users responsibility to close all browsers, context and pages and ensure that all process that are left running after the test execution end are closed. This level is only intended for test case development and must not be used when running tests in CI or similar environments.</p>\n<p>Automatic closing can be configured or switched off with the auto_closing_level library import parameter.</p>\n<p>See: <a href="#Importing" title="&quot;Importing&quot; section" class="name">Importing</a></p>',
+      usages: ["__init__"],
+      accepts: ["string"],
       members: [
         {
           name: "SUITE",
@@ -16119,7 +15844,7 @@ const DATA: Libdoc = {
     {
       type: "Standard",
       name: "boolean",
-      doc: "<p>Strings <code>TRUE</code>, <code>YES</code>, <code>ON</code>, <code>1</code> and possible localization specific \"true strings\" are converted to Boolean <code>True</code>, the empty string, strings <code>FALSE</code>, <code>NO</code>, <code>OFF</code> and <code>0</code> and possibly localization specific \"false strings\" are converted to Boolean <code>False</code>, and the string <code>NONE</code> is converted to the Python <code>None</code> object. Other strings and all other values are passed as-is, allowing keywords to handle them specially if needed. All string comparisons are case-insensitive.</p>\n<p>Examples: <code>TRUE</code> (converted to <code>True</code>), <code>off</code> (converted to <code>False</code>), <code>example</code> (used as-is)</p>",
+      doc: '<p>Strings <code>TRUE</code>, <code>YES</code>, <code>ON</code>, <code>1</code> and possible localization specific "true strings" are converted to Boolean <code>True</code>, the empty string, strings <code>FALSE</code>, <code>NO</code>, <code>OFF</code> and <code>0</code> and possibly localization specific "false strings" are converted to Boolean <code>False</code>, and the string <code>NONE</code> is converted to the Python <code>None</code> object. Other strings and all other values are passed as-is, allowing keywords to handle them specially if needed. All string comparisons are case-insensitive.</p>\n<p>Examples: <code>TRUE</code> (converted to <code>True</code>), <code>off</code> (converted to <code>False</code>), <code>example</code> (used as-is)</p>',
       usages: [
         "__init__",
         "Add Cookie",
@@ -16161,25 +15886,14 @@ const DATA: Libdoc = {
         "Type Text",
         "Uncheck Checkbox",
       ],
-      accepts: [
-        "string",
-        "integer",
-        "float",
-        "None",
-      ],
+      accepts: ["string", "integer", "float", "None"],
     },
     {
       type: "TypedDict",
       name: "BoundingBox",
-      doc: "<p>Bounding box of an element.</p>\n<table border=\"1\">\n<tr>\n<th>Key</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>x</code></td>\n<td>The amount of pixel between the left border of the page and the left border of the element.</td>\n</tr>\n<tr>\n<td><code>y</code></td>\n<td>The amount of pixel between the top border of the page and the top border of the element.</td>\n</tr>\n<tr>\n<td><code>width</code></td>\n<td>The width of the element, excluding margins.</td>\n</tr>\n<tr>\n<td><code>height</code></td>\n<td>The height of the element, excluding margins.</td>\n</tr>\n</table>",
-      usages: [
-        "Get BoundingBox",
-        "Take Screenshot",
-      ],
-      accepts: [
-        "string",
-        "Mapping",
-      ],
+      doc: '<p>Bounding box of an element.</p>\n<table border="1">\n<tr>\n<th>Key</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>x</code></td>\n<td>The amount of pixel between the left border of the page and the left border of the element.</td>\n</tr>\n<tr>\n<td><code>y</code></td>\n<td>The amount of pixel between the top border of the page and the top border of the element.</td>\n</tr>\n<tr>\n<td><code>width</code></td>\n<td>The width of the element, excluding margins.</td>\n</tr>\n<tr>\n<td><code>height</code></td>\n<td>The height of the element, excluding margins.</td>\n</tr>\n</table>',
+      usages: ["Get BoundingBox", "Take Screenshot"],
+      accepts: ["string", "Mapping"],
       items: [
         {
           key: "x",
@@ -16207,12 +15921,8 @@ const DATA: Libdoc = {
       type: "Enum",
       name: "BoundingBoxFields",
       doc: "<p>Enumeration that defines which location information of an element should be selected.</p>\n<p><code>x</code> / <code>y</code> defines the position of the top left corner of an element.</p>\n<p><code>width</code> / <code>height</code> defines the size of an elements bounding box.</p>\n<p><code>ALL</code> defines that all fields are selected and a dictionary with all information is returned.</p>",
-      usages: [
-        "Get BoundingBox",
-      ],
-      accepts: [
-        "string",
-      ],
+      usages: ["Get BoundingBox"],
+      accepts: ["string"],
       members: [
         {
           name: "width",
@@ -16239,14 +15949,9 @@ const DATA: Libdoc = {
     {
       type: "TypedDict",
       name: "BrowserInfo",
-      doc: "<p>Dictionary that contains information about a browser instance.</p>\n<table border=\"1\">\n<tr>\n<th>Key</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>type</code></td>\n<td>The browser type. e.g. chromium, firefox or webkit.</td>\n</tr>\n<tr>\n<td><code>id</code></td>\n<td>The unique id of the browser instance.</td>\n</tr>\n<tr>\n<td><code>contexts</code></td>\n<td>List of context information opened by the browser.</td>\n</tr>\n<tr>\n<td><code>activeContext</code></td>\n<td>The id of the active context.</td>\n</tr>\n<tr>\n<td><code>activeBrowser</code></td>\n<td>Boolean if the browser is the currently active browser.</td>\n</tr>\n</table>\n<p>Structure:</p>\n<pre>\n{\n  'type': <a href=\"#type-string\" title=\"&quot;string&quot; type\" class=\"name\">str</a>,\n  'id': <a href=\"#type-string\" title=\"&quot;string&quot; type\" class=\"name\">str</a>,\n  'contexts': [\n      {\n          'type': <a href=\"#type-string\" title=\"&quot;string&quot; type\" class=\"name\">str</a>,\n          'id': <a href=\"#type-string\" title=\"&quot;string&quot; type\" class=\"name\">str</a>,\n          'activePage': <a href=\"#type-string\" title=\"&quot;string&quot; type\" class=\"name\">str</a>,\n          'pages': [\n              {\n                  'type': <a href=\"#type-string\" title=\"&quot;string&quot; type\" class=\"name\">str</a>,\n                  'title': <a href=\"#type-string\" title=\"&quot;string&quot; type\" class=\"name\">str</a>,\n                  'url': <a href=\"#type-string\" title=\"&quot;string&quot; type\" class=\"name\">str</a>,\n                  'id': <a href=\"#type-string\" title=\"&quot;string&quot; type\" class=\"name\">str</a>,\n                  'timestamp': <a href=\"#type-float\" title=\"&quot;float&quot; type\" class=\"name\">float</a>\n              },\n              ...\n          ]\n      },\n      ...\n  ],\n  'activeContext': <a href=\"#type-string\" title=\"&quot;string&quot; type\" class=\"name\">str</a>,\n  'activeBrowser': <a href=\"#type-boolean\" title=\"&quot;boolean&quot; type\" class=\"name\">bool</a>\n}\n</pre>",
-      usages: [
-        "Get Browser Catalog",
-      ],
-      accepts: [
-        "string",
-        "Mapping",
-      ],
+      doc: '<p>Dictionary that contains information about a browser instance.</p>\n<table border="1">\n<tr>\n<th>Key</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>type</code></td>\n<td>The browser type. e.g. chromium, firefox or webkit.</td>\n</tr>\n<tr>\n<td><code>id</code></td>\n<td>The unique id of the browser instance.</td>\n</tr>\n<tr>\n<td><code>contexts</code></td>\n<td>List of context information opened by the browser.</td>\n</tr>\n<tr>\n<td><code>activeContext</code></td>\n<td>The id of the active context.</td>\n</tr>\n<tr>\n<td><code>activeBrowser</code></td>\n<td>Boolean if the browser is the currently active browser.</td>\n</tr>\n</table>\n<p>Structure:</p>\n<pre>\n{\n  \'type\': <a href="#type-string" title="&quot;string&quot; type" class="name">str</a>,\n  \'id\': <a href="#type-string" title="&quot;string&quot; type" class="name">str</a>,\n  \'contexts\': [\n      {\n          \'type\': <a href="#type-string" title="&quot;string&quot; type" class="name">str</a>,\n          \'id\': <a href="#type-string" title="&quot;string&quot; type" class="name">str</a>,\n          \'activePage\': <a href="#type-string" title="&quot;string&quot; type" class="name">str</a>,\n          \'pages\': [\n              {\n                  \'type\': <a href="#type-string" title="&quot;string&quot; type" class="name">str</a>,\n                  \'title\': <a href="#type-string" title="&quot;string&quot; type" class="name">str</a>,\n                  \'url\': <a href="#type-string" title="&quot;string&quot; type" class="name">str</a>,\n                  \'id\': <a href="#type-string" title="&quot;string&quot; type" class="name">str</a>,\n                  \'timestamp\': <a href="#type-float" title="&quot;float&quot; type" class="name">float</a>\n              },\n              ...\n          ]\n      },\n      ...\n  ],\n  \'activeContext\': <a href="#type-string" title="&quot;string&quot; type" class="name">str</a>,\n  \'activeBrowser\': <a href="#type-boolean" title="&quot;boolean&quot; type" class="name">bool</a>\n}\n</pre>',
+      usages: ["Get Browser Catalog"],
+      accepts: ["string", "Mapping"],
       items: [
         {
           key: "type",
@@ -16279,27 +15984,15 @@ const DATA: Libdoc = {
       type: "Standard",
       name: "bytes",
       doc: "<p>Strings are converted to bytes so that each Unicode code point below 256 is directly mapped to a matching byte. Higher code points are not allowed. Robot Framework's <code>\\xHH</code> escape syntax is convenient with bytes having non-printable values.</p>\n<p>Examples: <code>good</code>, <code>hyvä</code> (same as <code>hyv\\xE4</code>), <code>\\x00</code> (the null byte)</p>\n<p>Integers and sequences of integers are converted to matching bytes directly. They must be in range 0-255.</p>\n<p>Examples: <code>0</code> (converted to the null byte), <code>[82, 70]</code> (converted to <code>RF</code>)</p>\n<p>Support for integers and sequences of integers is new in Robot Framework 7.4.</p>",
-      usages: [
-        "Take Screenshot",
-      ],
-      accepts: [
-        "string",
-        "bytearray",
-        "Sequence",
-        "integer",
-      ],
+      usages: ["Take Screenshot"],
+      accepts: ["string", "bytearray", "Sequence", "integer"],
     },
     {
       type: "TypedDict",
       name: "ClientCertificate",
       doc: "<p>Defines client certificate.</p>\n<ul>\n<li><code>origin</code> Exact origin that the certificate is valid for. Origin includes https protocol, a hostname and optionally a port.</li>\n<li><code>certPath</code> <b>Optional</b> Path to the file with the certificate in PEM format.</li>\n<li><code>keyPath</code> <b>Optional</b> Path to the file with the private key in PEM format.</li>\n<li><code>pfxPath</code> <b>Optional</b> Path to the PFX or PKCS12 encoded private key and certificate chain.</li>\n<li><code>passphrase</code> <b>Optional</b> Passphrase for the private key (PEM or PFX).</li>\n</ul>\n<p>Example usage: <code>{'origin': '<a href=\"https://playwright.dev\">https://playwright.dev</a>', 'pfxPath': 'certificate.p12', 'passphrase': 'secret'}</code></p>",
-      usages: [
-        "New Context",
-      ],
-      accepts: [
-        "string",
-        "Mapping",
-      ],
+      usages: ["New Context"],
+      accepts: ["string", "Mapping"],
       items: [
         {
           key: "origin",
@@ -16332,12 +16025,8 @@ const DATA: Libdoc = {
       type: "Enum",
       name: "CLockAdvanceType",
       doc: "<p>Defines how time is advanced.</p>\n<p><code>fast_forward</code>: Advance the clock by jumping forward in time. <code>run_for</code>: Advance the clock, firing all the time-related callbacks.</p>\n<p>fast_forward will Only fires due timers at most once. This is equivalent to user closing the laptop lid for a while and reopening it later, after given time.</p>",
-      usages: [
-        "Advance Clock",
-      ],
-      accepts: [
-        "string",
-      ],
+      usages: ["Advance Clock"],
+      accepts: ["string"],
       members: [
         {
           name: "fast_forward",
@@ -16352,13 +16041,9 @@ const DATA: Libdoc = {
     {
       type: "Enum",
       name: "ClockType",
-      doc: "<p>Defines how time is set.</p>\n<p>The recommended approach is to use fixed to set the time to a specific value.</p>\n<p><code>fixed</code>: Sets the fixed time for Date.now() and new Date(). <code>system</code>: Is only recommended for advanced use cases. <code>install</code>: initializes the clock and allows you to: <span class=\"name\">pause_at</span>: Pauses the time at a specific time. <span class=\"name\">fast_forward</span>: Fast forwards the time. <span class=\"name\">run_for</span>: Runs the time for a specific duration. <span class=\"name\">resume</span>: Resumes the time.</p>",
-      usages: [
-        "Set Time",
-      ],
-      accepts: [
-        "string",
-      ],
+      doc: '<p>Defines how time is set.</p>\n<p>The recommended approach is to use fixed to set the time to a specific value.</p>\n<p><code>fixed</code>: Sets the fixed time for Date.now() and new Date(). <code>system</code>: Is only recommended for advanced use cases. <code>install</code>: initializes the clock and allows you to: <span class="name">pause_at</span>: Pauses the time at a specific time. <span class="name">fast_forward</span>: Fast forwards the time. <span class="name">run_for</span>: Runs the time for a specific duration. <span class="name">resume</span>: Resumes the time.</p>',
+      usages: ["Set Time"],
+      accepts: ["string"],
       members: [
         {
           name: "fixed",
@@ -16378,14 +16063,8 @@ const DATA: Libdoc = {
       type: "Enum",
       name: "ColorScheme",
       doc: "<p>Emulates 'prefers-colors-scheme' media feature. Supported values are 'light', 'dark', 'no-preference' and <span class=\"name\">null</span>. Passing <span class=\"name\">null</span> disables color scheme emulation. <span class=\"name\">no-preference</span> is deprecated.</p>\n<p>See <a href=\"https://playwright.dev/docs/api/class-page?_highlight=emulatemedia#pageemulatemediaparams\">emulateMedia(options)</a> for more details.</p>",
-      usages: [
-        "Emulate Media",
-        "New Context",
-        "New Persistent Context",
-      ],
-      accepts: [
-        "string",
-      ],
+      usages: ["Emulate Media", "New Context", "New Persistent Context"],
+      accepts: ["string"],
       members: [
         {
           name: "dark",
@@ -16408,13 +16087,9 @@ const DATA: Libdoc = {
     {
       type: "Enum",
       name: "ConditionInputs",
-      doc: "<p>Following values are allowed and represent the assertion keywords to use:</p>\n<table border=\"1\">\n<tr>\n<th>Value</th>\n<th>Keyword</th>\n</tr>\n<tr>\n<td><code>Attribute</code></td>\n<td><a href=\"#Get%20Attribute\" title=\"&quot;Get Attribute&quot; keyword\" class=\"name\">Get Attribute</a></td>\n</tr>\n<tr>\n<td><code>Attribute Names</code></td>\n<td><a href=\"#Get%20Attribute%20Names\" title=\"&quot;Get Attribute Names&quot; keyword\" class=\"name\">Get Attribute Names</a></td>\n</tr>\n<tr>\n<td><code>BoundingBox</code></td>\n<td><a href=\"#Get%20BoundingBox\" title=\"&quot;Get BoundingBox&quot; keyword\" class=\"name\">Get BoundingBox</a></td>\n</tr>\n<tr>\n<td><code>Browser Catalog</code></td>\n<td><a href=\"#Get%20Browser%20Catalog\" title=\"&quot;Get Browser Catalog&quot; keyword\" class=\"name\">Get Browser Catalog</a></td>\n</tr>\n<tr>\n<td><code>Checkbox State</code></td>\n<td><a href=\"#Get%20Checkbox%20State\" title=\"&quot;Get Checkbox State&quot; keyword\" class=\"name\">Get Checkbox State</a></td>\n</tr>\n<tr>\n<td><code>Classes</code></td>\n<td><a href=\"#Get%20Classes\" title=\"&quot;Get Classes&quot; keyword\" class=\"name\">Get Classes</a></td>\n</tr>\n<tr>\n<td><code>Client Size</code></td>\n<td><a href=\"#Get%20Client%20Size\" title=\"&quot;Get Client Size&quot; keyword\" class=\"name\">Get Client Size</a></td>\n</tr>\n<tr>\n<td><code>Download State</code></td>\n<td><a href=\"#Get%20Download%20State\" title=\"&quot;Get Download State&quot; keyword\" class=\"name\">Get Download State</a></td>\n</tr>\n<tr>\n<td><code>Element Count</code></td>\n<td><a href=\"#Get%20Element%20Count\" title=\"&quot;Get Element Count&quot; keyword\" class=\"name\">Get Element Count</a></td>\n</tr>\n<tr>\n<td><code>Element States</code></td>\n<td><a href=\"#Get%20Element%20States\" title=\"&quot;Get Element States&quot; keyword\" class=\"name\">Get Element States</a></td>\n</tr>\n<tr>\n<td><code>Page Source</code></td>\n<td><a href=\"#Get%20Page%20Source\" title=\"&quot;Get Page Source&quot; keyword\" class=\"name\">Get Page Source</a></td>\n</tr>\n<tr>\n<td><code>Property</code></td>\n<td><a href=\"#Get%20Property\" title=\"&quot;Get Property&quot; keyword\" class=\"name\">Get Property</a></td>\n</tr>\n<tr>\n<td><code>Scroll Position</code></td>\n<td><a href=\"#Get%20Scroll%20Position\" title=\"&quot;Get Scroll Position&quot; keyword\" class=\"name\">Get Scroll Position</a></td>\n</tr>\n<tr>\n<td><code>Scroll Size</code></td>\n<td><a href=\"#Get%20Scroll%20Size\" title=\"&quot;Get Scroll Size&quot; keyword\" class=\"name\">Get Scroll Size</a></td>\n</tr>\n<tr>\n<td><code>Select Options</code></td>\n<td><a href=\"#Get%20Select%20Options\" title=\"&quot;Get Select Options&quot; keyword\" class=\"name\">Get Select Options</a></td>\n</tr>\n<tr>\n<td><code>Selected Options</code></td>\n<td><a href=\"#Get%20Selected%20Options\" title=\"&quot;Get Selected Options&quot; keyword\" class=\"name\">Get Selected Options</a></td>\n</tr>\n<tr>\n<td><code>Style</code></td>\n<td><a href=\"#Get%20Style\" title=\"&quot;Get Style&quot; keyword\" class=\"name\">Get Style</a></td>\n</tr>\n<tr>\n<td><code>Table Cell Index</code></td>\n<td><a href=\"#Get%20Table%20Cell%20Index\" title=\"&quot;Get Table Cell Index&quot; keyword\" class=\"name\">Get Table Cell Index</a></td>\n</tr>\n<tr>\n<td><code>Table Row Index</code></td>\n<td><a href=\"#Get%20Table%20Row%20Index\" title=\"&quot;Get Table Row Index&quot; keyword\" class=\"name\">Get Table Row Index</a></td>\n</tr>\n<tr>\n<td><code>Text</code></td>\n<td><a href=\"#Get%20Text\" title=\"&quot;Get Text&quot; keyword\" class=\"name\">Get Text</a></td>\n</tr>\n<tr>\n<td><code>Title</code></td>\n<td><a href=\"#Get%20Title\" title=\"&quot;Get Title&quot; keyword\" class=\"name\">Get Title</a></td>\n</tr>\n<tr>\n<td><code>Url</code></td>\n<td><a href=\"#Get%20Url\" title=\"&quot;Get Url&quot; keyword\" class=\"name\">Get Url</a></td>\n</tr>\n<tr>\n<td><code>Viewport Size</code></td>\n<td><a href=\"#Get%20Viewport%20Size\" title=\"&quot;Get Viewport Size&quot; keyword\" class=\"name\">Get Viewport Size</a></td>\n</tr>\n</table>",
-      usages: [
-        "Wait For Condition",
-      ],
-      accepts: [
-        "string",
-      ],
+      doc: '<p>Following values are allowed and represent the assertion keywords to use:</p>\n<table border="1">\n<tr>\n<th>Value</th>\n<th>Keyword</th>\n</tr>\n<tr>\n<td><code>Attribute</code></td>\n<td><a href="#Get%20Attribute" title="&quot;Get Attribute&quot; keyword" class="name">Get Attribute</a></td>\n</tr>\n<tr>\n<td><code>Attribute Names</code></td>\n<td><a href="#Get%20Attribute%20Names" title="&quot;Get Attribute Names&quot; keyword" class="name">Get Attribute Names</a></td>\n</tr>\n<tr>\n<td><code>BoundingBox</code></td>\n<td><a href="#Get%20BoundingBox" title="&quot;Get BoundingBox&quot; keyword" class="name">Get BoundingBox</a></td>\n</tr>\n<tr>\n<td><code>Browser Catalog</code></td>\n<td><a href="#Get%20Browser%20Catalog" title="&quot;Get Browser Catalog&quot; keyword" class="name">Get Browser Catalog</a></td>\n</tr>\n<tr>\n<td><code>Checkbox State</code></td>\n<td><a href="#Get%20Checkbox%20State" title="&quot;Get Checkbox State&quot; keyword" class="name">Get Checkbox State</a></td>\n</tr>\n<tr>\n<td><code>Classes</code></td>\n<td><a href="#Get%20Classes" title="&quot;Get Classes&quot; keyword" class="name">Get Classes</a></td>\n</tr>\n<tr>\n<td><code>Client Size</code></td>\n<td><a href="#Get%20Client%20Size" title="&quot;Get Client Size&quot; keyword" class="name">Get Client Size</a></td>\n</tr>\n<tr>\n<td><code>Download State</code></td>\n<td><a href="#Get%20Download%20State" title="&quot;Get Download State&quot; keyword" class="name">Get Download State</a></td>\n</tr>\n<tr>\n<td><code>Element Count</code></td>\n<td><a href="#Get%20Element%20Count" title="&quot;Get Element Count&quot; keyword" class="name">Get Element Count</a></td>\n</tr>\n<tr>\n<td><code>Element States</code></td>\n<td><a href="#Get%20Element%20States" title="&quot;Get Element States&quot; keyword" class="name">Get Element States</a></td>\n</tr>\n<tr>\n<td><code>Page Source</code></td>\n<td><a href="#Get%20Page%20Source" title="&quot;Get Page Source&quot; keyword" class="name">Get Page Source</a></td>\n</tr>\n<tr>\n<td><code>Property</code></td>\n<td><a href="#Get%20Property" title="&quot;Get Property&quot; keyword" class="name">Get Property</a></td>\n</tr>\n<tr>\n<td><code>Scroll Position</code></td>\n<td><a href="#Get%20Scroll%20Position" title="&quot;Get Scroll Position&quot; keyword" class="name">Get Scroll Position</a></td>\n</tr>\n<tr>\n<td><code>Scroll Size</code></td>\n<td><a href="#Get%20Scroll%20Size" title="&quot;Get Scroll Size&quot; keyword" class="name">Get Scroll Size</a></td>\n</tr>\n<tr>\n<td><code>Select Options</code></td>\n<td><a href="#Get%20Select%20Options" title="&quot;Get Select Options&quot; keyword" class="name">Get Select Options</a></td>\n</tr>\n<tr>\n<td><code>Selected Options</code></td>\n<td><a href="#Get%20Selected%20Options" title="&quot;Get Selected Options&quot; keyword" class="name">Get Selected Options</a></td>\n</tr>\n<tr>\n<td><code>Style</code></td>\n<td><a href="#Get%20Style" title="&quot;Get Style&quot; keyword" class="name">Get Style</a></td>\n</tr>\n<tr>\n<td><code>Table Cell Index</code></td>\n<td><a href="#Get%20Table%20Cell%20Index" title="&quot;Get Table Cell Index&quot; keyword" class="name">Get Table Cell Index</a></td>\n</tr>\n<tr>\n<td><code>Table Row Index</code></td>\n<td><a href="#Get%20Table%20Row%20Index" title="&quot;Get Table Row Index&quot; keyword" class="name">Get Table Row Index</a></td>\n</tr>\n<tr>\n<td><code>Text</code></td>\n<td><a href="#Get%20Text" title="&quot;Get Text&quot; keyword" class="name">Get Text</a></td>\n</tr>\n<tr>\n<td><code>Title</code></td>\n<td><a href="#Get%20Title" title="&quot;Get Title&quot; keyword" class="name">Get Title</a></td>\n</tr>\n<tr>\n<td><code>Url</code></td>\n<td><a href="#Get%20Url" title="&quot;Get Url&quot; keyword" class="name">Get Url</a></td>\n</tr>\n<tr>\n<td><code>Viewport Size</code></td>\n<td><a href="#Get%20Viewport%20Size" title="&quot;Get Viewport Size&quot; keyword" class="name">Get Viewport Size</a></td>\n</tr>\n</table>',
+      usages: ["Wait For Condition"],
+      accepts: ["string"],
       members: [
         {
           name: "attribute",
@@ -16513,13 +16188,9 @@ const DATA: Libdoc = {
     {
       type: "Enum",
       name: "CookieSameSite",
-      doc: "<p>Enum that defines the Cookie SameSite type.</p>\n<p>It controls whether or not a cookie is sent with cross-site requests, providing some protection against cross-site request forgery attacks (CSRF).</p>\n<p>The possible attribute values are:</p>\n<table border=\"1\">\n<tr>\n<th>Value</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>Strict</code></td>\n<td>Means that the browser sends the cookie only for same-site requests, that is, requests originating from the same site that set the cookie. If a request originates from a different domain or scheme (even with the same domain), no cookies with the SameSite=Strict attribute are sent.</td>\n</tr>\n<tr>\n<td><code>Lax</code></td>\n<td>Means that the cookie is not sent on cross-site requests, such as on requests to load images or frames, but is sent when a user is navigating to the origin site from an external site (for example, when following a link). This is the default behavior if the SameSite attribute is not specified.</td>\n</tr>\n<tr>\n<td><code>None</code></td>\n<td>means that the browser sends the cookie with both cross-site and same-site requests. The Secure attribute must also be set when setting this value.</td>\n</tr>\n</table>\n<p>See <a href=\"https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie\">MDN Set-Cookie</a> for more information.</p>",
-      usages: [
-        "Add Cookie",
-      ],
-      accepts: [
-        "string",
-      ],
+      doc: '<p>Enum that defines the Cookie SameSite type.</p>\n<p>It controls whether or not a cookie is sent with cross-site requests, providing some protection against cross-site request forgery attacks (CSRF).</p>\n<p>The possible attribute values are:</p>\n<table border="1">\n<tr>\n<th>Value</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>Strict</code></td>\n<td>Means that the browser sends the cookie only for same-site requests, that is, requests originating from the same site that set the cookie. If a request originates from a different domain or scheme (even with the same domain), no cookies with the SameSite=Strict attribute are sent.</td>\n</tr>\n<tr>\n<td><code>Lax</code></td>\n<td>Means that the cookie is not sent on cross-site requests, such as on requests to load images or frames, but is sent when a user is navigating to the origin site from an external site (for example, when following a link). This is the default behavior if the SameSite attribute is not specified.</td>\n</tr>\n<tr>\n<td><code>None</code></td>\n<td>means that the browser sends the cookie with both cross-site and same-site requests. The Secure attribute must also be set when setting this value.</td>\n</tr>\n</table>\n<p>See <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie">MDN Set-Cookie</a> for more information.</p>',
+      usages: ["Add Cookie"],
+      accepts: ["string"],
       members: [
         {
           name: "Strict",
@@ -16539,13 +16210,8 @@ const DATA: Libdoc = {
       type: "Enum",
       name: "CookieType",
       doc: "<p>Enum that defines the Cookie type.</p>",
-      usages: [
-        "Get Cookie",
-        "Get Cookies",
-      ],
-      accepts: [
-        "string",
-      ],
+      usages: ["Get Cookie", "Get Cookies"],
+      accepts: ["string"],
       members: [
         {
           name: "dictionary",
@@ -16568,13 +16234,9 @@ const DATA: Libdoc = {
     {
       type: "Enum",
       name: "CoverageType",
-      doc: "<p>Enum that defines the type of coverage to collect.</p>\n<p><code>js</code>: <a href=\"https://playwright.dev/docs/api/class-coverage/#coverage-start-js-coverage\">JavaScript</a> coverage. <code>css</code>: <a href=\"https://playwright.dev/docs/api/class-coverage/#coverage-start-css-coverage\">CSS</a> coverage. <code>all</code>: Both <a href=\"https://playwright.dev/docs/api/class-coverage/#coverage-start-css-coverage\">CSS</a> and <a href=\"https://playwright.dev/docs/api/class-coverage/#coverage-start-js-coverage\">JS</a> coverage.</p>",
-      usages: [
-        "Start Coverage",
-      ],
-      accepts: [
-        "string",
-      ],
+      doc: '<p>Enum that defines the type of coverage to collect.</p>\n<p><code>js</code>: <a href="https://playwright.dev/docs/api/class-coverage/#coverage-start-js-coverage">JavaScript</a> coverage. <code>css</code>: <a href="https://playwright.dev/docs/api/class-coverage/#coverage-start-css-coverage">CSS</a> coverage. <code>all</code>: Both <a href="https://playwright.dev/docs/api/class-coverage/#coverage-start-css-coverage">CSS</a> and <a href="https://playwright.dev/docs/api/class-coverage/#coverage-start-js-coverage">JS</a> coverage.</p>',
+      usages: ["Start Coverage"],
+      accepts: ["string"],
       members: [
         {
           name: "js",
@@ -16593,30 +16255,16 @@ const DATA: Libdoc = {
     {
       type: "Standard",
       name: "datetime",
-      doc: "<p>String timestamps are expected to be in <a href=\"https://en.wikipedia.org/wiki/ISO_8601\">ISO 8601</a> like format <code>YYYY-MM-DD hh:mm:ss.mmmmmm</code>, where any non-digit character can be used as a separator or separators can be omitted altogether. Additionally, only the date part is mandatory, all possibly missing time components are considered to be zeros.</p>\n<p>A special values <code>NOW</code> and <code>TODAY</code> (case-insensitive) can be used to get the current local <code>datetime</code>. This is new in Robot Framework 7.3.</p>\n<p>Integers and floats are considered to represent seconds since the <a href=\"https://en.wikipedia.org/wiki/Unix_time\">Unix epoch</a>.</p>\n<p>Examples: <code>2022-02-09T16:39:43.632269</code>, <code>20220209 16:39</code>, <code>now</code>, <code>${1644417583.632269}</code> (Epoch time)</p>",
-      usages: [
-        "Add Cookie",
-        "Pause At",
-        "Set Time",
-      ],
-      accepts: [
-        "string",
-        "integer",
-        "float",
-      ],
+      doc: '<p>String timestamps are expected to be in <a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a> like format <code>YYYY-MM-DD hh:mm:ss.mmmmmm</code>, where any non-digit character can be used as a separator or separators can be omitted altogether. Additionally, only the date part is mandatory, all possibly missing time components are considered to be zeros.</p>\n<p>A special values <code>NOW</code> and <code>TODAY</code> (case-insensitive) can be used to get the current local <code>datetime</code>. This is new in Robot Framework 7.3.</p>\n<p>Integers and floats are considered to represent seconds since the <a href="https://en.wikipedia.org/wiki/Unix_time">Unix epoch</a>.</p>\n<p>Examples: <code>2022-02-09T16:39:43.632269</code>, <code>20220209 16:39</code>, <code>now</code>, <code>${1644417583.632269}</code> (Epoch time)</p>',
+      usages: ["Add Cookie", "Pause At", "Set Time"],
+      accepts: ["string", "integer", "float"],
     },
     {
       type: "Enum",
       name: "DialogAction",
       doc: "<p>Enum that defines how to handle a dialog.</p>",
-      usages: [
-        "Handle Future Dialogs",
-        "Wait For Alert",
-        "Wait For Alerts",
-      ],
-      accepts: [
-        "string",
-      ],
+      usages: ["Handle Future Dialogs", "Wait For Alert", "Wait For Alerts"],
+      accepts: ["string"],
       members: [
         {
           name: "accept",
@@ -16656,23 +16304,14 @@ const DATA: Libdoc = {
         "Set Assertion Formatters",
         "Show Keyword Banner",
       ],
-      accepts: [
-        "string",
-        "Mapping",
-      ],
+      accepts: ["string", "Mapping"],
     },
     {
       type: "TypedDict",
       name: "Dimensions",
       doc: "<p>Dimensions of an object in pixels.</p>",
-      usages: [
-        "Get Client Size",
-        "Get Scroll Size",
-      ],
-      accepts: [
-        "string",
-        "Mapping",
-      ],
+      usages: ["Get Client Size", "Get Scroll Size"],
+      accepts: ["string", "Mapping"],
       items: [
         {
           key: "width",
@@ -16689,16 +16328,9 @@ const DATA: Libdoc = {
     {
       type: "TypedDict",
       name: "DownloadInfo",
-      doc: "<p>Downloaded file information.</p>\n<table border=\"1\">\n<tr>\n<th>Key</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>saveAs</code></td>\n<td>is the path where downloaded file is saved. empty string if the file is not yet fully downloaded.</td>\n</tr>\n<tr>\n<td><code>suggestedFilename</code></td>\n<td>is the suggested filename that was computed from the <code>Content-Disposition</code> response header.</td>\n</tr>\n<tr>\n<td><code>state</code></td>\n<td>is the state of the download. i.e. <code>in_progress</code>, <code>finished</code> or <code>canceled</code>.</td>\n</tr>\n<tr>\n<td><code>downloadID</code></td>\n<td>is the unique id of the download.</td>\n</tr>\n</table>",
-      usages: [
-        "Cancel Download",
-        "Download",
-        "Get Download State",
-      ],
-      accepts: [
-        "string",
-        "Mapping",
-      ],
+      doc: '<p>Downloaded file information.</p>\n<table border="1">\n<tr>\n<th>Key</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>saveAs</code></td>\n<td>is the path where downloaded file is saved. empty string if the file is not yet fully downloaded.</td>\n</tr>\n<tr>\n<td><code>suggestedFilename</code></td>\n<td>is the suggested filename that was computed from the <code>Content-Disposition</code> response header.</td>\n</tr>\n<tr>\n<td><code>state</code></td>\n<td>is the state of the download. i.e. <code>in_progress</code>, <code>finished</code> or <code>canceled</code>.</td>\n</tr>\n<tr>\n<td><code>downloadID</code></td>\n<td>is the unique id of the download.</td>\n</tr>\n</table>',
+      usages: ["Cancel Download", "Download", "Get Download State"],
+      accepts: ["string", "Mapping"],
       items: [
         {
           key: "saveAs",
@@ -16725,13 +16357,9 @@ const DATA: Libdoc = {
     {
       type: "Enum",
       name: "ElementRole",
-      doc: "<p>Role selector does not replace accessibility audits and conformance tests, but rather gives early feedback about the ARIA guidelines.</p>\n<p>Many html elements have an implicitly <a href=\"https://w3c.github.io/html-aam/#html-element-role-mappings\">defined role</a> that is recognized by the role selector. You can find all the <a href=\"https://www.w3.org/TR/wai-aria-1.2/#role_definitions\">supported roles</a> here. ARIA guidelines do not recommend duplicating implicit roles and attributes by setting role and/or aria-* attributes to default values.</p>",
-      usages: [
-        "Get Element By Role",
-      ],
-      accepts: [
-        "string",
-      ],
+      doc: '<p>Role selector does not replace accessibility audits and conformance tests, but rather gives early feedback about the ARIA guidelines.</p>\n<p>Many html elements have an implicitly <a href="https://w3c.github.io/html-aam/#html-element-role-mappings">defined role</a> that is recognized by the role selector. You can find all the <a href="https://www.w3.org/TR/wai-aria-1.2/#role_definitions">supported roles</a> here. ARIA guidelines do not recommend duplicating implicit roles and attributes by setting role and/or aria-* attributes to default values.</p>',
+      usages: ["Get Element By Role"],
+      accepts: ["string"],
       members: [
         {
           name: "ALERT",
@@ -17066,15 +16694,9 @@ const DATA: Libdoc = {
     {
       type: "Enum",
       name: "ElementState",
-      doc: "<p>Enum that defines the state an element can have.</p>\n<p>The following <code>states</code> are possible:</p>\n<table border=\"1\">\n<tr>\n<th>State</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>attached</code></td>\n<td>to be present in DOM.</td>\n</tr>\n<tr>\n<td><code>detached</code></td>\n<td>to not be present in DOM.</td>\n</tr>\n<tr>\n<td><code>visible</code></td>\n<td>to have non or empty bounding box and no visibility:hidden.</td>\n</tr>\n<tr>\n<td><code>hidden</code></td>\n<td>to be detached from DOM, or have an empty bounding box or visibility:hidden.</td>\n</tr>\n<tr>\n<td><code>enabled</code></td>\n<td>to not be <code>disabled</code>.</td>\n</tr>\n<tr>\n<td><code>disabled</code></td>\n<td>to be <code>disabled</code>. Can be used on &lt;button&gt;, &lt;fieldset&gt;, &lt;input&gt;, &lt;optgroup&gt;, &lt;option&gt;, &lt;select&gt; and &lt;textarea&gt;.</td>\n</tr>\n<tr>\n<td><code>editable</code></td>\n<td>to not be <code>readOnly</code>.</td>\n</tr>\n<tr>\n<td><code>readonly</code></td>\n<td>to be <code>readOnly</code>. Can be used on &lt;input&gt; and &lt;textarea&gt;.</td>\n</tr>\n<tr>\n<td><code>selected</code></td>\n<td>to be <code>selected</code>. Can be used on &lt;option&gt;.</td>\n</tr>\n<tr>\n<td><code>deselected</code></td>\n<td>to not be <code>selected</code>.</td>\n</tr>\n<tr>\n<td><code>focused</code></td>\n<td>to be the <code>activeElement</code>.</td>\n</tr>\n<tr>\n<td><code>defocused</code></td>\n<td>to not be the <code>activeElement</code>.</td>\n</tr>\n<tr>\n<td><code>checked</code></td>\n<td>to be <code>checked</code>. Can be used on &lt;input&gt;.</td>\n</tr>\n<tr>\n<td><code>unchecked</code></td>\n<td>to not be <code>checked</code>.</td>\n</tr>\n<tr>\n<td><code>stable</code></td>\n<td>to be both <code>visible</code> and <code>stable</code>.</td>\n</tr>\n</table>",
-      usages: [
-        "Get Element States",
-        "Wait For Elements State",
-      ],
-      accepts: [
-        "string",
-        "integer",
-      ],
+      doc: '<p>Enum that defines the state an element can have.</p>\n<p>The following <code>states</code> are possible:</p>\n<table border="1">\n<tr>\n<th>State</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>attached</code></td>\n<td>to be present in DOM.</td>\n</tr>\n<tr>\n<td><code>detached</code></td>\n<td>to not be present in DOM.</td>\n</tr>\n<tr>\n<td><code>visible</code></td>\n<td>to have non or empty bounding box and no visibility:hidden.</td>\n</tr>\n<tr>\n<td><code>hidden</code></td>\n<td>to be detached from DOM, or have an empty bounding box or visibility:hidden.</td>\n</tr>\n<tr>\n<td><code>enabled</code></td>\n<td>to not be <code>disabled</code>.</td>\n</tr>\n<tr>\n<td><code>disabled</code></td>\n<td>to be <code>disabled</code>. Can be used on &lt;button&gt;, &lt;fieldset&gt;, &lt;input&gt;, &lt;optgroup&gt;, &lt;option&gt;, &lt;select&gt; and &lt;textarea&gt;.</td>\n</tr>\n<tr>\n<td><code>editable</code></td>\n<td>to not be <code>readOnly</code>.</td>\n</tr>\n<tr>\n<td><code>readonly</code></td>\n<td>to be <code>readOnly</code>. Can be used on &lt;input&gt; and &lt;textarea&gt;.</td>\n</tr>\n<tr>\n<td><code>selected</code></td>\n<td>to be <code>selected</code>. Can be used on &lt;option&gt;.</td>\n</tr>\n<tr>\n<td><code>deselected</code></td>\n<td>to not be <code>selected</code>.</td>\n</tr>\n<tr>\n<td><code>focused</code></td>\n<td>to be the <code>activeElement</code>.</td>\n</tr>\n<tr>\n<td><code>defocused</code></td>\n<td>to not be the <code>activeElement</code>.</td>\n</tr>\n<tr>\n<td><code>checked</code></td>\n<td>to be <code>checked</code>. Can be used on &lt;input&gt;.</td>\n</tr>\n<tr>\n<td><code>unchecked</code></td>\n<td>to not be <code>checked</code>.</td>\n</tr>\n<tr>\n<td><code>stable</code></td>\n<td>to be both <code>visible</code> and <code>stable</code>.</td>\n</tr>\n</table>',
+      usages: ["Get Element States", "Wait For Elements State"],
+      accepts: ["string", "integer"],
       members: [
         {
           name: "attached",
@@ -17141,14 +16763,9 @@ const DATA: Libdoc = {
     {
       type: "TypedDict",
       name: "FileUploadBuffer",
-      doc: "<p>Dictionary that contains information about a file upload buffer.</p>\n<table border=\"1\">\n<tr>\n<th>Key</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>name</code></td>\n<td>The name of the file.</td>\n</tr>\n<tr>\n<td><code>mimeType</code></td>\n<td>The mime type of the file.</td>\n</tr>\n<tr>\n<td><code>buffer</code></td>\n<td>The file content.</td>\n</tr>\n</table>\n<p>Structure:</p>\n<pre>\n{\n  'name': <a href=\"#type-string\" title=\"&quot;string&quot; type\" class=\"name\">str</a>,\n  'mimeType': <a href=\"#type-string\" title=\"&quot;string&quot; type\" class=\"name\">str</a>,\n  'buffer': <a href=\"#type-string\" title=\"&quot;string&quot; type\" class=\"name\">str</a>\n}\n</pre>",
-      usages: [
-        "Upload File By Selector",
-      ],
-      accepts: [
-        "string",
-        "Mapping",
-      ],
+      doc: '<p>Dictionary that contains information about a file upload buffer.</p>\n<table border="1">\n<tr>\n<th>Key</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>name</code></td>\n<td>The name of the file.</td>\n</tr>\n<tr>\n<td><code>mimeType</code></td>\n<td>The mime type of the file.</td>\n</tr>\n<tr>\n<td><code>buffer</code></td>\n<td>The file content.</td>\n</tr>\n</table>\n<p>Structure:</p>\n<pre>\n{\n  \'name\': <a href="#type-string" title="&quot;string&quot; type" class="name">str</a>,\n  \'mimeType\': <a href="#type-string" title="&quot;string&quot; type" class="name">str</a>,\n  \'buffer\': <a href="#type-string" title="&quot;string&quot; type" class="name">str</a>\n}\n</pre>',
+      usages: ["Upload File By Selector"],
+      accepts: ["string", "Mapping"],
       items: [
         {
           key: "name",
@@ -17170,7 +16787,7 @@ const DATA: Libdoc = {
     {
       type: "Standard",
       name: "float",
-      doc: "<p>Conversion is done using Python's <a href=\"https://docs.python.org/library/functions.html#float\">float</a> built-in function.</p>\n<p>Spaces and underscores can be used as visual separators for digit grouping purposes.</p>\n<p>Examples: <code>3.14</code>, <code>2.9979e8</code>, <code>10 000.000 01</code></p>",
+      doc: '<p>Conversion is done using Python\'s <a href="https://docs.python.org/library/functions.html#float">float</a> built-in function.</p>\n<p>Spaces and underscores can be used as visual separators for digit grouping purposes.</p>\n<p>Examples: <code>3.14</code>, <code>2.9979e8</code>, <code>10 000.000 01</code></p>',
       usages: [
         "Click With Options",
         "Drag And Drop By Coordinates",
@@ -17189,23 +16806,14 @@ const DATA: Libdoc = {
         "Save Page As Pdf",
         "Set Geolocation",
       ],
-      accepts: [
-        "string",
-        "Real",
-      ],
+      accepts: ["string", "Real"],
     },
     {
       type: "Enum",
       name: "ForcedColors",
       doc: "<p>Emulates 'forced-colors' media feature.</p>\n<p>Supported values are 'active', 'none' and <span class=\"name\">null</span>. Passing <span class=\"name\">null</span> disables forced colors emulation.</p>",
-      usages: [
-        "Emulate Media",
-        "New Context",
-        "New Persistent Context",
-      ],
-      accepts: [
-        "string",
-      ],
+      usages: ["Emulate Media", "New Context", "New Persistent Context"],
+      accepts: ["string"],
       members: [
         {
           name: "active",
@@ -17224,13 +16832,9 @@ const DATA: Libdoc = {
     {
       type: "Enum",
       name: "FormatingRules",
-      doc: "<p>Enum that defines the available formatters.</p>\n<table border=\"1\">\n<tr>\n<th>Formatter</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>normalize spaces</code></td>\n<td>Replaces all kind of spaces with a single space.</td>\n</tr>\n<tr>\n<td><code>strip</code></td>\n<td>Removes spaces from start and end of the string.</td>\n</tr>\n<tr>\n<td><code>apply to expected</code></td>\n<td>Applies the formatter also to the expected value.</td>\n</tr>\n<tr>\n<td><code>case insensitive</code></td>\n<td>Converts the string to lower case.</td>\n</tr>\n</table>",
-      usages: [
-        "Set Assertion Formatters",
-      ],
-      accepts: [
-        "string",
-      ],
+      doc: '<p>Enum that defines the available formatters.</p>\n<table border="1">\n<tr>\n<th>Formatter</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>normalize spaces</code></td>\n<td>Replaces all kind of spaces with a single space.</td>\n</tr>\n<tr>\n<td><code>strip</code></td>\n<td>Removes spaces from start and end of the string.</td>\n</tr>\n<tr>\n<td><code>apply to expected</code></td>\n<td>Applies the formatter also to the expected value.</td>\n</tr>\n<tr>\n<td><code>case insensitive</code></td>\n<td>Converts the string to lower case.</td>\n</tr>\n</table>',
+      usages: ["Set Assertion Formatters"],
+      accepts: ["string"],
       members: [
         {
           name: "normalize spaces",
@@ -17254,12 +16858,8 @@ const DATA: Libdoc = {
       type: "Enum",
       name: "FormatterKeywords",
       doc: "<p>Enum that defines the available keywords for formatters.</p>\n<p>Keywords that are not listed here, do not support formatters.</p>",
-      usages: [
-        "Set Assertion Formatters",
-      ],
-      accepts: [
-        "string",
-      ],
+      usages: ["Set Assertion Formatters"],
+      accepts: ["string"],
       members: [
         {
           name: "Get Attribute",
@@ -17311,14 +16911,8 @@ const DATA: Libdoc = {
       type: "TypedDict",
       name: "GeoLocation",
       doc: "<p>Defines the geolocation.</p>\n<ul>\n<li><code>latitude</code> Latitude between -90 and 90.</li>\n<li><code>longitude</code> Longitude between -180 and 180.</li>\n<li><code>accuracy</code> <b>Optional</b> Non-negative accuracy value. Defaults to 0.</li>\n</ul>\n<p>Example usage: <code>{'latitude': 59.95, 'longitude': 30.31667}</code></p>",
-      usages: [
-        "New Context",
-        "New Persistent Context",
-      ],
-      accepts: [
-        "string",
-        "Mapping",
-      ],
+      usages: ["New Context", "New Persistent Context"],
+      accepts: ["string", "Mapping"],
       items: [
         {
           key: "longitude",
@@ -17341,14 +16935,8 @@ const DATA: Libdoc = {
       type: "TypedDict",
       name: "HighLightElement",
       doc: "<p>Presenter mode configuration options.</p>\n<p><code>duration</code> Sets for how long the selector shall be highlighted. Defaults to <code>5s</code> =&gt; 5 seconds.</p>\n<p><code>width</code> Sets the width of the higlight border. Defaults to 2px.</p>\n<p><code>style</code> Sets the style of the border. Defaults to dotted.</p>\n<p><code>color</code> Sets the color of the border, default is blue. Valid colors i.e. are: <code>red</code>, <code>blue</code>, <code>yellow</code>, <code>pink</code>, <code>black</code></p>",
-      usages: [
-        "__init__",
-        "Set Presenter Mode",
-      ],
-      accepts: [
-        "string",
-        "Mapping",
-      ],
+      usages: ["__init__", "Set Presenter Mode"],
+      accepts: ["string", "Mapping"],
       items: [
         {
           key: "duration",
@@ -17376,12 +16964,8 @@ const DATA: Libdoc = {
       type: "Enum",
       name: "HighlightMode",
       doc: "<p>Highlight mode for the element.</p>\n<p><code>border</code>: Highlights the element with a border outside of the selected element. This is the classic way to highlight an element of Browser librarary.</p>\n<p><code>playwright</code>: Highlights the element with Playwrights built in function.</p>\n<p><code>both</code>: Highlights the element with both methods.</p>",
-      usages: [
-        "Highlight Elements",
-      ],
-      accepts: [
-        "string",
-      ],
+      usages: ["Highlight Elements"],
+      accepts: ["string"],
       members: [
         {
           name: "border",
@@ -17400,15 +16984,9 @@ const DATA: Libdoc = {
     {
       type: "TypedDict",
       name: "HttpCredentials",
-      doc: "<p>Sets the credentials for http basic-auth.</p>\n<p><code>origin</code>: Restrain sending http credentials on specific origin (<a href=\"scheme://host:port\">scheme://host:port</a>). Credentials for HTTP authentication. If no origin is specified, the username and password are sent to any servers upon unauthorized responses.</p>\n<p>Can be defined as robot dictionary or as string literal. Does not reveal secrets in Robot Framework logs. Instead, username and password values are resolved internally. Please note that if <code>enable_playwright_debug</code> is enabled in the library import, secret will be always visible as plain text in the playwright debug logs, regardless of the Robot Framework log level.</p>\n<p>Example as literal:</p>\n<pre>\n${pwd} =    Set Variable    1234\n${username} =    Set Variable    admin\n<a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a>\n...    httpCredentials={'username': '$username', 'password': '$pwd'}\n</pre>\n<p>Example as robot variable</p>\n<pre>\n<b>***</b> <b>Variables</b> <b>***</b>\n${username}=       admin\n${pwd}=            1234\n&amp;{credentials}=    username=$username    password=$pwd\n\n<b>***</b> <b>Keywords</b> <b>***</b>\nOpen Context\n   <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a>    httpCredentials=${credentials}\n</pre>",
-      usages: [
-        "New Context",
-        "New Persistent Context",
-      ],
-      accepts: [
-        "string",
-        "Mapping",
-      ],
+      doc: '<p>Sets the credentials for http basic-auth.</p>\n<p><code>origin</code>: Restrain sending http credentials on specific origin (<a href="scheme://host:port">scheme://host:port</a>). Credentials for HTTP authentication. If no origin is specified, the username and password are sent to any servers upon unauthorized responses.</p>\n<p>Can be defined as robot dictionary or as string literal. Does not reveal secrets in Robot Framework logs. Instead, username and password values are resolved internally. Please note that if <code>enable_playwright_debug</code> is enabled in the library import, secret will be always visible as plain text in the playwright debug logs, regardless of the Robot Framework log level.</p>\n<p>Example as literal:</p>\n<pre>\n${pwd} =    Set Variable    1234\n${username} =    Set Variable    admin\n<a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a>\n...    httpCredentials={\'username\': \'$username\', \'password\': \'$pwd\'}\n</pre>\n<p>Example as robot variable</p>\n<pre>\n<b>***</b> <b>Variables</b> <b>***</b>\n${username}=       admin\n${pwd}=            1234\n&amp;{credentials}=    username=$username    password=$pwd\n\n<b>***</b> <b>Keywords</b> <b>***</b>\nOpen Context\n   <a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a>    httpCredentials=${credentials}\n</pre>',
+      usages: ["New Context", "New Persistent Context"],
+      accepts: ["string", "Mapping"],
       items: [
         {
           key: "username",
@@ -17430,7 +17008,7 @@ const DATA: Libdoc = {
     {
       type: "Standard",
       name: "integer",
-      doc: "<p>Conversion is done using Python's <a href=\"https://docs.python.org/library/functions.html#int\">int</a> built-in function. Floating point numbers are accepted only if they can be represented as integers exactly. For example, <code>1.0</code> is accepted and <code>1.1</code> is not.</p>\n<p>It is possible to use hexadecimal, octal and binary numbers by prefixing values with <code>0x</code>, <code>0o</code> and <code>0b</code>, respectively. Spaces and underscores can be used as visual separators for digit grouping purposes.</p>\n<p>Examples: <code>42</code>, <code>-1</code>, <code>0b1010</code>, <code>10 000 000</code>, <code>0xBAD_C0FFEE</code></p>",
+      doc: '<p>Conversion is done using Python\'s <a href="https://docs.python.org/library/functions.html#int">int</a> built-in function. Floating point numbers are accepted only if they can be represented as integers exactly. For example, <code>1.0</code> is accepted and <code>1.1</code> is not.</p>\n<p>It is possible to use hexadecimal, octal and binary numbers by prefixing values with <code>0x</code>, <code>0o</code> and <code>0b</code>, respectively. Spaces and underscores can be used as visual separators for digit grouping purposes.</p>\n<p>Examples: <code>42</code>, <code>-1</code>, <code>0b1010</code>, <code>10 000 000</code>, <code>0xBAD_C0FFEE</code></p>',
       usages: [
         "__init__",
         "Add Locator Handler Click",
@@ -17462,21 +17040,14 @@ const DATA: Libdoc = {
         "Take Screenshot",
         "Tap",
       ],
-      accepts: [
-        "string",
-        "float",
-      ],
+      accepts: ["string", "float"],
     },
     {
       type: "Enum",
       name: "KeyAction",
-      doc: "<p>Enum that defines which <a href=\"#Keyboard%20Key\" title=\"&quot;Keyboard Key&quot; keyword\" class=\"name\">Keyboard Key</a> action to perform.</p>",
-      usages: [
-        "Keyboard Key",
-      ],
-      accepts: [
-        "string",
-      ],
+      doc: '<p>Enum that defines which <a href="#Keyboard%20Key" title="&quot;Keyboard Key&quot; keyword" class="name">Keyboard Key</a> action to perform.</p>',
+      usages: ["Keyboard Key"],
+      accepts: ["string"],
       members: [
         {
           name: "down",
@@ -17495,13 +17066,9 @@ const DATA: Libdoc = {
     {
       type: "Enum",
       name: "KeyboardInputAction",
-      doc: "<p>Enum that defines how <a href=\"#Keyboard%20Input\" title=\"&quot;Keyboard Input&quot; keyword\" class=\"name\">Keyboard Input</a> adds the text into the page.</p>\n<p><code>insertText</code> is mostly similar to pasting of text.</p>\n<p><code>type</code> is similar to typing by pressing keys on the keyboard.</p>",
-      usages: [
-        "Keyboard Input",
-      ],
-      accepts: [
-        "string",
-      ],
+      doc: '<p>Enum that defines how <a href="#Keyboard%20Input" title="&quot;Keyboard Input&quot; keyword" class="name">Keyboard Input</a> adds the text into the page.</p>\n<p><code>insertText</code> is mostly similar to pasting of text.</p>\n<p><code>type</code> is similar to typing by pressing keys on the keyboard.</p>',
+      usages: ["Keyboard Input"],
+      accepts: ["string"],
       members: [
         {
           name: "insertText",
@@ -17516,15 +17083,9 @@ const DATA: Libdoc = {
     {
       type: "Enum",
       name: "KeyboardModifier",
-      doc: "<p>Modifier keys to press while doing other actions.</p>\n<p>Modifiers that are pressed during the <a href=\"#Hover\" title=\"&quot;Hover&quot; keyword\" class=\"name\">Hover</a> or <a href=\"#Click\" title=\"&quot;Click&quot; keyword\" class=\"name\">Click</a>.</p>",
-      usages: [
-        "Click With Options",
-        "Hover",
-        "Tap",
-      ],
-      accepts: [
-        "string",
-      ],
+      doc: '<p>Modifier keys to press while doing other actions.</p>\n<p>Modifiers that are pressed during the <a href="#Hover" title="&quot;Hover&quot; keyword" class="name">Hover</a> or <a href="#Click" title="&quot;Click&quot; keyword" class="name">Click</a>.</p>',
+      usages: ["Click With Options", "Hover", "Tap"],
+      accepts: ["string"],
       members: [
         {
           name: "Alt",
@@ -17552,12 +17113,8 @@ const DATA: Libdoc = {
       type: "Custom",
       name: "LambdaFunction",
       doc: "<p>Python lambda function.</p>\n<p>The string must start with <code>lambda</code> and the function must accept one argument.</p>\n<p>Example: <code>lambda value: value.lower().replace(' ', '')</code></p>",
-      usages: [
-        "Set Assertion Formatters",
-      ],
-      accepts: [
-        "string",
-      ],
+      usages: ["Set Assertion Formatters"],
+      accepts: ["string"],
     },
     {
       type: "Standard",
@@ -17590,10 +17147,7 @@ const DATA: Libdoc = {
         "Take Screenshot",
         "Wait For Alerts",
       ],
-      accepts: [
-        "string",
-        "Sequence",
-      ],
+      accepts: ["string", "Sequence"],
     },
     {
       type: "Standard",
@@ -17605,21 +17159,14 @@ const DATA: Libdoc = {
         "Wait For Request",
         "Wait For Response",
       ],
-      accepts: [
-        "string",
-        "Mapping",
-      ],
+      accepts: ["string", "Mapping"],
     },
     {
       type: "Enum",
       name: "Media",
       doc: "<p>Changes the CSS media type of the page.</p>\n<p>The only allowed values are 'screen', 'print' and <span class=\"name\">null</span>. Passing null disables CSS media emulation. Using False will not define media argument.</p>",
-      usages: [
-        "Emulate Media",
-      ],
-      accepts: [
-        "string",
-      ],
+      usages: ["Emulate Media"],
+      accepts: ["string"],
       members: [
         {
           name: "screen",
@@ -17639,14 +17186,8 @@ const DATA: Libdoc = {
       type: "Enum",
       name: "MouseButton",
       doc: "<p>Enum that defines which mouse button to use.</p>",
-      usages: [
-        "Click",
-        "Click With Options",
-        "Mouse Button",
-      ],
-      accepts: [
-        "string",
-      ],
+      usages: ["Click", "Click With Options", "Mouse Button"],
+      accepts: ["string"],
       members: [
         {
           name: "left",
@@ -17665,13 +17206,9 @@ const DATA: Libdoc = {
     {
       type: "Enum",
       name: "MouseButtonAction",
-      doc: "<p>Enum that defines which <a href=\"#Mouse%20Button\" title=\"&quot;Mouse Button&quot; keyword\" class=\"name\">Mouse Button</a> action to perform.</p>",
-      usages: [
-        "Mouse Button",
-      ],
-      accepts: [
-        "string",
-      ],
+      doc: '<p>Enum that defines which <a href="#Mouse%20Button" title="&quot;Mouse Button&quot; keyword" class="name">Mouse Button</a> action to perform.</p>',
+      usages: ["Mouse Button"],
+      accepts: ["string"],
       members: [
         {
           name: "click",
@@ -17690,16 +17227,9 @@ const DATA: Libdoc = {
     {
       type: "TypedDict",
       name: "NewPageDetails",
-      doc: "<p>Return value of <a href=\"#New%20Page\" title=\"&quot;New Page&quot; keyword\" class=\"name\">New Page</a> keyword.</p>\n<p><code>page_id</code> is the UUID of the opened page. <code>video_path</code> path to the video or empty string if video is not created.</p>",
-      usages: [
-        "Close Page",
-        "New Page",
-        "Switch Page",
-      ],
-      accepts: [
-        "string",
-        "Mapping",
-      ],
+      doc: '<p>Return value of <a href="#New%20Page" title="&quot;New Page&quot; keyword" class="name">New Page</a> keyword.</p>\n<p><code>page_id</code> is the UUID of the opened page. <code>video_path</code> path to the video or empty string if video is not created.</p>',
+      usages: ["Close Page", "New Page", "Switch Page"],
+      accepts: ["string", "Mapping"],
       items: [
         {
           key: "page_id",
@@ -17800,20 +17330,14 @@ const DATA: Libdoc = {
         "Wait For Request",
         "Wait For Response",
       ],
-      accepts: [
-        "string",
-      ],
+      accepts: ["string"],
     },
     {
       type: "Enum",
       name: "NotSet",
-      doc: "<p>Defines a value that is not set.</p>\n<p>This is used to differentiate between a value that is set to None and a value that is not set at all. Example <a href=\"#type-ForcedColors\" title=\"&quot;ForcedColors&quot; type\" class=\"name\">ForcedColors</a> has an options active, none and null. If user does not not want to give any of the <a href=\"#type-ForcedColors\" title=\"&quot;ForcedColors&quot; type\" class=\"name\">ForcedColors</a> options, user can use <span class=\"name\">not_set</span> value. Then keyword will not define <a href=\"#type-ForcedColors\" title=\"&quot;ForcedColors&quot; type\" class=\"name\">ForcedColors</a> option at all when underlying Playwright method(s) is called.</p>",
-      usages: [
-        "Emulate Media",
-      ],
-      accepts: [
-        "string",
-      ],
+      doc: '<p>Defines a value that is not set.</p>\n<p>This is used to differentiate between a value that is set to None and a value that is not set at all. Example <a href="#type-ForcedColors" title="&quot;ForcedColors&quot; type" class="name">ForcedColors</a> has an options active, none and null. If user does not not want to give any of the <a href="#type-ForcedColors" title="&quot;ForcedColors&quot; type" class="name">ForcedColors</a> options, user can use <span class="name">not_set</span> value. Then keyword will not define <a href="#type-ForcedColors" title="&quot;ForcedColors&quot; type" class="name">ForcedColors</a> option at all when underlying Playwright method(s) is called.</p>',
+      usages: ["Emulate Media"],
+      accepts: ["string"],
       members: [
         {
           name: "not_set",
@@ -17832,9 +17356,7 @@ const DATA: Libdoc = {
         "Wait For Load State",
         "Wait For Navigation",
       ],
-      accepts: [
-        "string",
-      ],
+      accepts: ["string"],
       members: [
         {
           name: "load",
@@ -17857,7 +17379,7 @@ const DATA: Libdoc = {
     {
       type: "Standard",
       name: "Path",
-      doc: "<p>Strings are converted <a href=\"https://docs.python.org/library/pathlib.html\">Path</a> objects. On Windows <code>/</code> is converted to <code>\\</code> automatically.</p>\n<p>Examples: <code>/tmp/absolute/path</code>, <code>relative/path/to/file.ext</code>, <code>name.txt</code></p>",
+      doc: '<p>Strings are converted <a href="https://docs.python.org/library/pathlib.html">Path</a> objects. On Windows <code>/</code> is converted to <code>\\</code> automatically.</p>\n<p>Examples: <code>/tmp/absolute/path</code>, <code>relative/path/to/file.ext</code>, <code>name.txt</code></p>',
       usages: [
         "Merge Coverage Reports",
         "New Context",
@@ -17869,21 +17391,14 @@ const DATA: Libdoc = {
         "Take Screenshot",
         "Upload File By Selector",
       ],
-      accepts: [
-        "string",
-        "PurePath",
-      ],
+      accepts: ["string", "PurePath"],
     },
     {
       type: "Enum",
       name: "PdfFormat",
       doc: "<p>PDF format argument options are</p>\n<p>Letter: 8.5in x 11in Legal: 8.5in x 14in Tabloid: 11in x 17in Ledger: 17in x 11in A0: 33.1in x 46.8in A1: 23.4in x 33.1in A2: 16.54in x 23.4in A3: 11.7in x 16.54in A4: 8.27in x 11.7in A5: 5.83in x 8.27in A6: 4.13in x 5.83in</p>",
-      usages: [
-        "Save Page As Pdf",
-      ],
-      accepts: [
-        "string",
-      ],
+      usages: ["Save Page As Pdf"],
+      accepts: ["string"],
       members: [
         {
           name: "Letter",
@@ -17935,13 +17450,8 @@ const DATA: Libdoc = {
       type: "TypedDict",
       name: "PdfMarging",
       doc: "<p>Margins of the pdf.</p>\n<p>Top margin, accepts values labeled with units. Defaults to 0px. Right margin, accepts values labeled with units. Defaults to 0px. Bottom margin, accepts values labeled with units. Defaults to 0px. Left margin, accepts values labeled with units. Defaults to 0px.</p>",
-      usages: [
-        "Save Page As Pdf",
-      ],
-      accepts: [
-        "string",
-        "Mapping",
-      ],
+      usages: ["Save Page As Pdf"],
+      accepts: ["string", "Mapping"],
       items: [
         {
           key: "top",
@@ -17968,15 +17478,9 @@ const DATA: Libdoc = {
     {
       type: "Enum",
       name: "Permission",
-      doc: "<p>Enum that defines the permission to grant to a context.</p>\n<p>See <a href=\"https://playwright.dev/docs/api/class-browsercontext#browser-context-grant-permissions\">grantPermissions(permissions)</a> for more details.</p>",
-      usages: [
-        "Grant Permissions",
-        "New Context",
-        "New Persistent Context",
-      ],
-      accepts: [
-        "string",
-      ],
+      doc: '<p>Enum that defines the permission to grant to a context.</p>\n<p>See <a href="https://playwright.dev/docs/api/class-browsercontext#browser-context-grant-permissions">grantPermissions(permissions)</a> for more details.</p>',
+      usages: ["Grant Permissions", "New Context", "New Persistent Context"],
+      accepts: ["string"],
       members: [
         {
           name: "accelerometer",
@@ -18079,13 +17583,9 @@ const DATA: Libdoc = {
     {
       type: "Enum",
       name: "PlaywrightLogTypes",
-      doc: "<p>Enable low level debug information from the playwright to playwright-log.txt file.</p>\n<p>It is possible to disable the creation of playwright-log.txt totally. Mainly useful for the library developers and for debugging purposes. Will log everything as plain text, also including secrets. If playwright-log.txt file can not be deleted, time.time_ns() is added at the end of file name. Example playwright-log-12345.txt</p>\n<p><code>disabled</code>: playwright-log.txt is not created at all. All node side logging is lost. <code>library</code>: Default, only logging from Browser library node side is written to the playwright-log.txt file. <code>playwright</code>: Also includes Playwright log messages to the playwright-log.txt file. <code>false</code>: Same as <span class=\"name\">library</span> and for backwards compatability. <code>true</code>: Same as <span class=\"name\">playwright</span> and for backwards compatibility.</p>",
-      usages: [
-        "__init__",
-      ],
-      accepts: [
-        "string",
-      ],
+      doc: '<p>Enable low level debug information from the playwright to playwright-log.txt file.</p>\n<p>It is possible to disable the creation of playwright-log.txt totally. Mainly useful for the library developers and for debugging purposes. Will log everything as plain text, also including secrets. If playwright-log.txt file can not be deleted, time.time_ns() is added at the end of file name. Example playwright-log-12345.txt</p>\n<p><code>disabled</code>: playwright-log.txt is not created at all. All node side logging is lost. <code>library</code>: Default, only logging from Browser library node side is written to the playwright-log.txt file. <code>playwright</code>: Also includes Playwright log messages to the playwright-log.txt file. <code>false</code>: Same as <span class="name">library</span> and for backwards compatability. <code>true</code>: Same as <span class="name">playwright</span> and for backwards compatibility.</p>',
+      usages: ["__init__"],
+      accepts: ["string"],
       members: [
         {
           name: "disabled",
@@ -18112,17 +17612,14 @@ const DATA: Libdoc = {
     {
       type: "TypedDict",
       name: "Proxy",
-      doc: "<p>Network proxy settings.</p>\n<p><code>server</code> Proxy to be used for all requests. HTTP and SOCKS proxies are supported, for example <a href=\"http://myproxy.com:3128\">http://myproxy.com:3128</a> or <a href=\"socks5://myproxy.com:3128\">socks5://myproxy.com:3128</a>. Short form myproxy.com:3128 is considered an HTTP proxy.</p>\n<p><code>bypass</code> <b>Optional</b> coma-separated domains to bypass proxy, for example \".com, chromium.org, .domain.com\".</p>\n<p><code>username</code> <b>Optional</b> username to use if HTTP proxy requires authentication.</p>\n<p><code>password</code> <b>Optional</b> password to use if HTTP proxy requires authentication.</p>",
+      doc: '<p>Network proxy settings.</p>\n<p><code>server</code> Proxy to be used for all requests. HTTP and SOCKS proxies are supported, for example <a href="http://myproxy.com:3128">http://myproxy.com:3128</a> or <a href="socks5://myproxy.com:3128">socks5://myproxy.com:3128</a>. Short form myproxy.com:3128 is considered an HTTP proxy.</p>\n<p><code>bypass</code> <b>Optional</b> coma-separated domains to bypass proxy, for example ".com, chromium.org, .domain.com".</p>\n<p><code>username</code> <b>Optional</b> username to use if HTTP proxy requires authentication.</p>\n<p><code>password</code> <b>Optional</b> password to use if HTTP proxy requires authentication.</p>',
       usages: [
         "Launch Browser Server",
         "New Browser",
         "New Context",
         "New Persistent Context",
       ],
-      accepts: [
-        "string",
-        "Mapping",
-      ],
+      accepts: ["string", "Mapping"],
       items: [
         {
           key: "server",
@@ -18149,15 +17646,9 @@ const DATA: Libdoc = {
     {
       type: "TypedDict",
       name: "RecordHar",
-      doc: "<p>Enables HAR recording for all pages into to a file.</p>\n<p>If not specified, the HAR is not recorded. Make sure to await context to close for the <a href=\"http://www.softwareishard.com/blog/har-12-spec/\">HAR</a> to be saved.</p>\n<p><span class=\"name\">omitContent</span>: Optional setting to control whether to omit request content from the HAR. Default is False</p>\n<p><a href=\"#type-Path\" title=\"&quot;Path&quot; type\" class=\"name\">path</a>: Path on the filesystem to write the HAR file to.</p>\n<p>Example:</p>\n<pre>\n${har} =    Create Dictionary     path=/path/to/har.file    omitContent=True\nNew Context    recordHar=${har}\n</pre>",
-      usages: [
-        "New Context",
-        "New Persistent Context",
-      ],
-      accepts: [
-        "string",
-        "Mapping",
-      ],
+      doc: '<p>Enables HAR recording for all pages into to a file.</p>\n<p>If not specified, the HAR is not recorded. Make sure to await context to close for the <a href="http://www.softwareishard.com/blog/har-12-spec/">HAR</a> to be saved.</p>\n<p><span class="name">omitContent</span>: Optional setting to control whether to omit request content from the HAR. Default is False</p>\n<p><a href="#type-Path" title="&quot;Path&quot; type" class="name">path</a>: Path on the filesystem to write the HAR file to.</p>\n<p>Example:</p>\n<pre>\n${har} =    Create Dictionary     path=/path/to/har.file    omitContent=True\nNew Context    recordHar=${har}\n</pre>',
+      usages: ["New Context", "New Persistent Context"],
+      accepts: ["string", "Mapping"],
       items: [
         {
           key: "omitContent",
@@ -18175,14 +17666,8 @@ const DATA: Libdoc = {
       type: "TypedDict",
       name: "RecordVideo",
       doc: "<p>Enables Video recording</p>\n<p>Examples:</p>\n<pre>\n New Context  recordVideo={'dir':'videos', 'size':{'width':400, 'height':200}}\n New Context  recordVideo={'dir': 'd:/automation/video'}\n</pre>",
-      usages: [
-        "New Context",
-        "New Persistent Context",
-      ],
-      accepts: [
-        "string",
-        "Mapping",
-      ],
+      usages: ["New Context", "New Persistent Context"],
+      accepts: ["string", "Mapping"],
       items: [
         {
           key: "dir",
@@ -18200,12 +17685,8 @@ const DATA: Libdoc = {
       type: "Enum",
       name: "ReducedMotion",
       doc: "<p>Emulates 'prefers-reduced-motion' media feature.</p>\n<p>Supported values are 'reduce', 'no-preference' and <span class=\"name\">null</span>. Passing <span class=\"name\">null</span> disables reduced motion emulation.</p>",
-      usages: [
-        "Emulate Media",
-      ],
-      accepts: [
-        "string",
-      ],
+      usages: ["Emulate Media"],
+      accepts: ["string"],
       members: [
         {
           name: "reduce",
@@ -18224,14 +17705,9 @@ const DATA: Libdoc = {
     {
       type: "Enum",
       name: "ReduceMotion",
-      doc: "<p>Emulates <span class=\"name\">prefers-reduced-motion</span> media feature, supported values are <span class=\"name\">reduce</span>, <span class=\"name\">no-preference</span>.</p>",
-      usages: [
-        "New Context",
-        "New Persistent Context",
-      ],
-      accepts: [
-        "string",
-      ],
+      doc: '<p>Emulates <span class="name">prefers-reduced-motion</span> media feature, supported values are <span class="name">reduce</span>, <span class="name">no-preference</span>.</p>',
+      usages: ["New Context", "New Persistent Context"],
+      accepts: ["string"],
       members: [
         {
           name: "reduce",
@@ -18246,7 +17722,7 @@ const DATA: Libdoc = {
     {
       type: "Custom",
       name: "RegExp",
-      doc: "<p>Create a (JavaScript) RegExp object from a string.</p>\n<p>The matcher must start with a slash and end with a slash and can be followed by flags.</p>\n<p>Example: <code>/hello world/gi</code> Which is equivalent to <code>new RegExp(\"hello world\", \"gi\")</code> in JavaScript.</p>\n<p>Following flags are supported:</p>\n<table border=\"1\">\n<tr>\n<th>Flag</th>\n<th>Description</th>\n</tr>\n<tr>\n<td>g</td>\n<td>Global search.</td>\n</tr>\n<tr>\n<td>i</td>\n<td>Case-insensitive search.</td>\n</tr>\n<tr>\n<td>m</td>\n<td>Allows <code>^</code> and <code>$</code> to match newline characters.</td>\n</tr>\n<tr>\n<td>s</td>\n<td>Allows <code>.</code> to match newline characters.</td>\n</tr>\n<tr>\n<td>u</td>\n<td>\"unicode\"; treat a pattern as a sequence of unicode code points.</td>\n</tr>\n<tr>\n<td>y</td>\n<td>Perform a \"sticky\" search that matches starting at the current position in the target string.</td>\n</tr>\n</table>\n<p>See <a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp\">RegExp Object</a> and <a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions\">RegExp Guide</a> for more information.</p>",
+      doc: '<p>Create a (JavaScript) RegExp object from a string.</p>\n<p>The matcher must start with a slash and end with a slash and can be followed by flags.</p>\n<p>Example: <code>/hello world/gi</code> Which is equivalent to <code>new RegExp("hello world", "gi")</code> in JavaScript.</p>\n<p>Following flags are supported:</p>\n<table border="1">\n<tr>\n<th>Flag</th>\n<th>Description</th>\n</tr>\n<tr>\n<td>g</td>\n<td>Global search.</td>\n</tr>\n<tr>\n<td>i</td>\n<td>Case-insensitive search.</td>\n</tr>\n<tr>\n<td>m</td>\n<td>Allows <code>^</code> and <code>$</code> to match newline characters.</td>\n</tr>\n<tr>\n<td>s</td>\n<td>Allows <code>.</code> to match newline characters.</td>\n</tr>\n<tr>\n<td>u</td>\n<td>"unicode"; treat a pattern as a sequence of unicode code points.</td>\n</tr>\n<tr>\n<td>y</td>\n<td>Perform a "sticky" search that matches starting at the current position in the target string.</td>\n</tr>\n</table>\n<p>See <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp">RegExp Object</a> and <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions">RegExp Guide</a> for more information.</p>',
       usages: [
         "Get Element By",
         "Get Element By Role",
@@ -18254,20 +17730,14 @@ const DATA: Libdoc = {
         "Wait For Request",
         "Wait For Response",
       ],
-      accepts: [
-        "string",
-      ],
+      accepts: ["string"],
     },
     {
       type: "Enum",
       name: "RequestMethod",
       doc: "<p>Enum that defines the request type.</p>",
-      usages: [
-        "Http",
-      ],
-      accepts: [
-        "string",
-      ],
+      usages: ["Http"],
+      accepts: ["string"],
       members: [
         {
           name: "HEAD",
@@ -18298,13 +17768,9 @@ const DATA: Libdoc = {
     {
       type: "Enum",
       name: "Scale",
-      doc: "<p>Enum that defines the scale of the screenshot.</p>\n<p>When set to \"css\", screenshot will have a single pixel per each css pixel on the page. For high-dpi devices, this will keep screenshots small. Using \"device\" option will produce a single pixel per each device pixel, so screenshots of high-dpi devices will be twice as large or even larger.</p>",
-      usages: [
-        "Take Screenshot",
-      ],
-      accepts: [
-        "string",
-      ],
+      doc: '<p>Enum that defines the scale of the screenshot.</p>\n<p>When set to "css", screenshot will have a single pixel per each css pixel on the page. For high-dpi devices, this will keep screenshots small. Using "device" option will produce a single pixel per each device pixel, so screenshots of high-dpi devices will be twice as large or even larger.</p>',
+      usages: ["Take Screenshot"],
+      accepts: ["string"],
       members: [
         {
           name: "css",
@@ -18319,7 +17785,7 @@ const DATA: Libdoc = {
     {
       type: "Enum",
       name: "Scope",
-      doc: "<p>Some keywords which manipulates library settings have a scope argument. With that scope argument one can set the \"live time\" of that setting. Available Scopes are: <code>Global</code>, <code>Suite</code> and <code>Test</code> / <code>Task</code>. Is a scope finished, this scoped setting, like timeout, will no longer be used and the previous higher scope setting applies again.</p>\n<p>Live Times:</p>\n<ul>\n<li>A <code>Global</code> scope will live forever until it is overwritten by another Global scope. Or locally temporarily overridden by a more narrow scope.</li>\n<li>A <code>Suite</code> scope will locally override the Global scope and live until the end of the Suite within it is set, or if it is overwritten by a later setting with Global or same scope. Children suite does inherit the setting from the parent suite but also may have its own local Suite setting that then will be inherited to its children suites.</li>\n<li>A <code>Test</code> or <code>Task</code> scope will be inherited from its parent suite but when set, lives until the end of that particular test or task.</li>\n</ul>\n<p>A new set higher order scope will always remove the lower order scope which may be in charge. So the setting of a Suite scope from a test, will set that scope to the robot file suite where that test is and removes the Test scope that may have been in place.</p>",
+      doc: '<p>Some keywords which manipulates library settings have a scope argument. With that scope argument one can set the "live time" of that setting. Available Scopes are: <code>Global</code>, <code>Suite</code> and <code>Test</code> / <code>Task</code>. Is a scope finished, this scoped setting, like timeout, will no longer be used and the previous higher scope setting applies again.</p>\n<p>Live Times:</p>\n<ul>\n<li>A <code>Global</code> scope will live forever until it is overwritten by another Global scope. Or locally temporarily overridden by a more narrow scope.</li>\n<li>A <code>Suite</code> scope will locally override the Global scope and live until the end of the Suite within it is set, or if it is overwritten by a later setting with Global or same scope. Children suite does inherit the setting from the parent suite but also may have its own local Suite setting that then will be inherited to its children suites.</li>\n<li>A <code>Test</code> or <code>Task</code> scope will be inherited from its parent suite but when set, lives until the end of that particular test or task.</li>\n</ul>\n<p>A new set higher order scope will always remove the lower order scope which may be in charge. So the setting of a Suite scope from a test, will set that scope to the robot file suite where that test is and removes the Test scope that may have been in place.</p>',
       usages: [
         "Register Keyword To Run On Failure",
         "Set Assertion Formatters",
@@ -18330,9 +17796,7 @@ const DATA: Libdoc = {
         "Set Strict Mode",
         "Show Keyword Banner",
       ],
-      accepts: [
-        "string",
-      ],
+      accepts: ["string"],
       members: [
         {
           name: "Global",
@@ -18356,12 +17820,8 @@ const DATA: Libdoc = {
       type: "Enum",
       name: "ScreenshotFileTypes",
       doc: "<p>Enum that defines available file types for screenshots.</p>",
-      usages: [
-        "Take Screenshot",
-      ],
-      accepts: [
-        "string",
-      ],
+      usages: ["Take Screenshot"],
+      accepts: ["string"],
       members: [
         {
           name: "png",
@@ -18376,13 +17836,9 @@ const DATA: Libdoc = {
     {
       type: "Enum",
       name: "ScreenshotReturnType",
-      doc: "<p>Enum that defines what <a href=\"#Take%20Screenshot\" title=\"&quot;Take Screenshot&quot; keyword\" class=\"name\">Take Screenshot</a> keyword returns.</p>\n<ul>\n<li><code>path</code> returns the path to the screenshot file as <code>pathlib.Path</code> object.</li>\n<li><code>path_string</code> returns the path to the screenshot file as string.</li>\n<li><code>bytes</code> returns the screenshot itself as bytes.</li>\n<li><code>base64</code> returns the screenshot itself as base64 encoded string.</li>\n</ul>",
-      usages: [
-        "Take Screenshot",
-      ],
-      accepts: [
-        "string",
-      ],
+      doc: '<p>Enum that defines what <a href="#Take%20Screenshot" title="&quot;Take Screenshot&quot; keyword" class="name">Take Screenshot</a> keyword returns.</p>\n<ul>\n<li><code>path</code> returns the path to the screenshot file as <code>pathlib.Path</code> object.</li>\n<li><code>path_string</code> returns the path to the screenshot file as string.</li>\n<li><code>bytes</code> returns the screenshot itself as bytes.</li>\n<li><code>base64</code> returns the screenshot itself as base64 encoded string.</li>\n</ul>',
+      usages: ["Take Screenshot"],
+      accepts: ["string"],
       members: [
         {
           name: "path",
@@ -18406,13 +17862,8 @@ const DATA: Libdoc = {
       type: "Enum",
       name: "ScrollBehavior",
       doc: "<p>Enum that controls the behavior of scrolling.</p>\n<p><code>smooth</code></p>",
-      usages: [
-        "Scroll By",
-        "Scroll To",
-      ],
-      accepts: [
-        "string",
-      ],
+      usages: ["Scroll By", "Scroll To"],
+      accepts: ["string"],
       members: [
         {
           name: "auto",
@@ -18427,14 +17878,9 @@ const DATA: Libdoc = {
     {
       type: "TypedDict",
       name: "ScrollPosition",
-      doc: "<p>Scroll position of an element.</p>\n<table border=\"1\">\n<tr>\n<th>Key</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>top</code></td>\n<td>The amount of pixel between the top border of the page and the top border of visible area.</td>\n</tr>\n<tr>\n<td><code>left</code></td>\n<td>The amount of pixel between the left border of the page and the left border of visible area.</td>\n</tr>\n<tr>\n<td><code>bottom</code></td>\n<td>The amount of pixel between the top border of the page and the bottom border of visible area.</td>\n</tr>\n<tr>\n<td><code>right</code></td>\n<td>The amount of pixel between the left border of the page and the right border of visible area.</td>\n</tr>\n</table>",
-      usages: [
-        "Get Scroll Position",
-      ],
-      accepts: [
-        "string",
-        "Mapping",
-      ],
+      doc: '<p>Scroll position of an element.</p>\n<table border="1">\n<tr>\n<th>Key</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>top</code></td>\n<td>The amount of pixel between the top border of the page and the top border of visible area.</td>\n</tr>\n<tr>\n<td><code>left</code></td>\n<td>The amount of pixel between the left border of the page and the left border of visible area.</td>\n</tr>\n<tr>\n<td><code>bottom</code></td>\n<td>The amount of pixel between the top border of the page and the bottom border of visible area.</td>\n</tr>\n<tr>\n<td><code>right</code></td>\n<td>The amount of pixel between the left border of the page and the right border of visible area.</td>\n</tr>\n</table>',
+      usages: ["Get Scroll Position"],
+      accepts: ["string", "Mapping"],
       items: [
         {
           key: "top",
@@ -18461,26 +17907,16 @@ const DATA: Libdoc = {
     {
       type: "Standard",
       name: "Secret",
-      doc: "<p>Encapsulates secret values to avoid them being shown in Robot Framework logs.</p>\n<p>The value is required to be <a href=\"https://robot-framework.readthedocs.io/en/master/autodoc/robot.utils.html#robot.utils.secret.Secret\">robot.api.types.Secret</a> object. These objects encapsulate confidential values so that they are not exposed in log files. How to create them is explained in the <a href=\"https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#secret-variables\">User Guide</a>.</p>\n<p>New in Robot Framework 7.4.</p>",
-      usages: [
-        "Fill Secret",
-        "Type Secret",
-      ],
-      accepts: [
-        "string",
-      ],
+      doc: '<p>Encapsulates secret values to avoid them being shown in Robot Framework logs.</p>\n<p>The value is required to be <a href="https://robot-framework.readthedocs.io/en/master/autodoc/robot.utils.html#robot.utils.secret.Secret">robot.api.types.Secret</a> object. These objects encapsulate confidential values so that they are not exposed in log files. How to create them is explained in the <a href="https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#secret-variables">User Guide</a>.</p>\n<p>New in Robot Framework 7.4.</p>',
+      usages: ["Fill Secret", "Type Secret"],
+      accepts: ["string"],
     },
     {
       type: "Enum",
       name: "SelectAttribute",
-      doc: "<p>Enum that defines the attribute of an &lt;option&gt; element in a &lt;select&gt;-list.</p>\n<p>This defines by what attribute an option is selected/chosen.</p>\n<pre>\n&lt;select class=\"my_drop_down\"&gt;\n  &lt;option value=\"0: Object\"&gt;None&lt;/option&gt;\n  &lt;option value=\"1: Object\"&gt;Some&lt;/option&gt;\n  &lt;option value=\"2: Object\"&gt;Other&lt;/option&gt;\n&lt;/select&gt;\n</pre>\n<p><code>value</code> of the first option would be <code>0: Object</code>.</p>\n<p><code>label</code> / <code>text</code> both defines the innerText which would be <code>None</code> for first element.</p>\n<p><code>index</code> 0 indexed number of an option. Would be <code>0</code> for the first element.</p>",
-      usages: [
-        "Get Selected Options",
-        "Select Options By",
-      ],
-      accepts: [
-        "string",
-      ],
+      doc: '<p>Enum that defines the attribute of an &lt;option&gt; element in a &lt;select&gt;-list.</p>\n<p>This defines by what attribute an option is selected/chosen.</p>\n<pre>\n&lt;select class="my_drop_down"&gt;\n  &lt;option value="0: Object"&gt;None&lt;/option&gt;\n  &lt;option value="1: Object"&gt;Some&lt;/option&gt;\n  &lt;option value="2: Object"&gt;Other&lt;/option&gt;\n&lt;/select&gt;\n</pre>\n<p><code>value</code> of the first option would be <code>0: Object</code>.</p>\n<p><code>label</code> / <code>text</code> both defines the innerText which would be <code>None</code> for first element.</p>\n<p><code>index</code> 0 indexed number of an option. Would be <code>0</code> for the first element.</p>',
+      usages: ["Get Selected Options", "Select Options By"],
+      accepts: ["string"],
       members: [
         {
           name: "value",
@@ -18503,13 +17939,9 @@ const DATA: Libdoc = {
     {
       type: "Enum",
       name: "SelectionStrategy",
-      doc: "<p>SelectionStrategy to be used. Refers to Playwrights <code>page.getBy***</code> functions. See <a href=\"https://playwright.dev/docs/locators\">Playwright Locators</a></p>\n<h3 id=\"AltText\">AltText</h3>\n<p>All images should have an alt attribute that describes the image. You can locate an image based on the text alternative using page.getByAltText().</p>\n<p>For example, consider the following DOM structure.</p>\n<pre>\n&lt;img alt=\"playwright logo\" src=\"/img/playwright-logo.svg\" width=\"100\" /&gt;\n</pre>\n<h3 id=\"Label\">Label</h3>\n<p>Allows locating input elements by the text of the associated <code>&lt;label&gt;</code> or <code>aria-labelledby</code> element, or by the <code>aria-label</code> attribute.</p>\n<p>For example, this method will find inputs by label \"Username\" and \"Password\" in the following DOM:</p>\n<pre>\n&lt;input aria-label=\"Username\"&gt;\n&lt;label for=\"password-input\"&gt;Password:&lt;/label&gt;\n&lt;input id=\"password-input\"&gt;\n</pre>\n<h3 id=\"Placeholder\">Placeholder</h3>\n<p>Allows locating input elements by the placeholder text.</p>\n<p>Example:</p>\n<pre>\n&lt;input type=\"email\" placeholder=\"name@example.com\" /&gt;\n</pre>\n<h3 id=\"TestId\">TestId</h3>\n<p>Locate element by the test id.</p>\n<p>Currently only the exact attribute <code>data-testid</code> is supported.</p>\n<p>Example:</p>\n<pre>\n&lt;button data-testid=\"directions\"&gt;Itinéraire&lt;/button&gt;\n</pre>\n<h3 id=\"Text\">Text</h3>\n<p>Allows locating elements that contain given text.</p>\n<p>Matching by text always normalizes whitespace, even with exact match. For example, it turns multiple spaces into one, turns line breaks into spaces and ignores leading and trailing whitespace. Input elements of the type button and submit are matched by their value instead of the text content. For example, locating by text \"Log in\" matches &lt;input type=button value=\"Log in\"&gt;.</p>\n<h3 id=\"Title\">Title</h3>\n<p>Allows locating elements by their title attribute.</p>\n<p>Example:</p>\n<pre>\n&lt;img alt=\"playwright logo\" src=\"/img/playwright-logo.svg\" title=\"Playwright\" width=\"100\" /&gt;\n</pre>",
-      usages: [
-        "Get Element By",
-      ],
-      accepts: [
-        "string",
-      ],
+      doc: '<p>SelectionStrategy to be used. Refers to Playwrights <code>page.getBy***</code> functions. See <a href="https://playwright.dev/docs/locators">Playwright Locators</a></p>\n<h3 id="AltText">AltText</h3>\n<p>All images should have an alt attribute that describes the image. You can locate an image based on the text alternative using page.getByAltText().</p>\n<p>For example, consider the following DOM structure.</p>\n<pre>\n&lt;img alt="playwright logo" src="/img/playwright-logo.svg" width="100" /&gt;\n</pre>\n<h3 id="Label">Label</h3>\n<p>Allows locating input elements by the text of the associated <code>&lt;label&gt;</code> or <code>aria-labelledby</code> element, or by the <code>aria-label</code> attribute.</p>\n<p>For example, this method will find inputs by label "Username" and "Password" in the following DOM:</p>\n<pre>\n&lt;input aria-label="Username"&gt;\n&lt;label for="password-input"&gt;Password:&lt;/label&gt;\n&lt;input id="password-input"&gt;\n</pre>\n<h3 id="Placeholder">Placeholder</h3>\n<p>Allows locating input elements by the placeholder text.</p>\n<p>Example:</p>\n<pre>\n&lt;input type="email" placeholder="name@example.com" /&gt;\n</pre>\n<h3 id="TestId">TestId</h3>\n<p>Locate element by the test id.</p>\n<p>Currently only the exact attribute <code>data-testid</code> is supported.</p>\n<p>Example:</p>\n<pre>\n&lt;button data-testid="directions"&gt;Itinéraire&lt;/button&gt;\n</pre>\n<h3 id="Text">Text</h3>\n<p>Allows locating elements that contain given text.</p>\n<p>Matching by text always normalizes whitespace, even with exact match. For example, it turns multiple spaces into one, turns line breaks into spaces and ignores leading and trailing whitespace. Input elements of the type button and submit are matched by their value instead of the text content. For example, locating by text "Log in" matches &lt;input type=button value="Log in"&gt;.</p>\n<h3 id="Title">Title</h3>\n<p>Allows locating elements by their title attribute.</p>\n<p>Example:</p>\n<pre>\n&lt;img alt="playwright logo" src="/img/playwright-logo.svg" title="Playwright" width="100" /&gt;\n</pre>',
+      usages: ["Get Element By"],
+      accepts: ["string"],
       members: [
         {
           name: "AltText",
@@ -18551,9 +17983,7 @@ const DATA: Libdoc = {
         "Switch Context",
         "Switch Page",
       ],
-      accepts: [
-        "string",
-      ],
+      accepts: ["string"],
       members: [
         {
           name: "CURRENT",
@@ -18576,14 +18006,9 @@ const DATA: Libdoc = {
     {
       type: "TypedDict",
       name: "SelectOptions",
-      doc: "<p>Dictionary with the following keys and their values \"index\", \"value\", \"label\" and \"selected\".</p>\n<table border=\"1\">\n<tr>\n<th>Keys</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>index</code></td>\n<td>0 based index of the option.</td>\n</tr>\n<tr>\n<td><code>value</code></td>\n<td>Value attribute of the option.</td>\n</tr>\n<tr>\n<td><code>label</code></td>\n<td>Label/Text of the option.</td>\n</tr>\n<tr>\n<td><code>selected</code></td>\n<td>Boolean if the option is selected.</td>\n</tr>\n</table>",
-      usages: [
-        "Get Select Options",
-      ],
-      accepts: [
-        "string",
-        "Mapping",
-      ],
+      doc: '<p>Dictionary with the following keys and their values "index", "value", "label" and "selected".</p>\n<table border="1">\n<tr>\n<th>Keys</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>index</code></td>\n<td>0 based index of the option.</td>\n</tr>\n<tr>\n<td><code>value</code></td>\n<td>Value attribute of the option.</td>\n</tr>\n<tr>\n<td><code>label</code></td>\n<td>Label/Text of the option.</td>\n</tr>\n<tr>\n<td><code>selected</code></td>\n<td>Boolean if the option is selected.</td>\n</tr>\n</table>',
+      usages: ["Get Select Options"],
+      accepts: ["string", "Mapping"],
       items: [
         {
           key: "index",
@@ -18611,13 +18036,8 @@ const DATA: Libdoc = {
       type: "Enum",
       name: "ServiceWorkersPermissions",
       doc: "<p>Whether to allow sites to register Service workers.</p>\n<p><code>allow</code>: Service Workers can be registered.</p>\n<p><code>block</code>: Playwright will block all registration of Service Workers.</p>",
-      usages: [
-        "New Context",
-        "New Persistent Context",
-      ],
-      accepts: [
-        "string",
-      ],
+      usages: ["New Context", "New Persistent Context"],
+      accepts: ["string"],
       members: [
         {
           name: "allow",
@@ -18633,14 +18053,8 @@ const DATA: Libdoc = {
       type: "Enum",
       name: "SizeFields",
       doc: "<p>Enum that defines how the returned size is filtered.</p>\n<p><code>ALL</code> defines that the size is returned as a dictionary. <code>{'width': &lt;float&gt;, 'height': &lt;float&gt;}.</code></p>\n<p><code>width</code> / <code>height</code> will return a single float value of the chosen dimension.</p>",
-      usages: [
-        "Get Client Size",
-        "Get Scroll Size",
-        "Get Viewport Size",
-      ],
-      accepts: [
-        "string",
-      ],
+      usages: ["Get Client Size", "Get Scroll Size", "Get Viewport Size"],
+      accepts: ["string"],
       members: [
         {
           name: "width",
@@ -18659,7 +18073,7 @@ const DATA: Libdoc = {
     {
       type: "Standard",
       name: "string",
-      doc: "<p>All arguments are converted to Unicode strings.</p>\n<p>Most values are converted simply by using <code>str(value)</code>. An exception is that bytes are mapped directly to Unicode code points with same ordinals. This means that, for example, <code>b\"hyv\\xe4\"</code> becomes <code>\"hyvä\"</code>.</p>\n<p>Converting bytes specially is new Robot Framework 7.4.</p>",
+      doc: '<p>All arguments are converted to Unicode strings.</p>\n<p>Most values are converted simply by using <code>str(value)</code>. An exception is that bytes are mapped directly to Unicode code points with same ordinals. This means that, for example, <code>b"hyv\\xe4"</code> becomes <code>"hyvä"</code>.</p>\n<p>Converting bytes specially is new Robot Framework 7.4.</p>',
       usages: [
         "__init__",
         "Add Cookie",
@@ -18782,14 +18196,12 @@ const DATA: Libdoc = {
         "Wait For Request",
         "Wait For Response",
       ],
-      accepts: [
-        "Any",
-      ],
+      accepts: ["Any"],
     },
     {
       type: "Enum",
       name: "SupportedBrowsers",
-      doc: "<p>Defines which browser shall be started.</p>\n<table border=\"1\">\n<tr>\n<th>Browser</th>\n<th>Browser with this engine</th>\n</tr>\n<tr>\n<td><code>chromium</code></td>\n<td>Google Chrome, Microsoft Edge (since 2020), Opera</td>\n</tr>\n<tr>\n<td><code>firefox</code></td>\n<td>Mozilla Firefox</td>\n</tr>\n<tr>\n<td><code>webkit</code></td>\n<td>Apple Safari, Mail, AppStore on MacOS and iOS</td>\n</tr>\n</table>\n<p>Since <a href=\"https://github.com/microsoft/playwright\">Playwright</a> comes with a pack of builtin binaries for all browsers, no additional drivers e.g. geckodriver are needed.</p>\n<p>All these browsers that cover more than 85% of the world wide used browsers, can be tested on Windows, Linux and MacOS. Theres is not need for dedicated machines anymore.</p>",
+      doc: '<p>Defines which browser shall be started.</p>\n<table border="1">\n<tr>\n<th>Browser</th>\n<th>Browser with this engine</th>\n</tr>\n<tr>\n<td><code>chromium</code></td>\n<td>Google Chrome, Microsoft Edge (since 2020), Opera</td>\n</tr>\n<tr>\n<td><code>firefox</code></td>\n<td>Mozilla Firefox</td>\n</tr>\n<tr>\n<td><code>webkit</code></td>\n<td>Apple Safari, Mail, AppStore on MacOS and iOS</td>\n</tr>\n</table>\n<p>Since <a href="https://github.com/microsoft/playwright">Playwright</a> comes with a pack of builtin binaries for all browsers, no additional drivers e.g. geckodriver are needed.</p>\n<p>All these browsers that cover more than 85% of the world wide used browsers, can be tested on Windows, Linux and MacOS. Theres is not need for dedicated machines anymore.</p>',
       usages: [
         "__init__",
         "Connect To Browser",
@@ -18799,9 +18211,7 @@ const DATA: Libdoc = {
         "New Persistent Context",
         "Open Browser",
       ],
-      accepts: [
-        "string",
-      ],
+      accepts: ["string"],
       members: [
         {
           name: "chromium",
@@ -18820,13 +18230,9 @@ const DATA: Libdoc = {
     {
       type: "Enum",
       name: "TextType",
-      doc: "<p>Defines which Playwright method is used to get the text of an element.</p>\n<p><code>allInnerTexts</code>: Returns a list of <span class=\"name\">node.innerText</span> values for all matching nodes.</p>\n<p><code>allTextContents</code>: Returns a list of <span class=\"name\">node.textContent</span> values for all matching nodes.</p>\n<p><code>innerText</code>: Returns the element node.innerText value, which represents the rendered text content of a node and its descendants.</p>\n<p><code>inputValue</code>: Returns the value for the matching &lt;input&gt; or &lt;textarea&gt; or &lt;select&gt; element.</p>\n<p><code>innerHTML</code>: Returns the element node.innerHTML value, which is the HTML markup contained within the element, omitting any shadow roots.</p>",
-      usages: [
-        "Get Text",
-      ],
-      accepts: [
-        "string",
-      ],
+      doc: '<p>Defines which Playwright method is used to get the text of an element.</p>\n<p><code>allInnerTexts</code>: Returns a list of <span class="name">node.innerText</span> values for all matching nodes.</p>\n<p><code>allTextContents</code>: Returns a list of <span class="name">node.textContent</span> values for all matching nodes.</p>\n<p><code>innerText</code>: Returns the element node.innerText value, which represents the rendered text content of a node and its descendants.</p>\n<p><code>inputValue</code>: Returns the value for the matching &lt;input&gt; or &lt;textarea&gt; or &lt;select&gt; element.</p>\n<p><code>innerHTML</code>: Returns the element node.innerHTML value, which is the HTML markup contained within the element, omitting any shadow roots.</p>',
+      usages: ["Get Text"],
+      accepts: ["string"],
       members: [
         {
           name: "allInnerTexts",
@@ -18853,7 +18259,7 @@ const DATA: Libdoc = {
     {
       type: "Standard",
       name: "timedelta",
-      doc: "<p>Strings are expected to represent a time interval in one of the time formats Robot Framework supports:</p>\n<ul>\n<li>a number representing seconds like <code>42</code> or <code>10.5</code></li>\n<li>a time string like <code>1 hour 2 seconds</code> or <code>1h 2s</code></li>\n<li>a \"timer\" string like <code>01:02</code> (1 minute 2 seconds) or <code>01:00:03</code> (1 hour 3 seconds)</li>\n</ul>\n<p>Integers and floats are considered to be seconds.</p>\n<p>See the <a href=\"https://robotframework.org/robotframework/\">Robot Framework User Guide</a> for more details about the supported time formats.</p>",
+      doc: '<p>Strings are expected to represent a time interval in one of the time formats Robot Framework supports:</p>\n<ul>\n<li>a number representing seconds like <code>42</code> or <code>10.5</code></li>\n<li>a time string like <code>1 hour 2 seconds</code> or <code>1h 2s</code></li>\n<li>a "timer" string like <code>01:02</code> (1 minute 2 seconds) or <code>01:00:03</code> (1 hour 3 seconds)</li>\n</ul>\n<p>Integers and floats are considered to be seconds.</p>\n<p>See the <a href="https://robotframework.org/robotframework/">Robot Framework User Guide</a> for more details about the supported time formats.</p>',
       usages: [
         "__init__",
         "Advance Clock",
@@ -18887,22 +18293,14 @@ const DATA: Libdoc = {
         "Wait For Request",
         "Wait For Response",
       ],
-      accepts: [
-        "string",
-        "integer",
-        "float",
-      ],
+      accepts: ["string", "integer", "float"],
     },
     {
       type: "Enum",
       name: "TracingGroupMode",
-      doc: "<p>Defines in what detail level keywords are written to Playwright trace.</p>\n<p>Playwrright trace is a full log of all playwright actions and events that happen in the browser during the test run. This includes all API calls, events, logs, network requests, and responses as well as the DOM at every moment during execution. This trace can be activated with the <code>tracing</code> parameter of <a href=\"#New%20Context\" title=\"&quot;New Context&quot; keyword\" class=\"name\">New Context</a> keyword.</p>\n<ul>\n<li><code>Full</code> All keyword calls are written to trace as groups even if they do not call Browser keywords.</li>\n<li><code>Browser</code> Just Browser library keywords are written to the logs as groups.</li>\n<li><code>Playwright</code> No additional keywords are logged, just the Playwright API calls.</li>\n</ul>",
-      usages: [
-        "__init__",
-      ],
-      accepts: [
-        "string",
-      ],
+      doc: '<p>Defines in what detail level keywords are written to Playwright trace.</p>\n<p>Playwrright trace is a full log of all playwright actions and events that happen in the browser during the test run. This includes all API calls, events, logs, network requests, and responses as well as the DOM at every moment during execution. This trace can be activated with the <code>tracing</code> parameter of <a href="#New%20Context" title="&quot;New Context&quot; keyword" class="name">New Context</a> keyword.</p>\n<ul>\n<li><code>Full</code> All keyword calls are written to trace as groups even if they do not call Browser keywords.</li>\n<li><code>Browser</code> Just Browser library keywords are written to the logs as groups.</li>\n<li><code>Playwright</code> No additional keywords are logged, just the Playwright API calls.</li>\n</ul>',
+      usages: ["__init__"],
+      accepts: ["string"],
       members: [
         {
           name: "Full",
@@ -18932,24 +18330,14 @@ const DATA: Libdoc = {
         "Get Url",
         "Get Viewport Size",
       ],
-      accepts: [
-        "string",
-        "Sequence",
-      ],
+      accepts: ["string", "Sequence"],
     },
     {
       type: "TypedDict",
       name: "ViewportDimensions",
-      doc: "<p>Viewport dimensions.</p>\n<p>Viewport is the browsers inner window size that is used to display the page.</p>\n<table border=\"1\">\n<tr>\n<th>Key</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>width</code></td>\n<td>page width in pixels.</td>\n</tr>\n<tr>\n<td><code>height</code></td>\n<td>page height in pixels.</td>\n</tr>\n</table>",
-      usages: [
-        "Get Viewport Size",
-        "New Context",
-        "New Persistent Context",
-      ],
-      accepts: [
-        "string",
-        "Mapping",
-      ],
+      doc: '<p>Viewport dimensions.</p>\n<p>Viewport is the browsers inner window size that is used to display the page.</p>\n<table border="1">\n<tr>\n<th>Key</th>\n<th>Description</th>\n</tr>\n<tr>\n<td><code>width</code></td>\n<td>page width in pixels.</td>\n</tr>\n<tr>\n<td><code>height</code></td>\n<td>page height in pixels.</td>\n</tr>\n</table>',
+      usages: ["Get Viewport Size", "New Context", "New Persistent Context"],
+      accepts: ["string", "Mapping"],
       items: [
         {
           key: "width",
