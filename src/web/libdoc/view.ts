@@ -6,8 +6,9 @@ import { createModal, showModal } from "./modal";
 import { RuntimeLibdoc, ArgType } from "./types";
 import { htmlEscape, regexpEscape, delay } from "./util";
 
-// Heroicons clipboard and check (MIT licence, https://heroicons.com)
-const CLIPBOARD_SVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184"/></svg>`;
+// Feather Icons copy (MIT licence, https://feathericons.com)
+const CLIPBOARD_SVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+// Heroicons check (MIT licence, https://heroicons.com)
 const CHECK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>`;
 
 interface MatchInclude {
@@ -33,6 +34,7 @@ class View {
     this.storage = storage;
     this.translations = translations;
     this.initTemplating(translations, libdoc);
+    window.addEventListener("resize", () => delay(() => this.updateDocClamping(), 100));
   }
 
   private initTemplating(translate: Translations, libdoc: RuntimeLibdoc) {
@@ -62,7 +64,11 @@ class View {
     Handlebars.registerHelper(
       "hasVisibleReturnType",
       function (returnType: ArgType | null | undefined) {
-        return returnType !== null && returnType !== undefined && returnType.name !== "None";
+        return (
+          returnType !== null &&
+          returnType !== undefined &&
+          returnType.name !== "None"
+        );
       },
     );
     Handlebars.registerHelper("dictSize", function (context) {
@@ -118,9 +124,13 @@ class View {
         return renderTypeDocs(argType);
       },
     );
+    Handlebars.registerHelper("isArgMarker", function (kind: string) {
+      return kind === "POSITIONAL_ONLY_MARKER" || kind === "NAMED_ONLY_MARKER";
+    });
     this.registerPartial("arg", "argument-template");
     this.registerPartial("keyword", "keyword-template");
     this.registerPartial("dataType", "data-type-template");
+    this.registerPartial("argsSection", "arguments-section-template");
   }
 
   private registerPartial(name: string, id: string) {
@@ -135,12 +145,14 @@ class View {
     this.initTagSearch();
     this.initHashEvents();
     this.initLanguageMenu();
+    this.initThemeToggle();
     setTimeout(() => {
       if (this.storage.get("keyword-wall") === "open") {
         this.openKeywordWall();
       }
     }, 0);
     createModal();
+    this.updateDocClamping();
     this.addCopyButtons();
   }
 
@@ -275,6 +287,8 @@ class View {
     this.registerTypeDocHandlers("#keywords-container");
     document.getElementById("keyword-statistics-header")!.innerText =
       "" + this.libdoc.keywords.length;
+    this.updateDocClamping();
+    this.addCopyButtons();
   }
 
   private setTheme() {
@@ -282,16 +296,87 @@ class View {
   }
 
   private getTheme() {
-    if (this.libdoc.theme != null) {
-      return this.libdoc.theme;
-    } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      return "dark";
-    } else {
-      return "light";
-    }
+    const params = new URLSearchParams(window.location.search);
+    if (params.has("theme")) return params.get("theme")!;
+    const stored = localStorage.getItem("libdoc-theme");
+    if (stored) return stored;
+    if (this.libdoc.theme != null) return this.libdoc.theme;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  }
+
+  private initThemeToggle() {
+    document
+      .getElementById("theme-toggle")
+      ?.addEventListener("click", () => this.toggleTheme());
+  }
+
+  private toggleTheme() {
+    const next =
+      document.documentElement.getAttribute("data-theme") === "dark"
+        ? "light"
+        : "dark";
+    document.documentElement.setAttribute("theme-toggled", "");
+    document.documentElement.setAttribute("data-theme", next);
+    localStorage.setItem("libdoc-theme", next);
+  }
+
+  private updateDocClamping() {
+    document.querySelectorAll<HTMLElement>(".arg-doc").forEach((el) => {
+      // Remove any controls injected by a previous call
+      let sib = el.nextElementSibling;
+      while (
+        sib?.classList.contains("doc-more") ||
+        sib?.classList.contains("doc-less")
+      ) {
+        const next = sib.nextElementSibling;
+        sib.remove();
+        sib = next as Element | null;
+      }
+      el.classList.remove("truncated");
+      el.classList.add("clamped");
+      el.onclick = null;
+
+      if (el.scrollHeight > el.clientHeight) {
+        el.classList.add("truncated");
+
+        const more = document.createElement("span");
+        more.className = "doc-more";
+        more.textContent = this.translations.translate("more");
+        el.after(more);
+
+        const setExpanded = (expanded: boolean) => {
+          if (expanded) {
+            el.classList.remove("clamped", "truncated");
+            more.style.display = "none";
+            el.onclick = null;
+            const less = document.createElement("span");
+            less.className = "doc-less";
+            less.textContent = this.translations.translate("less");
+            less.onclick = () => {
+              less.remove();
+              setExpanded(false);
+            };
+            more.after(less);
+          } else {
+            el.classList.add("clamped", "truncated");
+            more.style.display = "";
+            el.onclick = () => setExpanded(true);
+            more.onclick = () => setExpanded(true);
+          }
+        };
+
+        el.onclick = () => setExpanded(true);
+        more.onclick = () => setExpanded(true);
+      } else {
+        el.classList.remove("clamped");
+      }
+    });
   }
 
   private addCopyButtons() {
+    if (!navigator.clipboard) return;
     document.querySelectorAll<HTMLElement>(".doc .code").forEach((block) => {
       if (block.querySelector(".code-copy-btn")) return;
       const btn = document.createElement("button");
@@ -303,7 +388,11 @@ class View {
         if (!pre) return;
         navigator.clipboard.writeText(pre.innerText).then(() => {
           btn.innerHTML = CHECK_SVG;
-          setTimeout(() => { btn.innerHTML = CLIPBOARD_SVG; }, 1500);
+          setTimeout(() => {
+            btn.innerHTML = CLIPBOARD_SVG;
+          }, 1500);
+        }).catch(() => {
+          btn.innerHTML = CLIPBOARD_SVG;
         });
       });
       block.appendChild(btn);
@@ -386,7 +475,7 @@ class View {
     }
     if (include.tags) {
       const matches = document.querySelectorAll(
-        "#keywords-container .match .tags a, #tags-shortcuts-container .match .tags a",
+        "#keywords-container .match .tags span.tag-link",
       );
       if (include.tagsExact) {
         const filtered: Array<Element> = [];

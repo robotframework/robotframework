@@ -8,6 +8,8 @@
   --highlighted-background-color: yellow;
   --less-important-text-color: gray;
   --link-color: #0000ee;
+  --hover-tint: #fafafa;
+  --more-hover-color: var(--link-color);
 }
 
 [data-theme="dark"] {
@@ -20,7 +22,15 @@
   --highlighted-background-color: yellow;
   --less-important-text-color: #5b6a6f;
   --link-color: #52adff;
+  --hover-tint: #232a30;
+  --more-hover-color: var(--link-color);
   color-scheme: dark;
+}
+
+html[theme-toggled] body {
+  transition:
+    background 0.3s,
+    color 0.3s;
 }
 
 body {
@@ -101,7 +111,7 @@ a {
   padding-left: 2%;
   padding-right: 2%;
   overflow: auto;
-  max-width: 1000px;
+  max-width: 1060px;
 }
 
 .libdoc-title {
@@ -129,6 +139,32 @@ a {
   border: none;
   padding-top: 15px;
   padding-right: 15px;
+}
+
+#theme-toggle {
+  background: var(--light-background-color);
+  border: none;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  bottom: 0;
+  cursor: pointer;
+  height: 28px;
+  padding: 4px;
+  position: fixed;
+  right: 0;
+  width: 28px;
+  z-index: 1000;
+}
+
+#theme-toggle svg {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+[data-theme="dark"] .dark-mode-icon,
+[data-theme="light"] .light-mode-icon {
+  display: none;
 }
 
 #language-container svg {
@@ -359,18 +395,28 @@ h4 a:hover {
   -webkit-text-size-adjust: none;
 }
 
+.tags .section-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
 .tag-link {
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
   cursor: pointer;
+  font-size: 0.85em;
+  padding: 0.05rem 0.6rem;
 }
 
 .tag-link:hover {
-  text-decoration: underline;
+  background: var(--light-background-color);
 }
 
-.args .arg-kind {
+.arg-kind {
   color: transparent;
   text-shadow: 0 0 0 var(--less-important-text-color);
-  padding: 0;
+  padding: 0 0.45em 0 0;
   font-size: 0.8em;
 }
 
@@ -396,6 +442,12 @@ h4 a:hover {
     flex-wrap: wrap;
     width: 320px;
     max-width: none;
+  }
+}
+
+@media only screen and (min-width: 700px) {
+  .section-content {
+    margin-left: 1.4rem;
   }
 }
 
@@ -552,17 +604,7 @@ input.switch:checked + .slider::before {
   display: flex;
   flex-direction: column;
 }
-.kw-overview {
-  display: flex;
-  flex-direction: column;
-  justify-content: start;
-}
-@media only screen and (min-width: 899px) {
-  .kw-overview {
-    max-width: 850px;
-    margin-right: 1.5rem;
-  }
-}
+
 .kw-docs {
   display: flex;
   flex-direction: column;
@@ -633,142 +675,225 @@ h4 {
   text-decoration: none;
   font-weight: bold;
 }
-.args {
+.args,
+.return-info,
+.raises-info {
   min-width: 200px;
 }
 
-/* Shared styles for arguments and return-info tables */
+/* Shared table for arguments, returns, and raises */
 .kw-info-table {
-  width: 100%;
-  table-layout: fixed;
+  table-layout: auto;
   border-collapse: separate;
   border-spacing: 0;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  overflow: hidden;
+  width: 100%;
+  max-width: 1000px;
   margin-bottom: 1.33rem;
 }
 
 .kw-info-table th,
 .kw-info-table td {
   text-align: left;
-  vertical-align: top;
-  padding: 0.4rem 0.55rem;
+  vertical-align: baseline;
+  overflow-wrap: break-word;
+  padding: 0.4rem 1.5rem 0.4rem 0;
+}
+
+.kw-info-table th:last-child,
+.kw-info-table td:last-child {
+  padding-right: 0;
 }
 
 .kw-info-table thead th {
-  border-bottom: 2px solid var(--border-color);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--less-important-text-color);
   white-space: nowrap;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.2rem;
+  font-size: 0.78em;
+  font-weight: 600;
 }
 
-.kw-info-table tbody td {
+.arguments-table {
+  table-layout: fixed;
+}
+
+.arg-col-name {
+  width: 30%;
+}
+
+.arg-col-type {
+  width: 40%;
+}
+
+.arg-col-default {
+  width: 30%;
+}
+
+.kw-info-table .arg-group > tr > td {
   border-bottom: 1px solid var(--border-color);
 }
 
-.kw-info-table tbody tr:last-child td {
+.kw-info-table .arg-group > tr.arg-row.has-doc > td {
+  border-bottom: none;
+  padding-bottom: 0.15rem;
+}
+
+.kw-info-table .arg-group:last-child > tr:last-child > td {
   border-bottom: none;
 }
 
-.kw-info-table td .doc {
+.kw-info-table .arg-group:hover > tr > td {
+  background: var(--hover-tint);
+}
+
+.kw-info-table .doc-row > td {
+  padding-top: 0;
+  padding-bottom: 0.5rem;
+}
+
+.arg-doc-wrap {
+  border-left: 3px solid var(--border-color);
+  max-width: 1000px;
+  margin-left: 1.6rem;
+  padding-left: 0.75rem;
+  transition: border-color 0.15s;
+}
+
+.arg-group:hover .arg-doc-wrap {
+  border-left-color: var(--robot-highlight);
+}
+
+.arg-doc {
   font-size: 0.95em;
 }
 
-.kw-info-table td .doc > p {
+.arg-doc.clamped {
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  overflow: hidden;
+}
+
+.arg-doc.truncated {
+  cursor: pointer;
+}
+
+.arg-doc.doc > p {
   margin: 0 0 0.35rem;
 }
 
-.kw-info-table td .doc > p:last-child {
+.arg-doc.doc > p:last-child {
   margin-bottom: 0;
 }
 
-.kw-info-table td .doc > ul,
-.kw-info-table td .doc > ol,
-.kw-info-table td .doc > pre {
+.arg-doc.doc > :first-child {
+  margin-top: 0;
+}
+
+.arg-doc.doc > ul,
+.arg-doc.doc > ol,
+.arg-doc.doc > pre {
   margin-top: 0.25rem;
   margin-bottom: 0.4rem;
 }
 
-.kw-info-table td .doc code,
-.kw-info-table td .doc .docutils.literal {
-  font-size: 1em;
+.doc-more,
+.doc-less {
+  color: var(--less-important-text-color);
+  cursor: pointer;
+  margin-top: 0.15rem;
+  font-size: 0.85em;
+  display: inline-block;
 }
 
-@media only screen and (max-width: 899px) {
-  .kw-info-table {
+.arg-doc-wrap:hover .doc-more,
+.arg-doc-wrap:hover .doc-less {
+  color: var(--more-hover-color);
+  font-weight: 600;
+}
+
+.arg-detail-container {
+  padding: 0.5rem 1.5rem 1.5rem;
+}
+
+.arg-detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.arg-detail-label {
+  color: var(--less-important-text-color);
+  margin-right: 0.4em;
+}
+
+@media only screen and (max-width: 640px) {
+  .kw-info-table,
+  .kw-info-table tbody,
+  .kw-info-table tr,
+  .kw-info-table td {
     display: block;
-    overflow-x: auto;
+    width: auto;
+  }
+
+  .kw-info-table thead {
+    display: none;
+  }
+
+  .kw-info-table td {
+    padding: 0;
+  }
+
+  .kw-info-table .arg-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.15rem 0.7rem;
+  }
+
+  .kw-info-table .arg-group {
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.4rem 0;
+  }
+
+  .kw-info-table .arg-group > tr > td,
+  .kw-info-table .arg-group > tr.arg-row.has-doc > td,
+  .kw-info-table .arg-group:last-child {
+    border-bottom: none;
+  }
+
+  .arg-doc-wrap {
+    margin-top: 0.2rem;
+    margin-left: 0.85rem;
   }
 }
 
-/* Arguments table column widths */
-.args .arguments-table .arg-col-name {
-  width: 20%;
-}
-
-.args .arguments-table .arg-col-default {
-  width: 10%;
-}
-
-.args .arguments-table .arg-col-type {
-  width: 24%;
-}
-
-.args .arguments-table .arg-col-doc {
-  width: auto;
-}
-
-/* Importing section has longer argument names than keywords — widen Name, narrow Type */
-#importing-container .args .arguments-table .arg-col-name {
-  width: 30%;
-}
-
-#importing-container .args .arguments-table .arg-col-type {
-  width: 18%;
-}
-
-.args .arguments-table td:nth-child(1),
-.args .arguments-table td:nth-child(2),
-.args .arguments-table td:nth-child(3) {
-  overflow-wrap: break-word;
-}
-
-.args .arguments-table td:nth-child(4) {
-  width: 100%;
-}
-
-/* Return info table column widths */
-.return-info {
-  min-width: 200px;
-}
-
-.return-info .return-info-table .ret-col-type {
-  width: 22%;
-}
-
-.return-info .return-info-table .ret-col-doc {
-  width: auto;
-}
-
-.return-info .return-info-table td {
-  overflow-wrap: break-word;
-}
-
 .enum-type-members span,
-.args span,
-.return-info span,
-.args a {
+.arg-name,
+.arg-default-value,
+.raise-name {
   font-family: monospace;
   background: var(--light-background-color);
+  border-radius: 3px;
   padding: 0 0.1em;
   font-size: 1.1em;
+}
+
+.arg-default-eq {
+  color: var(--less-important-text-color);
+  padding-right: 0.15em;
 }
 
 .arg-type,
 span.type,
 a.type {
   font-size: 1em;
+  font-family: monospace;
   background: none;
-  padding: 0 0;
+  padding: 0;
 }
 
 .typed-dict-item .td-type::after {
@@ -795,6 +920,13 @@ a.type {
 .args span .highlight {
   background: var(--highlighted-background-color);
   color: var(--highlighted-color);
+}
+
+mark {
+  background: var(--highlighted-background-color);
+  color: var(--highlighted-color);
+  border-radius: 2px;
+  padding: 0 1px;
 }
 
 .tags a {
