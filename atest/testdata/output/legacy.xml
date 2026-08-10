@@ -44,7 +44,7 @@
 <kw name="Failing">
 <kw name="Fail" library="BuiltIn">
 <arg>Hello!</arg>
-<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<doc>Fails the test or task with the given message and optionally alters its tags.</doc>
 <msg timestamp="20231116 17:35:01.775" level="FAIL">Hello!</msg>
 <status status="FAIL" starttime="20231116 17:35:01.775" endtime="20231116 17:35:01.775"/>
 </kw>
@@ -57,7 +57,7 @@
 <kw name="Failing" type="SETUP">
 <kw name="Fail" library="BuiltIn">
 <arg>Hello!</arg>
-<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<doc>Fails the test or task with the given message and optionally alters its tags.</doc>
 <msg timestamp="20231116 17:35:01.776" level="FAIL">Hello!</msg>
 <status status="FAIL" starttime="20231116 17:35:01.776" endtime="20231116 17:35:01.776"/>
 </kw>
@@ -81,7 +81,7 @@ Hello!</status>
 <kw name="Failing" type="TEARDOWN">
 <kw name="Fail" library="BuiltIn">
 <arg>Hello!</arg>
-<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<doc>Fails the test or task with the given message and optionally alters its tags.</doc>
 <msg timestamp="20231116 17:35:01.777" level="FAIL">Hello!</msg>
 <status status="FAIL" starttime="20231116 17:35:01.777" endtime="20231116 17:35:01.777"/>
 </kw>
