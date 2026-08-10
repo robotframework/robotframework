@@ -23,6 +23,10 @@ def ignore_me():
     raise SystemExit()
 ```
 
+<!---
+Parts can be excluded from the md render by putting it into a comment block.
+robotframework or robot code blocks are still parsed as part of the Robot file.
+
 ```robot
 *** Variables ***
 ${table_var}          foo
@@ -30,6 +34,7 @@ ${table_var}          foo
 ${quoted}             """this has """"many "" quotes """""
 ${single_quoted}      s'ingle'qu'ot'es''
 ```
+-->
 
 ``````    robotframework
 *** Test Cases ***
