@@ -1,7 +1,16 @@
-from typing import List, Union
+from typing import List, NoReturn, Union
+
+try:
+    from typing import Never
+except ImportError:  # Python < 3.11
+    from typing_extensions import Never
 
 
-def A_no_return():
+class Unknown:
+    pass
+
+
+def A_no_return_type():
     pass
 
 
@@ -25,13 +34,17 @@ def F_stringified_return() -> "int | float":
     return 42
 
 
-class Unknown:
-    pass
-
-
 def G_unknown_return() -> Unknown:
     return Unknown()
 
 
 def H_invalid_return() -> "list[int":  # noqa: F722
     pass
+
+
+def I_Never() -> Never:
+    raise AssertionError
+
+
+def J_NoReturn() -> NoReturn:
+    raise AssertionError

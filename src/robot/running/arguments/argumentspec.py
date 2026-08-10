@@ -15,7 +15,15 @@
 
 import sys
 from enum import Enum
-from typing import Any, Callable, Iterator, Mapping, Sequence
+from typing import Any, Callable, Iterator, Mapping, NoReturn, Sequence
+
+if sys.version_info >= (3, 11):
+    from typing import Never
+else:
+    try:
+        from typing_extensions import Never
+    except ImportError:
+        Never = NoReturn
 
 from robot.utils import NOT_SET, safe_str, setter, SetterAwareType
 
@@ -87,9 +95,11 @@ class ArgumentSpec(metaclass=SetterAwareType):
         return TypeValidator(self).validate(types)
 
     @setter
-    def return_type(self, hint: object) -> "TypeInfo | type[NOT_SET]":
-        if isinstance(hint, TypeInfo) or type is NOT_SET:
+    def return_type(self, hint: object) -> TypeInfo:
+        if isinstance(hint, TypeInfo):
             return hint
+        if hint is Never or hint is NoReturn:
+            hint = NOT_SET
         return TypeInfo.from_type_hint(hint, sequence_is_union=True)
 
     @setter

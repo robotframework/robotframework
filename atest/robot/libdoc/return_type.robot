@@ -4,8 +4,12 @@ Test Template      Return Type Should Be
 Resource           libdoc_resource.robot
 
 *** Test Cases ***
-No return
+No return type
     0    NOT SET
+
+Never and NoReturn
+    7    NOT SET
+    8    NOT SET
 
 None return
     1    None
