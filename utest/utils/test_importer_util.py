@@ -16,7 +16,7 @@ from robot.utils.importer import ByPathImporter, Importer
 
 CURDIR = Path(__file__).absolute().parent
 LIBDIR = CURDIR.parent.parent / "atest/testresources/testlibs"
-TEMPDIR = Path(tempfile.gettempdir())
+TEMPDIR = Path(os.getenv("TEMPDIR") or tempfile.gettempdir())
 TESTDIR = TEMPDIR / "robot-importer-testing"
 WINDOWS_PATH_IN_ERROR = re.compile(r"'\w:\\")
 
