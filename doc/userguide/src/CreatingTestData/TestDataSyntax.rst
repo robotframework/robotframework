@@ -384,42 +384,46 @@ are parsed by default when executing a directory. Parsing files with
 the :file:`.md` or :file:`.markdown` extension `can be enabled`__ by using
 either :option:`--parseinclude` or :option:`--extension` option.
 
+__ `Selecting files to parse`_
+
 Living documentation
 ''''''''''''''''''''
 
-In test automation, the term *Living documentation* is commonly used when
+In software development, the term *living documentation* is commonly used when
 acceptance tests are written in such a way that they can be used as an
 executable specification. The executable specification acts as the single
 source of truth from which both the specification document and the test
 automation is derived. When the specification changes, the test changes,
 implying a compliant system when the tests pass.
 
-A common issue is that test automation requires files to be in the tool's
-syntax, but the people responsible for the specification typically don't work
-well with syntax-rich files. They prefer regular documents. With Robot
-Framework's Markdown support, we bring these two worlds together in a
-single file.
+A common issue is that test automation requires documentation files to use
+the syntax of the selected automation tool, but the people responsible for
+the specification typically do not work well with such syntax-rich files.
+Robot Framework data files can in general be written using style that can
+work reasonably well with all stakeholders, but embedding Robot Framework
+data to Markdown files makes it even more convenient.
+
+.. tip:: You can use Markdown comment blocks created using the `<!--- comment -->`
+         syntax for hiding technical content from generated HTML files.
+
+Example:
 
 .. sourcecode:: markdown
 
    # Feature title
 
-   Free text introducing the feature. Include pictures, if you like.
+   Free text introducing the feature. You can use tables, lists, images,
+   etc. if needed.
 
-   <!---
-   Comments can be added in blocks like this. Text inside these blockes is not
-   rendered. We can use comments to hide the syntax parts needed for Robot
-   Framework. We keep only the test cases visible as code blocks. These are
-   the formal part of the specification.
-   -->
+   <!---  Markdown comment block hiding technical details.
 
-   <!---
    ```robotframework
    *** Settings ***
-   Resource   my_keywords.robot
+   Resource        example.resource
 
    *** Test Cases ***
    ```
+
    -->
 
    ## Business Rule 1
@@ -431,20 +435,21 @@ single file.
 
    ```robotframework
    Scenario 1
-      No operation
+       Given we want to use BDD
+       When we use Given/When/Then prefixes
+       Then everything works fine.
    ```
 
    Some additional in-between explanation.
 
    ```robotframework
    Scenario 2
-      No operation
+       There is not need to use BDD if that adds no benefits
+       Complicated syntax should be avoided anyway
    ```
 
-__ `Selecting files to parse`_
-
 .. note:: Using Markdown_ files with Robot Framework does not require any
-          external Python module to be installed.
+          external Markdown module or tool to be installed.
 
 .. note:: Markdown support is new in Robot Framework 7.5.
 
