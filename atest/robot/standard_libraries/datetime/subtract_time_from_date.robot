@@ -8,3 +8,6 @@ Time subtraction from date should succeed
 
 Time subtraction over DST boundary
     Check Test Case    ${TESTNAME}
+
+Calendar time subtraction from date should succeed
+    Check Test Case    ${TESTNAME}
