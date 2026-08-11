@@ -45,13 +45,10 @@ class _List:
         Use [Split String To Characters] from the String library for splitting
         strings to a list of characters.
 
-
         Args:
-
             item: The item to convert to a list.
 
         Returns:
-
             The converted list.
         """
         return list(item)  # type: ignore
@@ -66,27 +63,23 @@ class _List:
 
         Starting from Robot Framework 7.4, the modified list is also returned.
 
-
         Args:
-
             list_: The list to modify.
             *values: Values to append.
 
         Returns:
-
             The modified list.
 
         Examples:
 
         ```robotframework
         *** Test Cases ***
-        Example
+        Append to list
             Append To List    ${L1}    xxx
             Append To List    ${L2}    x    y    z
+            # ${L1} = ['a', 'xxx']
+            # ${L2} = ['a', 'b', 'x', 'y', 'z']
         ```
-
-        ${L1} = ['a', 'xxx']
-        ${L2} = ['a', 'b', 'x', 'y', 'z']
         """
         list_.extend(values)
         return list_
@@ -111,28 +104,25 @@ class _List:
 
         Starting from Robot Framework 7.4, the modified list is also returned.
 
-
         Args:
-
             list_: The list to modify.
             index: Index where to insert the value.
             value: The value to insert.
 
         Returns:
-
             The modified list.
 
         Examples:
 
         ```robotframework
         *** Test Cases ***
-        Example
+        Insert into list
             Insert Into List    ${L1}    0    xxx
             Insert Into List    ${L2}    ${-1}    xxx
+            # ${L1} = ['xxx', 'a']
+            # ${L2} = ['a', 'xxx', 'b']
         ```
-
-        ${L1} = ['xxx', 'a']
-        ${L2} = ['a', 'xxx', 'b']"""
+        """
         list_.insert(index, value)
         return list_
 
@@ -142,27 +132,24 @@ class _List:
 
         The given lists are not altered by this keyword.
 
-
         Args:
-
             *lists: Lists to combine.
 
         Returns:
-
             A new list containing all items.
 
         Examples:
 
         ```robotframework
         *** Test Cases ***
-        Example
+        Combine lists
             ${x} =    Combine Lists    ${L1}    ${L2}
             ${y} =    Combine Lists    ${L1}    ${L2}    ${L1}
+            # ${x} = ['a', 'a', 'b']
+            # ${y} = ['a', 'a', 'b', 'a']
+            # ${L1} and ${L2} are not changed.
         ```
-
-        ${x} = ['a', 'a', 'b']
-        ${y} = ['a', 'a', 'b', 'a']
-        ${L1} and ${L2} are not changed."""
+        """
         return list(chain.from_iterable(lists))
 
     def set_list_value(
@@ -180,31 +167,26 @@ class _List:
 
         Starting from Robot Framework 7.4, the modified list is also returned.
 
-
         Args:
-
             list_: The list to modify.
             index: Index of the value to set.
             value: The new value.
 
         Returns:
-
             The modified list.
 
         Raises:
-
             IndexError: If `index` is out of range.
 
         Examples:
 
         ```robotframework
         *** Test Cases ***
-        Example
+        Set list value
             Set List Value    ${L3}    1    xxx
             Set List Value    ${L3}    -1    yyy
+            # ${L3} = ['a', 'xxx', 'yyy']
         ```
-
-        ${L3} = ['a', 'xxx', 'yyy']
 
         Starting from Robot Framework 6.1, it is also possible to use the native
         item assignment syntax instead of this keyword. This is equivalent to
@@ -212,7 +194,7 @@ class _List:
 
         ```robotframework
         *** Test Cases ***
-        Example
+        Set list value
             ${L3}[1] =    Set Variable    xxx
             ${L3}[-1] =    Set Variable    yyy
         ```
@@ -235,25 +217,22 @@ class _List:
 
         Starting from Robot Framework 7.4, the modified list is also returned.
 
-
         Args:
-
             list_: The list to modify.
             *values: Values to remove.
 
         Returns:
-
             The modified list.
 
         Examples:
 
         ```robotframework
         *** Test Cases ***
-        Example
+        Remove values from list
             Remove Values From List    ${L4}    a    c    e    f
+            # ${L4} = ['b', 'd']
         ```
-
-        ${L4} = ['b', 'd']"""
+        """
         for value in values:
             while value in list_:
                 list_.remove(value)
@@ -267,30 +246,26 @@ class _List:
         Similarly, `-1` is the last position, `-2` the second last, and so on.
         Using an index that does not exist on the list causes an error.
 
-
         Args:
-
             list_: The list to modify.
             index: Index of the value to remove.
 
         Returns:
-
             The removed value.
 
         Raises:
-
             IndexError: If `index` is out of range.
 
         Examples:
 
         ```robotframework
         *** Test Cases ***
-        Example
+        Remove from list
             ${x} =    Remove From List    ${L2}    0
+            # ${x} = 'a'
+            # ${L2} = ['b']
         ```
-
-        ${x} = 'a'
-        ${L2} = ['b']"""
+        """
         try:
             return list_.pop(index)
         except IndexError:
@@ -305,13 +280,10 @@ class _List:
         the new list is the same as in the original except for missing
         duplicates. Number of the removed duplicates is logged.
 
-
         Args:
-
             list_: The list to process.
 
         Returns:
-
             A new list without duplicates."""
         ret = []
         for item in list_:
@@ -325,6 +297,16 @@ class _List:
         """
         Returns the value specified with an `index` from `list`.
 
+        Args:
+            list_: The list to read from.
+            index: Index of the value to get.
+
+        Returns:
+            The value at the given index.
+
+        Raises:
+            IndexError: If `index` is out of range.
+
         Index `0` means the first position, `1` the second, and so on.
         Negative indices work so that `-1` is the last position, `-2`
         the second last, and so on. Using an index that does not exist on
@@ -334,28 +316,14 @@ class _List:
 
         ```robotframework
         *** Test Cases ***
-        Example
+        Get from list
             ${x} =    Get From List    ${L5}    0    # L5[0]
             ${y} =    Get From List    ${L5}    -2    # L5[-2]
+            # ${x} = 'a'
+            # ${y} = 'd'
+            # ${L5} is not changed
         ```
-
-        ${x} = 'a'
-        ${y} = 'd'
-        ${L5} is not changed
-
-
-        Args:
-
-            list_: The list to read from.
-            index: Index of the value to get.
-
-        Returns:
-
-            The value at the given index.
-
-        Raises:
-
-            IndexError: If `index` is out of range."""
+"""
         try:
             return list_[index]
         except IndexError:
@@ -369,6 +337,14 @@ class _List:
     ) -> Sequence:
         """
         Returns a slice of the given list between `start` and `end` indices.
+
+        Args:
+            list_: The list to read from.
+            start: Start index of the slice.
+            end: End index of the slice.
+
+        Returns:
+            The requested slice.
 
         Indices have the same semantics as with [Get From List]. A difference is
         that too big or small indices are considered to be the same as the biggest
@@ -385,27 +361,16 @@ class _List:
 
         ```robotframework
         *** Test Cases ***
-        Example
+        Get slice from list
             ${x} =    Get Slice From List    ${L5}    2    4    # L5[2:4]
             ${y} =    Get Slice From List    ${L5}    1    # L5[1:]
             ${z} =    Get Slice From List    ${L5}    end=-2    # L5[0:-2]
+            # ${x} = ['c', 'd']
+            # ${y} = ['b', 'c', 'd', 'e']
+            # ${z} = ['a', 'b', 'c']
+            # ${L5} is not changed
         ```
-
-        ${x} = ['c', 'd']
-        ${y} = ['b', 'c', 'd', 'e']
-        ${z} = ['a', 'b', 'c']
-        ${L5} is not changed
-
-
-        Args:
-
-            list_: The list to read from.
-            start: Start index of the slice.
-            end: End index of the slice.
-
-        Returns:
-
-            The requested slice."""
+"""
         if start == "":
             # Deprecated in RF 7.4. TODO: Remove in RF 9.
             logger.warn(
@@ -429,28 +394,25 @@ class _List:
         `end` indexes having the same semantics as with [Get Slice From List]
         keyword.
 
-
         Args:
-
             list_: The list to search.
             value: The value to count.
             start: Optional start index for the search.
             end: Optional end index for the search.
 
         Returns:
-
             The number of occurrences.
 
         Examples:
 
         ```robotframework
         *** Test Cases ***
-        Example
+        Count values in list
             ${x} =    Count Values In List    ${L3}    b
+            # ${x} = 1
+            # ${L3} is not changed
         ```
-
-        ${x} = 1
-        ${L3} is not changed"""
+        """
         return self.get_slice_from_list(list_, start, end).count(value)
 
     def get_index_from_list(
@@ -470,32 +432,28 @@ class _List:
 
         If the value is not found, `-1` is returned.
 
-
         Args:
-
             list_: The list to search.
             value: The value to find.
             start: Optional start index for the search.
             end: Optional end index for the search.
 
         Returns:
-
             The index of the value, or `-1` if not found.
 
         Examples:
 
         ```robotframework
         *** Test Cases ***
-        Example
+        Get index from list
             ${x} =    Get Index From List    ${L5}    d
             ${y} =    Get Index From List    ${L5}    d    start=-4
             ${z} =    Get Index From List    ${L5}    c    start=3
+            # ${x} = 3
+            # ${y} = 3
+            # ${z} = -1
+            # ${L5} is not changed
         ```
-
-        ${x} = 3
-        ${y} = 3
-        ${z} = -1
-        ${L5} is not changed
 
         Starting from Robot Framework 7.5, the returned index is always positive
         if the value is found. With earlier versions negative start indices
@@ -526,14 +484,11 @@ class _List:
         Set the `deepcopy` argument to a true value if also items should
         be copied.
 
-
         Args:
-
             list_: The list to copy.
             deepcopy: Whether to also copy items.
 
         Returns:
-
             A copy of the list."""
         if deepcopy:
             return copy.deepcopy(list_)
@@ -543,25 +498,23 @@ class _List:
         """
         Reverses the given list.
 
-        Starting from Robot Framework 7.4, the reversed list is also returned.
-
-
-        ```robotframework
-        *** Test Cases ***
-        Example
-            Reverse List    ${L3}
-        ```
-
-        ${L3} = ['c', 'b', 'a']
-
-
         Args:
-
             list_: The list to reverse.
 
         Returns:
+            The reversed list.
 
-            The reversed list."""
+        Starting from Robot Framework 7.4, the reversed list is also returned.
+
+        Examples:
+
+        ```robotframework
+        *** Test Cases ***
+        Reverse list
+            Reverse List    ${L3}
+            # ${L3} = ['c', 'b', 'a']
+        ```
+"""
         list_.reverse()
         return list_
 
@@ -574,17 +527,13 @@ class _List:
 
         Starting from Robot Framework 7.4, the sorted list is also returned.
 
-
         Args:
-
             list_: The list to sort.
 
         Returns:
-
             The sorted list.
 
         Raises:
-
             TypeError: If items are not comparable."""
         if isinstance(list_, list):
             list_.sort()
@@ -608,9 +557,7 @@ class _List:
         See the [Ignore case] section for more details. This option is new in
         Robot Framework 7.0.
 
-
         Args:
-
             list_: The list to verify.
             value: The value that should be found.
             msg: Optional custom error message.
@@ -635,9 +582,7 @@ class _List:
         See the [Ignore case] section for more details. This option is new in
         Robot Framework 7.0.
 
-
         Args:
-
             list_: The list to verify.
             value: The value that should not be found.
             msg: Optional custom error message.
@@ -667,9 +612,7 @@ class _List:
         See the [Ignore case] section for more details. This option is new in
         Robot Framework 7.0.
 
-
         Args:
-
             list_: The list to verify.
             msg: Optional custom error message.
             ignore_case: Whether to ignore case in comparison."""
@@ -719,9 +662,7 @@ class _List:
         When using a dictionary, keys can be either integers
         or strings that can be converted to integers.
 
-
         Args:
-
             list1: The first list.
             list2: The second list.
             msg: Optional custom error message.
@@ -734,7 +675,7 @@ class _List:
 
         ```robotframework
         *** Test Cases ***
-        Example
+        Lists should be equal
             ${names} =    Create List    First Name    Family Name    Email
             Lists Should Be Equal    ${people1}    ${people2}    names=${names}
             ${names} =    Create Dictionary    0=First Name    2=Email
@@ -754,7 +695,7 @@ class _List:
 
         ```robotframework
         *** Test Cases ***
-        Example
+        Lists should be equal
             ${list1} =    Create List    apple    cherry    banana
             ${list2} =    Create List    cherry    banana    apple
             Lists Should Be Equal    ${list1}    ${list2}    ignore_order=True
@@ -811,9 +752,7 @@ class _List:
         See the [Ignore case] section for more details. This option is new in
         Robot Framework 7.0.
 
-
         Args:
-
             list1: The list that should contain all values.
             list2: The list whose values should be found.
             msg: Optional custom error message.
@@ -832,7 +771,6 @@ class _List:
         Logs contents of the `list` using the given `level`.
 
         Args:
-
             list_: The list to log.
             level: The log level to use."""
         logger.write("\n".join(self._log_list(list_)), level)
@@ -864,13 +802,10 @@ class _Dictionary:
         Use [Create Dictionary] from the BuiltIn library for constructing new
         dictionaries.
 
-
         Args:
-
             item: The item to convert to a dictionary.
 
         Returns:
-
             The converted dictionary."""
         return dict(item)  # type: ignore
 
@@ -883,6 +818,17 @@ class _Dictionary:
         """
         Adds the given `key_value_pairs` and/or `items` to the `dictionary`.
 
+        Args:
+            dictionary: The dictionary to modify.
+            *key_value_pairs: Keys and values to add as separate arguments.
+            **items: Keys and values to add using the `name=value` syntax.
+
+        Returns:
+            The modified dictionary.
+
+        Raises:
+            ValueError: If `key_value_pairs` does not contain an even number of arguments.
+
         If given items already exist in the dictionary, their values are updated.
 
         The modified dictionary is also returned.
@@ -891,48 +837,31 @@ class _Dictionary:
 
         ```robotframework
         *** Test Cases ***
-        Example
+        Set to dictionary
             Set To Dictionary    ${D1}    key=value    second=${2}
+            # ${D1} = {'a': 1, 'key': 'value', 'second': 2}
         ```
-
-        ${D1} = {'a': 1, 'key': 'value', 'second': 2}
 
         A limitation of the above syntax is that keys must be strings.
         That can be avoided by passing keys and values as separate arguments:
 
         ```robotframework
         *** Test Cases ***
-        Example
+        Set to dictionary
             Set To Dictionary    ${D1}    key    value    ${2}    value 2
+            # ${D1} = {'a': 1, 'key': 'value', 2: 'value 2'}
         ```
-
-        ${D1} = {'a': 1, 'key': 'value', 2: 'value 2'}
 
         Starting from Robot Framework 6.1, it is also possible to use the native
         item assignment syntax. This is equivalent to the above:
 
         ```robotframework
         *** Test Cases ***
-        Example
+        Set to dictionary
             ${D1}[key] =    Set Variable    value
             ${D1}[${2}] =    Set Variable    value 2
         ```
-
-
-        Args:
-
-            dictionary: The dictionary to modify.
-            *key_value_pairs: Keys and values to add as separate arguments.
-            **items: Keys and values to add using the `name=value` syntax.
-
-        Returns:
-
-            The modified dictionary.
-
-        Raises:
-
-            ValueError: If `key_value_pairs` does not contain an even number of arguments.
-        """
+"""
         if len(key_value_pairs) % 2 != 0:
             raise ValueError(
                 "Adding data to a dictionary failed. There should be even "
@@ -955,25 +884,22 @@ class _Dictionary:
 
         Starting from Robot Framework 7.4, the modified dictionary is also returned.
 
-
         Args:
-
             dictionary: The dictionary to modify.
             *keys: Keys to remove.
 
         Returns:
-
             The modified dictionary.
 
         Examples:
 
         ```robotframework
         *** Test Cases ***
-        Example
+        Remove from dictionary
             Remove From Dictionary    ${D3}    b    x    y
+            # ${D3} = {'a': 1, 'c': 3}
         ```
-
-        ${D3} = {'a': 1, 'c': 3}"""
+        """
         for key in keys:
             if key in dictionary:
                 value = dictionary.pop(key)
@@ -994,31 +920,27 @@ class _Dictionary:
         The keyword fails if the given `key` cannot be found from the `dictionary`
         by default. If optional `default` value is given, it will be returned instead.
 
-
         Args:
-
             dictionary: The dictionary to modify.
             key: The key to remove.
             default: Default value returned if the key is not found.
 
         Returns:
-
             The value of the removed key.
 
         Raises:
-
             RuntimeError: If `key` is not found and `default` is not given.
 
         Examples:
 
         ```robotframework
         *** Test Cases ***
-        Example
+        Pop from dictionary
             ${val}=    Pop From Dictionary    ${D3}    b
+            # ${val} = 2
+            # ${D3} = {'a': 1, 'c': 3}
         ```
-
-        ${val} = 2
-        ${D3} = {'a': 1, 'c': 3}"""
+        """
         if default is NOT_SET:
             self.dictionary_should_contain_key(dictionary, key)
             return dictionary.pop(key)
@@ -1036,25 +958,22 @@ class _Dictionary:
 
         Starting from Robot Framework 7.4, the modified dictionary is also returned.
 
-
         Args:
-
             dictionary: The dictionary to modify.
             *keys: Keys to keep.
 
         Returns:
-
             The modified dictionary.
 
         Examples:
 
         ```robotframework
         *** Test Cases ***
-        Example
+        Keep in dictionary
             Keep In Dictionary    ${D5}    b    x    d
+            # ${D5} = {'b': 2, 'd': 4}
         ```
-
-        ${D5} = {'b': 2, 'd': 4}"""
+        """
         remove_keys = [k for k in dictionary if k not in keys]
         self.remove_from_dictionary(dictionary, *remove_keys)
         return dictionary
@@ -1071,14 +990,11 @@ class _Dictionary:
         Set the `deepcopy` argument to a true value if also items should
         be copied.
 
-
         Args:
-
             dictionary: The dictionary to copy.
             deepcopy: Whether to also copy items.
 
         Returns:
-
             A copy of the dictionary."""
         if deepcopy:
             return copy.deepcopy(dictionary)
@@ -1096,21 +1012,18 @@ class _Dictionary:
         sortable), but they can be returned in the original order by giving
         `sort_keys` a false value.
 
-
         Args:
-
             dictionary: The dictionary to read from.
             sort_keys: Whether to sort keys.
 
         Returns:
-
             Dictionary keys as a list.
 
         Examples:
 
         ```robotframework
         *** Test Cases ***
-        Example
+        Get dictionary keys
             ${sorted} =    Get Dictionary Keys    ${D3}
             ${unsorted} =    Get Dictionary Keys    ${D3}    sort_keys=False
         ```
@@ -1134,21 +1047,18 @@ class _Dictionary:
         values. By default, keys are sorted and values returned in that order,
         but this can be changed by giving `sort_keys` a false value.
 
-
         Args:
-
             dictionary: The dictionary to read from.
             sort_keys: Whether to sort keys.
 
         Returns:
-
             Dictionary values as a list.
 
         Examples:
 
         ```robotframework
         *** Test Cases ***
-        Example
+        Get dictionary values
             ${sorted} =    Get Dictionary Values    ${D3}
             ${unsorted} =    Get Dictionary Values    ${D3}    sort_keys=False
         ```
@@ -1172,21 +1082,18 @@ class _Dictionary:
         second item is a corresponding value, third item is the second key,
         and so on.
 
-
         Args:
-
             dictionary: The dictionary to read from.
             sort_keys: Whether to sort keys.
 
         Returns:
-
             Dictionary items as a flat list.
 
         Examples:
 
         ```robotframework
         *** Test Cases ***
-        Example
+        Get dictionary items
             ${sorted} =    Get Dictionary Items    ${D3}
             ${unsorted} =    Get Dictionary Items    ${D3}    sort_keys=False
         ```
@@ -1207,30 +1114,25 @@ class _Dictionary:
         keyword fails. If optional `default` value is given, it will be
         returned instead of failing.
 
-
         Args:
-
             dictionary: The dictionary to read from.
             key: The key whose value to get.
             default: Default value returned if the key is not found.
 
         Returns:
-
             The value of the given key.
 
         Raises:
-
             RuntimeError: If `key` is not found and `default` is not given.
 
         Examples:
 
         ```robotframework
         *** Test Cases ***
-        Example
+        Get from dictionary
             ${value} =    Get From Dictionary    ${D3}    b
+            # ${value} = 2
         ```
-
-        ${value} = 2
 
         Support for `default` is new in Robot Framework 6.0."""
         try:
@@ -1256,9 +1158,7 @@ class _Dictionary:
         See the [Ignore case] section for more details. This option is new in
         Robot Framework 7.0.
 
-
         Args:
-
             dictionary: The dictionary to verify.
             key: The key that should be found.
             msg: Optional custom error message.
@@ -1283,9 +1183,7 @@ class _Dictionary:
         See the [Ignore case] section for more details. This option is new in
         Robot Framework 7.0.
 
-
         Args:
-
             dictionary: The dictionary to verify.
             key: The key that should not be found.
             msg: Optional custom error message.
@@ -1311,9 +1209,7 @@ class _Dictionary:
         See the [Ignore case] section for more details. This option is new in
         Robot Framework 7.0.
 
-
         Args:
-
             dictionary: The dictionary to verify.
             key: The key to verify.
             value: The expected value.
@@ -1344,9 +1240,7 @@ class _Dictionary:
         See the [Ignore case] section for more details. This option is new in
         Robot Framework 7.0.
 
-
         Args:
-
             dictionary: The dictionary to verify.
             value: The value that should be found.
             msg: Optional custom error message.
@@ -1371,9 +1265,7 @@ class _Dictionary:
         See the [Ignore case] section for more details. This option is new in
         Robot Framework 7.0.
 
-
         Args:
-
             dictionary: The dictionary to verify.
             value: The value that should not be found.
             msg: Optional custom error message.
@@ -1404,9 +1296,7 @@ class _Dictionary:
         comparison. This option is new in Robot Framework 6.1. It works recursively
         with nested dictionaries starting from Robot Framework 7.0.
 
-
         Args:
-
             dict1: The first dictionary.
             dict2: The second dictionary.
             msg: Optional custom error message.
@@ -1419,7 +1309,7 @@ class _Dictionary:
 
         ```robotframework
         *** Test Cases ***
-        Example
+        Dictionaries should be equal
             Dictionaries Should Be Equal    ${dict}    ${expected}
             Dictionaries Should Be Equal    ${dict}    ${expected}    ignore_keys=${ignored}
             Dictionaries Should Be Equal    ${dict}    ${expected}    ignore_keys=['key1', 'key2']
@@ -1507,9 +1397,7 @@ class _Dictionary:
         Using it requires items to be sortable.
         This option is new in Robot Framework 7.2.
 
-
         Args:
-
             dict1: The dictionary that should contain all items.
             dict2: The dictionary whose items should be found.
             msg: Optional custom error message.
@@ -1535,7 +1423,6 @@ class _Dictionary:
         Logs the contents of the `dictionary` using the given `level`.
 
         Args:
-
             dictionary: The dictionary to log.
             level: The log level to use."""
         logger.write("\n".join(self._log_dictionary(dictionary)), level)
@@ -1628,10 +1515,10 @@ class Collections(_List, _Dictionary):
 
     ```robotframework
     *** Test Cases ***
-    Examples
+     log dictionary
         Lists Should Be Equal        ${list1}    ${list2}    ignore_case=True
         Dictionaries Should Be Equal    ${dict1}    ${dict2}    ignore_case=VALUES
-    ```
+        ```
 
     Notice that some keywords accept also an older `case_insensitive` argument
     in addition to `ignore_case`. The latter is new in Robot Framework 7.0 and
@@ -1676,7 +1563,7 @@ class Collections(_List, _Dictionary):
 
         If you prepend `regexp=` to your pattern, your pattern will be used
         according to the Python
-        [re module](http://docs.python.org/library/re.html) regular expression
+        [re module] regular expression
         syntax. Notice that the backslash character often used with regular
         expressions is an escape character in Robot Framework data and needs
         to be escaped with another backslash like `regexp=\\\\d{6}`. See
@@ -1698,9 +1585,7 @@ class Collections(_List, _Dictionary):
 
         Use the `msg` argument to override the default error message.
 
-
         Args:
-
             list: The list to search.
             pattern: The pattern to match.
             msg: Optional custom error message.
@@ -1710,14 +1595,13 @@ class Collections(_List, _Dictionary):
             ignore_whitespace: Whether to ignore whitespace when matching.
 
         Raises:
-
             TypeError: If `pattern` is not a string.
 
         Examples:
 
         ```robotframework
         *** Test Cases ***
-        Example
+        Should contain match
             Should Contain Match    ${list}    a*    # Match strings beginning with 'a'.
             Should Contain Match    ${list}    regexp=a.*    # Same as the above but with regexp.
             Should Contain Match    ${list}    regexp=\\\\d{6}    # Match strings containing six digits.
@@ -1725,7 +1609,9 @@ class Collections(_List, _Dictionary):
             Should Contain Match    ${list}    ab*    ignore_whitespace=yes    # Match strings beginning with 'ab' with possible whitespace ignored.
             Should Contain Match    ${list}    ab*    ignore_whitespace=true    ignore_case=true    # Same as the above but also ignore case.
         ```
-        """
+
+        [re module]: http://docs.python.org/library/re.html
+"""
         matches = self._get_matches(
             sequence=list,
             pattern=pattern,
@@ -1754,9 +1640,7 @@ class Collections(_List, _Dictionary):
         Exact opposite of [Should Contain Match] keyword. See that keyword
         for information about arguments and usage in general.
 
-
         Args:
-
             list: The list to search.
             pattern: The pattern that should not match.
             msg: Optional custom error message.
@@ -1791,9 +1675,7 @@ class Collections(_List, _Dictionary):
         For more information on `pattern`, `case_insensitive/ignore_case`, and
         `whitespace_insensitive/ignore_whitespace`, see [Should Contain Match].
 
-
         Args:
-
             list: The list to search.
             pattern: The pattern to match.
             case_insensitive: Deprecated. Use `ignore_case` instead.
@@ -1802,18 +1684,16 @@ class Collections(_List, _Dictionary):
             ignore_whitespace: Whether to ignore whitespace when matching.
 
         Returns:
-
             Matching strings from the list.
 
         Raises:
-
             TypeError: If `pattern` is not a string.
 
         Examples:
 
         ```robotframework
         *** Test Cases ***
-        Example
+        Get matches
             ${matches}=    Get Matches    ${list}    a*    # ${matches} will contain any string beginning with 'a'
             ${matches}=    Get Matches    ${list}    regexp=a.*    # ${matches} will contain any string beginning with 'a' (regexp version)
             ${matches}=    Get Matches    ${list}    a*    ignore_case=True    # ${matches} will contain any string beginning with 'a' or 'A'
@@ -1843,9 +1723,7 @@ class Collections(_List, _Dictionary):
         For more information on `pattern`, `case_insensitive/ignore_case`, and
         `whitespace_insensitive/ignore_whitespace`, see [Should Contain Match].
 
-
         Args:
-
             list: The list to search.
             pattern: The pattern to match.
             case_insensitive: Deprecated. Use `ignore_case` instead.
@@ -1854,18 +1732,16 @@ class Collections(_List, _Dictionary):
             ignore_whitespace: Whether to ignore whitespace when matching.
 
         Returns:
-
             The number of matches.
 
         Raises:
-
             TypeError: If `pattern` is not a string.
 
         Examples:
 
         ```robotframework
         *** Test Cases ***
-        Example
+        Get match count
             ${count}=    Get Match Count    ${list}    a*    # ${count} will be the count of strings beginning with 'a'
             ${count}=    Get Match Count    ${list}    regexp=a.*    # ${matches} will be the count of strings beginning with 'a' (regexp version)
             ${count}=    Get Match Count    ${list}    a*    case_insensitive=${True}    # ${matches} will be the count of strings beginning with 'a' or 'A'
