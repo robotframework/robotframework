@@ -48,11 +48,11 @@ class Telnet:
 
     `Telnet` uses the `telnetlib` module internally. This module was
     part of the Python standard library until Python 3.12, but with newer
-    versions the [telnetlib-313-and-up](https://pypi.org/project/telnetlib-313-and-up)
+    versions the [telnetlib-313-and-up]
     package needs to be installed separately.
 
     If there is a need to do [terminal emulation](#terminal-emulation), the
-    [pyte](https://pypi.org/project/pyte) module needs to be installed. It is
+    [pyte] module needs to be installed. It is
     an optional dependency and only needed with terminal emulation.
 
     # Connections
@@ -129,8 +129,11 @@ class Telnet:
     Examples:
 
     ```robotframework
-    Set Newline    \\n
-    Set Newline    CRLF
+    *** Test Cases ***
+    Newline
+        Set Newline    \\n
+        Set Newline    CRLF
+
     ```
 
     ## Prompt
@@ -148,8 +151,11 @@ class Telnet:
     Examples:
 
     ```robotframework
-    Open Connection    lolcathost    prompt=$
-    Set Prompt         (> |# )        prompt_is_regexp=true
+    *** Test Cases ***
+    Prompt
+        Open Connection    lolcathost    prompt=$
+        Set Prompt         (> |# )        prompt_is_regexp=true
+
     ```
 
     ## Encoding
@@ -178,9 +184,12 @@ class Telnet:
     Examples:
 
     ```robotframework
-    Open Connection    lolcathost    encoding=Latin1    encoding_errors=strict
-    Set Encoding       ISO-8859-15
-    Set Encoding       errors=ignore
+    *** Test Cases ***
+    Open connection
+        Open Connection    lolcathost    encoding=Latin1    encoding_errors=strict
+        Set Encoding       ISO-8859-15
+        Set Encoding       errors=ignore
+
     ```
 
     ## Default log level
@@ -212,7 +221,7 @@ class Telnet:
 
     # Terminal emulation
 
-    Telnet library supports terminal emulation with [pyte](http://pyte.readthedocs.io).
+    Telnet library supports terminal emulation with [pyte].
     Terminal emulation will process the output in a virtual screen. This means
     that ANSI escape codes, like cursor movements, and also control characters,
     like carriage returns and backspaces, have the same effect on the result as
@@ -234,7 +243,10 @@ class Telnet:
     Examples:
 
     ```robotframework
-    Open Connection    lolcathost    terminal_emulation=True    terminal_type=vt100    window_size=400x100
+    *** Test Cases ***
+    Open connection
+        Open Connection    lolcathost    terminal_emulation=True    terminal_type=vt100    window_size=400x100
+
     ```
 
     As discussed in the [Dependencies](#dependencies) section, `pyte` is an
@@ -251,7 +263,7 @@ class Telnet:
     and `WARN`. Levels below `INFO` are not shown in log files by default
     whereas warnings are shown more prominently.
 
-    The [telnetlib module](http://docs.python.org/library/telnetlib.html)
+    The [telnetlib module]
     used by this library has a custom logging system for logging content it
     sends and receives. By default these messages are written using `TRACE`
     level, but the level is configurable with the `telnetlib_log_level`
@@ -266,7 +278,7 @@ class Telnet:
     like `15 seconds` or `1min 10s`. If the timeout is given as just
     a number, for example, `10` or `1.5`, it is considered to be seconds.
     The time string format is described in more detail in an appendix of
-    [Robot Framework User Guide](http://robotframework.org/robotframework/#user-guide).
+    [Robot Framework User Guide].
 
     # Boolean arguments
 
@@ -275,28 +287,44 @@ class Telnet:
     it is an empty string or equal to `FALSE`, `NONE`, `NO`, `OFF` or
     `0`, case-insensitively. Other strings are considered true regardless
     their value, and other argument types are tested using the same
-    [rules as in Python](http://docs.python.org/library/stdtypes.html#truth).
+    [rules as in Python].
 
     True examples:
 
     ```robotframework
-    Open Connection    lolcathost    terminal_emulation=True       # Strings are generally true.
-    Open Connection    lolcathost    terminal_emulation=yes        # Same as the above.
-    Open Connection    lolcathost    terminal_emulation=${TRUE}    # Python True is true.
-    Open Connection    lolcathost    terminal_emulation=${42}      # Numbers other than 0 are true.
+    *** Test Cases ***
+    Boolean arguments
+        Open Connection    lolcathost    terminal_emulation=True       # Strings are generally true.
+        Open Connection    lolcathost    terminal_emulation=yes        # Same as the above.
+        Open Connection    lolcathost    terminal_emulation=${TRUE}    # Python True is true.
+        Open Connection    lolcathost    terminal_emulation=${42}      # Numbers other than 0 are true.
+
     ```
 
     False examples:
 
     ```robotframework
-    Open Connection    lolcathost    terminal_emulation=False      # String false is false.
-    Open Connection    lolcathost    terminal_emulation=no           # Also string no is false.
-    Open Connection    lolcathost    terminal_emulation=${EMPTY}     # Empty string is false.
-    Open Connection    lolcathost    terminal_emulation=${FALSE}     # Python False is false.
+    *** Test Cases ***
+    Open connection
+        Open Connection    lolcathost    terminal_emulation=False      # String false is false.
+        Open Connection    lolcathost    terminal_emulation=no           # Also string no is false.
+        Open Connection    lolcathost    terminal_emulation=${EMPTY}     # Empty string is false.
+        Open Connection    lolcathost    terminal_emulation=${FALSE}     # Python False is false.
+
     ```
 
     Considering string `NONE` false is new in Robot Framework 3.0.3 and
     considering also `OFF` and `0` false is new in Robot Framework 3.1.
+
+    [telnetlib-313-and-up]: https://pypi.org/project/telnetlib-313-and-up "telnetlib-313-and-up"
+
+    [pyte]: http://pyte.readthedocs.io "pyte"
+
+    [telnetlib module]: http://docs.python.org/library/telnetlib.html "telnetlib module"
+
+    [Robot Framework User Guide]: http://robotframework.org/robotframework/#user-guide "Robot Framework User Guide"
+
+    [rules as in Python]: http://docs.python.org/library/stdtypes.html#truth "rules as in Python"
     """
 
     ROBOT_LIBRARY_SCOPE = "SUITE"
@@ -335,7 +363,6 @@ class Telnet:
         using arguments accepting times and Boolean values, respectively.
 
         Args:
-
             timeout: Default timeout used when reading output.
             newline: Default newline used by [Write].
             prompt: Default prompt used by [Read Until Prompt] and [Login].
@@ -356,13 +383,17 @@ class Telnet:
 
         ```robotframework
         *** Settings ***
-        Library    Telnet    # default values
-        Library    Telnet    5 seconds    # set only timeout
-        Library    Telnet    newline=LF    encoding=ISO-8859-1    # set newline and encoding using named arguments
-        Library    Telnet    prompt=$    # set prompt
-        Library    Telnet    prompt=(> |# )    prompt_is_regexp=yes    # set prompt as a regular expression
-        Library    Telnet    terminal_emulation=True    terminal_type=vt100    window_size=400x100    # use terminal emulation with defined window size and terminal type
-        Library    Telnet    telnetlib_log_level=NONE    # disable logging messages from the underlying telnetlib
+            Library    Telnet    # default values
+            Library    Telnet    5 seconds    # set only timeout
+            Library    Telnet    newline=LF    encoding=ISO-8859-1    # set newline and encoding using named arguments
+            Library    Telnet    prompt=$    # set prompt
+            Library    Telnet    prompt=(> |# )    prompt_is_regexp=yes    # set prompt as a regular expression
+            Library    Telnet    terminal_emulation=True    terminal_type=vt100    window_size=400x100    # use terminal emulation with defined window size and terminal type
+            Library    Telnet    telnetlib_log_level=NONE    # disable logging messages from the underlying telnetlib
+
+
+        *** Test Cases ***
+        Library
         ```
         """
         self._timeout = timeout or 3.0
@@ -459,7 +490,6 @@ class Telnet:
         [Close All Connections] keyword.
 
         Args:
-
             host: Host name or IP address of the Telnet server.
             alias: Optional alias for the opened connection.
             port: Port of the Telnet server. Defaults to 23.
@@ -478,7 +508,6 @@ class Telnet:
             connection_timeout: Timeout used when opening the connection.
 
         Returns:
-
             Index of the opened connection.
         """
         timeout = timeout or self._timeout
@@ -551,28 +580,29 @@ class Telnet:
         returns the connection index.
 
         Args:
-
             index_or_alias: Index or alias of the connection to activate.
 
         Returns:
-
             Index of the previously active connection.
 
         Example:
 
         ```robotframework
-        Open Connection       myhost.net
-        Login                 john        secret
-        Write                 some command
-        Open Connection       yourhost.com    2nd conn
-        Login                 root        password
-        Write                 another cmd
-        ${old index}=         Switch Connection    1    # index
-        Write                 something
-        Switch Connection     2nd conn                 # alias
-        Write                 whatever
-        Switch Connection     ${old index}               # back to original
-        [Teardown]            Close All Connections
+        *** Test Cases ***
+        Switch connection
+            Open Connection       myhost.net
+            Login                 john        secret
+            Write                 some command
+            Open Connection       yourhost.com    2nd conn
+            Login                 root        password
+            Write                 another cmd
+            ${old index}=         Switch Connection    1    # index
+            Write                 something
+            Switch Connection     2nd conn                 # alias
+            Write                 whatever
+            Switch Connection     ${old index}               # back to original
+            [Teardown]            Close All Connections
+
         ```
 
         The example above expects that there were no other open
@@ -582,9 +612,12 @@ class Telnet:
         shown below.
 
         ```robotframework
-        ${index} =            Open Connection    myhost.net
-        Do Something
-        Switch Connection     ${index}
+        *** Test Cases ***
+        Switch connection
+            ${index} =            Open Connection    myhost.net
+            Do Something
+            Switch Connection     ${index}
+
         ```
         """
         old_index = self._cache.current_index
@@ -657,19 +690,20 @@ class TelnetConnection(telnetlib.Telnet):
         The old timeout is returned and can be used to restore the timeout later.
 
         Args:
-
             timeout: Timeout used when waiting for output.
 
         Returns:
-
             Old timeout as a time string.
 
         Example:
 
         ```robotframework
-        ${old} =       Set Timeout    2 minute 30 seconds
-        Do Something
-        Set Timeout    ${old}
+        *** Test Cases ***
+        Set timeout
+            ${old} =       Set Timeout    2 minute 30 seconds
+            Do Something
+            Set Timeout    ${old}
+
         ```
 
         See [Configuration](#configuration) section for more information about
@@ -693,15 +727,12 @@ class TelnetConnection(telnetlib.Telnet):
         connection.
 
         Args:
-
             newline: Newline used by [Write].
 
         Returns:
-
             Old newline.
 
         Raises:
-
             AssertionError: If terminal emulation is used.
 
         See [Configuration](#configuration) section for more information about
@@ -729,30 +760,33 @@ class TelnetConnection(telnetlib.Telnet):
         The old prompt is returned and can be used to restore the prompt later.
 
         Args:
-
             prompt: Prompt to wait for when reading output.
             prompt_is_regexp: Whether the prompt is a regular expression.
 
         Returns:
-
             Old prompt. If the old prompt was a regular expression, a tuple
             containing the pattern and `True` is returned.
 
         Example:
 
         ```robotframework
-        ${prompt}    ${regexp} =    Set Prompt    $
-        Do Something
-        Set Prompt    ${prompt}    ${regexp}
+        *** Test Cases ***
+        Set prompt
+            ${prompt}    ${regexp} =    Set Prompt    $
+            Do Something
+            Set Prompt    ${prompt}    ${regexp}
+
         ```
 
         See the documentation of the
-        [Python re module](http://docs.python.org/library/re.html)
+        [Python re module]
         for more information about the supported regular expression syntax.
         Notice that possible backslashes need to be escaped in Robot Framework data.
 
         See [Configuration](#configuration) section for more information about
         global and connection specific configuration.
+
+        [Python re module]: http://docs.python.org/library/re.html "Python re module"
         """
         self._verify_connection()
         old = self._prompt
@@ -791,16 +825,13 @@ class TelnetConnection(telnetlib.Telnet):
         connection.
 
         Args:
-
             encoding: Encoding to use when writing and reading.
             errors: Error handler to use if encoding or decoding fails.
 
         Returns:
-
             Old encoding and error handler as a tuple.
 
         Raises:
-
             AssertionError: If terminal emulation is used.
         """
         self._verify_connection()
@@ -834,11 +865,9 @@ class TelnetConnection(telnetlib.Telnet):
         can shutdown the messages generated by this library.
 
         Args:
-
             level: Log level to use for telnetlib messages.
 
         Returns:
-
             Old telnetlib log level.
         """
         self._verify_connection()
@@ -860,15 +889,12 @@ class TelnetConnection(telnetlib.Telnet):
         log level later.
 
         Args:
-
             level: Default log level to use for logging.
 
         Returns:
-
             Old default log level.
 
         Raises:
-
             AssertionError: If the log level is invalid.
 
         See [Configuration](#configuration) section for more information about
@@ -901,11 +927,9 @@ class TelnetConnection(telnetlib.Telnet):
         connections are closed.
 
         Args:
-
             loglevel: Optional log level to use when logging the remaining output.
 
         Returns:
-
             Remaining output read from the connection.
 
         See [Logging](#logging) section for more information about log levels.
@@ -951,7 +975,6 @@ class TelnetConnection(telnetlib.Telnet):
         setting newline, timeout, and prompt.
 
         Args:
-
             username: Username to log in with.
             password: Password to log in with.
             login_prompt: Prompt that indicates username is expected.
@@ -960,11 +983,9 @@ class TelnetConnection(telnetlib.Telnet):
             login_incorrect: Text indicating login failure if prompt is not set.
 
         Returns:
-
             Output read during the login process.
 
         Raises:
-
             AssertionError: If login is considered incorrect.
         """
         output = self._submit_credentials(
@@ -1015,16 +1036,13 @@ class TelnetConnection(telnetlib.Telnet):
             more details.
 
         Args:
-
             text: Text to write into the connection.
             loglevel: Optional log level to use when logging output.
 
         Returns:
-
             Output consumed from the connection after writing.
 
         Raises:
-
             RuntimeError: If the given text contains newlines.
 
         See [Logging](#logging) section for more information about log levels.
@@ -1051,7 +1069,6 @@ class TelnetConnection(telnetlib.Telnet):
         Use [Write] if these features are needed.
 
         Args:
-
             text: Text to write into the connection.
         """
         self._verify_connection()
@@ -1080,7 +1097,6 @@ class TelnetConnection(telnetlib.Telnet):
         information about log levels.
 
         Args:
-
             text: Text to write into the connection.
             expected: Expected output to wait for.
             timeout: Maximum time to wait for the expected output.
@@ -1088,17 +1104,18 @@ class TelnetConnection(telnetlib.Telnet):
             loglevel: Optional log level to use when logging output.
 
         Returns:
-
             Output read when `expected` appears.
 
         Raises:
-
             NoMatchError: If `expected` does not appear within `timeout`.
 
         Example:
 
         ```robotframework
-        Write Until Expected Output    ps -ef| grep myprocess\\r\\n    myprocess    5 s    0.5 s
+        *** Test Cases ***
+        Write until expected output
+            Write Until Expected Output    ps -ef| grep myprocess\\r\\n    myprocess    5 s    0.5 s
+
         ```
 
         The above example writes command `ps -ef | grep myprocess\\r\\n` until
@@ -1130,14 +1147,16 @@ class TelnetConnection(telnetlib.Telnet):
         control character.
 
         Args:
-
             character: Control character name or number to send.
 
         Example:
 
         ```robotframework
-        Write Control Character    BRK    # Send Break command
-        Write Control Character    241    # Send No operation command
+        *** Test Cases ***
+        Write control character
+            Write Control Character    BRK    # Send Break command
+            Write Control Character    241    # Send No operation command
+
         ```
         """
         self._verify_connection()
@@ -1172,11 +1191,9 @@ class TelnetConnection(telnetlib.Telnet):
         for more information about log levels.
 
         Args:
-
             loglevel: Optional log level to use when logging output.
 
         Returns:
-
             All output currently available in the connection.
         """
         self._verify_connection()
@@ -1195,16 +1212,13 @@ class TelnetConnection(telnetlib.Telnet):
         on the [configured](#configuration) timeout.
 
         Args:
-
             expected: Text to wait for in the output.
             loglevel: Optional log level to use when logging output.
 
         Returns:
-
             Output up to and including the expected text.
 
         Raises:
-
             NoMatchError: If the expected text is not found before timeout.
 
         See [Logging](#logging) section for more information about log levels.
@@ -1298,30 +1312,30 @@ class TelnetConnection(telnetlib.Telnet):
         as `loglevel` similarly as with [Read Until] keyword.
 
         See the documentation of the
-        [Python re module](http://docs.python.org/library/re.html)
+        [Python re module]
         for more information about the supported regular expression syntax.
         Notice that possible backslashes need to be escaped in Robot Framework data.
 
         Args:
-
             *expected: Regular expression patterns to wait for. The last argument
                 can optionally be a log level.
 
         Returns:
-
             Output up to and including the first matching regular expression.
 
         Raises:
-
             RuntimeError: If no patterns are given.
             NoMatchError: If no pattern matches before timeout.
 
         Examples:
 
         ```robotframework
-        Read Until Regexp    (#|$)
-        Read Until Regexp    first_regexp    second_regexp
-        Read Until Regexp    \\d{4}-\\d{2}-\\d{2}    DEBUG
+        *** Test Cases ***
+        Read until regexp
+            Read Until Regexp    (#|$)
+            Read Until Regexp    first_regexp    second_regexp
+            Read Until Regexp    \\d{4}-\\d{2}-\\d{2}    DEBUG
+
         ```
         """
         if not expected:
@@ -1356,16 +1370,13 @@ class TelnetConnection(telnetlib.Telnet):
         the regular expression is stripped away.
 
         Args:
-
             loglevel: Optional log level to use when logging output.
             strip_prompt: Whether to exclude the prompt from the returned output.
 
         Returns:
-
             Output read from the connection.
 
         Raises:
-
             RuntimeError: If prompt is not set.
             AssertionError: If the prompt is not found before timeout.
 
@@ -1410,22 +1421,26 @@ class TelnetConnection(telnetlib.Telnet):
         internally. Following two examples are thus functionally identical:
 
         ```robotframework
-        ${out} =    Execute Command    pwd
+        *** Test Cases ***
+        Execute command
+            ${out} =    Execute Command    pwd
+
         ```
 
         ```robotframework
-        Write       pwd
-        ${out} =    Read Until Prompt
+        *** Test Cases ***
+        Execute command
+            Write       pwd
+            ${out} =    Read Until Prompt
+
         ```
 
         Args:
-
             command: Command to execute on the connection.
             loglevel: Optional log level to use when logging output.
             strip_prompt: Whether to exclude the prompt from the returned output.
 
         Returns:
-
             Output read from the connection.
 
         See [Logging](#logging) section for more information about log levels
