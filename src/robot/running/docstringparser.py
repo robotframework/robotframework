@@ -193,6 +193,8 @@ class DocStringParser:
                 yield name, doc
 
     def _normalize_name(self, name: str) -> str:
+        if name.startswith(("- ", "+ ", "* ")):
+            name = name[2:]
         if name.startswith("`"):
             name = name.strip("`").strip()
         if "(" in name:

@@ -523,6 +523,18 @@ doc:
     Doc
 args:
     <no-name>: Documentation
+
+## Ignore list markers
+Args:
+    - a: All doc formats ought to support the `-` list marker.
+    + `b`: Some support `+` as well.
+      Doc can continue.
+    * *c: Also `*` has some support.
+- - -
+args:
+    a: All doc formats ought to support the `-` list marker.
+    b: "Some support `+` as well.\\nDoc can continue."
+    c: Also `*` has some support.
 """
         )
 

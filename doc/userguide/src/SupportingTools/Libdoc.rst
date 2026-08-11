@@ -954,10 +954,13 @@ Possible unrecognized sections are left to the documentation without modificatio
 Supported formatting
 ~~~~~~~~~~~~~~~~~~~~
 
-There are often needs to process keyword documentation also using other tools
-than Libdoc. If the whole documentation is to be rendered as Markdown or
-reStructuredText, an empty line should be added after a header like `Args:`
-to avoid the header and following block to be rendered as a single paragraph::
+There are some times needs to process keyword documentation also using other
+tools than Libdoc. Such tools can support Markdown or reStructuredText, but
+all tools do not understand `Google style`_ documentation conventions.
+
+If the whole documentation is to be rendered as Markdown or reStructuredText,
+an empty line can be added after a header like `Args:` to avoid the header
+and the following block to be rendered as a single paragraph::
 
     Args:
 
@@ -973,9 +976,21 @@ into a `literal block`__-
 __ https://daringfireball.net/projects/markdown/syntax#precode
 __ https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#literal-blocks
 
+An alternative to the above is using a list::
+
+    Args:
+
+      - first: Documentation of the first argument.
+      - second: If documentation gets long, it can be split to multiple
+        lines. Wrapped lines should be indented consistently.
+
+Robot Framework supports `-`, `+` and `*` followed by a space as list markers
+in this context. Notice also that the whole list needs to indented with two
+spaces or more.
+
 Robot Framework also supports formatting section headers using the asterisk (`*`)
 and underscore (`_`) characters that are typically used for bold and italics in
-different documentation formats. The colon can be either inside (e.g. `**Args:**`)
+different documentation formats. The colon can be either inside (e.g. `*Args:*`)
 or outside (e.g. `*Returns*:`) formatting.
 
 Argument names can be formatted using the backtick character (:codesc:`\``)
