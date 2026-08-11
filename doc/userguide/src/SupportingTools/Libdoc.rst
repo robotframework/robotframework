@@ -959,8 +959,8 @@ tools than Libdoc. Such tools can support Markdown or reStructuredText, but
 all tools do not understand `Google style`_ documentation conventions.
 
 If the whole documentation is to be rendered as Markdown or reStructuredText,
-an empty line can be added after a header like `Args:` to avoid the header
-and the following block to be rendered as a single paragraph::
+an empty line can be added after a block header to avoid the header and the
+following block to be rendered as a single paragraph::
 
     Args:
 
@@ -970,8 +970,8 @@ and the following block to be rendered as a single paragraph::
 
 The above is enough to get arguments rendered as a `code block`__ in Markdown.
 This syntax still would not work too well with reStructuredText, but Robot Framework
-allows headers to end with two colons like `Args::` and that would turn the above
-into a `literal block`__-
+allows headers to end with two colons like `Args::` and then arguments would
+be rendered as a `literal block`__-
 
 __ https://daringfireball.net/projects/markdown/syntax#precode
 __ https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#literal-blocks
@@ -984,24 +984,29 @@ An alternative to the above is using a list::
       - second: If documentation gets long, it can be split to multiple
         lines. Wrapped lines should be indented consistently.
 
-Robot Framework supports `-`, `+` and `*` followed by a space as list markers
-in this context. Notice also that the whole list needs to indented with two
-spaces or more.
+Robot Framework supports `-`, `+` and `*`, followed by a space, as list markers
+in this context. The whole list also needs to indented with two or more spaces
+the same way as other blocks.
 
 Robot Framework also supports formatting section headers using the asterisk (`*`)
 and underscore (`_`) characters that are typically used for bold and italics in
-different documentation formats. The colon can be either inside (e.g. `*Args:*`)
-or outside (e.g. `*Returns*:`) formatting.
+different documentation formats. The colon can be either inside or outside
+formatting so, for example, both `*Args:*` and `*Args*:` are supported.
 
 Argument names can be formatted using the backtick character (:codesc:`\``)
-that is typically used for inline code. In this case the colon must not be
-formatted, so only something like :codesc:`\`first\`: The doc of the first argument`
-is supported.
+that is typically used for inline code. It is possible to use both single
+backticks like :codesc:`\`name\`` and double backticks like :codesc:`\`\`name\`\``.
+In this case the colon must not be formatted, so only something like
+:codesc:`\`name\`: Documentation` is supported.
 
 Possible header and argument name formatting is totally ignored by Robot Framework
 and thus has an effect only if the documentation is processed using other tools.
-Actual argument and return value documentation can also contain formatting
+Actual argument, return value and exception documentation can also contain formatting
 and that is handled the same way as `formatting elsewhere in the documentation`__.
+
+.. note:: External tools that understand `Google style`_ documentation conventions
+          may not accept extra formatting that Robot Framework supports. Test the
+          used formatting with all the used tools if interoperability is important.
 
 __ `Documentation syntax`_
 
