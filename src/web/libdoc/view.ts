@@ -26,6 +26,11 @@ class View {
   searchTime: number;
   resizeListenerAdded = false;
   resizeTimer: NodeJS.Timeout;
+  scrollAnchor: { element: HTMLElement; top: number } | null = null;
+  restoringAnchor = false;
+  anchorUpdateQueued = false;
+  resizing = false;
+  titleScrolled = false;
 
   constructor(
     libdoc: RuntimeLibdoc,
@@ -85,6 +90,9 @@ class View {
       return (
         Array.isArray(args) && args.some((arg) => arg.defaultValue !== null)
       );
+    });
+    Handlebars.registerHelper("hasDocs", function (args) {
+      return Array.isArray(args) && args.some((arg) => arg.doc);
     });
     Handlebars.registerHelper(
       "renderTypeInfo",
@@ -161,12 +169,33 @@ class View {
       createModal();
     }
     this.addCopyButtons();
-    requestAnimationFrame(() => this.updateDocClamping());
+    requestAnimationFrame(() => {
+      this.updateDocClamping();
+      this.updateTitleFit();
+    });
     if (!this.resizeListenerAdded) {
       this.resizeListenerAdded = true;
+      window.addEventListener(
+        "scroll",
+        () => {
+          this.updateTitleSize();
+          this.queueAnchorUpdate();
+        },
+        { passive: true },
+      );
+      this.updateTitleSize();
       window.addEventListener("resize", () => {
+        // Nothing is measured while the window is still being dragged: every
+        // measurement forces a layout of the whole document, and a drag fires
+        // this far more often than the screen is repainted.
+        this.resizing = true;
         clearTimeout(this.resizeTimer);
-        this.resizeTimer = setTimeout(() => this.updateDocClamping(), 200);
+        this.resizeTimer = setTimeout(() => {
+          this.resizing = false;
+          this.updateTitleFit();
+          this.updateDocClamping();
+          this.restoreScrollAnchor();
+        }, 200);
       });
       window
         .matchMedia("(prefers-color-scheme: dark)")
@@ -275,12 +304,133 @@ class View {
   }
 
   /**
+   * Resizing the window changes the height of everything above the reading
+   * position -- the keyword list collapses, arguments switch between rows and
+   * columns -- which would otherwise scroll the keyword being read out of
+   * view. The topmost visible keyword is therefore remembered while scrolling
+   * and put back to the same place after the layout has changed.
+   */
+  /**
+   * The title only has room to be big while the top of the page is visible.
+   * Reading `scrollY` does not force a layout and the class is only touched
+   * when the state really changes, so this is cheap enough for every event.
+   */
+  private updateTitleSize() {
+    const scrolled = window.scrollY > 40;
+    if (scrolled !== this.titleScrolled) {
+      this.titleScrolled = scrolled;
+      document.documentElement.classList.toggle("scrolled", scrolled);
+    }
+  }
+
+  /**
+   * Short library names fit into the compact bar at their full size, so only
+   * the ones that do not are made smaller. Measured off screen because the
+   * title itself is clipped, and only when the layout changes.
+   */
+  private updateTitleFit() {
+    const title = document.querySelector<HTMLElement>(".libdoc-title");
+    const heading = title?.querySelector<HTMLElement>("h1");
+    if (!title || !heading) {
+      return;
+    }
+    const root = document.documentElement;
+    const scrolled = root.classList.contains("scrolled");
+    root.classList.remove("scrolled");
+    const style = getComputedStyle(heading);
+    const probe = document.createElement("span");
+    probe.style.cssText =
+      "position:absolute;visibility:hidden;white-space:nowrap;" +
+      `font:${style.fontStyle} ${style.fontWeight} ${style.fontSize}/${style.lineHeight} ${style.fontFamily}`;
+    probe.textContent = heading.textContent;
+    document.body.appendChild(probe);
+    const needed = probe.getBoundingClientRect().width;
+    probe.remove();
+    if (scrolled) {
+      root.classList.add("scrolled");
+    }
+    root.classList.toggle("title-fits", needed <= this.compactTitleWidth());
+  }
+
+  /** Room the name has in the compact bar, without its horizontal padding. */
+  private compactTitleWidth(): number {
+    const padding = 16;
+    if (window.innerWidth < 900) {
+      // The bar spans the window; the language and hamburger buttons sit on it.
+      return window.innerWidth - 108 - padding;
+    }
+    const overview = document.querySelector<HTMLElement>(".libdoc-overview");
+    const width = overview?.getBoundingClientRect().width || 300;
+    return Math.min(width, 300) - padding;
+  }
+
+  private queueAnchorUpdate() {
+    if (this.restoringAnchor || this.anchorUpdateQueued || this.resizing) {
+      return;
+    }
+    // Measuring on every scroll event would force a layout per frame and make
+    // scrolling stutter. Once per 150ms is enough: the position is only read
+    // when the window is resized.
+    this.anchorUpdateQueued = true;
+    setTimeout(() => {
+      this.anchorUpdateQueued = false;
+      this.updateScrollAnchor();
+    }, 150);
+  }
+
+  private updateScrollAnchor() {
+    // The section that starts closest above the reading line, which is the one
+    // filling the top of the window. Taking the first section that merely
+    // reaches into the window would pick the previous, mostly scrolled away
+    // one, and its height changes on resize as well.
+    const readingLine = 100;
+    let anchor: { element: HTMLElement; top: number } | null = null;
+    document
+      .querySelectorAll<HTMLElement>(
+        "#introduction-container, .kw-row, .keyword-container, .data-type",
+      )
+      .forEach((element) => {
+        const { top, height } = element.getBoundingClientRect();
+        if (height && top <= readingLine) {
+          anchor = { element, top };
+        }
+      });
+    this.scrollAnchor = anchor;
+  }
+
+  private restoreScrollAnchor() {
+    const anchor = this.scrollAnchor;
+    if (!anchor || !anchor.element.isConnected) {
+      return;
+    }
+    const delta = anchor.element.getBoundingClientRect().top - anchor.top;
+    if (!delta) {
+      return;
+    }
+    this.restoringAnchor = true;
+    const details = document.querySelector<HTMLElement>(".libdoc-details");
+    if (details && details.scrollHeight > details.clientHeight + 1) {
+      details.scrollTop += delta;
+    } else {
+      window.scrollBy(0, delta);
+    }
+    requestAnimationFrame(() => {
+      this.restoringAnchor = false;
+    });
+  }
+
+  /**
    * Documentation is clamped to a few lines with CSS. Only documentation that
    * really is too long gets the `more...` link and becomes clickable.
    */
   private updateDocClamping() {
-    document.querySelectorAll(".arg-doc-wrap").forEach((wrap) => {
-      const doc = wrap.querySelector(".arg-doc") as HTMLElement | null;
+    const wraps: HTMLElement[] = [];
+    const docs: HTMLElement[] = [];
+    // Writes, reads and writes again in three separate passes. Interleaving
+    // them forces a layout per argument, which on a large library means a
+    // thousand of them for every single resize.
+    document.querySelectorAll<HTMLElement>(".arg-doc-wrap").forEach((wrap) => {
+      const doc = wrap.querySelector<HTMLElement>(".arg-doc");
       if (!doc) {
         return;
       }
@@ -288,7 +438,15 @@ class View {
       doc.classList.add("clamped");
       doc.classList.remove("truncated");
       doc.onclick = null;
-      if (doc.scrollHeight <= doc.clientHeight + 1) {
+      wraps.push(wrap);
+      docs.push(doc);
+    });
+    const overflowing = docs.map(
+      (doc) => doc.scrollHeight > doc.clientHeight + 1,
+    );
+    docs.forEach((doc, index) => {
+      const wrap = wraps[index];
+      if (!overflowing[index]) {
         doc.classList.remove("clamped");
         return;
       }
@@ -300,7 +458,7 @@ class View {
       wrap.appendChild(more);
       const showDetails = (event: Event) => {
         event.stopPropagation();
-        this.showArgDocModal(wrap as HTMLElement);
+        this.showArgDocModal(wrap);
       };
       doc.onclick = showDetails;
       more.onclick = showDetails;

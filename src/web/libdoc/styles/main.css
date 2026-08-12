@@ -7,6 +7,10 @@
   --highlighted-color: var(--text-color);
   --highlighted-background-color: yellow;
   --less-important-text-color: gray;
+  /* Slightly dimmer than --text-color, used for argument documentation. */
+  --muted-text-color: #5b5b60;
+  /* Argument kind markers: `*`, `**`, the tag and the arrow. */
+  --arg-kind-color: var(--less-important-text-color);
   --link-color: #0000ee;
   --hover-tint: #fafafa;
   --more-hover-color: var(--link-color);
@@ -14,13 +18,17 @@
 
 [data-theme="dark"] {
   --background-color: #1c2227;
-  --text-color: #e2e1d7;
+  --text-color: #ffffff;
   --border-color: #4e4e4e;
   --light-background-color: #002b36;
   --robot-highlight: yellow;
   --highlighted-color: var(--background-color);
   --highlighted-background-color: yellow;
   --less-important-text-color: #5b6a6f;
+  --muted-text-color: #c6c9cb;
+  /* Brighter than --less-important-text-color, which is too dim for the small
+     markers on the dark background. */
+  --arg-kind-color: #9fb0b6;
   --link-color: #52adff;
   --hover-tint: #232a30;
   --more-hover-color: var(--robot-highlight);
@@ -114,24 +122,70 @@ a {
   max-width: 1060px;
 }
 
+/* No transition on the width of this element. Animating it relayouts the whole
+   document on every frame, which on a large library is heavy enough to stall
+   the tab -- or, while resizing repeatedly deep inside the keywords, to make
+   the renderer run out of memory. The same was tried and reverted for the
+   margins and paddings inside the keywords. */
+
 .libdoc-title {
   position: fixed;
   left: 0;
   top: 0;
-  width: 300px;
+  /* Only as wide as the name, so the background does not cover the content
+     next to it. The keyword list width is the limit once scrolled. */
+  width: auto;
+  max-width: calc(100% - 80px);
   height: 36px;
   padding: 0.5rem;
-  margin: 0.5rem;
   display: flex;
   align-items: center;
   text-decoration: none;
   color: var(--text-color);
+  /* `.libdoc-details` paints its own background and scrolls underneath the
+     fixed title, so the title needs both a background and a higher layer to
+     stay readable. */
+  background: var(--background-color);
+  z-index: 2;
+}
+
+/* The title is large as long as the top of the page is visible and shrinks to
+   a compact bar once the page is scrolled, where it shares the line with the
+   keyword list and must stay readable instead of covering it. */
+.libdoc-title h1 {
+  margin: 0;
+  min-width: 0;
+  font-size: 2rem;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: font-size 0.2s ease;
+}
+
+/* Scrolled down the title shares the line with the keyword list and must not
+   reach into the documentation next to it. */
+html.scrolled .libdoc-title {
+  max-width: 300px;
+}
+
+/* Only names that do not fit the compact bar at full size are made smaller.
+   `title-fits` is set by the view, which measures the name off screen. */
+html.scrolled:not(.title-fits) .libdoc-title h1 {
+  font-size: 1.25rem;
+}
+
+/* The robot only decorates the big title; scrolled down the room is needed
+   for the name itself. */
+html.scrolled .libdoc-title > svg {
+  display: none;
 }
 
 #language-container {
   position: fixed;
   top: 0;
   right: 0;
+  width: 50px;
   z-index: 1000;
 }
 
@@ -179,6 +233,13 @@ a {
 
 #language-container ul {
   list-style: none;
+  /* The container is only as wide as the button, so the list is taken out of
+     the flow, sized to its entries and hung on the container's right edge
+     instead of wrapping them. */
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: max-content;
   margin: 0;
   padding: 10px;
   background-color: var(--background-color);
@@ -211,7 +272,9 @@ input.hamburger-menu {
   cursor: pointer;
 
   opacity: 0;
-  z-index: 2;
+  /* Above the title bar, which spans the whole width on mobile and paints its
+     own background. */
+  z-index: 4;
 
   -webkit-touch-callout: none;
 }
@@ -227,7 +290,7 @@ span.hamburger-menu {
   background: var(--text-color);
   border-radius: 2px;
 
-  z-index: 1;
+  z-index: 3;
 
   transform-origin: 4px 0;
 
@@ -270,6 +333,10 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3 {
   padding-top: 2px;
   height: 42px;
   width: 42px;
+  flex: none;
+  transition:
+    height 0.2s ease,
+    width 0.2s ease;
 }
 
 #robot-svg-path {
@@ -415,7 +482,7 @@ h4 a:hover {
 
 .arg-kind {
   color: transparent;
-  text-shadow: 0 0 0 var(--less-important-text-color);
+  text-shadow: 0 0 0 var(--arg-kind-color);
   /* Separates the marker from the name. Set here because the template joins
      them without whitespace. */
   padding: 0 0.45em 0 0;
@@ -427,6 +494,7 @@ h4 a:hover {
     z-index: 1;
     background: var(--background-color);
   }
+
 
   #toggle-keyword-shortcuts {
     border: 1px solid var(--border-color);
@@ -462,17 +530,57 @@ h4 a:hover {
     display: none;
   }
 
+  /* One navigation bar across the top: the library name on the left, the
+     language menu and the hamburger button on the right. The padding keeps the
+     name clear of those two buttons, which are positioned on top of the bar. */
   .libdoc-title {
     width: 100%;
-    padding: 0.5rem;
-    margin: 0;
+    max-width: 100%;
+    height: 52px;
+    padding: 0 108px 0 0.5rem;
     border-bottom: 1px solid var(--border-color);
     background: white;
     background: var(--background-color);
+    box-sizing: border-box;
   }
 
+  /* The robot decorates the wide layout; the bar needs the room for the name. */
   .libdoc-title > svg {
-    margin-right: 60px;
+    display: none;
+  }
+
+  .libdoc-title h1 {
+    font-size: 1.4rem;
+  }
+
+  html.scrolled:not(.title-fits) .libdoc-title h1 {
+    font-size: 1.15rem;
+  }
+
+  /* The bar spans the window here, so there is nothing to keep clear of. */
+  html.scrolled .libdoc-title {
+    max-width: 100%;
+  }
+
+  /* Left of the hamburger button, on the same bar. The offset itself is set in
+     the second narrow screen block further down. */
+  #language-container {
+    z-index: 5;
+  }
+
+  #language-container button {
+    padding: 0;
+    height: 52px;
+    width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+  }
+
+  #language-container ul {
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
   }
 
   .libdoc-details {
@@ -488,15 +596,18 @@ h4 a:hover {
   }
 
   .hamburger-menu:checked ~ .libdoc-overview {
-    display: block;
+    display: flex;
     position: fixed;
     height: 100vh;
     width: 100%;
+    /* Leaves the navigation bar visible above the opened menu. */
+    padding-top: 53px;
+    box-sizing: border-box;
   }
 
   .keywords-overview {
     border: none;
-    margin: 60px 0 0;
+    margin: 0;
   }
 
   .shortcuts {
@@ -506,7 +617,6 @@ h4 a:hover {
 
   #language-container {
     right: 50px;
-    width: 100px;
   }
 
   #language-container button {
@@ -610,6 +720,20 @@ h4 {
   display: flex;
   flex-direction: column;
   scroll-margin-top: 60px;
+  /* A large library is over 100 000 pixels tall and every width change would
+     otherwise relayout all of it. Keywords outside the window are skipped
+     until they are scrolled into view; `auto` in the intrinsic size makes the
+     browser remember the real height of the ones already seen, so the scroll
+     position stays put. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
+}
+
+/* Printing needs every keyword laid out, not just the visible ones. */
+@media print {
+  .keyword-container {
+    content-visibility: visible;
+  }
 }
 
 .keyword-container:target {
@@ -661,6 +785,15 @@ h4 {
 
 /* Arguments, returns and raises share the same layout: one `tbody` per entry
    holding the signature row and an optional documentation row below it. */
+/* A table that cannot shrink any further -- long argument names, wide types --
+   scrolls inside its own box instead of making the keyword card wider than the
+   screen. `min-width: 0` is needed because the section is a block inside flex
+   containers whose automatic minimum size is the content size. */
+.table-scroll {
+  overflow-x: auto;
+  min-width: 0;
+}
+
 .kw-info-table {
   width: 100%;
   max-width: 1000px;
@@ -721,7 +854,7 @@ h4 {
 /* Documentation is set apart from the signature by indentation and a bar. */
 .arg-doc-wrap {
   max-width: 1000px;
-  margin-left: 1.6rem;
+  margin: 0.5rem 1.6rem;
   padding-left: 0.75rem;
   border-left: 3px solid var(--border-color);
   transition: border-color 0.15s;
@@ -733,6 +866,28 @@ h4 {
 
 .arg-doc {
   font-size: 0.95em;
+  color: var(--muted-text-color);
+}
+
+/* Long unbreakable tokens in the documentation -- URLs, inline code samples --
+   would otherwise raise the table's min-content width and push the whole table
+   past the viewport, because `overflow-wrap: break-word` does not affect
+   intrinsic sizing while `anywhere` does. The descendants must be listed: the
+   inherited value loses against the rules matching code and links directly. */
+.arg-doc,
+.arg-doc code,
+.arg-doc a {
+  overflow-wrap: anywhere;
+}
+
+/* Code blocks do not wrap at all, so they would keep the whole table as wide
+   as their longest line -- even while clamped out of sight. `width: 0` takes
+   them out of the intrinsic width calculation, `min-width: 100%` gives them
+   the cell back, and what does not fit scrolls inside the block itself. */
+.arg-doc pre {
+  width: 0;
+  min-width: 100%;
+  overflow-x: auto;
 }
 
 /* Only documentation that really is too long stays clamped. `truncated` is
@@ -782,6 +937,15 @@ h4 {
   font-weight: 600;
 }
 
+/* Without a pointer that can hover there is nothing to reveal the link, so it
+   is shown highlighted right away. */
+@media (hover: none) {
+  .doc-more {
+    color: var(--more-hover-color);
+    font-weight: 600;
+  }
+}
+
 /* Argument details shown in the modal. */
 .arg-detail-container {
   padding: 0.5rem 1.5rem 1.5rem;
@@ -799,49 +963,97 @@ h4 {
   color: var(--less-important-text-color);
 }
 
-/* Arguments stack below each other when there is not enough room for columns. */
-@media only screen and (max-width: 640px) {
-  .kw-info-table,
-  .kw-info-table tbody,
-  .kw-info-table tr,
-  .kw-info-table td {
-    display: block;
-    width: auto;
+/* The documentation column only exists in the wide layout below. */
+.arg-col-doc {
+  display: none;
+}
+
+/* An argument without documentation has an empty cell so that the row keeps
+   all four columns in the wide layout. Without the columns it is just an empty
+   row and must not take any space. */
+.doc-row.no-doc {
+  display: none;
+}
+
+/* Keyword documentation stays at a readable measure even when the details pane
+   is wider. Returns and raises keep the 1000px of `.kw-info-table`. */
+.kwdoc {
+  max-width: 1000px;
+}
+
+/* From this width on there is room for a fourth column, so the documentation
+   moves next to the signature instead of below it. `display: contents` on the
+   two rows of a group drops the row boxes and lets their cells share one row.
+   The `colspan` of the documentation cell then spans phantom columns that stay
+   empty and therefore collapse to zero width. */
+@media only screen and (min-width: 1280px) {
+  .libdoc-details {
+    max-width: 1600px;
   }
 
-  .kw-info-table thead {
-    display: none;
+  .arguments-table {
+    max-width: none;
   }
 
-  .kw-info-table td {
-    padding: 0;
+  .arguments-table .arg-col-doc {
+    display: table-cell;
   }
 
-  .kw-info-table .arg-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    column-gap: 0.7rem;
-    row-gap: 0.15rem;
+  .arguments-table .arg-group > tr {
+    display: contents;
   }
 
-  .kw-info-table .arg-group {
-    padding: 0.4rem 0;
+  /* The table carries its own structure, so it does not need the indentation
+     the sections get below their headings. */
+  .args .section-content {
+    margin-left: 0;
+  }
+
+  /* The signature and the documentation are one row now, so the hairline below
+     the signature cells is wanted again. */
+  .arguments-table .arg-group > tr.arg-row.has-doc > td {
     border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.4rem;
   }
 
-  .kw-info-table .arg-group > tr > td,
-  .kw-info-table .arg-group > tr.arg-row.has-doc > td {
+  /* The last group closes the table without a trailing line, as everywhere
+     else. Its signature cells must drop the hairline too, otherwise the line
+     stops where the documentation column starts. */
+  .arguments-table .arg-group:last-child > tr.arg-row.has-doc > td,
+  .arguments-table .arg-group:last-child > tr > td {
     border-bottom: none;
   }
 
-  .kw-info-table .arg-group:last-child {
-    border-bottom: none;
+  .arguments-table .doc-row > td {
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+  }
+
+  /* The type is no longer the last cell of the row, so it needs the padding
+     that `td:last-child` takes away from it. */
+  .arguments-table thead th.arg-col-type,
+  .arguments-table .arg-group > tr > td.arg-cell-type {
+    padding-right: 1.5rem;
+  }
+
+  /* Its own column needs neither the indentation nor the quote bar. */
+  .arguments-table .arg-doc-wrap {
+    padding-left: 0;
+    border-left: none;
+    margin: 0;
+  }
+}
+
+/* The columns are kept on narrow screens as well; only the padding between
+   them and the documentation indentation are tightened up. */
+@media only screen and (max-width: 640px) {
+  .kw-info-table th,
+  .kw-info-table td {
+    padding-right: 0.7rem;
   }
 
   .arg-doc-wrap {
     margin-left: 0.85rem;
-    margin-top: 0.2rem;
   }
 }
 
@@ -856,9 +1068,10 @@ h4 {
   font-size: 1.1em;
 }
 
-.arg-default-eq {
-  color: var(--less-important-text-color);
-  padding-right: 0.15em;
+/* The kind marker and the name are one unit: a line break between them would
+   leave the `*`, the tag or the arrow dangling on its own line. */
+.arg-name {
+  white-space: nowrap;
 }
 
 .arg-type,
@@ -983,13 +1196,19 @@ mark {
   bottom: 0;
   left: 0;
   background-color: rgba(0, 0, 0, 0.7);
-  z-index: 1;
+  /* Above everything else -- the title bar, the language menu and the theme
+     toggle all place themselves on top of the page. The modal and its close
+     button stack inside this element, so this is the only value that has to
+     beat them. */
+  z-index: 2000;
 }
 .modal {
   display: flex;
   flex-wrap: nowrap;
   flex-direction: column;
-  width: 720px;
+  /* The same measure the documentation uses everywhere else. The close button
+     container must keep the identical width to stay aligned with the modal. */
+  width: 1000px;
   max-width: calc(100vw - 2rem);
   margin: 0 auto;
   height: calc(100vh - 6rem);
@@ -1012,7 +1231,9 @@ mark {
 }
 
 .modal-close-button-container {
-  width: 720px;
+  /* The same measure the documentation uses everywhere else. The close button
+     container must keep the identical width to stay aligned with the modal. */
+  width: 1000px;
   max-width: calc(100vw - 2rem);
   margin: 0 auto;
   overflow: auto;

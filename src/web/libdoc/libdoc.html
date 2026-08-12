@@ -82,8 +82,7 @@
     <div id="root"></div>
     <script type="text/x-handlebars-template" id="base-template">
       <div class="base-container">
-        <div id="language-container">
-        </div>
+        <div id="language-container"></div>
         <button id="theme-toggle" type="button" title="{{t 'toggleTheme'}}">
           <svg
             class="light-mode-icon"
@@ -201,7 +200,7 @@
       {{#if args.length}}
         <div class="args">
           <h4>{{t "arguments"}}</h4>
-          <div class="section-content">
+          <div class="section-content table-scroll">
             <table class="arguments-table kw-info-table">
               <thead>
                 <tr>
@@ -210,6 +209,9 @@
                     <th class="arg-col-default">{{t "default"}}</th>
                   {{/if}}
                   <th class="arg-col-type">{{t "type"}}</th>
+                  {{#if (hasDocs args)}}
+                    <th class="arg-col-doc">{{t "doc"}}</th>
+                  {{/if}}
                 </tr>
               </thead>
               {{#each args}}
@@ -303,7 +305,7 @@
             {{#if (or (hasVisibleReturnType returnType) returnDoc)}}
               <div class="return-info">
                 <h4>{{t "returns"}}</h4>
-                <div class="section-content">
+                <div class="section-content table-scroll">
                   <table class="return-info-table kw-info-table">
                     <tbody class="arg-group">
                       {{#if (hasVisibleReturnType returnType)}}
@@ -330,7 +332,7 @@
             {{#if (dictSize raises)}}
               <div class="raises-info">
                 <h4>{{t "raises"}}</h4>
-                <div class="section-content">
+                <div class="section-content table-scroll">
                   <table class="raises-table kw-info-table">
                     {{#each raises}}
                       <tbody class="arg-group">
@@ -401,8 +403,6 @@
                   >&#x27F6;</span>{{~/ifEquals~}}{{~name~}}</span></td>
             {{#if showDefault}}
               <td class="arg-cell-default">{{#ifNotNull defaultValue}}<span
-                    class="arg-default-eq"
-                  >=</span> <span
                     class="arg-default-value"
                     title="{{t 'defaultTitle'}}"
                   >{{defaultValue}}</span>{{/ifNotNull}}</td>
@@ -412,15 +412,15 @@
                 false
               }}}{{/if}}</td>
           </tr>
-          {{#if doc}}
-            <tr class="doc-row">
-              <td colspan="{{#if showDefault}}3{{else}}2{{/if}}">
+          <tr class="doc-row{{#unless doc}} no-doc{{/unless}}">
+            <td colspan="{{#if showDefault}}3{{else}}2{{/if}}">
+              {{#if doc}}
                 <div class="arg-doc-wrap">
                   <div class="doc arg-doc clamped">{{{doc}}}</div>
                 </div>
-              </td>
-            </tr>
-          {{/if}}
+              {{/if}}
+            </td>
+          </tr>
         </tbody>
       {{/unless}}
     </script>
