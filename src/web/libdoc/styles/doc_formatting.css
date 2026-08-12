@@ -3,12 +3,12 @@
 .doc > h2,
 .section > h1,
 .section > h2 {
-  margin-top: 2rem;
+  margin-top: 3rem;
   margin-bottom: 1rem;
 }
 .doc > h3,
 .section > h3 {
-  margin-top: 1.5rem;
+  margin-top: 2rem;
   margin-bottom: 1rem;
 }
 .doc > h4,

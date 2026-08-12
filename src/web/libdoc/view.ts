@@ -3,6 +3,7 @@ import Handlebars from "handlebars";
 import Storage from "./storage";
 import Translations from "./i18n/translations";
 import { createModal, showModal } from "./modal";
+import { renderArgKindIcons } from "./icons/icons";
 import { RuntimeLibdoc, ArgType } from "./types";
 import { htmlEscape, regexpEscape, delay } from "./util";
 
@@ -167,6 +168,7 @@ class View {
   render() {
     document.title = this.libdoc.name;
     this.setTheme();
+    renderArgKindIcons();
     this.renderTemplates();
     this.initTagSearch();
     this.initHashEvents();

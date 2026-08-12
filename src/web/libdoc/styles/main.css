@@ -34,7 +34,7 @@
   --background-color: #1c2227;
   --text-color: #ffffff;
   --border-color: #4e4e4e;
-  --light-background-color: #002b36;
+  --light-background-color: #033441;
   --robot-highlight: yellow;
   --highlighted-color: var(--background-color);
   --highlighted-background-color: yellow;
@@ -509,12 +509,48 @@ h4 a:hover {
 }
 
 .arg-kind {
-  color: transparent;
-  text-shadow: 0 0 0 var(--arg-kind-color);
+  color: var(--arg-kind-color);
   /* Separates the marker from the name. Set here because the template joins
      them without whitespace. */
   padding: 0 0.45em 0 0;
-  font-size: 0.8em;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* The sprite only holds the definitions and must not take any space. */
+.arg-icon-sprite {
+  display: none;
+}
+
+/* Sized in `em` so the markers follow the argument name, and the height is
+   what is normalised -- the four icons have different proportions, so a shared
+   width would render them at different optical sizes. The ratios have to be
+   declared here: the `viewBox` sits on the symbol, so the element referencing
+   it has no intrinsic size of its own and would fall back to 300x150. */
+.arg-kind-icon {
+  fill: currentColor;
+  width: 1.3em;
+  height: auto;
+  max-height: 0.8em;
+}
+
+.arg-kind-icon-varargs {
+  aspect-ratio: 1;
+}
+
+.arg-kind-icon-kwargs {
+  aspect-ratio: 199.39 / 98.98;
+}
+
+.arg-kind-icon-named {
+  aspect-ratio: 23.93 / 15.36;
+}
+
+/* The arrow is long and thin; at the shared height it reads as a hairline
+   next to the asterisks, so it gets a little more of it. */
+.arg-kind-icon-positional {
+  aspect-ratio: 23.12 / 7.64;
+  height: 0.75em;
 }
 
 @media only screen and (min-width: 900px) {
@@ -665,6 +701,7 @@ h4 a:hover {
 a.name,
 span.name {
   font-style: italic;
+  white-space: pre;
 }
 .libdoc-details a img {
   border: 1px solid #c30 !important;
@@ -1103,10 +1140,11 @@ h4 {
     padding-bottom: 0.4rem;
   }
 
-  /* The type is no longer the last cell of the row, so it needs the padding
-     that `td:last-child` takes away from it. */
-  .arguments-table thead th.arg-col-type,
-  .arguments-table .arg-group > tr > td.arg-cell-type {
+  /* The documentation is the last column here, so the signature cell before it
+     is not the last one of the table and keeps the gutter that
+     `td:last-child` would take away. */
+  .arguments-table.has-doc-column thead th:not(.arg-col-doc),
+  .arguments-table.has-doc-column .arg-group > tr.arg-row > td {
     padding-right: 1.5rem;
   }
 
@@ -1132,29 +1170,37 @@ h4 {
 }
 
 .enum-type-members span,
-.arg-name,
 .arg-default-value,
 .raise-name {
   font-family: monospace;
   background: var(--light-background-color);
   border-radius: 3px;
-  padding: 0 0.1em;
+  padding: 0.1em 0.8em;
   font-size: var(--font-size-code);
+  white-space: nowrap;
+}
+
+.arg-name {
+  font-family: monospace;
+  font-size: var(--font-size-code);
+  white-space: nowrap;
 }
 
 /* The kind marker and the name are one unit: a line break between them would
    leave the `*`, the tag or the arrow dangling on its own line. */
-.arg-name {
-  white-space: nowrap;
-}
 
 .arg-type,
 span.type,
 a.type {
   font-family: monospace;
   font-size: var(--font-size-code);
+  color: var(--link-color);
   background: none;
   padding: 0 0;
+}
+
+a.type {
+  text-decoration: underline;
 }
 
 .typed-dict-item .td-type::after {

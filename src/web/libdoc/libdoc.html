@@ -207,11 +207,11 @@
               <thead>
                 <tr>
                   <th class="arg-col-name" scope="col">{{t "name"}}</th>
-                  {{#if (hasDefaults args)}}
-                    <th class="arg-col-default" scope="col">{{t "default"}}</th>
-                  {{/if}}
                   {{#if (hasTypes args)}}
                     <th class="arg-col-type" scope="col">{{t "type"}}</th>
+                  {{/if}}
+                  {{#if (hasDefaults args)}}
+                    <th class="arg-col-default" scope="col">{{t "default"}}</th>
                   {{/if}}
                   {{#if (hasDocs args)}}
                     <th class="arg-col-doc" scope="col">{{t "doc"}}</th>
@@ -397,30 +397,30 @@
               >{{~#ifEquals kind "VAR_POSITIONAL"~}}<span
                     class="arg-kind"
                     title="{{t 'varArgs'}}"
-                  >*</span>{{~/ifEquals~}}{{~#ifEquals kind "VAR_NAMED"~}}<span
+                  ><svg class="arg-kind-icon arg-kind-icon-varargs" aria-hidden="true"><use href="#arg-icon-varargs"></use></svg></span>{{~/ifEquals~}}{{~#ifEquals kind "VAR_NAMED"~}}<span
                     class="arg-kind"
                     title="{{t 'varNamedArgs'}}"
-                  >**</span>{{~/ifEquals~}}{{~#ifEquals kind "NAMED_ONLY"~}}<span
+                  ><svg class="arg-kind-icon arg-kind-icon-kwargs" aria-hidden="true"><use href="#arg-icon-kwargs"></use></svg></span>{{~/ifEquals~}}{{~#ifEquals kind "NAMED_ONLY"~}}<span
                     class="arg-kind"
                     title="{{t 'namedOnlyArg'}}"
-                  >&#x1F3F7;</span>{{~/ifEquals~}}{{~#ifEquals
+                  ><svg class="arg-kind-icon arg-kind-icon-named" aria-hidden="true"><use href="#arg-icon-named"></use></svg></span>{{~/ifEquals~}}{{~#ifEquals
                   kind
                   "POSITIONAL_ONLY"
                 ~}}<span
                     class="arg-kind"
                     title="{{t 'posOnlyArg'}}"
-                  >&#x27F6;</span>{{~/ifEquals~}}{{~name~}}</span></td>
-            {{#if showDefault}}
-              <td class="arg-cell-default">{{#ifNotNull defaultValue}}<span
-                    class="arg-default-value"
-                    title="{{t 'defaultTitle'}}"
-                  >{{defaultValue}}</span>{{/ifNotNull}}</td>
-            {{/if}}
+                  ><svg class="arg-kind-icon arg-kind-icon-positional" aria-hidden="true"><use href="#arg-icon-positional"></use></svg></span>{{~/ifEquals~}}{{~name~}}</span></td>
             {{#if showType}}
               <td class="arg-cell-type">{{#if type}}{{{renderTypeInfo
                   type
                   false
                 }}}{{/if}}</td>
+            {{/if}}
+            {{#if showDefault}}
+              <td class="arg-cell-default">{{#ifNotNull defaultValue}}<span
+                    class="arg-default-value"
+                    title="{{t 'defaultTitle'}}"
+                  >{{defaultValue}}</span>{{/ifNotNull}}</td>
             {{/if}}
           </tr>
           {{#if showDoc}}
