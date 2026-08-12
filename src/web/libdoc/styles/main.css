@@ -14,6 +14,20 @@
   --link-color: #0000ee;
   --hover-tint: #fafafa;
   --more-hover-color: var(--link-color);
+
+  /* Type scale. Every size is in `rem` on purpose. With `em` the sizes
+     multiply as soon as the elements nest, and the generic `monospace` family
+     makes browsers restart the calculation from their 13px fixed font default
+     -- which is how `font-size: 1.1em` ended up rendering *smaller* than the
+     surrounding text. */
+  --font-size-keyword: 1.625rem; /* keyword and data type names */
+  --font-size-section: 1.25rem; /* Arguments, Returns, Documentation, ... */
+  --font-size-doc: 0.9375rem; /* argument documentation */
+  --font-size-code: 0.875rem; /* monospace runs larger than sans at the
+     same size -- bigger x-height, wider glyphs -- so it is set a step
+     smaller to sit level with the 1rem body text */
+  --font-size-small: 0.875rem; /* keyword list, `more...` */
+  --font-size-label: 0.75rem; /* uppercase column headers */
 }
 
 [data-theme="dark"] {
@@ -33,6 +47,23 @@
   --hover-tint: #232a30;
   --more-hover-color: var(--robot-highlight);
   color-scheme: dark;
+}
+
+html {
+  /* iOS Safari and Chrome on Android inflate the text of blocks they consider
+     too narrow ("text autosizing"). They do it to the body copy but not to the
+     headings, which flattens the type scale below into no hierarchy at all. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Safari only supports the prefixed property, and the CSS minifier drops that
+   prefix from the rule above. Inside a feature query the declaration survives,
+   and the query itself is a Safari-only test. */
+@supports (-webkit-touch-callout: none) {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
 }
 
 html[theme-toggled] body {
@@ -372,7 +403,7 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3 {
 }
 
 .shortcuts {
-  font-size: 0.9em;
+  font-size: var(--font-size-small);
   overflow: auto;
   list-style: none;
   padding-left: 0;
@@ -436,7 +467,7 @@ h4 a:hover {
   text-decoration: none;
   color: var(--text-color);
   display: inline-block;
-  font-size: 0.9em;
+  font-size: var(--font-size-small);
 }
 .dt-usages a::first-letter {
   font-weight: bold;
@@ -467,7 +498,7 @@ h4 a:hover {
 
 .tag-link {
   padding: 0.05rem 0.6rem;
-  font-size: 0.85em;
+  font-size: var(--font-size-small);
   border: 1px solid var(--border-color);
   border-radius: 10px;
   cursor: pointer;
@@ -596,8 +627,17 @@ h4 a:hover {
   .hamburger-menu:checked ~ .libdoc-overview {
     display: flex;
     position: fixed;
-    height: 100vh;
+    /* Covers whatever the viewport currently is. `height: 100vh` falls short
+       while a mobile browser hides its address bar, and the documentation
+       shows through below the menu. */
+    inset: 0;
+    height: auto;
     width: 100%;
+    /* Above the documentation: `content-visibility` makes every keyword card a
+       stacking context of its own, and those come later in the document, so
+       without a layer of its own the menu ends up behind their code blocks.
+       Stays below the navigation bar (2) and the hamburger button (3 and 4). */
+    z-index: 1;
     /* Leaves the navigation bar visible above the opened menu. */
     padding-top: 53px;
     box-sizing: border-box;
@@ -645,7 +685,7 @@ a:hover {
 .shortcut-list-toggle,
 .tag-list-toggle {
   margin-bottom: 1em;
-  font-size: 0.9em;
+  font-size: var(--font-size-small);
 }
 input.switch {
   display: none;
@@ -699,6 +739,19 @@ input.switch:checked + .slider::before {
   min-width: 250px;
 }
 h4 {
+  margin-right: 0.5rem;
+}
+
+/* The keyword name and the headings of its sections. Sized here rather than
+   left to the browser defaults, where an `h3` following an `h2` would be the
+   same size as the body text next to it. */
+.libdoc-details h2 {
+  font-size: var(--font-size-keyword);
+}
+
+.libdoc-details h3 {
+  font-size: var(--font-size-section);
+  font-weight: 600;
   margin-right: 0.5rem;
 }
 
@@ -769,7 +822,7 @@ h4 {
 /* Section contents are indented below their heading when there is room. */
 @media only screen and (min-width: 700px) {
   .section-content {
-    margin-left: 1.4rem;
+    margin-left: 0.8rem;
   }
 }
 
@@ -793,11 +846,21 @@ h4 {
   margin-bottom: 1.33rem;
 }
 
+/* Without a documentation column nothing wants the leftover space, and
+   stretching a signature over the full width leaves the columns floating far
+   apart -- the gutter below is what gives them room instead. A table that does
+   have the column keeps the full width, because that column is what grows. */
+.arguments-table:not(.has-doc-column) {
+  width: auto;
+}
+
 .kw-info-table th,
 .kw-info-table td {
   text-align: left;
   vertical-align: baseline;
-  padding: 0.4rem 1.5rem 0.4rem 0;
+  /* The gutter between the columns grows with the window between these two
+     bounds, so the columns breathe on a wide screen without drifting apart. */
+  padding: 0.4rem clamp(1.5rem, 2.5vw, 3rem) 0.4rem 0;
   overflow-wrap: break-word;
 }
 
@@ -807,7 +870,7 @@ h4 {
 }
 
 .kw-info-table thead th {
-  font-size: 0.78em;
+  font-size: var(--font-size-label);
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -857,7 +920,7 @@ h4 {
 }
 
 .arg-doc {
-  font-size: 0.95em;
+  font-size: var(--font-size-doc);
   color: var(--muted-text-color);
 }
 
@@ -925,7 +988,7 @@ h4 {
   border: none;
   background: none;
   font-family: inherit;
-  font-size: 0.85em;
+  font-size: var(--font-size-small);
   color: var(--muted-text-color);
   cursor: pointer;
 }
@@ -999,9 +1062,9 @@ h4 {
      differently sized -- and mostly empty -- columns. Below this width the
      documentation is a full width row of its own and has no column to grow
      into, so the distribution is left to the browser there. */
-  .arguments-table .arg-col-name,
-  .arguments-table .arg-col-default,
-  .arguments-table .arg-col-type {
+  .arguments-table.has-doc-column .arg-col-name,
+  .arguments-table.has-doc-column .arg-col-default,
+  .arguments-table.has-doc-column .arg-col-type {
     width: 1%;
   }
 
@@ -1076,7 +1139,7 @@ h4 {
   background: var(--light-background-color);
   border-radius: 3px;
   padding: 0 0.1em;
-  font-size: 1.1em;
+  font-size: var(--font-size-code);
 }
 
 /* The kind marker and the name are one unit: a line break between them would
@@ -1089,7 +1152,7 @@ h4 {
 span.type,
 a.type {
   font-family: monospace;
-  font-size: 1em;
+  font-size: var(--font-size-code);
   background: none;
   padding: 0 0;
 }
@@ -1112,7 +1175,7 @@ a.type {
   padding: 0.4rem;
   font-family: monospace;
   background: var(--light-background-color);
-  font-size: 1.1em;
+  font-size: var(--font-size-code);
 }
 
 /* Search matches found by mark.js. */
@@ -1158,7 +1221,7 @@ mark {
 }
 
 .footer {
-  font-size: 0.9em;
+  font-size: var(--font-size-small);
 }
 .highlight {
   background: var(--highlighted-background-color);

@@ -95,6 +95,17 @@ class View {
     Handlebars.registerHelper("hasDocs", function (args) {
       return Array.isArray(args) && args.some((arg) => arg.doc);
     });
+    Handlebars.registerHelper("hasTypes", function (args) {
+      return Array.isArray(args) && args.some((arg) => arg.type);
+    });
+    // The documentation cell spans the signature columns, and which of those
+    // are rendered depends on the arguments.
+    Handlebars.registerHelper(
+      "signatureColumns",
+      function (showDefault: boolean, showType: boolean) {
+        return 1 + (showDefault ? 1 : 0) + (showType ? 1 : 0);
+      },
+    );
     Handlebars.registerHelper(
       "renderTypeInfo",
       function (argType: ArgType, isReturnType: boolean) {

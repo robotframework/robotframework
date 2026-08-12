@@ -185,7 +185,7 @@
               {{> argsSection this}}
               {{#if this.doc}}
                 <div class="kw-docs">
-                  <h4>{{t "doc"}}</h4>
+                  <h3>{{t "doc"}}</h3>
                   <div class="section-content">
                     <div class="kwdoc doc">{{{this.doc}}}</div>
                   </div>
@@ -199,16 +199,20 @@
     <script type="text/x-handlebars-template" id="arguments-section-template">
       {{#if args.length}}
         <div class="args">
-          <h4>{{t "arguments"}}</h4>
+          <h3>{{t "arguments"}}</h3>
           <div class="section-content table-scroll">
-            <table class="arguments-table kw-info-table">
+            <table
+              class="arguments-table kw-info-table{{#if (hasDocs args)}} has-doc-column{{/if}}"
+            >
               <thead>
                 <tr>
                   <th class="arg-col-name" scope="col">{{t "name"}}</th>
                   {{#if (hasDefaults args)}}
                     <th class="arg-col-default" scope="col">{{t "default"}}</th>
                   {{/if}}
-                  <th class="arg-col-type" scope="col">{{t "type"}}</th>
+                  {{#if (hasTypes args)}}
+                    <th class="arg-col-type" scope="col">{{t "type"}}</th>
+                  {{/if}}
                   {{#if (hasDocs args)}}
                     <th class="arg-col-doc" scope="col">{{t "doc"}}</th>
                   {{/if}}
@@ -218,6 +222,7 @@
                 {{> arg
                   this
                   showDefault=(hasDefaults ../args)
+                  showType=(hasTypes ../args)
                   showDoc=(hasDocs ../args)
                 }}
               {{/each}}
@@ -308,7 +313,7 @@
             {{> argsSection this}}
             {{#if (or (hasVisibleReturnType returnType) returnDoc)}}
               <div class="return-info">
-                <h4>{{t "returns"}}</h4>
+                <h3>{{t "returns"}}</h3>
                 <div class="section-content table-scroll">
                   <table class="return-info-table kw-info-table">
                     <tbody class="arg-group">
@@ -335,7 +340,7 @@
             {{/if}}
             {{#if (dictSize raises)}}
               <div class="raises-info">
-                <h4>{{t "raises"}}</h4>
+                <h3>{{t "raises"}}</h3>
                 <div class="section-content table-scroll">
                   <table class="raises-table kw-info-table">
                     {{#each raises}}
@@ -362,7 +367,7 @@
             {{/if}}
             {{#if tags.length}}
               <div class="tags">
-                <h4>{{t "tags"}}</h4>
+                <h3>{{t "tags"}}</h3>
                 <div class="section-content">
                   {{#each tags}}<span
                       class="tag-link"
@@ -373,7 +378,7 @@
             {{/if}}
             {{#if doc}}
               <div class="kw-docs">
-                <h4>{{t "doc"}}</h4>
+                <h3>{{t "doc"}}</h3>
                 <div class="section-content">
                   <div class="kwdoc doc">{{{doc}}}</div>
                 </div>
@@ -411,10 +416,12 @@
                     title="{{t 'defaultTitle'}}"
                   >{{defaultValue}}</span>{{/ifNotNull}}</td>
             {{/if}}
-            <td class="arg-cell-type">{{#if type}}{{{renderTypeInfo
-                type
-                false
-              }}}{{/if}}</td>
+            {{#if showType}}
+              <td class="arg-cell-type">{{#if type}}{{{renderTypeInfo
+                  type
+                  false
+                }}}{{/if}}</td>
+            {{/if}}
           </tr>
           {{#if showDoc}}
             {{! The colspan counts the signature columns only. In the wide
@@ -424,7 +431,7 @@
                 documentation still needs its cell there to keep the columns
                 aligned, and `.doc-row.no-doc` hides it in the narrow layout. }}
             <tr class="doc-row{{#unless doc}} no-doc{{/unless}}">
-              <td colspan="{{#if showDefault}}3{{else}}2{{/if}}">
+              <td colspan="{{signatureColumns showDefault showType}}">
                 {{#if doc}}
                   <div class="arg-doc-wrap">
                     <div class="doc arg-doc clamped">{{{doc}}}</div>
@@ -461,13 +468,13 @@
          <div class="data-type-content">
             {{#if doc}}
               <div class="dt-docs">
-                <h4>{{t "doc"}}</h4>
+                <h3>{{t "doc"}}</h3>
                 <div class="dtdoc doc">{{{doc}}}</div>
               </div>
             {{/if}}
             {{#if members}}
               <div class="dt-members">
-                <h4>{{t "allowedValues"}}</h4>
+                <h3>{{t "allowedValues"}}</h3>
                 <ul class="enum-type-members">
                   {{#each members}}
                   <li>
@@ -482,7 +489,7 @@
             {{else}}
               {{#if items}}
               <div class="dt-items">
-                <h4>{{t "dictStructure"}}</h4>
+                <h3>{{t "dictStructure"}}</h3>
                   <div class="typed-dict-annotation">
                   <span class="typed-dict-item">
                     {
@@ -503,7 +510,7 @@
             {{/if}}
             {{#if accepts.length}}
               <div class="dt-docs">
-                <h4>{{t "convertedTypes"}}</h4>
+                <h3>{{t "convertedTypes"}}</h3>
                 <ul class="dt-usages-list">
                 {{#each accepts}}
                   <li>{{this}}</li>
@@ -513,7 +520,7 @@
             {{/if}}
             {{#if usages.length}}
               <div class="dt-usages">
-                <h4>{{t "usages"}}</h4>
+                <h3>{{t "usages"}}</h3>
                 <ul class="dt-usages-list">
                   {{#each usages}}
                     <li><a href="#{{encodeURIComponent this}}">{{this}}</a></li>

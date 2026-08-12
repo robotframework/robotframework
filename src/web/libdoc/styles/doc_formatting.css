@@ -46,7 +46,7 @@
   letter-spacing: 0.1em;
 }
 .doc pre {
-  font-size: 1.1em;
+  font-size: var(--font-size-code);
   letter-spacing: 0.05em;
   background: var(--light-background-color);
   overflow-y: auto;
@@ -60,7 +60,7 @@
 
 .doc code,
 .docutils.literal {
-  font-size: 1.1em;
+  font-size: var(--font-size-code);
   letter-spacing: 0.05em;
   background: var(--light-background-color);
   padding: 1px;
@@ -68,6 +68,12 @@
 }
 .doc ul > li {
   list-style-type: square;
+}
+/* Half of the 40px browsers indent lists by. Enough to set the items apart
+   from the text above them, and it keeps nested lists readable on a phone. */
+.doc ul,
+.doc ol {
+  padding-left: 20px;
 }
 .doc img {
   border: 1px solid #ccc;
