@@ -204,18 +204,22 @@
             <table class="arguments-table kw-info-table">
               <thead>
                 <tr>
-                  <th class="arg-col-name">{{t "name"}}</th>
+                  <th class="arg-col-name" scope="col">{{t "name"}}</th>
                   {{#if (hasDefaults args)}}
-                    <th class="arg-col-default">{{t "default"}}</th>
+                    <th class="arg-col-default" scope="col">{{t "default"}}</th>
                   {{/if}}
-                  <th class="arg-col-type">{{t "type"}}</th>
+                  <th class="arg-col-type" scope="col">{{t "type"}}</th>
                   {{#if (hasDocs args)}}
-                    <th class="arg-col-doc">{{t "doc"}}</th>
+                    <th class="arg-col-doc" scope="col">{{t "doc"}}</th>
                   {{/if}}
                 </tr>
               </thead>
               {{#each args}}
-                {{> arg this showDefault=(hasDefaults ../args)}}
+                {{> arg
+                  this
+                  showDefault=(hasDefaults ../args)
+                  showDoc=(hasDocs ../args)
+                }}
               {{/each}}
             </table>
           </div>
@@ -412,15 +416,23 @@
                 false
               }}}{{/if}}</td>
           </tr>
-          <tr class="doc-row{{#unless doc}} no-doc{{/unless}}">
-            <td colspan="{{#if showDefault}}3{{else}}2{{/if}}">
-              {{#if doc}}
-                <div class="arg-doc-wrap">
-                  <div class="doc arg-doc clamped">{{{doc}}}</div>
-                </div>
-              {{/if}}
-            </td>
-          </tr>
+          {{#if showDoc}}
+            {{! The colspan counts the signature columns only. In the wide
+                layout the rows of a group are merged into one with
+                `display: contents`, where this cell continues into columns
+                that stay empty and therefore collapse. An argument without
+                documentation still needs its cell there to keep the columns
+                aligned, and `.doc-row.no-doc` hides it in the narrow layout. }}
+            <tr class="doc-row{{#unless doc}} no-doc{{/unless}}">
+              <td colspan="{{#if showDefault}}3{{else}}2{{/if}}">
+                {{#if doc}}
+                  <div class="arg-doc-wrap">
+                    <div class="doc arg-doc clamped">{{{doc}}}</div>
+                  </div>
+                {{/if}}
+              </td>
+            </tr>
+          {{/if}}
         </tbody>
       {{/unless}}
     </script>

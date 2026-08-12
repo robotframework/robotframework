@@ -30,6 +30,7 @@ class View {
   restoringAnchor = false;
   anchorUpdateQueued = false;
   resizing = false;
+  lastWidth = 0;
   titleScrolled = false;
 
   constructor(
@@ -184,7 +185,16 @@ class View {
         { passive: true },
       );
       this.updateTitleSize();
+      this.lastWidth = window.innerWidth;
       window.addEventListener("resize", () => {
+        // Mobile browsers fire `resize` while scrolling, because hiding and
+        // showing the address bar changes the window height. Nothing in this
+        // layout depends on the height, and restoring the reading position
+        // for such an event undoes the very scrolling that caused it.
+        if (window.innerWidth === this.lastWidth) {
+          return;
+        }
+        this.lastWidth = window.innerWidth;
         // Nothing is measured while the window is still being dragged: every
         // measurement forces a layout of the whole document, and a drag fires
         // this far more often than the screen is repainted.
@@ -374,7 +384,12 @@ class View {
     this.anchorUpdateQueued = true;
     setTimeout(() => {
       this.anchorUpdateQueued = false;
-      this.updateScrollAnchor();
+      // A resize may have started in the meantime. Measuring now would store
+      // the position the layout has *after* the change and the correction
+      // afterwards would have nothing left to correct.
+      if (!this.resizing && !this.restoringAnchor) {
+        this.updateScrollAnchor();
+      }
     }, 150);
   }
 
@@ -387,7 +402,7 @@ class View {
     let anchor: { element: HTMLElement; top: number } | null = null;
     document
       .querySelectorAll<HTMLElement>(
-        "#introduction-container, .kw-row, .keyword-container, .data-type",
+        "#introduction-container, .kw-row, .keyword-container, .data-type-container",
       )
       .forEach((element) => {
         const { top, height } = element.getBoundingClientRect();
@@ -441,17 +456,27 @@ class View {
       wraps.push(wrap);
       docs.push(doc);
     });
-    const overflowing = docs.map(
-      (doc) => doc.scrollHeight > doc.clientHeight + 1,
-    );
+    // A hidden documentation -- a keyword filtered out by the search, a
+    // section not laid out yet -- measures zero and would look like it fits.
+    // Those stay clamped, which is how the template renders them anyway.
+    const measured = docs.map((doc) => ({
+      known: doc.clientHeight > 0,
+      overflowing: doc.scrollHeight > doc.clientHeight + 1,
+    }));
     docs.forEach((doc, index) => {
       const wrap = wraps[index];
-      if (!overflowing[index]) {
+      if (!measured[index].known) {
+        return;
+      }
+      if (!measured[index].overflowing) {
         doc.classList.remove("clamped");
         return;
       }
       doc.classList.add("truncated");
-      const more = document.createElement("span");
+      // A button, not a span: opening the full documentation has to work with
+      // the keyboard as well.
+      const more = document.createElement("button");
+      more.type = "button";
       more.classList.add("doc-more");
       more.textContent = this.translations.translate("more");
       more.title = this.translations.translate("argInfoDialog");

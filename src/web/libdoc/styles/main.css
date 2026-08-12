@@ -119,14 +119,14 @@ a {
   padding-left: 2%;
   padding-right: 2%;
   overflow: auto;
+  /* Deliberately not animated when the breakpoints change this width: the
+     whole document is relayouted on every frame of such a transition, which on
+     a large library is heavy enough to stall the tab -- or, while resizing
+     repeatedly deep inside the keywords, to make the renderer run out of
+     memory. The same was tried and reverted for the margins and paddings
+     inside the keywords. */
   max-width: 1060px;
 }
-
-/* No transition on the width of this element. Animating it relayouts the whole
-   document on every frame, which on a large library is heavy enough to stall
-   the tab -- or, while resizing repeatedly deep inside the keywords, to make
-   the renderer run out of memory. The same was tried and reverted for the
-   margins and paddings inside the keywords. */
 
 .libdoc-title {
   position: fixed;
@@ -334,9 +334,6 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3 {
   height: 42px;
   width: 42px;
   flex: none;
-  transition:
-    height 0.2s ease,
-    width 0.2s ease;
 }
 
 #robot-svg-path {
@@ -495,7 +492,6 @@ h4 a:hover {
     background: var(--background-color);
   }
 
-
   #toggle-keyword-shortcuts {
     border: 1px solid var(--border-color);
     border-radius: 3px;
@@ -562,9 +558,10 @@ h4 a:hover {
     max-width: 100%;
   }
 
-  /* Left of the hamburger button, on the same bar. The offset itself is set in
-     the second narrow screen block further down. */
+  /* Left of the hamburger button, on the same bar. The layer has to clear the
+     hamburger (3 and 4) and the title bar (2) the buttons sit on. */
   #language-container {
+    right: 50px;
     z-index: 5;
   }
 
@@ -576,6 +573,7 @@ h4 a:hover {
     align-items: center;
     justify-content: center;
     background: none;
+    cursor: pointer;
   }
 
   #language-container ul {
@@ -613,14 +611,6 @@ h4 a:hover {
   .shortcuts {
     max-width: 100vw;
     overscroll-behavior: none;
-  }
-
-  #language-container {
-    right: 50px;
-  }
-
-  #language-container button {
-    cursor: pointer;
   }
 }
 
@@ -821,7 +811,9 @@ h4 {
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--less-important-text-color);
+  /* Not --less-important-text-color: at this size it stays below the contrast
+     required for small text in both themes. */
+  color: var(--muted-text-color);
   white-space: nowrap;
   padding-bottom: 0.2rem;
   border-bottom: 1px solid var(--border-color);
@@ -924,11 +916,17 @@ h4 {
   margin-bottom: 0.4rem;
 }
 
+/* A button so that the full documentation can be opened with the keyboard.
+   It has to look like the piece of text it replaced. */
 .doc-more {
   display: inline-block;
   margin-top: 0.15rem;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
   font-size: 0.85em;
-  color: var(--less-important-text-color);
+  color: var(--muted-text-color);
   cursor: pointer;
 }
 
@@ -995,18 +993,31 @@ h4 {
     max-width: none;
   }
 
+  /* The signature columns take the width their content needs and the
+     documentation column absorbs the rest. Plain `auto` layout spreads the
+     surplus proportionally over all columns instead, which gives every keyword
+     differently sized -- and mostly empty -- columns. Below this width the
+     documentation is a full width row of its own and has no column to grow
+     into, so the distribution is left to the browser there. */
+  .arguments-table .arg-col-name,
+  .arguments-table .arg-col-default,
+  .arguments-table .arg-col-type {
+    width: 1%;
+  }
+
   .arguments-table .arg-col-doc {
     display: table-cell;
+    width: 100%;
+  }
+
+  /* There is room for the whole type here, so it is kept on one line instead
+     of being wrapped to make the column narrower. */
+  .arguments-table .arg-cell-type {
+    white-space: nowrap;
   }
 
   .arguments-table .arg-group > tr {
     display: contents;
-  }
-
-  /* The table carries its own structure, so it does not need the indentation
-     the sections get below their headings. */
-  .args .section-content {
-    margin-left: 0;
   }
 
   /* The signature and the documentation are one row now, so the hairline below
@@ -1178,10 +1189,10 @@ mark {
   border: none;
   background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="100%" width="100%"><path stroke="black" fill="none" stroke-width="2px" stroke-linecap="round" d="M1 8 L1 1 L8 1 M16 1 L23 1 L23 8 M23 16 L23 23 L16 23 M8 23 L1 23 L1 16"></path><path fill="black" stroke="none" stroke-width="1px" transform="scale(1.3) translate(-3 -2.5)" d="M19 7.97zm-8 9.2-4-2.3v-4.63l4 2.33v4.6zm1-6.33L8.04 8.53 12 6.25l3.96 2.28L12 10.84zm5 4.03-4 2.3v-4.6l4-2.33v4.63z"></path></svg>');
 }
-@media (prefers-color-scheme: dark) {
-  .modal-icon {
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="100%" width="100%"><path stroke="%23e2e1d7" fill="none" stroke-width="2px" stroke-linecap="round" d="M1 8 L1 1 L8 1 M16 1 L23 1 L23 8 M23 16 L23 23 L16 23 M8 23 L1 23 L1 16"></path><path fill="%23e2e1d7" stroke="none" stroke-width="1px" transform="scale(1.3) translate(-3 -2.5)" d="M19 7.97zm-8 9.2-4-2.3v-4.63l4 2.33v4.6zm1-6.33L8.04 8.53 12 6.25l3.96 2.28L12 10.84zm5 4.03-4 2.3v-4.6l4-2.33v4.63z"></path></svg>');
-  }
+/* The theme is chosen with the toggle, not by the system preference, so the
+   dark variant follows `data-theme` like every other themed rule. */
+[data-theme="dark"] .modal-icon {
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="100%" width="100%"><path stroke="%23ffffff" fill="none" stroke-width="2px" stroke-linecap="round" d="M1 8 L1 1 L8 1 M16 1 L23 1 L23 8 M23 16 L23 23 L16 23 M8 23 L1 23 L1 16"></path><path fill="%23ffffff" stroke="none" stroke-width="1px" transform="scale(1.3) translate(-3 -2.5)" d="M19 7.97zm-8 9.2-4-2.3v-4.63l4 2.33v4.6zm1-6.33L8.04 8.53 12 6.25l3.96 2.28L12 10.84zm5 4.03-4 2.3v-4.6l4-2.33v4.63z"></path></svg>');
 }
 .modal-background,
 .modal {
