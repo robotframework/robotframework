@@ -207,7 +207,7 @@ class EmbeddedArgumentParser:
 
     def _compile_regexp(self, pattern: str) -> re.Pattern:
         try:
-            return re.compile(pattern.replace(r"\ ", r"\s"), re.IGNORECASE)
+            return re.compile(pattern.replace(r"\ ", r"\s"), re.IGNORECASE | re.DOTALL)
         except Exception:
             raise DataError(
                 f"Compiling embedded arguments regexp failed: {get_error_message()}"

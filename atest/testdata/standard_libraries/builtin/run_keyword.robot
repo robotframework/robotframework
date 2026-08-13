@@ -7,6 +7,9 @@ Variables            variable.py
 @{NEEDS ESCAPING}    c:\\temp\\foo    \${notvar}    ${42}
 ${FAIL KW}           Fail
 ${VARIABLE}          value
+${VAR_MULTILINE}     SEPARATOR=\n
+...    foo
+...    bar
 
 *** Test Cases ***
 Run Keyword
@@ -60,10 +63,12 @@ With library keyword accepting embedded arguments
 With keyword accepting embedded arguments as variables
     Run Keyword    Embedded "${VARIABLE}"
     Run Keyword    Embedded "${1}"
+    Run Keyword    Embedded "${VAR_MULTILINE}"
 
 With library keyword accepting embedded arguments as variables
     Run Keyword    Embedded "${VARIABLE}" in library
     Run Keyword    Embedded "${1}" in library
+    Run Keyword    Embedded "${VAR_MULTILINE}" in library
 
 With keyword accepting embedded arguments as variables containing objects
     Run Keyword    Embedded "${OBJECT}"
