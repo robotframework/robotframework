@@ -68,15 +68,14 @@ else:
             # Give source as a string:
             Elements Should Be Equal    ${elem}    <child>text</child>
 
-                ```
+        ```
         """
 
     class Element:
         """A parsed XML element.
 
-        Represented as an ElementTree
-        [Element]
-        object. Can be used as a `source` argument with keywords modifying
+        Represented as an ElementTree [Element] object. Can be used as a
+        `source` argument with keywords modifying or validating XML elements.
         or validating XML elements. In addition to that, attributes like `text`
         can be accessed using the extended variable syntax like `${elem.text}`
         directly.
@@ -92,7 +91,7 @@ else:
             # Access element attributes:
             Log    ${elem.text}
 
-                ```
+        ```
 
         [Element]: https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element "Element"
         """
@@ -121,9 +120,9 @@ class XML:
     - Modifying XML and saving it (e.g. [Set Element Text], [Add Element]
       and [Save XML]).
 
-        ### Table of contents
+    ### Table of contents
 
-        %TOC%
+    %TOC%
 
     # Parsing XML
 
@@ -213,7 +212,7 @@ class XML:
         Element Attribute Should Be    ${root}    id    1    xpath=first
         Element Attribute Should Be    ${XML}    id    1    xpath=first
 
-        ```
+    ```
 
     Notice that in the example three last lines are equivalent. Which one to
     use in practice depends on which other elements you need to get or verify.
@@ -324,11 +323,11 @@ class XML:
     the standard ElementTree supports is explained in the table below.
 
     | Predicate | Matches | Example |
-| --- | --- | --- |
-| `@attrib` | Elements with attribute `attrib`. | `second[@id]` |
-| `@attrib="value"` | Elements with attribute `attrib` having value `value`. | `*[@id="2"]` |
-| `position` | Elements at the specified position. Position can be an integer (starting from 1), expression `last()`, or relative expression like `last() - 1`. | `third/child[1]` |
-| `tag` | Elements with a child element named `tag`. | `third/child[grandchild]` |
+    | --- | --- | --- |
+    | `@attrib` | Elements with attribute `attrib`. | `second[@id]` |
+    | `@attrib="value"` | Elements with attribute `attrib` having value `value`. | `*[@id="2"]` |
+    | `position` | Elements at the specified position. Position can be an integer (starting from 1), expression `last()`, or relative expression like `last() - 1`. | `third/child[1]` |
+    | `tag` | Elements with a child element named `tag`. | `third/child[grandchild]` |
 
     Predicates can also be stacked like `path[predicate1][predicate2]`.
     A limitation is that possible position predicate must always be first.
@@ -545,16 +544,16 @@ class XML:
     ## Pattern matching
 
     Some keywords, for example [Elements Should Match], support so called
-    [glob patterns]) where:
+    [glob patterns] where:
 
     | Wildcard | Description |
-| --- | --- |
-| `*` | matches any string, even an empty string |
-| `?` | matches any single character |
-| `[chars]` | matches one character in the bracket |
-| `[!chars]` | matches one character not in the bracket |
-| `[a-z]` | matches one character from the range in the bracket |
-| `[!a-z]` | matches one character not from the range in the bracket |
+    | --- | --- |
+    | `*` | matches any string, even an empty string |
+    | `?` | matches any single character |
+    | `[chars]` | matches one character in the bracket |
+    | `[!chars]` | matches one character not in the bracket |
+    | `[a-z]` | matches one character from the range in the bracket |
+    | `[!a-z]` | matches one character not from the range in the bracket |
 
     Unlike with glob patterns normally, path separator characters `/` and
     `\\` and the newline character `\\n` are matches by the above
@@ -597,18 +596,6 @@ class XML:
         Args:
             use_lxml: Enable the lxml module for parsing XML instead of the
                 standard ElementTree.
-
-        Examples:
-
-        ```robotframework
-        *** Settings ***
-            Library    XML
-            Library    XML    use_lxml=True
-
-
-        *** Test Cases ***
-        Example
-        ```
         """
         if use_lxml and lxml_etree:
             self.etree = lxml_etree  # type: ignore
@@ -675,7 +662,7 @@ class XML:
         the whole structure. See [Parsing XML] section for more details and
         examples.
 
-        !!! note
+        **NOTE:**
             This keyword does not accept an already parsed XML element as
         an argument. Use [Get Element] instead.
         """
@@ -711,7 +698,9 @@ class XML:
         Raises:
             AssertionError: If zero or more than one element matches.
 
-        Examples using `${XML}` structure from [Example]: ```robotframework "Example"
+        Examples using `${XML}` structure from [Example]:
+
+        ```robotframework
         *** Test Cases ***
         Get element
             ${element} =    Get Element    ${XML}    second
@@ -766,7 +755,9 @@ class XML:
         Returns:
             A list of matching elements. An empty list if none match.
 
-        Examples using `${XML}` structure from [Example]: ```robotframework "Example"
+        Examples using `${XML}` structure from [Example]:
+
+        ```robotframework
         *** Test Cases ***
         Get elements
             ${children} =    Get Elements    ${XML}    third/child
@@ -798,7 +789,9 @@ class XML:
         Returns:
             A list of direct child elements.
 
-        Examples using `${XML}` structure from [Example]: ```robotframework "Example"
+        Examples using `${XML}` structure from [Example]:
+
+        ```robotframework
         *** Test Cases ***
         Get child elements
             ${children} =    Get Child Elements    ${XML}
@@ -910,7 +903,9 @@ class XML:
         Returns:
             All text of the element, including text of child elements.
 
-        Examples using `${XML}` structure from [Example]: ```robotframework "Example"
+        Examples using `${XML}` structure from [Example]:
+
+        ```robotframework
         *** Test Cases ***
         Get element text
             ${text} =    Get Element Text    ${XML}    first
@@ -967,7 +962,9 @@ class XML:
         Returns:
             A list of texts of the matched elements.
 
-        Examples using `${XML}` structure from [Example]: ```robotframework "Example"
+        Examples using `${XML}` structure from [Example]:
+
+        ```robotframework
         *** Test Cases ***
         Get elements texts
             @{texts} =    Get Elements Texts    ${XML}    third/child
@@ -1013,7 +1010,9 @@ class XML:
             normalize_whitespace: Normalize whitespace before comparison.
             message: Optional custom error message.
 
-        Examples using `${XML}` structure from [Example]: ```robotframework "Example"
+        Examples using `${XML}` structure from [Example]:
+
+        ```robotframework
         *** Test Cases ***
         Element text should be
             Element Text Should Be    ${XML}    text    xpath=first
@@ -1051,7 +1050,9 @@ class XML:
             normalize_whitespace: Normalize whitespace before matching.
             message: Optional custom error message.
 
-        Examples using `${XML}` structure from [Example]: ```robotframework "Example"
+        Examples using `${XML}` structure from [Example]:
+
+        ```robotframework
         *** Test Cases ***
         Element text should match
             Element Text Should Match    ${XML}    t???    xpath=first
@@ -1089,7 +1090,9 @@ class XML:
         Returns:
             The attribute value, or ``default`` if the attribute is missing.
 
-        Examples using `${XML}` structure from [Example]: ```robotframework "Example"
+        Examples using `${XML}` structure from [Example]:
+
+        ```robotframework
         *** Test Cases ***
         Get element attribute
             ${attribute} =    Get Element Attribute    ${XML}    id    xpath=first
@@ -1125,7 +1128,9 @@ class XML:
         Returns:
             A dictionary of all attributes of the element.
 
-        Examples using `${XML}` structure from [Example]: ```robotframework "Example"
+        Examples using `${XML}` structure from [Example]:
+
+        ```robotframework
         *** Test Cases ***
         Get element attributes
             ${attributes} =    Get Element Attributes    ${XML}    first
@@ -1168,7 +1173,9 @@ class XML:
             xpath: XPath expression selecting the element.
             message: Optional custom error message.
 
-        Examples using `${XML}` structure from [Example]: ```robotframework "Example"
+        Examples using `${XML}` structure from [Example]:
+
+        ```robotframework
         *** Test Cases ***
         Element attribute should be
             Element Attribute Should Be    ${XML}    id    1    xpath=first
@@ -1206,7 +1213,9 @@ class XML:
             xpath: XPath expression selecting the element.
             message: Optional custom error message.
 
-        Examples using `${XML}` structure from [Example]: ```robotframework "Example"
+        Examples using `${XML}` structure from [Example]:
+
+        ```robotframework
         *** Test Cases ***
         Element attribute should match
             Element Attribute Should Match    ${XML}    id    ?    xpath=first
@@ -1241,7 +1250,9 @@ class XML:
             xpath: XPath expression selecting the element.
             message: Optional custom error message.
 
-        Examples using `${XML}` structure from [Example]: ```robotframework "Example"
+        Examples using `${XML}` structure from [Example]:
+
+        ```robotframework
         *** Test Cases ***
         Element should not have attribute
             Element Should Not Have Attribute    ${XML}    id
@@ -1296,7 +1307,9 @@ class XML:
             normalize_whitespace: Normalize whitespace in text comparison.
             sort_children: Sort child elements by tag name before comparison.
 
-        Examples using `${XML}` structure from [Example]: ```robotframework "Example"
+        Examples using `${XML}` structure from [Example]:
+
+        ```robotframework
         *** Test Cases ***
         Elements should be equal
             ${first} =    Get Element    ${XML}    first
@@ -1350,7 +1363,9 @@ class XML:
             normalize_whitespace: Normalize whitespace in text comparison.
             sort_children: Sort child elements by tag name before comparison.
 
-        Examples using `${XML}` structure from [Example]: ```robotframework "Example"
+        Examples using `${XML}` structure from [Example]:
+
+        ```robotframework
         *** Test Cases ***
         Elements should match
             ${first} =    Get Element    ${XML}    first
@@ -1407,7 +1422,9 @@ class XML:
         Returns:
             The root of the modified XML structure.
 
-        Examples using `${XML}` structure from [Example]: ```robotframework "Example"
+        Examples using `${XML}` structure from [Example]:
+
+        ```robotframework
         *** Test Cases ***
         Set element tag
             Set Element Tag    ${XML}    newTag
@@ -1471,7 +1488,9 @@ class XML:
         Returns:
             The root of the modified XML structure.
 
-        Examples using `${XML}` structure from [Example]: ```robotframework "Example"
+        Examples using `${XML}` structure from [Example]:
+
+        ```robotframework
         *** Test Cases ***
         Set element text
             Set Element Text    ${XML}    new text    xpath=first
@@ -1550,7 +1569,9 @@ class XML:
         Raises:
             RuntimeError: If ``name`` is empty.
 
-        Examples using `${XML}` structure from [Example]: ```robotframework "Example"
+        Examples using `${XML}` structure from [Example]:
+
+        ```robotframework
         *** Test Cases ***
         Set element attribute
             Set Element Attribute    ${XML}    attr    value
@@ -1620,7 +1641,9 @@ class XML:
         Returns:
             The root of the modified XML structure.
 
-        Examples using `${XML}` structure from [Example]: ```robotframework "Example"
+        Examples using `${XML}` structure from [Example]:
+
+        ```robotframework
         *** Test Cases ***
         Remove element attribute
             Remove Element Attribute    ${XML}    id    xpath=first
@@ -1679,7 +1702,9 @@ class XML:
         Returns:
             The root of the modified XML structure.
 
-        Examples using `${XML}` structure from [Example]: ```robotframework "Example"
+        Examples using `${XML}` structure from [Example]:
+
+        ```robotframework
         *** Test Cases ***
         Remove element attributes
             Remove Element Attributes    ${XML}    xpath=first
@@ -1729,8 +1754,7 @@ class XML:
         The `element` to add can be specified as a path to an XML file or
         as a string containing XML, or it can be an already parsed XML element.
         The element is copied before adding so modifying either the original
-        or the added element has no effect on the other
-        .
+        or the added element has no effect on the other.
         The element is added as the last child by default, but a custom index
         can be used to alter the position. Indices start from zero (0 = first
         position, 1 = second position, etc.), and negative numbers refer to
@@ -1745,7 +1769,9 @@ class XML:
         Returns:
             The root of the modified XML structure.
 
-        Examples using `${XML}` structure from [Example]: ```robotframework "Example"
+        Examples using `${XML}` structure from [Example]:
+
+        ```robotframework
         *** Test Cases ***
         Add element
             Add Element    ${XML}    <new id="x"><c1/></new>
@@ -1798,7 +1824,9 @@ class XML:
         Raises:
             AssertionError: If ``xpath`` does not match exactly one element.
 
-        Examples using `${XML}` structure from [Example]: ```robotframework "Example"
+        Examples using `${XML}` structure from [Example]:
+
+        ```robotframework
         *** Test Cases ***
         Remove element
             Remove Element    ${XML}    xpath=second
@@ -1839,7 +1867,9 @@ class XML:
         Returns:
             The root of the modified XML structure.
 
-        Examples using `${XML}` structure from [Example]: ```robotframework "Example"
+        Examples using `${XML}` structure from [Example]:
+
+        ```robotframework
         *** Test Cases ***
         Remove elements
             Remove Elements    ${XML}    xpath=*/child
@@ -1907,7 +1937,9 @@ class XML:
         Returns:
             The root of the modified XML structure.
 
-        Examples using `${XML}` structure from [Example]: ```robotframework "Example"
+        Examples using `${XML}` structure from [Example]:
+
+        ```robotframework
         *** Test Cases ***
         Clear element
             Clear Element    ${XML}    xpath=first
@@ -1946,7 +1978,9 @@ class XML:
         Returns:
             A deep copy of the element.
 
-        Examples using `${XML}` structure from [Example]: ```robotframework "Example"
+        Examples using `${XML}` structure from [Example]:
+
+        ```robotframework
         *** Test Cases ***
         Copy element
             ${elem} =    Get Element    ${XML}    xpath=first
@@ -2099,7 +2133,9 @@ class XML:
         Raises:
             RuntimeError: If the library is not running in lxml mode.
 
-        Examples using `${XML}` structure from [Example]: ```robotframework "Example"
+        Examples using `${XML}` structure from [Example]:
+
+        ```robotframework
         *** Test Cases ***
         Evaluate xpath
             ${count} =    Evaluate Xpath    ${XML}    count(third/*)
