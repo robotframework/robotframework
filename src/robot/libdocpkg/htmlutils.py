@@ -141,23 +141,27 @@ class DocToHtml:
         return self._handle_backtick_links(doc)
 
     def _get_toc(self, doc):
-        tokens = []
-        nested = []
         entries = re.findall(r"^\s*(={1,2})\s+(.+?)\s+\1\s*$", doc, flags=re.MULTILINE)
+        items = []
         for level, header in entries:
             if level == "=":
-                if nested:
-                    tokens.extend(self._toc_block(nested))
-                    nested = []
-                tokens.append(self._toc_item(header))
-            elif tokens:
-                nested.append(self._toc_item(header))
-        if nested:
-            tokens.extend(self._toc_block(nested))
-        return "\n".join(self._toc_block(tokens))
+                items.append((header, []))
+            elif items:
+                items[-1][1].append(header)
+        lines = []
+        for header, nested in items:
+            lines.extend(self._toc_item(header, nested))
+        return "\n".join(self._toc_block(lines))
 
-    def _toc_item(self, header):
-        return f'<li><a href="{fragment(header)}">{header}</a></li>'
+    def _toc_item(self, header, nested=()):
+        link = f'<a href="{fragment(header)}">{header}</a>'
+        if not nested:
+            return [f"<li>{link}</li>"]
+        # The nested list belongs inside the item it is nested under. Next to
+        # it, as a sibling of the `li`, it would not be valid HTML: a `ul` can
+        # only contain list items.
+        sub_items = [line for sub in nested for line in self._toc_item(sub)]
+        return [f"<li>{link}", *self._toc_block(sub_items), "</li>"]
 
     def _toc_block(self, items):
         return ["<ul>", *items, "</ul>"]

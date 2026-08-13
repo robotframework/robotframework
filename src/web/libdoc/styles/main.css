@@ -788,10 +788,28 @@ h4 {
   /* A large library is over 100 000 pixels tall and every width change would
      otherwise relayout all of it. Keywords outside the window are skipped
      until they are scrolled into view; `auto` in the intrinsic size makes the
-     browser remember the real height of the ones already seen, so the scroll
-     position stays put. */
+     browser remember the real height of the ones already seen, so passing a
+     keyword a second time costs nothing.
+
+     The placeholder height is the measured median height of a keyword card:
+     the first pass is laid out with this number, and guessing too low makes
+     every card grow as it renders, which shifts the content under the reader
+     while scrolling. */
   content-visibility: auto;
-  contain-intrinsic-size: auto 600px;
+  contain-intrinsic-size: auto 800px;
+}
+
+/* No skipping on a narrow screen. Rendering a keyword for the first time
+   replaces its estimated height with the real one, and the heights range from
+   200 to 3800 pixels, so no single estimate avoids that -- the content under
+   the reader's thumb shifts while the cards render. The skipping is here to
+   keep resizing cheap, and a phone hardly ever changes its width; only a
+   rotation does. Must come after the rule above: a media query adds no
+   specificity, so this is decided by the order alone. */
+@media only screen and (max-width: 899px) {
+  .keyword-container {
+    content-visibility: visible;
+  }
 }
 
 /* Printing needs every keyword laid out, not just the visible ones. */
@@ -946,13 +964,13 @@ h4 {
   color: var(--muted-text-color);
 }
 
-/* Long unbreakable tokens in the documentation -- URLs, inline code samples --
-   would otherwise raise the table's min-content width and push the whole table
-   past the viewport, because `overflow-wrap: break-word` does not affect
-   intrinsic sizing while `anywhere` does. The descendants must be listed: the
-   inherited value loses against the rules matching code and links directly. */
+/* Long unbreakable tokens in the documentation -- URLs above all -- would
+   otherwise raise the table's min-content width and push the whole table past
+   the viewport, because `overflow-wrap: break-word` does not affect intrinsic
+   sizing while `anywhere` does. The descendants must be listed: the inherited
+   value loses against the rule matching links directly. Inline code is
+   deliberately not in the list; it is never broken up. */
 .arg-doc,
-.arg-doc code,
 .arg-doc a {
   overflow-wrap: anywhere;
 }
@@ -971,7 +989,7 @@ h4 {
    set by the view after measuring, and only then a click opens the modal. */
 .arg-doc.clamped {
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -1004,9 +1022,13 @@ h4 {
 /* A button so that the full documentation can be opened with the keyboard.
    It has to look like the piece of text it replaced. */
 .doc-more {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  /* 24px tall and wide enough to be hit reliably (WCAG 2.5.8); the text of
+     the button is smaller than that on its own. */
+  min-height: 24px;
   margin-top: 0.15rem;
-  padding: 0;
+  padding: 0 0.25rem 0 0;
   border: none;
   background: none;
   font-family: inherit;

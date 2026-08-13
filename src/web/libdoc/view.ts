@@ -179,7 +179,7 @@ class View {
       }
     }, 0);
     if (!document.getElementById("modal-background")) {
-      createModal();
+      createModal(this.translations.translate("closeDialog"));
     }
     this.addCopyButtons();
     requestAnimationFrame(() => {
@@ -447,7 +447,7 @@ class View {
   }
 
   /**
-   * Documentation is clamped to a few lines with CSS. Only documentation that
+   * Documentation is clamped to four lines with CSS. Only documentation that
    * really is too long gets the `more...` link and becomes clickable.
    */
   private updateDocClamping() {

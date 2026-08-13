@@ -2,10 +2,7 @@
 <html id="library-documentation-top" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="-1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -87,12 +84,13 @@
           id="hamburger-menu-input"
           class="hamburger-menu"
           type="checkbox"
+          aria-label="{{t 'toggleKeywordList'}}"
         />
         <span class="hamburger-menu hamburger-menu-1"></span>
         <span class="hamburger-menu hamburger-menu-2"></span>
         <span class="hamburger-menu hamburger-menu-3"></span>
         <div class="libdoc-overview"><div id="shortcuts-container"></div></div>
-        <div class="libdoc-details">
+        <main class="libdoc-details">
           <table class="metadata">
             {{#if version}}<tr><th>{{t "libVersion"}}:</th><td
                 >{{version}}</td></tr>{{/if}}
@@ -107,7 +105,7 @@
           <div id="keywords-container"></div>
           <div id="data-types-container"></div>
           <div id="footer-container"></div>
-        </div>
+        </main>
         <a class="libdoc-title" href="#library-documentation-top">
           <h1>{{name}}</h1>
           <svg

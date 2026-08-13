@@ -69,9 +69,30 @@
   background: var(--light-background-color);
   padding: 1px;
   border-radius: 3px;
+  /* A piece of code is one thing and is not broken across lines, not even
+     between the words of a keyword name. What does not fit moves to the next
+     line as a whole. */
+  white-space: nowrap;
 }
 .doc ul > li {
   list-style-type: square;
+}
+/* Consecutive list items keep 24px between them so that a link in one is far
+   enough from the link in the next to be hit reliably (WCAG 2.5.8). The gap
+   goes between the items rather than into their line height, which would
+   stretch the text of multi-line entries as well. */
+.doc li + li {
+  margin-top: 0.4rem;
+}
+/* The first item of a nested list has no item before it, so the distance to
+   the entry it belongs to has to come from the list itself. */
+.doc li > ul,
+.doc li > ol,
+.doc ul > ul,
+.doc ul > ol,
+.doc ol > ul,
+.doc ol > ol {
+  margin-top: 0.4rem;
 }
 /* Half of the 40px browsers indent lists by. Enough to set the items apart
    from the text above them, and it keeps nested lists readable on a phone. */

@@ -33,7 +33,9 @@
     "copyCode": "Copy code",
     "more": "more...",
     "argInfoDialog": "Click to show the full documentation",
-    "showTagKeywords": "Show keywords with this tag"
+    "showTagKeywords": "Show keywords with this tag",
+    "closeDialog": "Close",
+    "toggleKeywordList": "Show or hide the keyword list"
   },
   "fi": {
     "code": "fi",
@@ -69,7 +71,9 @@
     "copyCode": null,
     "more": null,
     "argInfoDialog": null,
-    "showTagKeywords": null
+    "showTagKeywords": null,
+    "closeDialog": null,
+    "toggleKeywordList": null
   },
   "fr": {
     "code": "fr",
@@ -105,7 +109,9 @@
     "copyCode": null,
     "more": null,
     "argInfoDialog": null,
-    "showTagKeywords": null
+    "showTagKeywords": null,
+    "closeDialog": null,
+    "toggleKeywordList": null
   },
   "it": {
     "code": "it",
@@ -141,7 +147,9 @@
     "copyCode": null,
     "more": null,
     "argInfoDialog": null,
-    "showTagKeywords": null
+    "showTagKeywords": null,
+    "closeDialog": null,
+    "toggleKeywordList": null
   },
   "nl": {
     "code": "nl",
@@ -177,7 +185,9 @@
     "copyCode": null,
     "more": null,
     "argInfoDialog": null,
-    "showTagKeywords": null
+    "showTagKeywords": null,
+    "closeDialog": null,
+    "toggleKeywordList": null
   },
   "pt-br": {
     "code": "pt-BR",
@@ -213,7 +223,9 @@
     "copyCode": null,
     "more": null,
     "argInfoDialog": null,
-    "showTagKeywords": null
+    "showTagKeywords": null,
+    "closeDialog": null,
+    "toggleKeywordList": null
   },
   "pt-pt": {
     "code": "pt-PT",
@@ -249,6 +261,8 @@
     "copyCode": null,
     "more": null,
     "argInfoDialog": null,
-    "showTagKeywords": null
+    "showTagKeywords": null,
+    "closeDialog": null,
+    "toggleKeywordList": null
   }
 }
