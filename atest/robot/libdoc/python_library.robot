@@ -46,7 +46,7 @@ Init Arguments
 
 Init Source Info
     Keyword Should Not Have Source   0    xpath=inits/init
-    Keyword Lineno Should Be         0    334      xpath=inits/init
+    Keyword Lineno Should Be         0    329      xpath=inits/init
 
 Keyword Names
     Keyword Name Should Be           0    Close All Connections
@@ -61,8 +61,8 @@ Keyword Documentation
     Keyword Doc Should Start With    2
     ...    Executes the given `command` and reads, logs, and returns everything until the prompt.
     ...
-    ...    This keyword requires the prompt to be [configured](#configuration)
-    ...    either in [importing](#importing) or with [Open Connection] or
+    ...    This keyword requires the prompt to be configured
+    ...    either when [Importing] or with [Open Connection] or
     ...    [Set Prompt] keyword.
     ...
     ...    This is a convenience keyword that uses [Write] and [Read Until Prompt]
@@ -72,11 +72,11 @@ Keyword Source Info
     # This keyword is from the "main library".
     Keyword Name Should Be           0    Close All Connections
     Keyword Should Not Have Source   0
-    Keyword Lineno Should Be         0    627
+    Keyword Lineno Should Be         0    617
     # This keyword is from an external library component.
     Keyword Name Should Be           7    Read Until Prompt
     Keyword Should Not Have Source   7
-    Keyword Lineno Should Be         7    1355
+    Keyword Lineno Should Be         7    1343
 
 KwArgs and VarArgs
     Run Libdoc And Parse Output      ${TESTDATADIR}/KwArgs.py
