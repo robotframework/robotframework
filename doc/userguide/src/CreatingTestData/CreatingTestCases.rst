@@ -611,10 +611,8 @@ __ `Dividing data to several rows`_
        No Operation
 
 Test metadata is shown in reports and logs similarly as test documentation.
-
-.. note:: Unlike `free suite metadata`_, test metadata does not have a
-          keyword for setting or updating it during execution, and there
-          is no dedicated automatic variable or command line option for it.
+It is also stored in `output files`_ and is available to `listeners`_
+and other tools that process execution results.
 
 .. note:: :setting:`[Metadata]` is new in Robot Framework 7.5.
 
