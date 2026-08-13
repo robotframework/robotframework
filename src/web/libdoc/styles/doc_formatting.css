@@ -74,6 +74,11 @@
      line as a whole. */
   white-space: nowrap;
 }
+/* Only for code within a sentence. A code block keeps its own line breaks,
+   which `nowrap` would collapse into a single long line. */
+.doc pre code {
+  white-space: inherit;
+}
 .doc ul > li {
   list-style-type: square;
 }

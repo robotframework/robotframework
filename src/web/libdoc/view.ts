@@ -96,6 +96,37 @@ class View {
     Handlebars.registerHelper("hasDocs", function (args) {
       return Array.isArray(args) && args.some((arg) => arg.doc);
     });
+    // Raises is a mapping of exception name to documentation. The
+    // documentation is mandatory today, which may well change.
+    Handlebars.registerHelper("anyValue", function (dict) {
+      return !!dict && Object.values(dict).some((value) => value);
+    });
+    // What the marker in front of an argument means, spelled out: how the
+    // argument can be given, and whether a value has to be given at all.
+    Handlebars.registerHelper(
+      "argKindInfo",
+      function (kind: string, required: boolean) {
+        const kinds: Record<string, string> = {
+          POSITIONAL_OR_NAMED: "argKindPositionalOrNamed",
+          POSITIONAL_ONLY: "argKindPositionalOnly",
+          NAMED_ONLY: "argKindNamedOnly",
+          VAR_POSITIONAL: "argKindVarArgs",
+          VAR_NAMED: "argKindVarNamed",
+        };
+        const how = translate.translate(
+          kinds[kind] ?? "argKindPositionalOrNamed",
+        );
+        // The variable ones take whatever is left over, so "required" says
+        // nothing about them.
+        if (kind === "VAR_POSITIONAL" || kind === "VAR_NAMED") {
+          return how;
+        }
+        const must = translate.translate(
+          required ? "argRequired" : "argOptional",
+        );
+        return `${must} \u00b7 ${how}`;
+      },
+    );
     Handlebars.registerHelper("hasTypes", function (args) {
       return Array.isArray(args) && args.some((arg) => arg.type);
     });
@@ -197,6 +228,32 @@ class View {
         { passive: true },
       );
       this.updateTitleSize();
+      // The symbol in front of a name is focusable so that the keyboard and
+      // touch can ask what the argument kind means. A mouse should not leave
+      // the explanation behind after a click, and `:focus-visible` does not
+      // help: a click on a focusable span counts as keyboard-like focus.
+      // Dropping the focus again on mouse release keeps the text selectable,
+      // which preventing the focus would not.
+      document.addEventListener("pointerup", (event) => {
+        const chip = (event.target as HTMLElement)?.closest?.(
+          ".arg-kind[data-arg-info]",
+        );
+        // Without a pointer that can hover, the explanation is opened by
+        // tapping the symbol and closed by tapping anywhere else. The class is
+        // set here rather than relying on focus: tapping a `span` does not
+        // reliably focus it.
+        document
+          .querySelectorAll(".arg-kind.show-info")
+          .forEach((shown) => shown.classList.remove("show-info"));
+        if (event.pointerType !== "mouse") {
+          chip?.classList.add("show-info");
+        } else if (chip) {
+          // A mouse has hovering, so a click must not leave it behind. It
+          // would, because a click on a focusable span counts as keyboard-like
+          // focus.
+          (chip as HTMLElement).blur();
+        }
+      });
       this.lastWidth = window.innerWidth;
       window.addEventListener("resize", () => {
         // Mobile browsers fire `resize` while scrolling, because hiding and

@@ -859,13 +859,6 @@ h4 {
   min-width: 200px;
 }
 
-/* Section contents are indented below their heading when there is room. */
-@media only screen and (min-width: 700px) {
-  .section-content {
-    margin-left: 0.8rem;
-  }
-}
-
 /* Arguments, returns and raises share the same layout: one `tbody` per entry
    holding the signature row and an optional documentation row below it. */
 /* A table that cannot shrink any further -- long argument names, wide types --
@@ -877,21 +870,20 @@ h4 {
   min-width: 0;
 }
 
+/* Shrink to fit: a table is as wide as its content and no wider. `width:
+   100%` would stretch every one of them to the full measure and leave the
+   short ones -- a `bool` return, two one-word arguments -- floating in empty
+   space. When the content does not fit, the table takes the width it is given
+   and the columns share the shortfall; which column gives way is settled by
+   the `nowrap` rules further down rather than by percentage widths, which in a
+   shrink-to-fit box ask for a multiple of the table instead of a share of it. */
 .kw-info-table {
-  width: 100%;
+  width: auto;
   max-width: 1000px;
   table-layout: auto;
   border-collapse: separate;
   border-spacing: 0;
   margin-bottom: 1.33rem;
-}
-
-/* Without a documentation column nothing wants the leftover space, and
-   stretching a signature over the full width leaves the columns floating far
-   apart -- the gutter below is what gives them room instead. A table that does
-   have the column keeps the full width, because that column is what grows. */
-.arguments-table:not(.has-doc-column) {
-  width: auto;
 }
 
 .kw-info-table th,
@@ -907,6 +899,17 @@ h4 {
 .kw-info-table th:last-child,
 .kw-info-table td:last-child {
   padding-right: 0;
+}
+
+/* Except for the documentation, which is the last column in every one of these
+   tables. It is running text and would otherwise end flush with the edge of
+   the table -- and, where the table takes the full width, with the edge of the
+   card. Rather less of it than between the columns: this is a margin, not a
+   gutter that has to keep two columns apart. */
+.kw-info-table td.arg-cell-doc,
+.kw-info-table th.arg-col-doc,
+.kw-info-table .doc-row > td {
+  padding-right: clamp(0.7rem, 1.5vw, 1.5rem);
 }
 
 .kw-info-table thead th {
@@ -1068,9 +1071,44 @@ h4 {
   color: var(--less-important-text-color);
 }
 
-/* The documentation column only exists in the wide layout below. */
+/* For the arguments the documentation column only exists in the wide layout
+   below; a keyword has many arguments and their documentation needs the full
+   width more often than not. */
 .arg-col-doc {
   display: none;
+}
+
+/* Returns and raises are a single type each, so there is room for the
+   documentation next to it at every width. */
+.return-info-table .arg-col-doc,
+.raises-table .arg-col-doc {
+  display: table-cell;
+}
+
+/* The type column takes what it needs and leaves the rest to the
+   documentation. Not `1%`: a percentage is measured against the width of the
+   table, which a table sized by its content does not have yet -- there it
+   would ask for a hundred times the column. */
+.return-info-table .arg-col-type,
+.raises-table .arg-col-type {
+  width: 1px;
+  white-space: nowrap;
+}
+
+/* In its own column the documentation needs neither the indentation nor the
+   bar that set it apart from the signature above it. */
+.return-info-table .arg-doc-wrap,
+.raises-table .arg-doc-wrap {
+  margin: 0;
+  padding-left: 0;
+  border-left: none;
+}
+
+/* The type is not the last column any more and keeps the gutter that
+   `td:last-child` would take away. */
+.return-info-table .arg-cell-type,
+.raises-table .arg-cell-type {
+  padding-right: 1.5rem;
 }
 
 /* An argument without documentation has an empty cell so that the row keeps
@@ -1096,31 +1134,35 @@ h4 {
     max-width: 1600px;
   }
 
-  .arguments-table {
+  /* There is room for more than the reading measure here. What a table
+     actually takes is still decided by its content. */
+  .arguments-table,
+  .return-info-table,
+  .raises-table {
     max-width: none;
   }
 
-  /* The signature columns take the width their content needs and the
-     documentation column absorbs the rest. Plain `auto` layout spreads the
-     surplus proportionally over all columns instead, which gives every keyword
-     differently sized -- and mostly empty -- columns. Below this width the
-     documentation is a full width row of its own and has no column to grow
-     into, so the distribution is left to the browser there. */
-  .arguments-table.has-doc-column .arg-col-name,
-  .arguments-table.has-doc-column .arg-col-default,
-  .arguments-table.has-doc-column .arg-col-type {
-    width: 1%;
+  /* The signature is kept on one line, so when the table has to give way it is
+     the documentation column that gives way and the signature columns stay at
+     the width their content needs. */
+  .arguments-table.has-doc-column .arg-cell-name,
+  .arguments-table.has-doc-column .arg-cell-default,
+  .arguments-table.has-doc-column .arg-cell-type,
+  .arguments-table.has-doc-column thead th:not(.arg-col-doc) {
+    white-space: nowrap;
   }
 
   .arguments-table .arg-col-doc {
     display: table-cell;
-    width: 100%;
   }
 
-  /* There is room for the whole type here, so it is kept on one line instead
-     of being wrapped to make the column narrower. */
-  .arguments-table .arg-cell-type {
-    white-space: nowrap;
+  /* Room for an exception name of ordinary length -- `ArithmeticError` and
+     shorter -- so that the documentation of neighbouring rows starts at the
+     same place instead of hugging every name individually. Narrower windows
+     need the space for the text itself and let the column shrink. */
+  .return-info-table .arg-col-type,
+  .raises-table .arg-col-type {
+    min-width: 7rem;
   }
 
   .arguments-table .arg-group > tr {
@@ -1195,6 +1237,56 @@ h4 {
 
 /* The kind marker and the name are one unit: a line break between them would
    leave the `*`, the tag or the arrow dangling on its own line. */
+
+/* What the marker means, spelled out. The icons are a shorthand that has to be
+   learned, so the symbol itself carries the explanation: on hover for the
+   mouse, on focus for the keyboard, and on tap for touch, where focus follows.
+   Only the symbol, not the whole name -- reading a name should not make a box
+   appear over the row above.
+
+   `display` rather than `visibility`: an absolutely positioned box counts
+   towards the scrollable overflow of `.table-scroll` even while invisible,
+   which put a scroll bar on every argument table. */
+.arg-kind[data-arg-info]::after {
+  content: attr(data-arg-info);
+  display: none;
+  position: absolute;
+  /* Above the symbol, where it does not cover the name it belongs to. */
+  left: 0;
+  bottom: calc(100% + 0.3rem);
+  z-index: 3;
+  width: max-content;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--robot-highlight);
+  border-radius: 3px;
+  background: var(--light-background-color);
+  color: var(--text-color);
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-size: var(--font-size-small);
+  white-space: nowrap;
+}
+
+.arg-kind[data-arg-info] {
+  position: relative;
+  /* The pointer stays an arrow: the symbol is not a link and clicking it does
+     nothing a mouse does not already get by pointing at it. */
+  cursor: default;
+}
+
+/* A mouse gets it while pointing, never by clicking: `focus-visible` does not
+   match a click, so the explanation does not stay behind after one. */
+.arg-kind[data-arg-info]:hover::after,
+.arg-kind[data-arg-info]:focus-visible::after {
+  display: block;
+}
+
+/* Without a pointer, tapping the symbol is the only way to ask for it. */
+.arg-kind[data-arg-info].show-info::after {
+  display: block;
+}
 
 .arg-type,
 span.type,
@@ -1328,15 +1420,23 @@ mark {
      beat them. */
   z-index: 2000;
 }
+/* Holds the dialog and the close button above it, and is as large as the
+   content needs -- up to the measure the documentation uses everywhere else. */
+.modal-frame {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  max-width: min(1000px, calc(100vw - 2rem));
+  margin: 0 auto;
+}
+
 .modal {
   display: flex;
   flex-wrap: nowrap;
   flex-direction: column;
-  /* The same measure the documentation uses everywhere else. The close button
-     container must keep the identical width to stay aligned with the modal. */
-  width: 1000px;
-  max-width: calc(100vw - 2rem);
-  margin: 0 auto;
+  /* The width comes from the frame, the height is always the same: a dialog
+     that is as tall as its content jumps around between one entry and the
+     next, and the documentation shown here is long more often than not. */
   height: calc(100vh - 6rem);
   overflow: auto;
   background-color: var(--background-color);
@@ -1357,12 +1457,10 @@ mark {
 }
 
 .modal-close-button-container {
-  /* The same measure the documentation uses everywhere else. The close button
-     container must keep the identical width to stay aligned with the modal. */
-  width: 1000px;
-  max-width: calc(100vw - 2rem);
-  margin: 0 auto;
-  overflow: auto;
+  /* Follows the width of the frame, so the button stays at the right edge of
+     the dialog however wide it turns out to be. */
+  display: flex;
+  justify-content: flex-end;
 }
 
 .modal-close-button {

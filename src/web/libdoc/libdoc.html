@@ -296,23 +296,30 @@
                 <h3>{{t "returns"}}</h3>
                 <div class="section-content table-scroll">
                   <table class="return-info-table kw-info-table">
+                    <thead>
+                      <tr>
+                        <th class="arg-col-type" scope="col">{{t "type"}}</th>
+                        {{#if returnDoc}}
+                          <th class="arg-col-doc" scope="col">{{t "doc"}}</th>
+                        {{/if}}
+                      </tr>
+                    </thead>
                     <tbody class="arg-group">
-                      {{#if (hasVisibleReturnType returnType)}}
-                        <tr class="arg-row{{#if returnDoc}} has-doc{{/if}}">
-                          <td class="arg-cell-type"><span
-                              class="arg-type"
-                            >{{{renderTypeInfo returnType true}}}</span></td>
-                        </tr>
-                      {{/if}}
-                      {{#if returnDoc}}
-                        <tr class="doc-row">
-                          <td>
+                      <tr class="arg-row">
+                        {{! The column stays even when the keyword only
+                            documents what it returns without saying of which
+                            type: the header is always the same. }}
+                        <td class="arg-cell-type">{{#if (hasVisibleReturnType
+                            returnType
+                          )}}{{{renderTypeInfo returnType true}}}{{/if}}</td>
+                        {{#if returnDoc}}
+                          <td class="arg-cell-doc">
                             <div class="arg-doc-wrap">
                               <div class="doc arg-doc clamped">{{{returnDoc}}}</div>
                             </div>
                           </td>
-                        </tr>
-                      {{/if}}
+                        {{/if}}
+                      </tr>
                     </tbody>
                   </table>
                 </div>
@@ -323,22 +330,28 @@
                 <h3>{{t "raises"}}</h3>
                 <div class="section-content table-scroll">
                   <table class="raises-table kw-info-table">
+                    <thead>
+                      <tr>
+                        {{! An exception is named by its class, which is a type
+                            like any other, so the column is the same one. }}
+                        <th class="arg-col-type" scope="col">{{t "type"}}</th>
+                        {{#if (anyValue raises)}}
+                          <th class="arg-col-doc" scope="col">{{t "doc"}}</th>
+                        {{/if}}
+                      </tr>
+                    </thead>
                     {{#each raises}}
                       <tbody class="arg-group">
-                        <tr class="arg-row{{#if this}} has-doc{{/if}}">
-                          <td class="arg-cell-name"><span
-                              class="raise-name"
+                        <tr class="arg-row">
+                          <td class="arg-cell-type"><span
+                              class="raise-name type"
                             >{{@key}}</span></td>
+                          {{#if (anyValue ../raises)}}
+                            <td class="arg-cell-doc">{{#if this}}<div
+                                  class="arg-doc-wrap"
+                                ><div class="doc arg-doc clamped">{{{this}}}</div></div>{{/if}}</td>
+                          {{/if}}
                         </tr>
-                        {{#if this}}
-                          <tr class="doc-row">
-                            <td>
-                              <div class="arg-doc-wrap">
-                                <div class="doc arg-doc clamped">{{{this}}}</div>
-                              </div>
-                            </td>
-                          </tr>
-                        {{/if}}
                       </tbody>
                     {{/each}}
                   </table>
@@ -373,22 +386,33 @@
           <tr class="arg-row{{#if doc}} has-doc{{/if}}">
             <td class="arg-cell-name"><span
                 class="arg-name {{#if required}}arg-required{{else}}arg-optional{{/if}}"
-                title="{{t 'name'}}"
               >{{~#ifEquals kind "VAR_POSITIONAL"~}}<span
                     class="arg-kind"
-                    title="{{t 'varArgs'}}"
+                    data-arg-info="{{argKindInfo kind required}}"
+                    role="img"
+                    aria-label="{{argKindInfo kind required}}"
+                    tabindex="0"
                   ><svg class="arg-kind-icon arg-kind-icon-varargs" aria-hidden="true"><use href="#arg-icon-varargs"></use></svg></span>{{~/ifEquals~}}{{~#ifEquals kind "VAR_NAMED"~}}<span
                     class="arg-kind"
-                    title="{{t 'varNamedArgs'}}"
+                    data-arg-info="{{argKindInfo kind required}}"
+                    role="img"
+                    aria-label="{{argKindInfo kind required}}"
+                    tabindex="0"
                   ><svg class="arg-kind-icon arg-kind-icon-kwargs" aria-hidden="true"><use href="#arg-icon-kwargs"></use></svg></span>{{~/ifEquals~}}{{~#ifEquals kind "NAMED_ONLY"~}}<span
                     class="arg-kind"
-                    title="{{t 'namedOnlyArg'}}"
+                    data-arg-info="{{argKindInfo kind required}}"
+                    role="img"
+                    aria-label="{{argKindInfo kind required}}"
+                    tabindex="0"
                   ><svg class="arg-kind-icon arg-kind-icon-named" aria-hidden="true"><use href="#arg-icon-named"></use></svg></span>{{~/ifEquals~}}{{~#ifEquals
                   kind
                   "POSITIONAL_ONLY"
                 ~}}<span
                     class="arg-kind"
-                    title="{{t 'posOnlyArg'}}"
+                    data-arg-info="{{argKindInfo kind required}}"
+                    role="img"
+                    aria-label="{{argKindInfo kind required}}"
+                    tabindex="0"
                   ><svg class="arg-kind-icon arg-kind-icon-positional" aria-hidden="true"><use href="#arg-icon-positional"></use></svg></span>{{~/ifEquals~}}{{~name~}}</span></td>
             {{#if showType}}
               <td class="arg-cell-type">{{#if type}}{{{renderTypeInfo

@@ -21,7 +21,13 @@ function createModal(closeLabel: string = "Close") {
   modalCloseButton.addEventListener("click", () => {
     hideModal();
   });
-  modalBackground.appendChild(modalCloseButtonContainer);
+  // The close button sits above the dialog and has to end where the dialog
+  // ends. Since the dialog is only as wide as its content, both share a frame
+  // that takes that width instead of each of them repeating a fixed measure.
+  const modalFrame = document.createElement("div");
+  modalFrame.classList.add("modal-frame");
+  modalFrame.appendChild(modalCloseButtonContainer);
+  modalBackground.appendChild(modalFrame);
   modalCloseButtonContainer.addEventListener("click", () => {
     hideModal();
   });
@@ -38,7 +44,7 @@ function createModal(closeLabel: string = "Close") {
   modalContent.classList.add("modal-content");
   modal.appendChild(modalContent);
 
-  modalBackground.appendChild(modal);
+  modalFrame.appendChild(modal);
   document.body.appendChild(modalBackground);
   document.addEventListener("keydown", ({ key }) => {
     if (key === "Escape") hideModal();
