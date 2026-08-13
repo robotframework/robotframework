@@ -10,15 +10,17 @@ Metadata is included in XML
     Validate metadata in XML
 
 Metadata is included in log
-    Validate metadate in HTML    ${OUTDIR}/log.html
+    Validate metadata in HTML    ${OUTDIR}/log.html
 
 Metadata is included in report
-    Validate metadate in HTML    ${OUTDIR}/report.html
+    Validate metadata in HTML    ${OUTDIR}/report.html
 
 Metadata is preserved by Rebot
     Copy Previous Outfile
-    Run Rebot    --log rebot-log.html --report NONE    ${OUTFILE COPY}
+    Run Rebot    --log rebot-log.html --report rebot-report.html    ${OUTFILE COPY}
     Validate metadata in model
+    Validate metadata in HTML    ${OUTDIR}/rebot-log.html
+    Validate metadata in HTML    ${OUTDIR}/rebot-report.html
 
 Metadata is included in JSON
     Copy Previous Outfile
@@ -44,7 +46,7 @@ Validate metadata in XML
     Element Text Should Be    ${tc}    *bold* & <extra>             xpath=meta[@name="Format"]
     Element Should Not Exist    ${OUTFILE}    xpath=.//test[@name="Test Without Metadata"]/meta
 
-Validate metadate in HTML
+Validate metadata in HTML
     [Arguments]    ${path}
     File Should Contain    ${path}    Team Robot
     File Should Contain    ${path}    RF-4409

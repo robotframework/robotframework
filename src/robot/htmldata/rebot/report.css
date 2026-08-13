@@ -205,6 +205,9 @@ input[type='submit']:hover, input[type='button']:hover {
 .details-col-doc {
     min-width: 10em;
 }
+.details-col-metadata {
+    min-width: 10em;
+}
 .details-col-tags {
     min-width: 10em;
 }
