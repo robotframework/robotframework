@@ -69,12 +69,12 @@
   background: var(--light-background-color);
   padding: 1px;
   border-radius: 3px;
-  /* A piece of code is one thing and moves to the next line as a whole. */
-  white-space: nowrap;
 }
-/* A code block keeps its own line breaks, which `nowrap` would collapse. */
-.doc pre code {
-  white-space: inherit;
+/* Code in a table is not running text: it stays in one piece and a table that
+   does not fit scrolls, the way a code block does. */
+.doc table code {
+  white-space: nowrap;
+  overflow-wrap: normal;
 }
 .doc ul > li {
   list-style-type: square;

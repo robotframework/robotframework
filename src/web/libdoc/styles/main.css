@@ -831,7 +831,7 @@ h4 {
    for a multiple of a table that is sized by its content. */
 .kw-info-table {
   width: auto;
-  max-width: 1000px;
+  max-width: 1200px;
   table-layout: auto;
   border-collapse: separate;
   border-spacing: 0;
@@ -910,9 +910,10 @@ h4 {
 /* A long URL would otherwise raise the table's min-content width and push it
    past the viewport: `break-word` does not affect intrinsic sizing, `anywhere`
    does. The descendants are listed because the inherited value loses against
-   the rule matching links directly. Inline code is left out on purpose. */
+   the rules matching links and code directly. */
 .arg-doc,
-.arg-doc a {
+.arg-doc a,
+.arg-doc code {
   overflow-wrap: anywhere;
 }
 
@@ -1021,6 +1022,12 @@ h4 {
 .return-info-table .arg-col-type,
 .raises-table .arg-col-type {
   width: 1px;
+}
+
+/* A name, a type or a default value is one token and is never broken up.
+   Documentation is running text and wraps, inline code included. */
+.arg-cell-name,
+.arg-cell-type {
   white-space: nowrap;
 }
 
@@ -1046,7 +1053,7 @@ h4 {
 
 /* A readable measure even when the details pane is wider. */
 .kwdoc {
-  max-width: 1000px;
+  max-width: 1200px;
 }
 
 /* Room for a fourth column, so the documentation moves next to the signature.
@@ -1054,7 +1061,7 @@ h4 {
    share one row; the `colspan` then spans phantom columns that collapse. */
 @media only screen and (min-width: 1280px) {
   .libdoc-details {
-    max-width: 1600px;
+    max-width: 1200px;
   }
 
   /* Room for more than the reading measure; the content still decides. */
@@ -1066,9 +1073,6 @@ h4 {
 
   /* The signature stays on one line, so a table that has to give way gives
      way in the documentation column. */
-  .arguments-table.has-doc-column .arg-cell-name,
-  .arguments-table.has-doc-column .arg-cell-default,
-  .arguments-table.has-doc-column .arg-cell-type,
   .arguments-table.has-doc-column thead th:not(.arg-col-doc) {
     white-space: nowrap;
   }
@@ -1140,7 +1144,6 @@ h4 {
   border-radius: 3px;
   padding: 0.1em 0.8em;
   font-size: var(--font-size-code);
-  white-space: nowrap;
 }
 
 .arg-name {
