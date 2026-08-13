@@ -4855,6 +4855,8 @@ class _Misc(_BuiltInBase):
         `${SUITE METADATA}` in a Python dictionary. Notice that modifying this
         variable directly has no effect on the actual metadata the suite has.
 
+        See [Set Test Metadata] if you want to set metadata for a single test.
+
         The `separator` argument is new in Robot Framework 7.2.
         """
         if not isinstance(name, str):
