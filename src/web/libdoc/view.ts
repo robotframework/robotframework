@@ -12,6 +12,21 @@ const CLIPBOARD_SVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewB
 // Heroicons check (MIT licence, https://heroicons.com)
 const CHECK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>`;
 
+const ARG_KIND_ICONS: Record<string, string> = {
+  POSITIONAL_ONLY: "positional",
+  NAMED_ONLY: "named",
+  VAR_POSITIONAL: "varargs",
+  VAR_NAMED: "kwargs",
+};
+
+const ARG_KIND_KEYS: Record<string, string> = {
+  POSITIONAL_OR_NAMED: "argKindPositionalOrNamed",
+  POSITIONAL_ONLY: "argKindPositionalOnly",
+  NAMED_ONLY: "argKindNamedOnly",
+  VAR_POSITIONAL: "argKindVarArgs",
+  VAR_NAMED: "argKindVarNamed",
+};
+
 interface MatchInclude {
   args?: boolean;
   doc?: boolean;
@@ -96,28 +111,22 @@ class View {
     Handlebars.registerHelper("hasDocs", function (args) {
       return Array.isArray(args) && args.some((arg) => arg.doc);
     });
-    // Raises is a mapping of exception name to documentation. The
-    // documentation is mandatory today, which may well change.
+    // Raises maps an exception name to its documentation, which is mandatory
+    // today but may not stay that way.
     Handlebars.registerHelper("anyValue", function (dict) {
       return !!dict && Object.values(dict).some((value) => value);
     });
-    // What the marker in front of an argument means, spelled out: how the
-    // argument can be given, and whether a value has to be given at all.
+    Handlebars.registerHelper("argKindIcon", function (kind: string) {
+      return ARG_KIND_ICONS[kind] ?? "";
+    });
     Handlebars.registerHelper(
       "argKindInfo",
       function (kind: string, required: boolean) {
-        const kinds: Record<string, string> = {
-          POSITIONAL_OR_NAMED: "argKindPositionalOrNamed",
-          POSITIONAL_ONLY: "argKindPositionalOnly",
-          NAMED_ONLY: "argKindNamedOnly",
-          VAR_POSITIONAL: "argKindVarArgs",
-          VAR_NAMED: "argKindVarNamed",
-        };
         const how = translate.translate(
-          kinds[kind] ?? "argKindPositionalOrNamed",
+          ARG_KIND_KEYS[kind] ?? ARG_KIND_KEYS.POSITIONAL_OR_NAMED,
         );
-        // The variable ones take whatever is left over, so "required" says
-        // nothing about them.
+        // Variable arguments take whatever is left over, so being required
+        // says nothing about them.
         if (kind === "VAR_POSITIONAL" || kind === "VAR_NAMED") {
           return how;
         }
@@ -131,7 +140,7 @@ class View {
       return Array.isArray(args) && args.some((arg) => arg.type);
     });
     // The documentation cell spans the signature columns, and which of those
-    // are rendered depends on the arguments.
+    // exist depends on the arguments.
     Handlebars.registerHelper(
       "signatureColumns",
       function (showDefault: boolean, showType: boolean) {
@@ -228,54 +237,8 @@ class View {
         { passive: true },
       );
       this.updateTitleSize();
-      // The symbol in front of a name is focusable so that the keyboard and
-      // touch can ask what the argument kind means. A mouse should not leave
-      // the explanation behind after a click, and `:focus-visible` does not
-      // help: a click on a focusable span counts as keyboard-like focus.
-      // Dropping the focus again on mouse release keeps the text selectable,
-      // which preventing the focus would not.
-      document.addEventListener("pointerup", (event) => {
-        const chip = (event.target as HTMLElement)?.closest?.(
-          ".arg-kind[data-arg-info]",
-        );
-        // Without a pointer that can hover, the explanation is opened by
-        // tapping the symbol and closed by tapping anywhere else. The class is
-        // set here rather than relying on focus: tapping a `span` does not
-        // reliably focus it.
-        document
-          .querySelectorAll(".arg-kind.show-info")
-          .forEach((shown) => shown.classList.remove("show-info"));
-        if (event.pointerType !== "mouse") {
-          chip?.classList.add("show-info");
-        } else if (chip) {
-          // A mouse has hovering, so a click must not leave it behind. It
-          // would, because a click on a focusable span counts as keyboard-like
-          // focus.
-          (chip as HTMLElement).blur();
-        }
-      });
-      this.lastWidth = window.innerWidth;
-      window.addEventListener("resize", () => {
-        // Mobile browsers fire `resize` while scrolling, because hiding and
-        // showing the address bar changes the window height. Nothing in this
-        // layout depends on the height, and restoring the reading position
-        // for such an event undoes the very scrolling that caused it.
-        if (window.innerWidth === this.lastWidth) {
-          return;
-        }
-        this.lastWidth = window.innerWidth;
-        // Nothing is measured while the window is still being dragged: every
-        // measurement forces a layout of the whole document, and a drag fires
-        // this far more often than the screen is repainted.
-        this.resizing = true;
-        clearTimeout(this.resizeTimer);
-        this.resizeTimer = setTimeout(() => {
-          this.resizing = false;
-          this.updateTitleFit();
-          this.updateDocClamping();
-          this.restoreScrollAnchor();
-        }, 200);
-      });
+      this.initArgKindInfo();
+      this.initResizeHandling();
       window
         .matchMedia("(prefers-color-scheme: dark)")
         .addEventListener("change", ({ matches }) => {
@@ -287,6 +250,54 @@ class View {
           }
         });
     }
+  }
+
+  /**
+   * Touch has no hover, so the explanation of an argument kind is opened by
+   * tapping the symbol and closed by tapping anywhere else. A class is used
+   * rather than focus: tapping a `span` does not reliably focus it.
+   */
+  private initArgKindInfo() {
+    document.addEventListener("pointerup", (event) => {
+      const symbol = (event.target as HTMLElement)?.closest?.(
+        ".arg-kind[aria-label]",
+      );
+      document
+        .querySelectorAll(".arg-kind.show-info")
+        .forEach((shown) => shown.classList.remove("show-info"));
+      if (event.pointerType !== "mouse") {
+        symbol?.classList.add("show-info");
+      } else if (symbol) {
+        // A click on a focusable span counts as keyboard-like focus, which
+        // would leave the explanation behind. Dropping the focus again keeps
+        // the text selectable, which preventing the focus would not.
+        (symbol as HTMLElement).blur();
+      }
+    });
+  }
+
+  private initResizeHandling() {
+    this.lastWidth = window.innerWidth;
+    window.addEventListener("resize", () => {
+      // Mobile browsers fire `resize` while scrolling, because hiding the
+      // address bar changes the window height. Nothing here depends on the
+      // height, and restoring the reading position for such an event undoes
+      // the very scrolling that caused it.
+      if (window.innerWidth === this.lastWidth) {
+        return;
+      }
+      this.lastWidth = window.innerWidth;
+      // Measuring forces a layout of the whole document, and dragging a window
+      // edge fires this far more often than the screen is repainted.
+      this.resizing = true;
+      clearTimeout(this.resizeTimer);
+      this.resizeTimer = setTimeout(() => {
+        this.resizing = false;
+        this.updateTitleFit();
+        this.updateDocClamping();
+        this.restoreScrollAnchor();
+      }, 200);
+    });
   }
 
   private renderTemplates() {
@@ -382,18 +393,7 @@ class View {
     this.updateDocClamping();
   }
 
-  /**
-   * Resizing the window changes the height of everything above the reading
-   * position -- the keyword list collapses, arguments switch between rows and
-   * columns -- which would otherwise scroll the keyword being read out of
-   * view. The topmost visible keyword is therefore remembered while scrolling
-   * and put back to the same place after the layout has changed.
-   */
-  /**
-   * The title only has room to be big while the top of the page is visible.
-   * Reading `scrollY` does not force a layout and the class is only touched
-   * when the state really changes, so this is cheap enough for every event.
-   */
+  /** The title only has room to be big while the top of the page is visible. */
   private updateTitleSize() {
     const scrolled = window.scrollY > 40;
     if (scrolled !== this.titleScrolled) {
@@ -443,19 +443,23 @@ class View {
     return Math.min(width, 300) - padding;
   }
 
+  /**
+   * Resizing changes the height of everything above the reading position --
+   * the keyword list collapses, arguments switch between rows and columns --
+   * which would otherwise scroll the keyword being read out of view. The
+   * topmost visible section is remembered while scrolling and put back to the
+   * same place once the layout has changed.
+   */
   private queueAnchorUpdate() {
     if (this.restoringAnchor || this.anchorUpdateQueued || this.resizing) {
       return;
     }
-    // Measuring on every scroll event would force a layout per frame and make
-    // scrolling stutter. Once per 150ms is enough: the position is only read
-    // when the window is resized.
+    // Measuring on every scroll event would force a layout per frame. Once per
+    // 150ms is enough: the position is only read when the window is resized.
     this.anchorUpdateQueued = true;
     setTimeout(() => {
       this.anchorUpdateQueued = false;
-      // A resize may have started in the meantime. Measuring now would store
-      // the position the layout has *after* the change and the correction
-      // afterwards would have nothing left to correct.
+      // A resize started in the meantime would already have changed the layout.
       if (!this.resizing && !this.restoringAnchor) {
         this.updateScrollAnchor();
       }
@@ -463,10 +467,9 @@ class View {
   }
 
   private updateScrollAnchor() {
-    // The section that starts closest above the reading line, which is the one
-    // filling the top of the window. Taking the first section that merely
-    // reaches into the window would pick the previous, mostly scrolled away
-    // one, and its height changes on resize as well.
+    // The section starting closest above the reading line fills the top of the
+    // window. The first one merely reaching into it would be the previous,
+    // mostly scrolled away section, whose height changes on resize as well.
     const readingLine = 100;
     let anchor: { element: HTMLElement; top: number } | null = null;
     document
@@ -505,14 +508,13 @@ class View {
 
   /**
    * Documentation is clamped to four lines with CSS. Only documentation that
-   * really is too long gets the `more...` link and becomes clickable.
+   * really is too long gets the `more...` button and becomes clickable.
    */
   private updateDocClamping() {
     const wraps: HTMLElement[] = [];
     const docs: HTMLElement[] = [];
-    // Writes, reads and writes again in three separate passes. Interleaving
-    // them forces a layout per argument, which on a large library means a
-    // thousand of them for every single resize.
+    // Writes, reads and writes again in three passes. Interleaving them forces
+    // a layout per argument, a thousand of them on a large library.
     document.querySelectorAll<HTMLElement>(".arg-doc-wrap").forEach((wrap) => {
       const doc = wrap.querySelector<HTMLElement>(".arg-doc");
       if (!doc) {
@@ -525,9 +527,9 @@ class View {
       wraps.push(wrap);
       docs.push(doc);
     });
-    // A hidden documentation -- a keyword filtered out by the search, a
-    // section not laid out yet -- measures zero and would look like it fits.
-    // Those stay clamped, which is how the template renders them anyway.
+    // Hidden documentation -- filtered out by the search, not laid out yet --
+    // measures zero and would look like it fits. It stays clamped, which is
+    // how the template renders it anyway.
     const measured = docs.map((doc) => ({
       known: doc.clientHeight > 0,
       overflowing: doc.scrollHeight > doc.clientHeight + 1,
@@ -542,8 +544,7 @@ class View {
         return;
       }
       doc.classList.add("truncated");
-      // A button, not a span: opening the full documentation has to work with
-      // the keyboard as well.
+      // A button, not a span, so that the keyboard reaches it.
       const more = document.createElement("button");
       more.type = "button";
       more.classList.add("doc-more");
@@ -569,7 +570,6 @@ class View {
     container.classList.add("arg-detail-container");
 
     const heading = document.createElement("h2");
-    heading.classList.add("arg-detail-name");
     const name = group.querySelector(".arg-name, .raise-name");
     if (name) {
       heading.appendChild(name.cloneNode(true));
@@ -600,13 +600,11 @@ class View {
 
   private argDetailItem(labelKey: string, html: string) {
     const item = document.createElement("span");
-    item.classList.add("arg-detail-item");
     const label = document.createElement("span");
     label.classList.add("arg-detail-label");
     label.textContent = `${this.translations.translate(labelKey)}:`;
     item.appendChild(label);
     const value = document.createElement("span");
-    value.classList.add("arg-detail-value");
     value.innerHTML = html;
     // Type links open the data type modal and cannot be nested into this one.
     value.querySelectorAll("a.type").forEach((link) => {

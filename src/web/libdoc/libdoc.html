@@ -306,9 +306,8 @@
                     </thead>
                     <tbody class="arg-group">
                       <tr class="arg-row">
-                        {{! The column stays even when the keyword only
-                            documents what it returns without saying of which
-                            type: the header is always the same. }}
+                        {{! The cell stays empty when there is no type; the
+                            header is the same either way. }}
                         <td class="arg-cell-type">{{#if (hasVisibleReturnType
                             returnType
                           )}}{{{renderTypeInfo returnType true}}}{{/if}}</td>
@@ -332,8 +331,8 @@
                   <table class="raises-table kw-info-table">
                     <thead>
                       <tr>
-                        {{! An exception is named by its class, which is a type
-                            like any other, so the column is the same one. }}
+                        {{! An exception is named by its class, a type like
+                            any other. }}
                         <th class="arg-col-type" scope="col">{{t "type"}}</th>
                         {{#if (anyValue raises)}}
                           <th class="arg-col-doc" scope="col">{{t "doc"}}</th>
@@ -386,34 +385,12 @@
           <tr class="arg-row{{#if doc}} has-doc{{/if}}">
             <td class="arg-cell-name"><span
                 class="arg-name {{#if required}}arg-required{{else}}arg-optional{{/if}}"
-              >{{~#ifEquals kind "VAR_POSITIONAL"~}}<span
+              >{{~#if (argKindIcon kind)~}}<span
                     class="arg-kind"
-                    data-arg-info="{{argKindInfo kind required}}"
                     role="img"
                     aria-label="{{argKindInfo kind required}}"
                     tabindex="0"
-                  ><svg class="arg-kind-icon arg-kind-icon-varargs" aria-hidden="true"><use href="#arg-icon-varargs"></use></svg></span>{{~/ifEquals~}}{{~#ifEquals kind "VAR_NAMED"~}}<span
-                    class="arg-kind"
-                    data-arg-info="{{argKindInfo kind required}}"
-                    role="img"
-                    aria-label="{{argKindInfo kind required}}"
-                    tabindex="0"
-                  ><svg class="arg-kind-icon arg-kind-icon-kwargs" aria-hidden="true"><use href="#arg-icon-kwargs"></use></svg></span>{{~/ifEquals~}}{{~#ifEquals kind "NAMED_ONLY"~}}<span
-                    class="arg-kind"
-                    data-arg-info="{{argKindInfo kind required}}"
-                    role="img"
-                    aria-label="{{argKindInfo kind required}}"
-                    tabindex="0"
-                  ><svg class="arg-kind-icon arg-kind-icon-named" aria-hidden="true"><use href="#arg-icon-named"></use></svg></span>{{~/ifEquals~}}{{~#ifEquals
-                  kind
-                  "POSITIONAL_ONLY"
-                ~}}<span
-                    class="arg-kind"
-                    data-arg-info="{{argKindInfo kind required}}"
-                    role="img"
-                    aria-label="{{argKindInfo kind required}}"
-                    tabindex="0"
-                  ><svg class="arg-kind-icon arg-kind-icon-positional" aria-hidden="true"><use href="#arg-icon-positional"></use></svg></span>{{~/ifEquals~}}{{~name~}}</span></td>
+                  ><svg class="arg-kind-icon arg-kind-icon-{{argKindIcon kind}}" aria-hidden="true"><use href="#arg-icon-{{argKindIcon kind}}"></use></svg></span>{{~/if~}}{{~name~}}</span></td>
             {{#if showType}}
               <td class="arg-cell-type">{{#if type}}{{{renderTypeInfo
                   type
@@ -428,12 +405,10 @@
             {{/if}}
           </tr>
           {{#if showDoc}}
-            {{! The colspan counts the signature columns only. In the wide
-                layout the rows of a group are merged into one with
-                `display: contents`, where this cell continues into columns
-                that stay empty and therefore collapse. An argument without
-                documentation still needs its cell there to keep the columns
-                aligned, and `.doc-row.no-doc` hides it in the narrow layout. }}
+            {{! The colspan counts the signature columns only; in the wide
+                layout this cell continues into columns that collapse. An
+                argument without documentation keeps its empty cell there to
+                keep the columns aligned. }}
             <tr class="doc-row{{#unless doc}} no-doc{{/unless}}">
               <td colspan="{{signatureColumns showDefault showType}}">
                 {{#if doc}}

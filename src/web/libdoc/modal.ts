@@ -22,8 +22,7 @@ function createModal(closeLabel: string = "Close") {
     hideModal();
   });
   // The close button sits above the dialog and has to end where the dialog
-  // ends. Since the dialog is only as wide as its content, both share a frame
-  // that takes that width instead of each of them repeating a fixed measure.
+  // ends, so both take their width from a shared frame.
   const modalFrame = document.createElement("div");
   modalFrame.classList.add("modal-frame");
   modalFrame.appendChild(modalCloseButtonContainer);

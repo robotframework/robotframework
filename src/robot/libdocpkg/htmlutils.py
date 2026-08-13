@@ -157,9 +157,7 @@ class DocToHtml:
         link = f'<a href="{fragment(header)}">{header}</a>'
         if not nested:
             return [f"<li>{link}</li>"]
-        # The nested list belongs inside the item it is nested under. Next to
-        # it, as a sibling of the `li`, it would not be valid HTML: a `ul` can
-        # only contain list items.
+        # Nested list must be inside the item, not a sibling of it.
         sub_items = [line for sub in nested for line in self._toc_item(sub)]
         return [f"<li>{link}", *self._toc_block(sub_items), "</li>"]
 

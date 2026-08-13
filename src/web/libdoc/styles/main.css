@@ -8,25 +8,18 @@
   --highlighted-color: var(--text-color);
   --highlighted-background-color: yellow;
   --less-important-text-color: gray;
-  /* Slightly dimmer than --text-color, used for argument documentation. */
-  --muted-text-color: #5b5b60;
-  /* Argument kind markers: `*`, `**`, the tag and the arrow. */
-  --arg-kind-color: var(--less-important-text-color);
+  --muted-text-color: #5b5b60; /* argument documentation */
+  --arg-kind-color: var(--less-important-text-color); /* argument markers */
   --link-color: #0000ee;
   --hover-tint: #fafafa;
   --more-hover-color: var(--link-color);
 
-  /* Type scale. Every size is in `rem` on purpose. With `em` the sizes
-     multiply as soon as the elements nest, and the generic `monospace` family
-     makes browsers restart the calculation from their 13px fixed font default
-     -- which is how `font-size: 1.1em` ended up rendering *smaller* than the
-     surrounding text. */
+  /* Type scale. In `rem`, not `em`: sizes multiply as soon as elements nest,
+     and `monospace` makes browsers restart from their 13px fixed font default. */
   --font-size-keyword: 1.625rem; /* keyword and data type names */
   --font-size-section: 1.25rem; /* Arguments, Returns, Documentation, ... */
   --font-size-doc: 0.9375rem; /* argument documentation */
-  --font-size-code: 0.875rem; /* monospace runs larger than sans at the
-     same size -- bigger x-height, wider glyphs -- so it is set a step
-     smaller to sit level with the 1rem body text */
+  --font-size-code: 0.875rem; /* a step smaller: monospace looks larger */
   --font-size-small: 0.875rem; /* keyword list, `more...` */
   --font-size-label: 0.75rem; /* uppercase column headers */
 }
@@ -42,26 +35,22 @@
   --highlighted-background-color: yellow;
   --less-important-text-color: #5b6a6f;
   --muted-text-color: #c6c9cb;
-  /* Brighter than --less-important-text-color, which is too dim for the small
-     markers on the dark background. */
-  --arg-kind-color: #9fb0b6;
+  --arg-kind-color: #9fb0b6; /* --less-important-text-color is too dim here */
   --link-color: #52adff;
   --hover-tint: #232a30;
   --more-hover-color: var(--robot-highlight);
   color-scheme: dark;
 }
 
+/* Mobile browsers inflate the text of narrow blocks, but not the headings,
+   which flattens the type scale into no hierarchy at all. */
 html {
-  /* iOS Safari and Chrome on Android inflate the text of blocks they consider
-     too narrow ("text autosizing"). They do it to the body copy but not to the
-     headings, which flattens the type scale below into no hierarchy at all. */
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
 
-/* Safari only supports the prefixed property, and the CSS minifier drops that
-   prefix from the rule above. Inside a feature query the declaration survives,
-   and the query itself is a Safari-only test. */
+/* The minifier drops the prefix above, which Safari needs. Inside a feature
+   query it survives, and the query itself is a Safari-only test. */
 @supports (-webkit-touch-callout: none) {
   html {
     -webkit-text-size-adjust: 100%;
@@ -146,12 +135,9 @@ a {
   padding-left: 2%;
   padding-right: 2%;
   overflow: auto;
-  /* Deliberately not animated when the breakpoints change this width: the
-     whole document is relayouted on every frame of such a transition, which on
-     a large library is heavy enough to stall the tab -- or, while resizing
-     repeatedly deep inside the keywords, to make the renderer run out of
-     memory. The same was tried and reverted for the margins and paddings
-     inside the keywords. */
+  /* Deliberately not animated: a transition relayouts the whole document on
+     every frame, which on a large library can make the renderer run out of
+     memory. Tried and reverted for the paddings inside the keywords as well. */
   max-width: 1060px;
 }
 
@@ -159,8 +145,8 @@ a {
   position: fixed;
   left: 0;
   top: 0;
-  /* Only as wide as the name, so the background does not cover the content
-     next to it. The keyword list width is the limit once scrolled. */
+  /* Only as wide as the name, so the background does not cover what is next
+     to it. */
   width: auto;
   max-width: calc(100% - 80px);
   height: 36px;
@@ -169,16 +155,12 @@ a {
   align-items: center;
   text-decoration: none;
   color: var(--text-color);
-  /* `.libdoc-details` paints its own background and scrolls underneath the
-     fixed title, so the title needs both a background and a higher layer to
-     stay readable. */
+  /* The documentation scrolls underneath and paints its own background. */
   background: var(--background-color);
   z-index: 2;
 }
 
-/* The title is large as long as the top of the page is visible and shrinks to
-   a compact bar once the page is scrolled, where it shares the line with the
-   keyword list and must stay readable instead of covering it. */
+/* Large while the top of the page is visible, compact once scrolled. */
 .libdoc-title h1 {
   margin: 0;
   min-width: 0;
@@ -190,20 +172,18 @@ a {
   transition: font-size 0.2s ease;
 }
 
-/* Scrolled down the title shares the line with the keyword list and must not
-   reach into the documentation next to it. */
+/* Scrolled down the title must not reach into the documentation. */
 html.scrolled .libdoc-title {
   max-width: 300px;
 }
 
-/* Only names that do not fit the compact bar at full size are made smaller.
-   `title-fits` is set by the view, which measures the name off screen. */
+/* Only names that do not fit are made smaller; `title-fits` is set by the
+   view, which measures the name off screen. */
 html.scrolled:not(.title-fits) .libdoc-title h1 {
   font-size: 1.25rem;
 }
 
-/* The robot only decorates the big title; scrolled down the room is needed
-   for the name itself. */
+/* Scrolled down the room is needed for the name itself. */
 html.scrolled .libdoc-title > svg {
   display: none;
 }
@@ -234,9 +214,8 @@ html.scrolled .libdoc-title > svg {
 
 #language-container ul {
   list-style: none;
-  /* The container is only as wide as the button, so the list is taken out of
-     the flow, sized to its entries and hung on the container's right edge
-     instead of wrapping them. */
+  /* Sized to its entries and hung on the right edge of the button, which is
+     narrower than the list. */
   position: absolute;
   top: 100%;
   right: 0;
@@ -273,9 +252,7 @@ input.hamburger-menu {
   cursor: pointer;
 
   opacity: 0;
-  /* Above the title bar, which spans the whole width on mobile and paints its
-     own background. */
-  z-index: 4;
+  z-index: 4; /* above the title bar, which paints its own background */
 
   -webkit-touch-callout: none;
 }
@@ -478,9 +455,8 @@ h4 a:hover {
   background: var(--light-background-color);
 }
 
-/* A matched tag highlights as a whole pill. Marking only the text inside the
-   border leaves a highlighted word in a box, which reads as two separate
-   things rather than one selected tag. */
+/* A matched tag highlights as a whole pill: a highlighted word inside a
+   border reads as two things rather than one selected tag. */
 .tag-link:has(mark) {
   background: var(--highlighted-background-color);
   color: var(--highlighted-color);
@@ -495,23 +471,20 @@ h4 a:hover {
 
 .arg-kind {
   color: var(--arg-kind-color);
-  /* Separates the marker from the name. Set here because the template joins
-     them without whitespace. */
+  /* Separates marker and name, which the template joins without whitespace. */
   padding: 0 0.45em 0 0;
   display: inline-flex;
   align-items: center;
 }
 
-/* The sprite only holds the definitions and must not take any space. */
+/* The sprite only holds definitions and must not take any space. */
 .arg-icon-sprite {
   display: none;
 }
 
-/* Sized in `em` so the markers follow the argument name, and the height is
-   what is normalised -- the four icons have different proportions, so a shared
-   width would render them at different optical sizes. The ratios have to be
-   declared here: the `viewBox` sits on the symbol, so the element referencing
-   it has no intrinsic size of its own and would fall back to 300x150. */
+/* Normalised by height, not width: the icons have different proportions. The
+   ratios belong here because an element referencing a `symbol` has no
+   intrinsic size of its own and would fall back to 300x150. */
 .arg-kind-icon {
   fill: currentColor;
   width: 1.3em;
@@ -531,8 +504,7 @@ h4 a:hover {
   aspect-ratio: 23.93 / 15.36;
 }
 
-/* The arrow is long and thin; at the shared height it reads as a hairline
-   next to the asterisks, so it gets a little more of it. */
+/* Long and thin: at the shared height it reads as a hairline. */
 .arg-kind-icon-positional {
   aspect-ratio: 23.12 / 7.64;
   height: 0.75em;
@@ -578,9 +550,8 @@ h4 a:hover {
     display: none;
   }
 
-  /* One navigation bar across the top: the library name on the left, the
-     language menu and the hamburger button on the right. The padding keeps the
-     name clear of those two buttons, which are positioned on top of the bar. */
+  /* One navigation bar: the name on the left, the language menu and the
+     hamburger button on top of it on the right. */
   .libdoc-title {
     width: 100%;
     max-width: 100%;
@@ -592,7 +563,7 @@ h4 a:hover {
     box-sizing: border-box;
   }
 
-  /* The robot decorates the wide layout; the bar needs the room for the name. */
+  /* The bar needs the room for the name. */
   .libdoc-title > svg {
     display: none;
   }
@@ -605,13 +576,12 @@ h4 a:hover {
     font-size: 1.15rem;
   }
 
-  /* The bar spans the window here, so there is nothing to keep clear of. */
+  /* The bar spans the window, so there is nothing to keep clear of. */
   html.scrolled .libdoc-title {
     max-width: 100%;
   }
 
-  /* Left of the hamburger button, on the same bar. The layer has to clear the
-     hamburger (3 and 4) and the title bar (2) the buttons sit on. */
+  /* Left of the hamburger button, above it (3 and 4) and the bar (2). */
   #language-container {
     right: 50px;
     z-index: 5;
@@ -648,18 +618,16 @@ h4 a:hover {
   .hamburger-menu:checked ~ .libdoc-overview {
     display: flex;
     position: fixed;
-    /* Covers whatever the viewport currently is. `height: 100vh` falls short
-       while a mobile browser hides its address bar, and the documentation
-       shows through below the menu. */
+    /* `height: 100vh` falls short while a mobile browser hides its address
+       bar and the documentation shows through below the menu. */
     inset: 0;
     height: auto;
     width: 100%;
-    /* Above the documentation: `content-visibility` makes every keyword card a
-       stacking context of its own, and those come later in the document, so
-       without a layer of its own the menu ends up behind their code blocks.
-       Stays below the navigation bar (2) and the hamburger button (3 and 4). */
+    /* `content-visibility` makes every keyword card a stacking context, and
+       those come later in the document. Stays below the bar (2) and the
+       hamburger button (3 and 4). */
     z-index: 1;
-    /* Leaves the navigation bar visible above the opened menu. */
+    /* Leaves the bar visible above the opened menu. */
     padding-top: 53px;
     box-sizing: border-box;
   }
@@ -764,9 +732,7 @@ h4 {
   margin-right: 0.5rem;
 }
 
-/* The keyword name and the headings of its sections. Sized here rather than
-   left to the browser defaults, where an `h3` following an `h2` would be the
-   same size as the body text next to it. */
+/* Sized here: by browser default an `h3` is as large as the body text. */
 .libdoc-details h2 {
   font-size: var(--font-size-keyword);
 }
@@ -786,33 +752,24 @@ h4 {
   flex-direction: column;
   scroll-margin-top: 60px;
   /* A large library is over 100 000 pixels tall and every width change would
-     otherwise relayout all of it. Keywords outside the window are skipped
-     until they are scrolled into view; `auto` in the intrinsic size makes the
-     browser remember the real height of the ones already seen, so passing a
-     keyword a second time costs nothing.
-
-     The placeholder height is the measured median height of a keyword card:
-     the first pass is laid out with this number, and guessing too low makes
-     every card grow as it renders, which shifts the content under the reader
-     while scrolling. */
+     otherwise relayout all of it. The size is the measured median height of a
+     keyword card; guessing too low makes cards grow as they render, which
+     shifts the content under the reader. */
   content-visibility: auto;
   contain-intrinsic-size: auto 800px;
 }
 
-/* No skipping on a narrow screen. Rendering a keyword for the first time
-   replaces its estimated height with the real one, and the heights range from
-   200 to 3800 pixels, so no single estimate avoids that -- the content under
-   the reader's thumb shifts while the cards render. The skipping is here to
-   keep resizing cheap, and a phone hardly ever changes its width; only a
-   rotation does. Must come after the rule above: a media query adds no
-   specificity, so this is decided by the order alone. */
+/* No skipping on a narrow screen: card heights range from 200 to 3800 pixels,
+   so any estimate shifts the content under the reader's thumb. Skipping is
+   here to keep resizing cheap, and a phone only changes width on rotation.
+   Must come after the rule above, which a media query does not outweigh. */
 @media only screen and (max-width: 899px) {
   .keyword-container {
     content-visibility: visible;
   }
 }
 
-/* Printing needs every keyword laid out, not just the visible ones. */
+/* Printing needs every keyword laid out. */
 @media print {
   .keyword-container {
     content-visibility: visible;
@@ -859,24 +816,19 @@ h4 {
   min-width: 200px;
 }
 
-/* Arguments, returns and raises share the same layout: one `tbody` per entry
-   holding the signature row and an optional documentation row below it. */
-/* A table that cannot shrink any further -- long argument names, wide types --
-   scrolls inside its own box instead of making the keyword card wider than the
-   screen. `min-width: 0` is needed because the section is a block inside flex
-   containers whose automatic minimum size is the content size. */
+/* Arguments, returns and raises share one `tbody` per entry. */
+/* A table that cannot shrink any further scrolls inside its own box instead
+   of making the keyword card wider than the screen. `min-width: 0` because the
+   automatic minimum size of a flex item is its content size. */
 .table-scroll {
   overflow-x: auto;
   min-width: 0;
 }
 
-/* Shrink to fit: a table is as wide as its content and no wider. `width:
-   100%` would stretch every one of them to the full measure and leave the
-   short ones -- a `bool` return, two one-word arguments -- floating in empty
-   space. When the content does not fit, the table takes the width it is given
-   and the columns share the shortfall; which column gives way is settled by
-   the `nowrap` rules further down rather than by percentage widths, which in a
-   shrink-to-fit box ask for a multiple of the table instead of a share of it. */
+/* As wide as its content and no wider; `width: 100%` would leave short tables
+   floating in empty space. Which column gives way when the content does not
+   fit is settled by the `nowrap` rules below -- a percentage width would ask
+   for a multiple of a table that is sized by its content. */
 .kw-info-table {
   width: auto;
   max-width: 1000px;
@@ -890,8 +842,7 @@ h4 {
 .kw-info-table td {
   text-align: left;
   vertical-align: baseline;
-  /* The gutter between the columns grows with the window between these two
-     bounds, so the columns breathe on a wide screen without drifting apart. */
+  /* The gutter grows with the window, within bounds. */
   padding: 0.4rem clamp(1.5rem, 2.5vw, 3rem) 0.4rem 0;
   overflow-wrap: break-word;
 }
@@ -901,11 +852,9 @@ h4 {
   padding-right: 0;
 }
 
-/* Except for the documentation, which is the last column in every one of these
-   tables. It is running text and would otherwise end flush with the edge of
-   the table -- and, where the table takes the full width, with the edge of the
-   card. Rather less of it than between the columns: this is a margin, not a
-   gutter that has to keep two columns apart. */
+/* Except for the documentation, the last column everywhere here. Running text
+   should not end flush with the edge of the card. Less than the gutter above:
+   this is a margin, not a gap between two columns. */
 .kw-info-table td.arg-cell-doc,
 .kw-info-table th.arg-col-doc,
 .kw-info-table .doc-row > td {
@@ -917,8 +866,7 @@ h4 {
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  /* Not --less-important-text-color: at this size it stays below the contrast
-     required for small text in both themes. */
+  /* --less-important-text-color misses the contrast required at this size. */
   color: var(--muted-text-color);
   white-space: nowrap;
   padding-bottom: 0.2rem;
@@ -929,8 +877,7 @@ h4 {
   border-bottom: 1px solid var(--border-color);
 }
 
-/* Signature and documentation of one entry belong together, so the hairline
-   is drawn below the documentation instead. */
+/* One entry, so the hairline is drawn below its documentation instead. */
 .kw-info-table .arg-group > tr.arg-row.has-doc > td {
   border-bottom: none;
   padding-bottom: 0.15rem;
@@ -949,7 +896,7 @@ h4 {
   padding-bottom: 0.5rem;
 }
 
-/* Documentation is set apart from the signature by indentation and a bar. */
+/* Set apart from the signature by indentation and a bar. */
 .arg-doc-wrap {
   max-width: 1000px;
   margin: 0.5rem 1.6rem;
@@ -967,29 +914,26 @@ h4 {
   color: var(--muted-text-color);
 }
 
-/* Long unbreakable tokens in the documentation -- URLs above all -- would
-   otherwise raise the table's min-content width and push the whole table past
-   the viewport, because `overflow-wrap: break-word` does not affect intrinsic
-   sizing while `anywhere` does. The descendants must be listed: the inherited
-   value loses against the rule matching links directly. Inline code is
-   deliberately not in the list; it is never broken up. */
+/* A long URL would otherwise raise the table's min-content width and push it
+   past the viewport: `break-word` does not affect intrinsic sizing, `anywhere`
+   does. The descendants are listed because the inherited value loses against
+   the rule matching links directly. Inline code is left out on purpose. */
 .arg-doc,
 .arg-doc a {
   overflow-wrap: anywhere;
 }
 
-/* Code blocks do not wrap at all, so they would keep the whole table as wide
-   as their longest line -- even while clamped out of sight. `width: 0` takes
-   them out of the intrinsic width calculation, `min-width: 100%` gives them
-   the cell back, and what does not fit scrolls inside the block itself. */
+/* A code block does not wrap and would keep the table as wide as its longest
+   line, even while clamped out of sight. `width: 0` takes it out of the
+   intrinsic width, `min-width: 100%` gives it the cell back. */
 .arg-doc pre {
   width: 0;
   min-width: 100%;
   overflow-x: auto;
 }
 
-/* Only documentation that really is too long stays clamped. `truncated` is
-   set by the view after measuring, and only then a click opens the modal. */
+/* `truncated` is set by the view after measuring; only then a click opens
+   the modal. */
 .arg-doc.clamped {
   display: -webkit-box;
   -webkit-line-clamp: 4;
@@ -1001,8 +945,7 @@ h4 {
   cursor: pointer;
 }
 
-/* Tighter than the regular documentation formatting, which is loaded after
-   this file and therefore needs to be overridden with a stronger selector. */
+/* Tighter than doc_formatting.css, which is loaded after this file. */
 .arg-doc.doc > p {
   margin: 0 0 0.35rem;
 }
@@ -1022,13 +965,11 @@ h4 {
   margin-bottom: 0.4rem;
 }
 
-/* A button so that the full documentation can be opened with the keyboard.
-   It has to look like the piece of text it replaced. */
+/* A button for the keyboard, looking like the text it replaced. */
 .doc-more {
   display: inline-flex;
   align-items: center;
-  /* 24px tall and wide enough to be hit reliably (WCAG 2.5.8); the text of
-     the button is smaller than that on its own. */
+  /* Big enough to be hit reliably (WCAG 2.5.8). */
   min-height: 24px;
   margin-top: 0.15rem;
   padding: 0 0.25rem 0 0;
@@ -1045,8 +986,7 @@ h4 {
   font-weight: 600;
 }
 
-/* Without a pointer that can hover there is nothing to reveal the link, so it
-   is shown highlighted right away. */
+/* Without hover there is nothing to reveal it, so it is shown right away. */
 @media (hover: none) {
   .doc-more {
     color: var(--more-hover-color);
@@ -1072,31 +1012,26 @@ h4 {
 }
 
 /* For the arguments the documentation column only exists in the wide layout
-   below; a keyword has many arguments and their documentation needs the full
-   width more often than not. */
+   below. */
 .arg-col-doc {
   display: none;
 }
 
-/* Returns and raises are a single type each, so there is room for the
-   documentation next to it at every width. */
+/* A single type leaves room for the documentation next to it at any width. */
 .return-info-table .arg-col-doc,
 .raises-table .arg-col-doc {
   display: table-cell;
 }
 
-/* The type column takes what it needs and leaves the rest to the
-   documentation. Not `1%`: a percentage is measured against the width of the
-   table, which a table sized by its content does not have yet -- there it
-   would ask for a hundred times the column. */
+/* Not the usual `1%`: measured against a table that is sized by its content,
+   a percentage asks for a hundred times the column. */
 .return-info-table .arg-col-type,
 .raises-table .arg-col-type {
   width: 1px;
   white-space: nowrap;
 }
 
-/* In its own column the documentation needs neither the indentation nor the
-   bar that set it apart from the signature above it. */
+/* Its own column needs neither the indentation nor the bar. */
 .return-info-table .arg-doc-wrap,
 .raises-table .arg-doc-wrap {
   margin: 0;
@@ -1104,47 +1039,40 @@ h4 {
   border-left: none;
 }
 
-/* The type is not the last column any more and keeps the gutter that
-   `td:last-child` would take away. */
+/* Not the last column any more, so it keeps its gutter. */
 .return-info-table .arg-cell-type,
 .raises-table .arg-cell-type {
   padding-right: 1.5rem;
 }
 
-/* An argument without documentation has an empty cell so that the row keeps
-   all four columns in the wide layout. Without the columns it is just an empty
-   row and must not take any space. */
+/* The empty cell keeps the columns aligned in the wide layout; here it is an
+   empty row and must not take any space. */
 .doc-row.no-doc {
   display: none;
 }
 
-/* Keyword documentation stays at a readable measure even when the details pane
-   is wider. Returns and raises keep the 1000px of `.kw-info-table`. */
+/* A readable measure even when the details pane is wider. */
 .kwdoc {
   max-width: 1000px;
 }
 
-/* From this width on there is room for a fourth column, so the documentation
-   moves next to the signature instead of below it. `display: contents` on the
-   two rows of a group drops the row boxes and lets their cells share one row.
-   The `colspan` of the documentation cell then spans phantom columns that stay
-   empty and therefore collapse to zero width. */
+/* Room for a fourth column, so the documentation moves next to the signature.
+   `display: contents` drops the row boxes of a group and lets their cells
+   share one row; the `colspan` then spans phantom columns that collapse. */
 @media only screen and (min-width: 1280px) {
   .libdoc-details {
     max-width: 1600px;
   }
 
-  /* There is room for more than the reading measure here. What a table
-     actually takes is still decided by its content. */
+  /* Room for more than the reading measure; the content still decides. */
   .arguments-table,
   .return-info-table,
   .raises-table {
     max-width: none;
   }
 
-  /* The signature is kept on one line, so when the table has to give way it is
-     the documentation column that gives way and the signature columns stay at
-     the width their content needs. */
+  /* The signature stays on one line, so a table that has to give way gives
+     way in the documentation column. */
   .arguments-table.has-doc-column .arg-cell-name,
   .arguments-table.has-doc-column .arg-cell-default,
   .arguments-table.has-doc-column .arg-cell-type,
@@ -1156,10 +1084,8 @@ h4 {
     display: table-cell;
   }
 
-  /* Room for an exception name of ordinary length -- `ArithmeticError` and
-     shorter -- so that the documentation of neighbouring rows starts at the
-     same place instead of hugging every name individually. Narrower windows
-     need the space for the text itself and let the column shrink. */
+  /* Room for an exception name of ordinary length, so that neighbouring rows
+     start their documentation at the same place. */
   .return-info-table .arg-col-type,
   .raises-table .arg-col-type {
     min-width: 7rem;
@@ -1169,15 +1095,13 @@ h4 {
     display: contents;
   }
 
-  /* The signature and the documentation are one row now, so the hairline below
-     the signature cells is wanted again. */
+  /* One row now, so the hairline below the signature is wanted again. */
   .arguments-table .arg-group > tr.arg-row.has-doc > td {
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 0.4rem;
   }
 
-  /* The last group closes the table without a trailing line, as everywhere
-     else. Its signature cells must drop the hairline too, otherwise the line
+  /* No trailing line, and the signature cells have to drop it as well or it
      stops where the documentation column starts. */
   .arguments-table .arg-group:last-child > tr.arg-row.has-doc > td,
   .arguments-table .arg-group:last-child > tr > td {
@@ -1189,15 +1113,13 @@ h4 {
     padding-bottom: 0.4rem;
   }
 
-  /* The documentation is the last column here, so the signature cell before it
-     is not the last one of the table and keeps the gutter that
-     `td:last-child` would take away. */
+  /* Not the last cells of the table any more, so they keep their gutter. */
   .arguments-table.has-doc-column thead th:not(.arg-col-doc),
   .arguments-table.has-doc-column .arg-group > tr.arg-row > td {
     padding-right: 1.5rem;
   }
 
-  /* Its own column needs neither the indentation nor the quote bar. */
+  /* Its own column needs neither the indentation nor the bar. */
   .arguments-table .arg-doc-wrap {
     padding-left: 0;
     border-left: none;
@@ -1205,8 +1127,7 @@ h4 {
   }
 }
 
-/* The columns are kept on narrow screens as well; only the padding between
-   them and the documentation indentation are tightened up. */
+/* The columns are kept; only the paddings are tightened up. */
 @media only screen and (max-width: 640px) {
   .kw-info-table th,
   .kw-info-table td {
@@ -1235,23 +1156,17 @@ h4 {
   white-space: nowrap;
 }
 
-/* The kind marker and the name are one unit: a line break between them would
-   leave the `*`, the tag or the arrow dangling on its own line. */
+/* One unit: a line break would leave the marker dangling on its own line. */
 
-/* What the marker means, spelled out. The icons are a shorthand that has to be
-   learned, so the symbol itself carries the explanation: on hover for the
-   mouse, on focus for the keyboard, and on tap for touch, where focus follows.
-   Only the symbol, not the whole name -- reading a name should not make a box
-   appear over the row above.
-
-   `display` rather than `visibility`: an absolutely positioned box counts
-   towards the scrollable overflow of `.table-scroll` even while invisible,
-   which put a scroll bar on every argument table. */
-.arg-kind[data-arg-info]::after {
-  content: attr(data-arg-info);
+/* What the marker means, spelled out on hover, on focus and on tap. The same
+   text serves the screen reader, hence `aria-label` rather than a data
+   attribute. `display` rather than `visibility`: an invisible box still counts
+   towards the scrollable overflow and put a scroll bar on every table. */
+.arg-kind[aria-label]::after {
+  content: attr(aria-label);
   display: none;
   position: absolute;
-  /* Above the symbol, where it does not cover the name it belongs to. */
+  /* Above the symbol, not over the name it belongs to. */
   left: 0;
   bottom: calc(100% + 0.3rem);
   z-index: 3;
@@ -1269,26 +1184,23 @@ h4 {
   white-space: nowrap;
 }
 
-.arg-kind[data-arg-info] {
+.arg-kind[aria-label] {
   position: relative;
-  /* The pointer stays an arrow: the symbol is not a link and clicking it does
-     nothing a mouse does not already get by pointing at it. */
+  /* Not a link: clicking gives a mouse nothing that pointing does not. */
   cursor: default;
 }
 
-/* A mouse gets it while pointing, never by clicking: `focus-visible` does not
-   match a click, so the explanation does not stay behind after one. */
-.arg-kind[data-arg-info]:hover::after,
-.arg-kind[data-arg-info]:focus-visible::after {
+/* `focus-visible` does not match a click, so nothing stays behind after one. */
+.arg-kind[aria-label]:hover::after,
+.arg-kind[aria-label]:focus-visible::after {
   display: block;
 }
 
-/* Without a pointer, tapping the symbol is the only way to ask for it. */
-.arg-kind[data-arg-info].show-info::after {
+/* Without hover, tapping the symbol is the only way to ask. */
+.arg-kind[aria-label].show-info::after {
   display: block;
 }
 
-.arg-type,
 span.type,
 a.type {
   font-family: monospace;
@@ -1396,8 +1308,7 @@ mark {
   border: none;
   background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="100%" width="100%"><path stroke="black" fill="none" stroke-width="2px" stroke-linecap="round" d="M1 8 L1 1 L8 1 M16 1 L23 1 L23 8 M23 16 L23 23 L16 23 M8 23 L1 23 L1 16"></path><path fill="black" stroke="none" stroke-width="1px" transform="scale(1.3) translate(-3 -2.5)" d="M19 7.97zm-8 9.2-4-2.3v-4.63l4 2.33v4.6zm1-6.33L8.04 8.53 12 6.25l3.96 2.28L12 10.84zm5 4.03-4 2.3v-4.6l4-2.33v4.63z"></path></svg>');
 }
-/* The theme is chosen with the toggle, not by the system preference, so the
-   dark variant follows `data-theme` like every other themed rule. */
+
 [data-theme="dark"] .modal-icon {
   background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="100%" width="100%"><path stroke="%23ffffff" fill="none" stroke-width="2px" stroke-linecap="round" d="M1 8 L1 1 L8 1 M16 1 L23 1 L23 8 M23 16 L23 23 L16 23 M8 23 L1 23 L1 16"></path><path fill="%23ffffff" stroke="none" stroke-width="1px" transform="scale(1.3) translate(-3 -2.5)" d="M19 7.97zm-8 9.2-4-2.3v-4.63l4 2.33v4.6zm1-6.33L8.04 8.53 12 6.25l3.96 2.28L12 10.84zm5 4.03-4 2.3v-4.6l4-2.33v4.63z"></path></svg>');
 }
@@ -1414,14 +1325,12 @@ mark {
   bottom: 0;
   left: 0;
   background-color: rgba(0, 0, 0, 0.7);
-  /* Above everything else -- the title bar, the language menu and the theme
-     toggle all place themselves on top of the page. The modal and its close
-     button stack inside this element, so this is the only value that has to
-     beat them. */
+  /* Above the title bar and the language menu. The dialog and its close
+     button stack inside this element. */
   z-index: 2000;
 }
-/* Holds the dialog and the close button above it, and is as large as the
-   content needs -- up to the measure the documentation uses everywhere else. */
+/* Holds the dialog and the close button above it, and takes the width the
+   content needs. */
 .modal-frame {
   display: flex;
   flex-direction: column;
@@ -1434,9 +1343,8 @@ mark {
   display: flex;
   flex-wrap: nowrap;
   flex-direction: column;
-  /* The width comes from the frame, the height is always the same: a dialog
-     that is as tall as its content jumps around between one entry and the
-     next, and the documentation shown here is long more often than not. */
+  /* The width comes from the frame; the height is fixed so that the dialog
+     does not jump around between one entry and the next. */
   height: calc(100vh - 6rem);
   overflow: auto;
   background-color: var(--background-color);
@@ -1457,8 +1365,7 @@ mark {
 }
 
 .modal-close-button-container {
-  /* Follows the width of the frame, so the button stays at the right edge of
-     the dialog however wide it turns out to be. */
+  /* Follows the frame, so the button stays at the edge of the dialog. */
   display: flex;
   justify-content: flex-end;
 }

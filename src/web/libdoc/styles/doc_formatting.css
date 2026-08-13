@@ -69,28 +69,23 @@
   background: var(--light-background-color);
   padding: 1px;
   border-radius: 3px;
-  /* A piece of code is one thing and is not broken across lines, not even
-     between the words of a keyword name. What does not fit moves to the next
-     line as a whole. */
+  /* A piece of code is one thing and moves to the next line as a whole. */
   white-space: nowrap;
 }
-/* Only for code within a sentence. A code block keeps its own line breaks,
-   which `nowrap` would collapse into a single long line. */
+/* A code block keeps its own line breaks, which `nowrap` would collapse. */
 .doc pre code {
   white-space: inherit;
 }
 .doc ul > li {
   list-style-type: square;
 }
-/* Consecutive list items keep 24px between them so that a link in one is far
-   enough from the link in the next to be hit reliably (WCAG 2.5.8). The gap
-   goes between the items rather than into their line height, which would
-   stretch the text of multi-line entries as well. */
+/* Keeps the links of consecutive items far enough apart to be hit reliably
+   (WCAG 2.5.8). Between the items, not in their line height, which would
+   stretch multi-line entries as well. */
 .doc li + li {
   margin-top: 0.4rem;
 }
-/* The first item of a nested list has no item before it, so the distance to
-   the entry it belongs to has to come from the list itself. */
+/* The first item of a nested list has no item before it. */
 .doc li > ul,
 .doc li > ol,
 .doc ul > ul,
@@ -99,8 +94,7 @@
 .doc ol > ol {
   margin-top: 0.4rem;
 }
-/* Half of the 40px browsers indent lists by. Enough to set the items apart
-   from the text above them, and it keeps nested lists readable on a phone. */
+/* Half of the browser default, which keeps nested lists readable on a phone. */
 .doc ul,
 .doc ol {
   padding-left: 20px;
