@@ -1158,10 +1158,10 @@ h4 {
 
 /* One unit: a line break would leave the marker dangling on its own line. */
 
-/* What the marker means, spelled out on hover, on focus and on tap. The same
-   text serves the screen reader, hence `aria-label` rather than a data
-   attribute. `display` rather than `visibility`: an invisible box still counts
-   towards the scrollable overflow and put a scroll bar on every table. */
+/* What the marker means, spelled out on hover and on tap. The same text serves
+   the screen reader, hence `aria-label` rather than a data attribute.
+   `display` rather than `visibility`: an invisible box still counts towards
+   the scrollable overflow and put a scroll bar on every table. */
 .arg-kind[aria-label]::after {
   content: attr(aria-label);
   display: none;
@@ -1190,9 +1190,7 @@ h4 {
   cursor: default;
 }
 
-/* `focus-visible` does not match a click, so nothing stays behind after one. */
-.arg-kind[aria-label]:hover::after,
-.arg-kind[aria-label]:focus-visible::after {
+.arg-kind[aria-label]:hover::after {
   display: block;
 }
 

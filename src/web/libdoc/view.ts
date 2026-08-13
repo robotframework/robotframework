@@ -41,7 +41,7 @@ class View {
   translations: Translations;
   searchTime: number;
   resizeListenerAdded = false;
-  resizeTimer: NodeJS.Timeout;
+  resizeTimer?: ReturnType<typeof setTimeout>;
   scrollAnchor: { element: HTMLElement; top: number } | null = null;
   restoringAnchor = false;
   anchorUpdateQueued = false;
@@ -254,8 +254,7 @@ class View {
 
   /**
    * Touch has no hover, so the explanation of an argument kind is opened by
-   * tapping the symbol and closed by tapping anywhere else. A class is used
-   * rather than focus: tapping a `span` does not reliably focus it.
+   * tapping the symbol and closed by tapping anywhere else.
    */
   private initArgKindInfo() {
     document.addEventListener("pointerup", (event) => {
@@ -267,11 +266,6 @@ class View {
         .forEach((shown) => shown.classList.remove("show-info"));
       if (event.pointerType !== "mouse") {
         symbol?.classList.add("show-info");
-      } else if (symbol) {
-        // A click on a focusable span counts as keyboard-like focus, which
-        // would leave the explanation behind. Dropping the focus again keeps
-        // the text selectable, which preventing the focus would not.
-        (symbol as HTMLElement).blur();
       }
     });
   }
