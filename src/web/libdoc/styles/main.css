@@ -489,7 +489,7 @@ h4 a:hover {
   fill: currentColor;
   width: 1.3em;
   height: auto;
-  max-height: 0.8em;
+  max-height: 0.6em;
 }
 
 .arg-kind-icon-varargs {
