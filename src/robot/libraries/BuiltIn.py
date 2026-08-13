@@ -4734,6 +4734,75 @@ class _Misc(_BuiltInBase):
         self._variables.set_test("${TEST_DOCUMENTATION}", test.doc)
         logger.info(f"Set test documentation to:\n{test.doc}")
 
+    def set_test_metadata(
+        self,
+        name: str,
+        value: str,
+        append: bool = False,
+        separator: str = " ",
+    ):
+        """Sets metadata for the current test case.
+
+        Args:
+            name: The name of the metadata to set.
+            value: The metadata value.
+            append: If true, the given `value` is added after the earlier
+              value instead of overwriting it.
+            separator: The separator to use between the old and the new
+              value when appending.
+
+        The metadata of the current test is available as a built-in variable
+        `${TEST METADATA}` in a Python dictionary. Notice that modifying this
+        variable directly has no effect on the actual metadata the test has.
+
+        Metadata names are case, space, and underscore insensitive. This
+        keyword can not be used in suite setup or suite teardown.
+
+        When creating automated tasks, not tests, it is possible to use
+        [Set Task Metadata]. See also [Set Suite Metadata].
+
+        New in Robot Framework 7.5.
+        """
+        test = self._context.test
+        if not test:
+            raise RuntimeError(
+                "'Set Test Metadata' keyword cannot be used in "
+                "suite setup or teardown."
+            )
+        if not isinstance(name, str):
+            name = str(name)
+        metadata = test.metadata
+        original = metadata.get(name, "")
+        metadata[name] = self._get_new_text(
+            original, value, append, separator=separator
+        )
+        self._variables.set_test("${TEST_METADATA}", metadata.copy())
+        logger.info(f"Set test metadata '{name}' to value '{metadata[name]}'.")
+
+    def set_task_metadata(
+        self,
+        name: str,
+        value: str,
+        append: bool = False,
+        separator: str = " ",
+    ):
+        """Sets metadata for the current task.
+
+        Args:
+            name: The name of the metadata to set.
+            value: The metadata value.
+            append: If true, the given `value` is added after the earlier
+              value instead of overwriting it.
+            separator: The separator to use between the old and the new
+              value when appending.
+
+        This is an alias for [Set Test Metadata] that is more applicable when
+        creating tasks, not tests.
+
+        New in Robot Framework 7.5.
+        """
+        self.set_test_metadata(name, value, append, separator)
+
     def set_suite_documentation(
         self,
         doc: str,

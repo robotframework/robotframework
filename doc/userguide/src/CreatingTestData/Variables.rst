@@ -1594,6 +1594,10 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
    |                        | dynamically using using :name:`Set Test Documentation`|            |
    |                        | keyword.                                              |            |
    +------------------------+-------------------------------------------------------+------------+
+   | &{TEST METADATA}       | The free metadata of the current test case. Can be    | Test case  |
+   |                        | set using :name:`Set Test Metadata` keyword.          |            |
+   |                        | New in Robot Framework 7.5.                           |            |
+   +------------------------+-------------------------------------------------------+------------+
    | ${TEST STATUS}         | The status of the current test case, either PASS or   | `Test      |
    |                        | FAIL.                                                 | teardown`_ |
    +------------------------+-------------------------------------------------------+------------+
