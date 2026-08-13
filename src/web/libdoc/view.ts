@@ -29,6 +29,9 @@ class View {
     this.storage = storage;
     this.translations = translations;
     this.initTemplating(translations, libdoc);
+    window.addEventListener("resize", () =>
+      delay(() => this.updateDocClamping(), 100),
+    );
   }
 
   private initTemplating(translate: Translations, libdoc: RuntimeLibdoc) {
@@ -58,7 +61,11 @@ class View {
     Handlebars.registerHelper(
       "hasVisibleReturnType",
       function (returnType: ArgType | null | undefined) {
-        return returnType !== null && returnType !== undefined && returnType.name !== "None";
+        return (
+          returnType !== null &&
+          returnType !== undefined &&
+          returnType.name !== "None"
+        );
       },
     );
     Handlebars.registerHelper("dictSize", function (context) {
@@ -114,9 +121,13 @@ class View {
         return renderTypeDocs(argType);
       },
     );
+    Handlebars.registerHelper("isArgMarker", function (kind: string) {
+      return kind === "POSITIONAL_ONLY_MARKER" || kind === "NAMED_ONLY_MARKER";
+    });
     this.registerPartial("arg", "argument-template");
     this.registerPartial("keyword", "keyword-template");
     this.registerPartial("dataType", "data-type-template");
+    this.registerPartial("argsSection", "arguments-section-template");
   }
 
   private registerPartial(name: string, id: string) {
@@ -131,12 +142,14 @@ class View {
     this.initTagSearch();
     this.initHashEvents();
     this.initLanguageMenu();
+    this.initThemeToggle();
     setTimeout(() => {
       if (this.storage.get("keyword-wall") === "open") {
         this.openKeywordWall();
       }
     }, 0);
     createModal();
+    this.updateDocClamping();
   }
 
   private renderTemplates() {
@@ -270,6 +283,7 @@ class View {
     this.registerTypeDocHandlers("#keywords-container");
     document.getElementById("keyword-statistics-header")!.innerText =
       "" + this.libdoc.keywords.length;
+    this.updateDocClamping();
   }
 
   private setTheme() {
@@ -277,13 +291,83 @@ class View {
   }
 
   private getTheme() {
-    if (this.libdoc.theme != null) {
-      return this.libdoc.theme;
-    } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      return "dark";
-    } else {
-      return "light";
-    }
+    const params = new URLSearchParams(window.location.search);
+    if (params.has("theme")) return params.get("theme")!;
+    const stored = localStorage.getItem("libdoc-theme");
+    if (stored) return stored;
+    if (this.libdoc.theme != null) return this.libdoc.theme;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  }
+
+  private initThemeToggle() {
+    document
+      .getElementById("theme-toggle")
+      ?.addEventListener("click", () => this.toggleTheme());
+  }
+
+  private toggleTheme() {
+    const next =
+      document.documentElement.getAttribute("data-theme") === "dark"
+        ? "light"
+        : "dark";
+    document.documentElement.setAttribute("theme-toggled", "");
+    document.documentElement.setAttribute("data-theme", next);
+    localStorage.setItem("libdoc-theme", next);
+  }
+
+  private updateDocClamping() {
+    document.querySelectorAll<HTMLElement>(".arg-doc").forEach((el) => {
+      // Remove any controls injected by a previous call
+      let sib = el.nextElementSibling;
+      while (
+        sib?.classList.contains("doc-more") ||
+        sib?.classList.contains("doc-less")
+      ) {
+        const next = sib.nextElementSibling;
+        sib.remove();
+        sib = next as Element | null;
+      }
+      el.classList.remove("truncated");
+      el.classList.add("clamped");
+      el.onclick = null;
+
+      if (el.scrollHeight > el.clientHeight) {
+        el.classList.add("truncated");
+
+        const more = document.createElement("span");
+        more.className = "doc-more";
+        more.textContent = this.translations.translate("more");
+        el.after(more);
+
+        const setExpanded = (expanded: boolean) => {
+          if (expanded) {
+            el.classList.remove("clamped", "truncated");
+            more.style.display = "none";
+            el.onclick = null;
+            const less = document.createElement("span");
+            less.className = "doc-less";
+            less.textContent = this.translations.translate("less");
+            less.onclick = () => {
+              less.remove();
+              setExpanded(false);
+            };
+            more.after(less);
+          } else {
+            el.classList.add("clamped", "truncated");
+            more.style.display = "";
+            el.onclick = () => setExpanded(true);
+            more.onclick = () => setExpanded(true);
+          }
+        };
+
+        el.onclick = () => setExpanded(true);
+        more.onclick = () => setExpanded(true);
+      } else {
+        el.classList.remove("clamped");
+      }
+    });
   }
 
   private scrollToHash() {
@@ -362,7 +446,7 @@ class View {
     }
     if (include.tags) {
       const matches = document.querySelectorAll(
-        "#keywords-container .match .tags a, #tags-shortcuts-container .match .tags a",
+        "#keywords-container .match .tags span.tag-link",
       );
       if (include.tagsExact) {
         const filtered: Array<Element> = [];
