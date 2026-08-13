@@ -64,7 +64,7 @@ class _List:
         Starting from Robot Framework 7.4, the modified list is also returned.
 
         Args:
-            list_: The list to modify.
+            list: The list to modify.
             *values: Values to append.
 
         Returns:
@@ -105,7 +105,7 @@ class _List:
         Starting from Robot Framework 7.4, the modified list is also returned.
 
         Args:
-            list_: The list to modify.
+            list: The list to modify.
             index: Index where to insert the value.
             value: The value to insert.
 
@@ -168,7 +168,7 @@ class _List:
         Starting from Robot Framework 7.4, the modified list is also returned.
 
         Args:
-            list_: The list to modify.
+            list: The list to modify.
             index: Index of the value to set.
             value: The new value.
 
@@ -218,7 +218,7 @@ class _List:
         Starting from Robot Framework 7.4, the modified list is also returned.
 
         Args:
-            list_: The list to modify.
+            list: The list to modify.
             *values: Values to remove.
 
         Returns:
@@ -247,7 +247,7 @@ class _List:
         Using an index that does not exist on the list causes an error.
 
         Args:
-            list_: The list to modify.
+            list: The list to modify.
             index: Index of the value to remove.
 
         Returns:
@@ -281,7 +281,7 @@ class _List:
         duplicates. Number of the removed duplicates is logged.
 
         Args:
-            list_: The list to process.
+            list: The list to process.
 
         Returns:
             A new list without duplicates."""
@@ -298,7 +298,7 @@ class _List:
         Returns the value specified with an `index` from `list`.
 
         Args:
-            list_: The list to read from.
+            list: The list to read from.
             index: Index of the value to get.
 
         Returns:
@@ -339,7 +339,7 @@ class _List:
         Returns a slice of the given list between `start` and `end` indices.
 
         Args:
-            list_: The list to read from.
+            list: The list to read from.
             start: Start index of the slice.
             end: End index of the slice.
 
@@ -395,7 +395,7 @@ class _List:
         keyword.
 
         Args:
-            list_: The list to search.
+            list: The list to search.
             value: The value to count.
             start: Optional start index for the search.
             end: Optional end index for the search.
@@ -433,7 +433,7 @@ class _List:
         If the value is not found, `-1` is returned.
 
         Args:
-            list_: The list to search.
+            list: The list to search.
             value: The value to find.
             start: Optional start index for the search.
             end: Optional end index for the search.
@@ -485,7 +485,7 @@ class _List:
         be copied.
 
         Args:
-            list_: The list to copy.
+            list: The list to copy.
             deepcopy: Whether to also copy items.
 
         Returns:
@@ -499,7 +499,7 @@ class _List:
         Reverses the given list.
 
         Args:
-            list_: The list to reverse.
+            list: The list to reverse.
 
         Returns:
             The reversed list.
@@ -528,7 +528,7 @@ class _List:
         Starting from Robot Framework 7.4, the sorted list is also returned.
 
         Args:
-            list_: The list to sort.
+            list: The list to sort.
 
         Returns:
             The sorted list.
@@ -558,7 +558,7 @@ class _List:
         Robot Framework 7.0.
 
         Args:
-            list_: The list to verify.
+            list: The list to verify.
             value: The value that should be found.
             msg: Optional custom error message.
             ignore_case: Whether to ignore case in comparison."""
@@ -583,7 +583,7 @@ class _List:
         Robot Framework 7.0.
 
         Args:
-            list_: The list to verify.
+            list: The list to verify.
             value: The value that should not be found.
             msg: Optional custom error message.
             ignore_case: Whether to ignore case in comparison."""
@@ -613,7 +613,7 @@ class _List:
         Robot Framework 7.0.
 
         Args:
-            list_: The list to verify.
+            list: The list to verify.
             msg: Optional custom error message.
             ignore_case: Whether to ignore case in comparison."""
         dupes = []
@@ -771,7 +771,7 @@ class _List:
         Logs contents of the `list` using the given `level`.
 
         Args:
-            list_: The list to log.
+            list: The list to log.
             level: The log level to use."""
         logger.write("\n".join(self._log_list(list_)), level)
 
@@ -1447,9 +1447,9 @@ class Collections(_List, _Dictionary):
     `Collections` is Robot Framework's standard library that provides a
     set of keywords for handling Python lists and dictionaries. This
     library has keywords, for example, for modifying and getting
-    values from lists and dictionaries (e.g. [Append To List], [Get
-    From Dictionary]) and for verifying their contents (e.g. [Lists
-    Should Be Equal], [Dictionary Should Contain Value]).
+    values from lists and dictionaries (e.g. [Append To List],
+    [Get From Dictionary]) and for verifying their contents (e.g.
+    [Lists Should Be Equal], [Dictionary Should Contain Value]).
 
     ### Table of contents
 
@@ -1515,10 +1515,10 @@ class Collections(_List, _Dictionary):
 
     ```robotframework
     *** Test Cases ***
-     log dictionary
+    Ignore case
         Lists Should Be Equal        ${list1}    ${list2}    ignore_case=True
         Dictionaries Should Be Equal    ${dict1}    ${dict2}    ignore_case=VALUES
-        ```
+    ```
 
     Notice that some keywords accept also an older `case_insensitive` argument
     in addition to `ignore_case`. The latter is new in Robot Framework 7.0 and
