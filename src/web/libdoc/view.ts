@@ -33,7 +33,6 @@ class View {
   resizing = false;
   lastWidth = 0;
   titleScrolled = false;
-  themeChosen = false;
 
   constructor(
     libdoc: RuntimeLibdoc,
@@ -174,7 +173,6 @@ class View {
     this.initTagSearch();
     this.initHashEvents();
     this.initLanguageMenu();
-    this.initThemeToggle();
     setTimeout(() => {
       if (this.storage.get("keyword-wall") === "open") {
         this.openKeywordWall();
@@ -224,8 +222,7 @@ class View {
       window
         .matchMedia("(prefers-color-scheme: dark)")
         .addEventListener("change", ({ matches }) => {
-          // Follows the system for as long as nothing else was chosen.
-          if (!this.themeChosen && !this.libdoc.theme) {
+          if (!this.libdoc.theme) {
             document.documentElement.setAttribute(
               "data-theme",
               matches ? "dark" : "light",
@@ -612,17 +609,7 @@ class View {
     document.documentElement.setAttribute("data-theme", this.getTheme());
   }
 
-  /**
-   * The chosen theme lasts for the page, it is deliberately not stored: a
-   * theme picked once should not silently decide how every other Libdoc page
-   * of the same host is rendered from then on.
-   */
   private getTheme() {
-    const urlTheme = new URLSearchParams(window.location.search).get("theme");
-    if (urlTheme === "dark" || urlTheme === "light") {
-      this.themeChosen = true;
-      return urlTheme;
-    }
     if (this.libdoc.theme != null) {
       return this.libdoc.theme;
     } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
@@ -657,20 +644,6 @@ class View {
       });
       block.appendChild(btn);
     });
-  }
-
-  private initThemeToggle() {
-    document
-      .getElementById("theme-toggle")
-      ?.addEventListener("click", () => this.toggleTheme());
-  }
-
-  private toggleTheme() {
-    const current = document.documentElement.getAttribute("data-theme");
-    const theme = current === "dark" ? "light" : "dark";
-    this.themeChosen = true;
-    document.documentElement.setAttribute("theme-toggled", "");
-    document.documentElement.setAttribute("data-theme", theme);
   }
 
   private scrollToHash() {

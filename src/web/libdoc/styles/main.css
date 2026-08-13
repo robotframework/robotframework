@@ -3,6 +3,7 @@
   --text-color: black;
   --border-color: #e0e0e2;
   --light-background-color: #f3f3f3;
+  --code-background-color: #fafafa;
   --robot-highlight: #00c0b5;
   --highlighted-color: var(--text-color);
   --highlighted-background-color: yellow;
@@ -35,6 +36,7 @@
   --text-color: #ffffff;
   --border-color: #4e4e4e;
   --light-background-color: #033441;
+  --code-background-color: #002b36;
   --robot-highlight: yellow;
   --highlighted-color: var(--background-color);
   --highlighted-background-color: yellow;
@@ -64,12 +66,6 @@ html {
   html {
     -webkit-text-size-adjust: 100%;
   }
-}
-
-html[theme-toggled] body {
-  transition:
-    background 0.3s,
-    color 0.3s;
 }
 
 body {
@@ -229,32 +225,6 @@ html.scrolled .libdoc-title > svg {
 #language-container svg {
   width: 20px;
   height: 20px;
-}
-
-#theme-toggle {
-  position: fixed;
-  right: 0;
-  bottom: 0;
-  width: 28px;
-  height: 28px;
-  padding: 4px;
-  border: none;
-  border-top-left-radius: 3px;
-  border-top-right-radius: 3px;
-  background: var(--light-background-color);
-  cursor: pointer;
-  z-index: 1000;
-}
-
-#theme-toggle svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-[data-theme="dark"] .dark-mode-icon,
-[data-theme="light"] .light-mode-icon {
-  display: none;
 }
 
 #language-container svg path {
@@ -506,6 +476,21 @@ h4 a:hover {
 
 .tag-link:hover {
   background: var(--light-background-color);
+}
+
+/* A matched tag highlights as a whole pill. Marking only the text inside the
+   border leaves a highlighted word in a box, which reads as two separate
+   things rather than one selected tag. */
+.tag-link:has(mark) {
+  background: var(--highlighted-background-color);
+  color: var(--highlighted-color);
+  border-color: var(--highlighted-background-color);
+}
+
+.tag-link mark {
+  background: none;
+  color: inherit;
+  padding: 0;
 }
 
 .arg-kind {
@@ -1228,8 +1213,7 @@ a.type {
 mark {
   background: var(--highlighted-background-color);
   color: var(--highlighted-color);
-  border-radius: 2px;
-  padding: 0 1px;
+  border-radius: 3px;
 }
 
 .tags a {

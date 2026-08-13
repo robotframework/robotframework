@@ -48,10 +48,14 @@
 .doc pre {
   font-size: var(--font-size-code);
   letter-spacing: 0.05em;
-  background: var(--light-background-color);
+  background: var(--code-background-color);
   overflow-y: auto;
   padding: 0.3rem;
   border-radius: 3px;
+  border: 1px solid var(--border-color);
+}
+.doc pre code {
+  background: var(--code-background-color);
 }
 
 .doc div:not(.admonition) > *:last-child {
