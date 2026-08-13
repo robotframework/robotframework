@@ -515,8 +515,7 @@ class Process:
     redirect the output. This can also be useful if other processes or
     other keywords need to read or manipulate the output somehow.
 
-    Given `stdout` and `stderr` paths are relative to the [current working
-    directory]. Forward slashes in the given paths are automatically converted
+    Given `stdout` and `stderr` paths are relative to the [current working directory]. Forward slashes in the given paths are automatically converted
     to backslashes on Windows.
 
     Regardless are outputs redirected to files or not, they are accessible
@@ -680,7 +679,6 @@ class Process:
     Suite Teardown    Terminate All Processes    kill=True
 
     *** Test Cases ***
-    Library
     Example
         Start Process    program    arg1    arg2    alias=First
         ${handle} =    Start Process    command.sh arg | command2.sh    shell=True    cwd=/path
@@ -689,6 +687,7 @@ class Process:
         Terminate Process    ${handle}
         ${result} =    Wait For Process    First
         Should Be Equal As Integers    ${result.rc}    0
+    ```
 
     [OperatingSystem]: http://robotframework.org/robotframework/latest/libraries/OperatingSystem.html "OperatingSystem"
 
@@ -771,13 +770,14 @@ class Process:
 
         Examples:
 
-
-    ```robotframework
-        ${result} =    Run Process    python    -c    print('Hello, world!')
-        Should Be Equal    ${result.stdout}    Hello, world!
-        ${result} =    Run Process    ${command}    stdout=${CURDIR}/stdout.txt    stderr=STDOUT
-        ${result} =    Run Process    ${command}    timeout=1min    on_timeout=continue
-        ${result} =    Run Process    java -Dname\\=value Example    shell=True    cwd=${EXAMPLE}
+        ```robotframework
+        *** Test Cases ***
+        Run process
+            ${result} =    Run Process    python    -c    print('Hello, world!')
+            Should Be Equal    ${result.stdout}    Hello, world!
+            ${result} =    Run Process    ${command}    stdout=${CURDIR}/stdout.txt    stderr=STDOUT
+            ${result} =    Run Process    ${command}    timeout=1min    on_timeout=continue
+            ${result} =    Run Process    java -Dname\\=value Example    shell=True    cwd=${EXAMPLE}
         ```
         """
         current = self._processes.current
@@ -1092,9 +1092,7 @@ class Process:
         value, kills the process forcefully. Stops also all the child processes
         of the originally started process.
 
-        Waits for the process to stop after terminating it. Returns a [result
-        object] containing information about the execution similarly as [Wait
-        For Process].
+        Waits for the process to stop after terminating it. Returns a [result object] containing information about the execution similarly as [Wait For Process].
 
         On Unix-like machines graceful termination is done using `TERM (15)`
         signal and forceful kill using `KILL (9)`. Use [Send Signal To Process]
@@ -1212,8 +1210,7 @@ class Process:
         signal handling (typically `man signal` or `man 7 signal`).
 
         By default, sends the signal only to the parent process, not to possible
-        child processes started by it. Notice that when [running processes in
-        shell], the shell is the parent process, and it depends on the system
+        child processes started by it. Notice that when [running processes in shell], the shell is the parent process, and it depends on the system
         does the shell propagate the signal to the actual started process.
 
         Args:
@@ -1299,8 +1296,7 @@ class Process:
         """Returns the specified [result object] or some of its attributes.
 
         The given `handle` specifies the process whose results should be
-        returned. If no `handle` is given, results of the current [active
-        process] are returned. In either case, the process must have been
+        returned. If no `handle` is given, results of the current [active process] are returned. In either case, the process must have been
         finishes before this keyword can be used. In practice this means
         that processes started with [Start Process] must be finished either
         with [Wait For Process] or [Terminate Process] before using this
