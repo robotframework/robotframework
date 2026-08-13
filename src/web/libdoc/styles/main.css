@@ -847,17 +847,10 @@ h4 {
   overflow-wrap: break-word;
 }
 
+/* The last column ends the table and gets a margin instead of the gutter
+   above: less, but not nothing, or the table stops flush with its content. */
 .kw-info-table th:last-child,
 .kw-info-table td:last-child {
-  padding-right: 0;
-}
-
-/* Except for the documentation, the last column everywhere here. Running text
-   should not end flush with the edge of the card. Less than the gutter above:
-   this is a margin, not a gap between two columns. */
-.kw-info-table td.arg-cell-doc,
-.kw-info-table th.arg-col-doc,
-.kw-info-table .doc-row > td {
   padding-right: clamp(0.7rem, 1.5vw, 1.5rem);
 }
 
