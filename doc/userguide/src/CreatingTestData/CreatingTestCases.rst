@@ -578,43 +578,8 @@ in that case they normally do not need any documentation. If the logic
 of the test case needs documenting, it is often a sign that keywords
 in the test case need better names and they are to be enhanced,
 instead of adding extra documentation. Finally, metadata, such as the
-environment and user information in the last example above, can also
-be specified as `free test metadata`_ or using tags_, depending on the
-use case.
-
-Free test metadata
-------------------
-
-In addition to documentation, test cases can also have free metadata. This
-metadata is defined as name-value pairs using the :setting:`[Metadata]`
-setting in the test case, similarly as `free suite metadata`_ is defined
-for test suites.
-
-Name of the metadata is the first argument given to the :setting:`[Metadata]`
-setting and the remaining arguments specify its value. The value is handled
-similarly as `test case documentation`_, which means that it supports
-`HTML formatting`_ and variables_, and that longer values can be `split into
-multiple rows`__. A test case can have any number of :setting:`[Metadata]`
-settings, and each of them adds one name-value pair.
-
-__ `Dividing data to several rows`_
-
-.. sourcecode:: robotframework
-
-   *** Test Cases ***
-   Example
-       [Metadata]    Owner              John Doe
-       [Metadata]    Environment        Staging
-       [Metadata]    Longer Value
-       ...           Longer metadata values can be split into multiple
-       ...           rows. Also *simple* _formatting_ is supported.
-       No Operation
-
-Test metadata is shown in reports and logs similarly as test documentation.
-It is also stored in `output files`_ and is available to `listeners`_
-and other tools that process execution results.
-
-.. note:: :setting:`[Metadata]` is new in Robot Framework 7.5.
+environment and user information in the last example above, is often
+better specified using tags_.
 
 .. _test case tags:
 
