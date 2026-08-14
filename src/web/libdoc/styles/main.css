@@ -442,7 +442,7 @@ h4 a:hover {
   .hamburger-menu:checked ~ .libdoc-overview {
     display: block;
     position: fixed;
-    height: 100vh;
+    height: calc(100vh - 44px);
     width: 100%;
   }
 
@@ -457,12 +457,36 @@ h4 a:hover {
   }
 
   #language-container {
-    right: 50px;
-    width: 100px;
+    display: none;
   }
 
-  #language-container button {
-    cursor: pointer;
+  input.hamburger-menu:checked ~ #language-container {
+    display: block;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: auto;
+    padding: 0.4rem 0.75rem;
+    border-top: 1px solid var(--border-color);
+    background: var(--background-color);
+    z-index: 150;
+  }
+
+  input.hamburger-menu:checked ~ #language-container button {
+    display: none;
+  }
+
+  /* Show language list inline, overriding the .hidden class used by the desktop dropdown */
+  input.hamburger-menu:checked ~ #language-container ul,
+  input.hamburger-menu:checked ~ #language-container ul.hidden {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.75rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background: none;
   }
 }
 
