@@ -79,7 +79,7 @@ Syslog messages can be changed
     Syslog Should Contain Match    2015-12-16 15:51:20.141000 | INFO \ | TESTS EXECUTION ENDED. STATISTICS:
 
 Library import
-    Stdout Should Contain    Imported library 'BuiltIn' with 107 keywords.
+    Stdout Should Contain    Imported library 'BuiltIn' with 109 keywords.
     Stdout Should Contain    Imported library 'String' with 32 keywords.
     ${tc} =   Get Test Case    Pass [start suite]
     Check Keyword Data    ${tc[0, 0]}    BuiltIn.Log    doc=Changed!    args=Hello says "\${who}"!, \${LEVEL1}
