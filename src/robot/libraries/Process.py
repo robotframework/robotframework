@@ -56,15 +56,21 @@ class ProcessResult:
 
     ```robotframework
     *** Test Cases ***
-    Run process
-        ${result} =            Run Process         program
-        Should Be Equal        ${result.rc}          0    type=int
-        Should Match           ${result.stdout}      Some t?xt*
-        Should Be Empty        ${result.stderr}
-        ${stdout} =            Get File            ${result.stdout_path}
-        Should Be Equal        ${stdout}             ${result.stdout}
-        File Should Be Empty   ${result.stderr_path}
+    Run Process
+        ${result}=    Run Process    program
+        VAR    ${result}    ${result}    scope=SUITE
 
+    Verify Exitcode
+        Should Be Equal    ${result.rc}    0    type=int
+
+    Verify Output
+        Should Match    ${result.stdout}    Some t?xt*
+        Should Be Empty    ${result.stderr}
+
+    Verify Output Files
+        ${stdout}=    Get File    ${result.stdout_path}
+        Should Be Equal    ${stdout}    ${result.stdout}
+        File Should Be Empty    ${result.stderr_path}
     ```
 
     Notice that in `stdout` and `stderr` content possible trailing newline
@@ -147,7 +153,8 @@ class ProcessResult:
     def _format_output(self, output):
         if output is None:
             return None
-        output = console_decode(output, self._output_encoding).replace("\r\n", "\n")
+        output = console_decode(output, self._output_encoding)
+        output = output.replace("\r\n", "\n")
         if output.endswith("\n"):
             output = output[:-1]
         return output
@@ -339,7 +346,7 @@ def _popen_documentation(value):
 
     ```robotframework
     *** Test Cases ***
-    Start process
+    Popen Object
         ${process} =    Start Process    ${command}
         Log             PID: ${process.pid}
         # Other keywords
@@ -536,11 +543,15 @@ class Process:
 
     ```robotframework
     *** Test Cases ***
-    Run process
+    Capture Output
         ${result} =    Run Process    program    stdout=${TEMPDIR}/stdout.txt    stderr=${TEMPDIR}/stderr.txt
         Log Many       stdout: ${result.stdout}    stderr: ${result.stderr}
+
+    Merge Output
         ${result} =    Run Process    program    stderr=STDOUT
         Log            all output: ${result.stdout}
+
+    Discard Output
         ${result} =    Run Process    program    stdout=DEVNULL    stderr=DEVNULL
 
     ```
@@ -570,7 +581,7 @@ class Process:
 
     ```robotframework
     *** Test Cases ***
-    Run process
+    Provide Input
         Run Process    command    stdin=PIPE
         Run Process    command    stdin=${CURDIR}/stdin.txt
         Run Process    command    stdin=Stdin as text.
@@ -601,7 +612,7 @@ class Process:
 
     ```robotframework
     *** Test Cases ***
-    Start process
+    Output Encoding
         Start Process    program    output_encoding=UTF-8
         Run Process      program    stdout=${path}    output_encoding=SYSTEM
 
@@ -654,14 +665,22 @@ class Process:
 
     ```robotframework
     *** Test Cases ***
-    Result object
-        ${result} =            Run Process         program
-        Should Be Equal        ${result.rc}          0    type=int
-        Should Match           ${result.stdout}      Some t?xt*
-        Should Be Empty        ${result.stderr}
-        ${stdout} =            Get File            ${result.stdout_path}
-        Should Be Equal        ${stdout}             ${result.stdout}
-        File Should Be Empty   ${result.stderr_path}
+    Run Process
+        ${result}=    Run Process    program
+        VAR    ${result}    ${result}    scope=SUITE
+
+    Verify Exitcode
+        Should Be Equal    ${result.rc}    0    type=int
+
+    Verify Output
+        Should Match    ${result.stdout}    Some t?xt*
+        Should Be Empty    ${result.stderr}
+
+    Verify Output Files
+        ${stdout}=    Get File    ${result.stdout_path}
+        Should Be Equal    ${stdout}    ${result.stdout}
+        File Should Be Empty    ${result.stderr_path}
+
 
     ```
 
@@ -678,14 +697,21 @@ class Process:
     Suite Teardown    Terminate All Processes    kill=True
 
     *** Test Cases ***
-    Example
+    Start Process
         Start Process    program    arg1    arg2    alias=First
         ${handle} =    Start Process    command.sh arg | command2.sh    shell=True    cwd=/path
+
+    Run Process
         ${result} =    Run Process    ${CURDIR}/script.py
         Should Not Contain    ${result.stdout}    FAIL
+
+    Terminate Process
         Terminate Process    ${handle}
+
+    Wait Process
         ${result} =    Wait For Process    First
         Should Be Equal As Integers    ${result.rc}    0
+
     ```
 
     [OperatingSystem]: http://robotframework.org/robotframework/latest/libraries/OperatingSystem.html "OperatingSystem"
@@ -771,12 +797,14 @@ class Process:
 
         ```robotframework
         *** Test Cases ***
-        Run process
+        Verify Output
             ${result} =    Run Process    python    -c    print('Hello, world!')
             Should Be Equal    ${result.stdout}    Hello, world!
-            ${result} =    Run Process    ${command}    stdout=${CURDIR}/stdout.txt    stderr=STDOUT
-            ${result} =    Run Process    ${command}    timeout=1min    on_timeout=continue
-            ${result} =    Run Process    java -Dname\\=value Example    shell=True    cwd=${EXAMPLE}
+
+        Process Options
+            Run Process    ${command}    stdout=${CURDIR}/stdout.txt    stderr=STDOUT
+            Run Process    ${command}    timeout=1min    on_timeout=continue
+            Run Process    java -Dname\\=value Example    shell=True    cwd=${EXAMPLE}
         ```
         """
         current = self._processes.current
@@ -854,8 +882,9 @@ class Process:
 
         ```robotframework
         *** Test Cases ***
-        Start process
+        Process Alias
             Start Process    ${command}    alias=example
+
             # Other keywords
             ${result} =    Wait For Process    example
 
@@ -865,9 +894,10 @@ class Process:
 
         ```robotframework
         *** Test Cases ***
-        Start process
+        Process Handle
             ${process} =    Start Process    ${command}
             Log             PID: ${process.pid}
+
             # Other keywords
             ${result} =     Terminate Process    ${process}
 
@@ -877,11 +907,11 @@ class Process:
 
         ```robotframework
         *** Test Cases ***
-        Start process
+        Process Pipeline
             ${process} =    Start Process    python    -c    print('Hello, world!')
             ${result} =     Run Process      python    -c    import sys; print(sys.stdin.read().upper().strip())    stdin=${process.stdout}
             Wait For Process    ${process}
-            Should Be Equal     ${result.stdout}    HELLO, WORLD!
+            Should Be Equal     ${result.stdout}    HELLO, WORLD
 
         ```
         """
@@ -1017,19 +1047,20 @@ class Process:
 
         ```robotframework
         *** Test Cases ***
-        Wait for process
-            # Process ends cleanly
-            ${result} =                 Wait For Process    example
-            Process Should Be Stopped   example
-            Should Be Equal As Integers    ${result.rc}     0
-            # Process does not end
-            ${result} =                 Wait For Process    timeout=42 secs
+        Wait For Completion
+            ${result} =    Wait For Process    example
+            Process Should Be Stopped    example
+            Should Be Equal As Integers    ${result.rc}    0
+
+        Wait With Timeout
+            ${result} =    Wait For Process    timeout=42 secs
             Process Should Be Running
-            Should Be Equal             ${result}        ${NONE}
-            # Kill non-ending process
-            ${result} =                 Wait For Process    timeout=1min 30s    on_timeout=kill
+            Should Be Equal    ${result}    ${NONE}
+
+        Kill On Timeout
+            ${result} =    Wait For Process    timeout=1min 30s    on_timeout=kill
             Process Should Be Stopped
-            Should Be Equal As Integers    ${result.rc}     -9
+            Should Be Equal As Integers    ${result.rc}    -9
 
         ```
 
@@ -1119,10 +1150,12 @@ class Process:
 
         ```robotframework
         *** Test Cases ***
-        Terminate process
-            ${result} =                 Terminate Process
-            Should Be Equal As Integers    ${result.rc}      -15    # On Unixes
-            Terminate Process           myproc            kill=true
+        Verify Termination
+            ${result} =    Terminate Process
+            Should Be Equal As Integers    ${result.rc}    -15    # On Unixes
+
+        Force Termination
+            Terminate Process    myproc    kill=True
 
         ```
         """
@@ -1196,7 +1229,7 @@ class Process:
 
         ```robotframework
         *** Test Cases ***
-        Send signal to process
+        Send signal
             Send Signal To Process    2
             Send Signal To Process    INT
             Send Signal To Process    SIGINT    myproc
@@ -1316,11 +1349,11 @@ class Process:
         Args:
             handle: Process handle or alias. Uses the current [active process]
                 if not given.
-            rc: If true, return return code.
-            stdout: If true, return standard output.
-            stderr: If true, return standard error.
-            stdout_path: If true, return stdout path.
-            stderr_path: If true, return stderr path.
+            rc: If true, returns return code.
+            stdout: If true, returns standard output.
+            stderr: If true, returns standard error.
+            stdout_path: If true, returns stdout path.
+            stderr_path: If true, returns stderr path.
 
         Returns:
             Whole [result object], a single attribute, or a tuple of attributes
@@ -1334,19 +1367,23 @@ class Process:
         ```robotframework
         *** Test Cases ***
         Get process result
-            Run Process           python             -c            print('Hello, world!')    alias=myproc
-            # Get result object
-            ${result} =           Get Process Result    myproc
-            Should Be Equal       ${result.rc}       ${0}
-            Should Be Equal       ${result.stdout}   Hello, world!
-            Should Be Empty       ${result.stderr}
-            # Get one attribute
-            ${stdout} =           Get Process Result    myproc        stdout=true
-            Should Be Equal       ${stdout}          Hello, world!
-            # Multiple attributes
-            ${stdout}             ${stderr} =        Get Process Result    myproc    stdout=yes    stderr=yes
-            Should Be Equal       ${stdout}          Hello, world!
-            Should Be Empty       ${stderr}
+            Run Process    python    -c    print('Hello, world!')    alias=myproc
+            VAR    ${PROCESS_ALIAS}    myproc    scope=SUITE
+
+        Get result object
+            ${result}=    Get Process Result    ${PROCESS_ALIAS}
+            Should Be Equal    ${result.rc}       ${0}
+            Should Be Equal    ${result.stdout}   Hello, world!
+            Should Be Empty    ${result.stderr}
+
+        Get one attribute
+            ${stdout}=    Get Process Result    ${PROCESS_ALIAS}    stdout=true
+            Should Be Equal    ${stdout}    Hello, world!
+
+        Multiple attributes
+            ${stdout}    ${stderr}=    Get Process Result    ${PROCESS_ALIAS}    stdout=yes    stderr=yes
+            Should Be Equal    ${stdout}    Hello, world!
+            Should Be Empty    ${stderr}
 
         ```
         """
@@ -1387,7 +1424,7 @@ class Process:
 
         ```robotframework
         *** Test Cases ***
-        Switch process
+        Switch Active Process
             Start Process    prog1    alias=process1
             Start Process    prog2    alias=process2
             # currently active process is process2
@@ -1427,7 +1464,7 @@ class Process:
 
         ```robotframework
         *** Test Cases ***
-        Split command line
+        Parse Command Line
             @{cmd} =    Split Command Line    --option "value with spaces"
             Should Be True    $cmd == ['--option', 'value with spaces']
 
@@ -1457,7 +1494,7 @@ class Process:
 
         ```robotframework
         *** Test Cases ***
-        Join command line
+        Build Command Line
             ${cmd} =        Join Command Line    --option    value with spaces
             Should Be Equal    ${cmd}            --option "value with spaces"
 
@@ -1467,7 +1504,7 @@ class Process:
 
         ```robotframework
         *** Test Cases ***
-        Join command line
+        Build Command From List
             VAR             @{arguments}      --option    value with spaces
             ${cmd} =        Join Command Line    ${arguments}
             Should Be Equal    ${cmd}            --option "value with spaces"
