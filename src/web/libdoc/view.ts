@@ -639,8 +639,8 @@ class View {
     }
     this.renderLibdocTemplate("keywords", libdoc);
     document.querySelectorAll(".tag-link").forEach((elem) => {
-      elem.addEventListener("click", (e) => {
-        this.tagSearch((e.target! as HTMLSpanElement).innerText);
+      elem.addEventListener("click", () => {
+        this.tagSearch(elem.textContent?.trim() ?? "");
       });
     });
     this.registerTypeDocHandlers("#keywords-container");
