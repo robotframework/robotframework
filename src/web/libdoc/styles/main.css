@@ -207,11 +207,6 @@ html.scrolled .libdoc-title > svg {
   height: 20px;
 }
 
-#language-container svg path {
-  stroke: var(--text-color);
-  fill: var(--background-color);
-}
-
 #language-container ul {
   list-style: none;
   /* Sized to its entries and hung on the right edge of the button, which is
@@ -314,11 +309,11 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3 {
   flex: none;
 }
 
-#robot-svg-path {
-  fill: var(--text-color);
-  stroke: none;
-  fill-opacity: 1;
-  fill-rule: nonzero;
+/* An element referencing a `symbol` has no intrinsic size of its own. */
+.modal-close-button svg {
+  display: block;
+  height: 2em;
+  width: 2em;
 }
 
 .keywords-overview {
@@ -478,7 +473,7 @@ h4 a:hover {
 }
 
 /* The sprite only holds definitions and must not take any space. */
-.arg-icon-sprite {
+.icon-sprite {
   display: none;
 }
 
@@ -1241,9 +1236,17 @@ mark {
   text-decoration: none;
   padding: 0 0.1em;
 }
-/* Code blocks need a stacking context for the absolutely-positioned copy button */
-.doc .code {
+/* Code blocks need a stacking context for the absolutely-positioned copy
+   button. `.code` is what Markdown and reST produce, `.code-block` is the
+   wrapper added to the bare blocks of the other documentation formats. */
+.doc .code,
+.doc .code-block {
   position: relative;
+}
+
+/* The wrapper must not disturb the spacing the block had on its own. */
+.doc .code-block > pre {
+  margin: 0;
 }
 
 .code-copy-btn {
@@ -1252,22 +1255,85 @@ mark {
   border-radius: 3px;
   color: var(--less-important-text-color);
   cursor: pointer;
+  /* Stacks both icons in the same cell so that swapping them can be animated
+     without the button changing size. */
+  display: grid;
   height: 1.6rem;
+  /* Stays out of the way until the block is hovered or tapped. */
+  opacity: 0;
   padding: 0.15rem;
   position: absolute;
   right: 0.3rem;
   top: 0.3rem;
+  transition:
+    color 0.15s,
+    border-color 0.15s,
+    opacity 0.15s,
+    transform 0.1s;
   width: 1.6rem;
+}
+
+/* Touch devices cannot hover, so there the block is tapped instead and the
+   view marks it with `copy-visible`. */
+@media (hover: hover) {
+  .doc .code:hover .code-copy-btn,
+  .doc .code-block:hover .code-copy-btn {
+    opacity: 1;
+  }
+}
+
+.doc .code.copy-visible .code-copy-btn,
+.doc .code-block.copy-visible .code-copy-btn,
+/* Reachable by keyboard, and the result of a copy stays visible even when the
+   pointer has already left the block. */
+.code-copy-btn:focus-visible,
+.code-copy-btn.copied {
+  opacity: 1;
 }
 
 .code-copy-btn:hover {
   color: var(--text-color);
 }
 
+/* Without this the button gives no sign that it was hit at all. */
+.code-copy-btn:active {
+  transform: scale(0.88);
+}
+
+.code-copy-btn.copied {
+  border-color: var(--robot-highlight);
+  color: var(--robot-highlight);
+}
+
 .code-copy-btn svg {
-  display: block;
+  grid-area: 1 / 1;
   height: 100%;
+  transition:
+    opacity 0.15s,
+    transform 0.15s;
   width: 100%;
+}
+
+.code-copy-btn .code-check-icon,
+.code-copy-btn.copied .code-copy-icon {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+.code-copy-btn.copied .code-check-icon {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .code-copy-btn,
+  .code-copy-btn svg {
+    transition: none;
+  }
+
+  .code-copy-btn:active {
+    transform: none;
+  }
 }
 
 .footer {
@@ -1291,21 +1357,6 @@ mark {
   color: var(--less-important-text-color);
 }
 
-.modal-icon {
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
-  margin: 0 0.25rem;
-  width: 1rem;
-  height: 1rem;
-  padding: 0;
-  border: none;
-  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="100%" width="100%"><path stroke="black" fill="none" stroke-width="2px" stroke-linecap="round" d="M1 8 L1 1 L8 1 M16 1 L23 1 L23 8 M23 16 L23 23 L16 23 M8 23 L1 23 L1 16"></path><path fill="black" stroke="none" stroke-width="1px" transform="scale(1.3) translate(-3 -2.5)" d="M19 7.97zm-8 9.2-4-2.3v-4.63l4 2.33v4.6zm1-6.33L8.04 8.53 12 6.25l3.96 2.28L12 10.84zm5 4.03-4 2.3v-4.6l4-2.33v4.63z"></path></svg>');
-}
-
-[data-theme="dark"] .modal-icon {
-  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="100%" width="100%"><path stroke="%23ffffff" fill="none" stroke-width="2px" stroke-linecap="round" d="M1 8 L1 1 L8 1 M16 1 L23 1 L23 8 M23 16 L23 23 L16 23 M8 23 L1 23 L1 16"></path><path fill="%23ffffff" stroke="none" stroke-width="1px" transform="scale(1.3) translate(-3 -2.5)" d="M19 7.97zm-8 9.2-4-2.3v-4.63l4 2.33v4.6zm1-6.33L8.04 8.53 12 6.25l3.96 2.28L12 10.84zm5 4.03-4 2.3v-4.6l4-2.33v4.63z"></path></svg>');
-}
 .modal-background,
 .modal {
   opacity: 0;

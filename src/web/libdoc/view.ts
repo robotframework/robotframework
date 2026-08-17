@@ -3,14 +3,9 @@ import Handlebars from "handlebars";
 import Storage from "./storage";
 import Translations from "./i18n/translations";
 import { createModal, showModal } from "./modal";
-import { renderArgKindIcons } from "./icons/icons";
+import { renderIcons } from "./icons/icons";
 import { RuntimeLibdoc, ArgType } from "./types";
 import { htmlEscape, regexpEscape, delay } from "./util";
-
-// Feather Icons copy (MIT licence, https://feathericons.com)
-const CLIPBOARD_SVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
-// Heroicons check (MIT licence, https://heroicons.com)
-const CHECK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>`;
 
 const ARG_KIND_ICONS: Record<string, string> = {
   POSITIONAL_ONLY: "positional",
@@ -41,6 +36,7 @@ class View {
   translations: Translations;
   searchTime: number;
   resizeListenerAdded = false;
+  copyRevealAdded = false;
   resizeTimer?: ReturnType<typeof setTimeout>;
   scrollAnchor: { element: HTMLElement; top: number } | null = null;
   restoringAnchor = false;
@@ -208,7 +204,7 @@ class View {
   render() {
     document.title = this.libdoc.name;
     this.setTheme();
-    renderArgKindIcons();
+    renderIcons();
     this.renderTemplates();
     this.initTagSearch();
     this.initHashEvents();
@@ -668,31 +664,113 @@ class View {
     }
   }
 
+  /**
+   * Every documentation format renders code blocks differently: Markdown wraps
+   * them into `<div class="code">`, reST and HTML put the class on the `<pre>`
+   * itself and Robot Framework format leaves a bare `<pre>`. Looking for the
+   * `<pre>` covers them all. Blocks that are not already wrapped get a wrapper,
+   * because the button has to be positioned by an element that does not scroll
+   * with the code.
+   */
   private addCopyButtons() {
-    if (!navigator.clipboard) return;
-    document.querySelectorAll<HTMLElement>(".doc .code").forEach((block) => {
-      if (block.querySelector(".code-copy-btn")) return;
-      const btn = document.createElement("button");
-      btn.className = "code-copy-btn";
-      btn.title = this.translations.translate("copyCode");
-      btn.innerHTML = CLIPBOARD_SVG;
-      btn.addEventListener("click", () => {
-        const pre = block.querySelector("pre");
-        if (!pre) return;
-        navigator.clipboard
-          .writeText(pre.innerText)
-          .then(() => {
-            btn.innerHTML = CHECK_SVG;
-            setTimeout(() => {
-              btn.innerHTML = CLIPBOARD_SVG;
-            }, 1500);
-          })
-          .catch(() => {
-            btn.innerHTML = CLIPBOARD_SVG;
-          });
-      });
-      block.appendChild(btn);
+    if (!navigator.clipboard) {
+      return;
+    }
+    this.initCopyButtonReveal();
+    document.querySelectorAll<HTMLElement>(".doc pre").forEach((pre) => {
+      const block = this.codeBlockOf(pre);
+      if (block.querySelector(".code-copy-btn")) {
+        return;
+      }
+      // Read before the button is added so that it cannot end up in the copy.
+      // `textContent` and not `innerText`: the latter depends on the layout and
+      // is empty for everything the browser has not laid out yet.
+      const code = (pre.textContent ?? "").replace(/\s+$/, "");
+      if (!code) {
+        return;
+      }
+      block.appendChild(this.createCopyButton(code));
     });
+  }
+
+  /**
+   * The button only shows while its block is hovered, which touch devices
+   * cannot do. There tapping the block reveals it, and tapping anywhere else
+   * hides it again.
+   */
+  private initCopyButtonReveal() {
+    if (this.copyRevealAdded) {
+      return;
+    }
+    this.copyRevealAdded = true;
+    document.addEventListener("pointerdown", (event) => {
+      // A mouse has hover and needs no help. Deciding by the pointer instead of
+      // by a media query also covers devices that have both.
+      if (event.pointerType === "mouse") {
+        return;
+      }
+      const block = (event.target as HTMLElement).closest(
+        ".doc .code, .doc .code-block",
+      );
+      document.querySelectorAll(".copy-visible").forEach((visible) => {
+        if (visible !== block) {
+          visible.classList.remove("copy-visible");
+        }
+      });
+      block?.classList.add("copy-visible");
+    });
+  }
+
+  private codeBlockOf(pre: HTMLElement): HTMLElement {
+    const parent = pre.parentElement;
+    if (
+      parent?.classList.contains("code") ||
+      parent?.classList.contains("code-block")
+    ) {
+      return parent;
+    }
+    const block = document.createElement("div");
+    block.classList.add("code-block");
+    pre.replaceWith(block);
+    block.appendChild(pre);
+    return block;
+  }
+
+  private createCopyButton(code: string): HTMLButtonElement {
+    const copyLabel = this.translations.translate("copyCode");
+    const copiedLabel = this.translations.translate("codeCopied");
+    const button = document.createElement("button");
+    button.type = "button";
+    button.classList.add("code-copy-btn");
+    button.title = copyLabel;
+    button.setAttribute("aria-label", copyLabel);
+    // Both icons are rendered and only swapped by CSS, which lets the change
+    // be animated and keeps the button from resizing.
+    button.innerHTML =
+      '<svg class="code-copy-icon" aria-hidden="true">' +
+      '<use href="#code-icon-copy" /></svg>' +
+      '<svg class="code-check-icon" aria-hidden="true">' +
+      '<use href="#code-icon-check" /></svg>';
+    let reset: NodeJS.Timeout;
+    button.addEventListener("click", () => {
+      navigator.clipboard
+        .writeText(code)
+        .then(() => {
+          button.classList.add("copied");
+          button.title = copiedLabel;
+          button.setAttribute("aria-label", copiedLabel);
+          clearTimeout(reset);
+          reset = setTimeout(() => {
+            button.classList.remove("copied");
+            button.title = copyLabel;
+            button.setAttribute("aria-label", copyLabel);
+          }, 1500);
+        })
+        .catch(() => {
+          // Copying can be denied by the browser. Nothing to show then.
+        });
+    });
+    return button;
   }
 
   private scrollToHash() {

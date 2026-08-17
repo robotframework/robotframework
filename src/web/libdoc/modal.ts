@@ -7,10 +7,8 @@ function createModal(closeLabel: string = "Close") {
   });
 
   const modalCloseButton = document.createElement("button");
-  modalCloseButton.innerHTML = `<svg xmlns="
-    http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="2em" height="2em" className="block" data-v-2754030d="" data-v-512b0344="">
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"
-                  data-v-2754030d="" fill="var(--text-color)"></path></svg>`;
+  modalCloseButton.innerHTML =
+    '<svg aria-hidden="true"><use href="#icon-close"></use></svg>';
   modalCloseButton.classList.add("modal-close-button");
   // The button holds nothing but an icon, so it needs a name of its own.
   modalCloseButton.setAttribute("aria-label", closeLabel);
