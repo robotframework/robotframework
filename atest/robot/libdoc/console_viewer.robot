@@ -41,15 +41,17 @@ List some keywords
 
 Show whole library
     Run Libdoc And Set Output    ${TESTDATADIR}/module.py show
-    Should Contain Intro    module
+    Should Contain    ${OUTPUT}    \## Keywords
+    Should Contain Intro    \# module
     ...    Version=0.1-alpha
     ...    Scope=GLOBAL
-    Should Contain Keyword    Get Hello    ${EMPTY}
+    Should Contain Keyword    Get Hello    ${EMPTY}    ${EMPTY}
     ...    Get hello.
     ...    ${EMPTY}
     ...    See `importing` for explanation of nothing
     ...    and `introduction` for no more information
-    Should Contain Keyword    Keyword    a1=d, *a2
+    VAR    @{args}    `a1` (default: `d`)    `*a2`
+    Should Contain Keyword    Keyword    ${args}    ${EMPTY}
     ...    A keyword.
     ...    ${EMPTY}
     ...    See `get hello` for details.
@@ -57,12 +59,20 @@ Show whole library
 Show intro only
     Run Libdoc and set output    Telnet SHOW intro
     Should Contain Intro    Telnet    Version=
-    ${args} =    Catenate    SEPARATOR=\n${SPACE*12}
-    ...    timeout=3 seconds, newline=CRLF, prompt=None,
-    ...    prompt_is_regexp=False, encoding=UTF-8, encoding_errors=ignore,
-    ...    default_log_level=INFO, window_size=None, environ_user=None,
-    ...    terminal_emulation=False, terminal_type=None,
-    ...    telnetlib_log_level=TRACE, connection_timeout=None
+    VAR    @{args}
+    ...    `timeout` (default: `3 seconds`)
+    ...    `newline` (default: `CRLF`)
+    ...    `prompt` (default: `None`)
+    ...    `prompt_is_regexp` (default: `False`)
+    ...    `encoding` (default: `UTF-8`)
+    ...    `encoding_errors` (default: `ignore`)
+    ...    `default_log_level` (default: `INFO`)
+    ...    `window_size` (default: `None`)
+    ...    `environ_user` (default: `None`)
+    ...    `terminal_emulation` (default: `False`)
+    ...    `terminal_type` (default: `None`)
+    ...    `telnetlib_log_level` (default: `TRACE`)
+    ...    `connection_timeout` (default: `None`)
     Should Contain Importing    ${args}
     ...    Telnet library can be imported with optional configuration parameters.
     Should Not Contain Keyword    Open Connection
@@ -70,11 +80,17 @@ Show intro only
 
 Show intro and keywords
     Run Libdoc and set output    ${TESTDATADIR}/resource.robot SHOW NONASC* INTRO
+    VAR    @{tags}    `common`
     Should Contain Keyword    non ascii doc    ${EMPTY}
+    ...    ${tags}
     ...    Hyvää yötä.
     ...    ${EMPTY}
     # Cannot test does output contain `Спасибо!` because consoles may not be able to show it.
     # Actually all consoles cannot show `Hyvää yötä` either but we expect western config.
+
+Show markdown libary
+    Run Libdoc and set output    ${TESTDATADIR}/MarkdownLibrary.py show
+    Compare Against Golden Image    ${TESTDATADIR}/MarkdownLibrary.txt
 
 Show version
     Run Libdoc And Verify Output    ${TESTDATADIR}/module.py version
@@ -86,28 +102,55 @@ Show version
 *** Keywords ***
 Should Contain Intro
     [Arguments]    ${name}    &{meta}
-    ${underline} =    Evaluate    '=' * len($name)
-    @{meta} =    Evaluate    [(n+':').ljust(10) + v for n, v in $meta.items()]
+    @{meta} =    Evaluate    [f"* {n}: {v}" for n, v in $meta.items()]
     ${expected} =    Catenate    SEPARATOR=\n
     ...    ${name}
-    ...    ${underline}
+    ...    ${EMPTY}
     ...    @{meta}
     Should Contain    ${OUTPUT}    ${expected}
 
+Compare Against Golden Image
+    [Arguments]    ${file}
+    ${expected} =    Get File    ${file}
+    Should Be Equal    ${OUTPUT}    ${expected}
+
 Should Contain Keyword
-    [Arguments]    ${name}    ${args}    @{doc}
-    ${underline} =    Evaluate    '-'*len('${name}')
+    [Arguments]    ${name}    ${args}    ${tags}    @{doc}
+    IF    $name == 'Importing'
+        VAR    ${heading}    \##
+    ELSE
+        VAR    ${heading}    \###
+    END
     ${expected} =    Catenate    SEPARATOR=\n
-    ...    ${name}
-    ...    ${underline}
-    ...    Arguments:${SPACE * 2}\[${args}]
+    ...    ${heading} ${name}
+    IF    $args
+        ${args}    Evaluate    [f"* {a}" for a in $args]
+        ${expected}    Catenate    SEPARATOR=\n
+        ...    ${expected}
+        ...    ${EMPTY}
+        ...    **Arguments:**
+        ...    ${EMPTY}
+        ...    @{args}
+    END
+    IF    $tags
+        ${tags}    Evaluate    [f"* {t}" for t in $tags]
+        ${expected}    Catenate    SEPARATOR=\n
+        ...    ${expected}
+        ...    ${EMPTY}
+        ...    **Tags:**
+        ...    ${EMPTY}
+        ...    @{tags}
+    END
+
+    ${expected}    Catenate    SEPARATOR=\n
+    ...    ${expected}
     ...    ${EMPTY}
     ...    @{doc}
     Should Contain    ${OUTPUT}    ${expected}
 
 Should Contain Importing
     [Arguments]    ${args}    @{doc}
-    Should Contain Keyword    Importing    ${args}    @{doc}
+    Should Contain Keyword    Importing    ${args}    ${EMPTY}    @{doc}
 
 Should Not Contain Keyword
     [Arguments]    ${name}
