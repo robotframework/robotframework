@@ -70,7 +70,8 @@ class TestTypeInfo(unittest.TestCase):
             ("union", Union),
         ]:
             for name in name, name.upper():
-                assert_info(TypeInfo(name), name, expected)
+                nested = () if expected is Union else None
+                assert_info(TypeInfo(name), name, expected, nested)
 
     def test_union(self):
         for union in [
@@ -199,7 +200,9 @@ class TestTypeInfo(unittest.TestCase):
         )
 
     def test_params_with_invalid_type(self):
-        accepts_params = (Sequence, Mapping, list, tuple, dict, set, frozenset, Literal)
+        accepts_params = (
+            Sequence, Mapping, list, tuple, dict, set, frozenset, Literal, Union
+        )  # fmt: skip
         for name in TYPE_NAMES:
             if TYPE_NAMES[name] not in accepts_params:
                 assert_raises_with_msg(

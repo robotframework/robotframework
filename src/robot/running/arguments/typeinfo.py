@@ -124,14 +124,16 @@ class TypeInfo(metaclass=SetterAwareType):
         self.nested = nested
 
     @setter
-    def nested(self, nested: "Sequence[TypeInfo]") -> "tuple[TypeInfo, ...] | None":
+    def nested(
+        self, nested: "Sequence[TypeInfo] | None"
+    ) -> "tuple[TypeInfo, ...] | None":
         """Nested types as a tuple of ``TypeInfo`` objects.
 
         Used with parameterized types and unions.
         """
         typ = self.type
         if self.is_union:
-            return self._validate_union(nested)
+            return tuple(nested or ())
         if nested is None:
             return None
         if typ is None:
@@ -156,11 +158,6 @@ class TypeInfo(metaclass=SetterAwareType):
                 return self._validate_nested_count(nested, 2)
         if typ in TYPE_NAMES.values():
             self._report_nested_error(nested)
-        return tuple(nested)
-
-    def _validate_union(self, nested):
-        if not nested:
-            raise DataError("Union cannot be empty.")
         return tuple(nested)
 
     def _validate_literal(self, nested):
@@ -196,7 +193,7 @@ class TypeInfo(metaclass=SetterAwareType):
 
     @property
     def is_union(self):
-        return self.name == "Union"
+        return self.name and self.name.title() == "Union"
 
     @classmethod
     def from_type_hint(cls, hint: Any, sequence_is_union: bool = False) -> "TypeInfo":
@@ -227,9 +224,9 @@ class TypeInfo(metaclass=SetterAwareType):
             hint = hint.__forward_arg__
         if isinstance(hint, typeddict_types):
             return TypedDictInfo(hint.__name__, hint)
-        if is_union(hint):
+        if is_union(hint) or hint is Union:
             nested = [cls.from_type_hint(a) for a in get_args(hint)]
-            return cls("Union", nested=nested)
+            return cls("Union", nested=cls._validate_union_params(nested))
         origin = get_origin(hint)
         if origin:
             args = get_args(hint)
@@ -251,18 +248,22 @@ class TypeInfo(metaclass=SetterAwareType):
             return cls("None", type(None))
         if hint is Ellipsis:
             return cls("...", hint)
-        if hint is Union:  # Plain Union without params.
-            return cls("Union")
         if isinstance(hint, type):
             return cls(type_repr(hint), hint)
         if isinstance(hint, Sequence):
             if sequence_is_union:
-                return cls.from_sequence(hint)
+                return cls.from_sequence(cls._validate_union_params(hint))
             if isinstance(hint, list):
                 # Better string representation with Callable params and other lists.
                 items = [t.__name__ if isinstance(t, type) else repr(t) for t in hint]
                 return cls(f"[{', '.join(items)}]")
         return cls(str(hint))
+
+    @classmethod
+    def _validate_union_params(cls, nested):
+        if not nested:
+            raise DataError("Union cannot be empty.")
+        return tuple(nested)
 
     @classmethod
     def from_type(cls, hint: type) -> "TypeInfo":
