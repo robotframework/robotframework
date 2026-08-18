@@ -57,18 +57,17 @@ class ProcessResult:
     ```robotframework
     *** Test Cases ***
     Run Process
-        ${result}=    Run Process    program
-        VAR    ${result}    ${result}    scope=SUITE
+        ${result} =    Run Process    program
 
-    Verify Exitcode
+        # Verify Exitcode
         Should Be Equal    ${result.rc}    0    type=int
 
-    Verify Output
+        # Verify Output
         Should Match    ${result.stdout}    Some t?xt*
         Should Be Empty    ${result.stderr}
 
-    Verify Output Files
-        ${stdout}=    Get File    ${result.stdout_path}
+        # Verify Output Files
+        ${stdout} =    Get File    ${result.stdout_path}
         Should Be Equal    ${stdout}    ${result.stdout}
         File Should Be Empty    ${result.stderr_path}
     ```
@@ -347,9 +346,9 @@ def _popen_documentation(value):
     *** Test Cases ***
     Popen Object
         ${process} =    Start Process    ${command}
-        Log             PID: ${process.pid}
+        Log    PID: ${process.pid}
         # Other keywords
-        ${result} =     Terminate Process    ${process}
+        ${result} =    Terminate Process    ${process}
 
     ```
 
@@ -544,11 +543,11 @@ class Process:
     *** Test Cases ***
     Capture Output
         ${result} =    Run Process    program    stdout=${TEMPDIR}/stdout.txt    stderr=${TEMPDIR}/stderr.txt
-        Log Many       stdout: ${result.stdout}    stderr: ${result.stderr}
+        Log Many    stdout: ${result.stdout}    stderr: ${result.stderr}
 
     Merge Output
         ${result} =    Run Process    program    stderr=STDOUT
-        Log            all output: ${result.stdout}
+        Log    all output: ${result.stdout}
 
     Discard Output
         ${result} =    Run Process    program    stdout=DEVNULL    stderr=DEVNULL
@@ -613,7 +612,7 @@ class Process:
     *** Test Cases ***
     Output Encoding
         Start Process    program    output_encoding=UTF-8
-        Run Process      program    stdout=${path}    output_encoding=SYSTEM
+        Run Process    program    stdout=${path}    output_encoding=SYSTEM
 
     ```
 
@@ -628,7 +627,7 @@ class Process:
     *** Test Cases ***
     Alias
         Start Process    program    alias=example
-        Run Process      python     -c    print('hello')    alias=hello
+        Run Process    python    -c    print('hello')    alias=hello
 
     ```
 
@@ -665,22 +664,19 @@ class Process:
     ```robotframework
     *** Test Cases ***
     Run Process
-        ${result}=    Run Process    program
-        VAR    ${result}    ${result}    scope=SUITE
+        ${result} =    Run Process    program
 
-    Verify Exitcode
+        # Verify Exitcode
         Should Be Equal    ${result.rc}    0    type=int
 
-    Verify Output
+        # Verify Output
         Should Match    ${result.stdout}    Some t?xt*
         Should Be Empty    ${result.stderr}
 
-    Verify Output Files
-        ${stdout}=    Get File    ${result.stdout_path}
+        # Verify Output Files
+        ${stdout} =    Get File    ${result.stdout_path}
         Should Be Equal    ${stdout}    ${result.stdout}
         File Should Be Empty    ${result.stderr_path}
-
-
     ```
 
     Notice that in `stdout` and `stderr` content possible trailing newline
@@ -700,14 +696,14 @@ class Process:
         Start Process    program    arg1    arg2    alias=First
         ${handle} =    Start Process    command.sh arg | command2.sh    shell=True    cwd=/path
 
-    Run Process
+        # Run Process
         ${result} =    Run Process    ${CURDIR}/script.py
         Should Not Contain    ${result.stdout}    FAIL
 
-    Terminate Process
+        # Terminate Process
         Terminate Process    ${handle}
 
-    Wait Process
+        # Wait Process
         ${result} =    Wait For Process    First
         Should Be Equal As Integers    ${result.rc}    0
 
@@ -895,10 +891,10 @@ class Process:
         *** Test Cases ***
         Process Handle
             ${process} =    Start Process    ${command}
-            Log             PID: ${process.pid}
+            Log    PID: ${process.pid}
 
             # Other keywords
-            ${result} =     Terminate Process    ${process}
+            ${result} =    Terminate Process    ${process}
 
         ```
 
@@ -908,9 +904,9 @@ class Process:
         *** Test Cases ***
         Process Pipeline
             ${process} =    Start Process    python    -c    print('Hello, world!')
-            ${result} =     Run Process      python    -c    import sys; print(sys.stdin.read().upper().strip())    stdin=${process.stdout}
+            ${result} =    Run Process    python    -c    import sys; print(sys.stdin.read().upper().strip())    stdin=${process.stdout}
             Wait For Process    ${process}
-            Should Be Equal     ${result.stdout}    HELLO, WORLD
+            Should Be Equal    ${result.stdout}    HELLO, WORLD
 
         ```
         """
@@ -1367,20 +1363,19 @@ class Process:
         *** Test Cases ***
         Get process result
             Run Process    python    -c    print('Hello, world!')    alias=myproc
-            VAR    ${PROCESS_ALIAS}    myproc    scope=SUITE
 
-        Get result object
-            ${result}=    Get Process Result    ${PROCESS_ALIAS}
-            Should Be Equal    ${result.rc}       ${0}
-            Should Be Equal    ${result.stdout}   Hello, world!
+            # Get result object
+            ${result} =    Get Process Result    ${PROCESS_ALIAS}
+            Should Be Equal    ${result.rc}    ${0}
+            Should Be Equal    ${result.stdout}    Hello, world!
             Should Be Empty    ${result.stderr}
 
-        Get one attribute
-            ${stdout}=    Get Process Result    ${PROCESS_ALIAS}    stdout=true
+            # Get one attribute
+            ${stdout} =    Get Process Result    ${PROCESS_ALIAS}    stdout=true
             Should Be Equal    ${stdout}    Hello, world!
 
-        Multiple attributes
-            ${stdout}    ${stderr}=    Get Process Result    ${PROCESS_ALIAS}    stdout=yes    stderr=yes
+            # Multiple attributes
+            ${stdout}    ${stderr} =    Get Process Result    ${PROCESS_ALIAS}    stdout=yes    stderr=yes
             Should Be Equal    ${stdout}    Hello, world!
             Should Be Empty    ${stderr}
 
@@ -1427,6 +1422,7 @@ class Process:
             Start Process    prog1    alias=process1
             Start Process    prog2    alias=process2
             # currently active process is process2
+
             Switch Process    process1
             # now active process is process1
 
@@ -1493,9 +1489,9 @@ class Process:
 
         ```robotframework
         *** Test Cases ***
-        Build Command Line
-            ${cmd} =        Join Command Line    --option    value with spaces
-            Should Be Equal    ${cmd}            --option "value with spaces"
+        Join Command Line
+            ${cmd} =    Join Command Line    --option    value with spaces
+            Should Be Equal    ${cmd}    --option "value with spaces"
 
         ```
 
@@ -1503,10 +1499,10 @@ class Process:
 
         ```robotframework
         *** Test Cases ***
-        Build Command From List
-            VAR             @{arguments}      --option    value with spaces
-            ${cmd} =        Join Command Line    ${arguments}
-            Should Be Equal    ${cmd}            --option "value with spaces"
+        Join Command From List
+            VAR    @{arguments}    --option    value with spaces
+            ${cmd} =    Join Command Line    ${arguments}
+            Should Be Equal    ${cmd}    --option "value with spaces"
 
         ```
         """
