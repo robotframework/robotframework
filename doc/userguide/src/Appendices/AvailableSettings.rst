@@ -87,6 +87,8 @@ Exactly same settings are available when `creating tasks`_ in the Task section.
    +=================+========================================================+
    | [Documentation] | Used for specifying a `test case documentation`_.      |
    +-----------------+--------------------------------------------------------+
+   | [Metadata]      | Used for setting `free test metadata`_.                |
+   +-----------------+--------------------------------------------------------+
    | [Tags]          | Used for `tagging test cases`_.                        |
    +-----------------+--------------------------------------------------------+
    | [Setup]         | Used for specifying a `test setup`_.                   |
