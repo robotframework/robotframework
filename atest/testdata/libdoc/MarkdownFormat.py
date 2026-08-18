@@ -136,8 +136,8 @@ def syntax_highlighting():
     ```
     ~~~python
     def keyword(arg):
-        print(arg)
         # This is comment in code, not a Markdown header!
+        return arg
     ~~~
 
     Indented code blocks are a standard Markdown feature:
