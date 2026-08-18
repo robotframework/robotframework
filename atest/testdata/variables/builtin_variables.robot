@@ -126,3 +126,8 @@ $CURDIR
     Set Log Level    NONE
     Should Be Equal    ${LOG_LEVEL}    NONE
     [Teardown]    Set Log Level    INFO
+
+\${EXECUTION ID}
+    Should Not Be Empty    ${EXECUTION ID}
+    Should Match Regexp    ${EXECUTION ID}    (?i)^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$
+    Should Be Equal    ${EXECUTION ID}    ${SUITE METADATA}[Execution ID]

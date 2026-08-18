@@ -1651,6 +1651,11 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
    | ${DEBUG FILE}          | An absolute path to the `debug file`_ as a string or  | Everywhere |
    |                        | a string `NONE` if the debug file is not created.     |            |
    +------------------------+-------------------------------------------------------+------------+
+   | ${EXECUTION ID}        | Unique ID for the current execution. Same value as    | Everywhere |
+   |                        | the ``Execution ID`` suite metadata. Given with the   |            |
+   |                        | :option:`--executionid` option or, by default, a      |            |
+   |                        | generated UUID. New in RF 7.5.                        |            |
+   +------------------------+-------------------------------------------------------+------------+
    | &{OPTIONS}             | A dictionary exposing command line options. The       | Everywhere |
    |                        | dictionary keys match the command line options and    |            |
    |                        | can be accessed both like `${OPTIONS}[key]` and       |            |
