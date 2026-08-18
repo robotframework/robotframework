@@ -78,14 +78,14 @@ below and explained later in this section.
 `[Documentation]`:setting:
     Used for specifying a `test case documentation`_.
 
+`[Tags]`:setting:
+    Used for `tagging test cases`_.
+
 `[Metadata]`:setting:
     Used for setting `free test metadata`_ as name-value pairs.
 
 `[Setup]`:setting:, `[Teardown]`:setting:
    Specify `test setup and teardown`_.
-
-`[Tags]`:setting:
-    Used for `tagging test cases`_.
 
 `[Template]`:setting:
    Specifies the `template keyword`_ to use. The test itself will contain only
@@ -614,7 +614,7 @@ Test metadata is shown in reports and logs similarly as test documentation.
 It is also stored in `output files`_ and is available to `listeners`_
 and other tools that process execution results.
 
-.. note:: :setting:`[Metadata]` is new in Robot Framework 7.5.
+.. note:: Test case metadata is new in Robot Framework 7.5.
 
 .. _test case tags:
 

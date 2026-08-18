@@ -1586,17 +1586,17 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
    +========================+=======================================================+============+
    | ${TEST NAME}           | The name of the current test case.                    | Test case  |
    +------------------------+-------------------------------------------------------+------------+
-   | @{TEST TAGS}           | Contains the tags of the current test case in         | Test case  |
-   |                        | alphabetical order. Can be modified dynamically using |            |
-   |                        | :name:`Set Tags` and :name:`Remove Tags` keywords.    |            |
-   +------------------------+-------------------------------------------------------+------------+
    | ${TEST DOCUMENTATION}  | The documentation of the current test case. Can be set| Test case  |
    |                        | dynamically using using :name:`Set Test Documentation`|            |
    |                        | keyword.                                              |            |
    +------------------------+-------------------------------------------------------+------------+
+   | @{TEST TAGS}           | Contains the tags of the current test case in         | Test case  |
+   |                        | alphabetical order. Can be modified dynamically using |            |
+   |                        | :name:`Set Tags` and :name:`Remove Tags` keywords.    |            |
+   +------------------------+-------------------------------------------------------+------------+
    | &{TEST METADATA}       | The free metadata of the current test case. Can be    | Test case  |
-   |                        | set using :name:`Set Test Metadata` keyword.          |            |
-   |                        | New in Robot Framework 7.5.                           |            |
+   |                        | set dynamically using :name:`Set Test Metadata`       |            |
+   |                        | keyword. New in Robot Framework 7.5.                  |            |
    +------------------------+-------------------------------------------------------+------------+
    | ${TEST STATUS}         | The status of the current test case, either PASS or   | `Test      |
    |                        | FAIL.                                                 | teardown`_ |
