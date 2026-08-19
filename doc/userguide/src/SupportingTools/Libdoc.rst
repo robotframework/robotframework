@@ -299,6 +299,49 @@ Examples::
   libdoc SeleniumLibrary show intro
   libdoc SeleniumLibrary version
 
+When showing documentation of a whole library or some keywords, the overall
+structure is formatted using Markdown_. This is especially convenient with
+libraries that use `Markdown documentation syntax`_ themselves, because then
+the whole output is in Markdown format. This is demonstrated by the following
+example from the beginning of the Dialogs library documentation::
+
+    # Dialogs
+
+    * Version: 7.5
+    * Scope: GLOBAL
+
+    ## Introduction
+
+    A library providing dialogs for interacting with users.
+
+    `Dialogs` is Robot Framework's standard library that provides means
+    for pausing the test or task execution and getting input from users.
+
+    Long lines in the provided messages are wrapped automatically. If you want
+    to wrap lines manually, you can add newlines using the `\n` character sequence.
+
+    ## Keywords
+
+    ### Execute Manual Step
+
+    **Arguments:**
+
+    * `message` (type: `str`) -
+      The instruction shown in the initial dialog.
+    * `default_error` (type: `str`, default: ``) -
+      The default value shown in the possible error message dialog.
+
+    Pauses execution until user sets the keyword status.
+
+    User can press either `PASS` or `FAIL` button. In the latter case execution
+    fails and an additional dialog is opened for defining the error message.
+
+.. note:: Prior to Robot Framework 7.5 console output used custom formatting.
+
+.. note:: The console output format is not guaranteed to stay stable between
+          Robot Framework versions. If you need a stable, machine readable format,
+          use `Libdoc spec files`_ instead.
+
 Writing documentation
 ---------------------
 
