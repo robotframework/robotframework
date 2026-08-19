@@ -1,0 +1,62 @@
+# MarkdownLibrary
+
+* Version: 1.0
+* Scope: TEST
+
+## Introduction
+
+Intro doc.
+
+## Importing
+
+**Arguments:**
+
+* `arg` (type: `str`, default: `default`)
+* `other` (type: `int`, default: `1`)
+
+Importing doc.
+
+## Keywords
+
+### Positional And Named
+
+**Arguments:**
+
+* `pos_only` (type: `str`, positional-only) -
+  positional-only argument.
+* `normal` (type: `int`, default: `1`) -
+  normal argument document.
+  continues here.
+* `named_only` (type: `str`, default: `default`, named-only) -
+  named-only argument.
+
+**Returns:**
+
+* `str` -
+  Always string.
+
+**Raises:**
+
+* `ValueError` -
+  Never
+* `TypeError` -
+  Not ever
+
+**Tags:**
+
+* `tag1`
+* `tag2`
+
+Keyword doc.
+
+### Varargs And Kwargs
+
+**Arguments:**
+
+* `*args` (type: `str`) -
+  varargs doc.
+* `**kwargs` (type: `str`) -
+  keyword args doc.
+
+Doc for variable arguments and keyword arguments.
+
