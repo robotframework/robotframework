@@ -21,6 +21,7 @@ import sys
 import warnings
 from datetime import datetime
 from pathlib import Path
+from uuid import uuid4
 
 from robot.errors import DataError, FrameworkError
 from robot.output import LOGGER, LogLevel
@@ -502,8 +503,10 @@ class RobotSettings(_BaseSettings):
         "ConsoleMarkers"     : ("consolemarkers", "AUTO"),
         "DebugFile"          : ("debugfile", None),
         "Language"           : ("language", []),
+        "ExecutionId"        : ("executionid", None),
     }  # fmt: skip
     _languages = None
+    _execution_id = None
 
     def get_rebot_settings(self):
         settings = RebotSettings()
@@ -552,6 +555,18 @@ class RobotSettings(_BaseSettings):
             except DataError as err:
                 self._raise_invalid("Language", err)
         return self._languages
+
+    @property
+    def execution_id(self):
+        """Unique ID for the current execution.
+
+        Given with the ``--executionid`` option or, by default, a generated
+        UUID. The value is generated only once and cached so that it stays the
+        same throughout the execution.
+        """
+        if self._execution_id is None:
+            self._execution_id = self["ExecutionId"] or str(uuid4())
+        return self._execution_id
 
     @property
     def suite_config(self):
