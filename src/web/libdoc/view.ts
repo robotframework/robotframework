@@ -217,7 +217,6 @@ class View {
     if (!document.getElementById("modal-background")) {
       createModal(this.translations.translate("closeDialog"));
     }
-    this.addCopyButtons();
     requestAnimationFrame(() => {
       this.updateDocClamping();
       this.updateTitleFit();
@@ -315,7 +314,7 @@ class View {
     );
     window.addEventListener(
       "hashchange",
-      function () {
+      () => {
         if (window.location.hash.indexOf("#type-") == 0) {
           const hash =
             "#type-modal-" + decodeURI(window.location.hash.slice(6));
@@ -323,7 +322,7 @@ class View {
             .querySelector(".data-types")!
             .querySelector(hash);
           if (typeDoc) {
-            showModal(typeDoc);
+            this.openModal(typeDoc);
           }
         }
       },
@@ -534,6 +533,9 @@ class View {
         return;
       }
       doc.classList.add("truncated");
+      doc
+        .querySelectorAll(".code-copy-btn")
+        .forEach((button) => button.remove());
       // A button, not a span, so that the keyboard reaches it.
       const more = document.createElement("button");
       more.type = "button";
@@ -548,6 +550,21 @@ class View {
       doc.onclick = showDetails;
       more.onclick = showDetails;
     });
+    this.addCopyButtons();
+  }
+
+  private openModal(content: Element | null) {
+    if (!content) {
+      return;
+    }
+    showModal(content);
+    const modalContent = document.getElementById("modal-content");
+    if (modalContent) {
+      modalContent
+        .querySelectorAll(".code-copy-btn")
+        .forEach((button) => button.remove());
+      this.addCopyButtons(modalContent);
+    }
   }
 
   private showArgDocModal(wrap: HTMLElement) {
@@ -570,6 +587,12 @@ class View {
 
     const meta = document.createElement("div");
     meta.classList.add("arg-detail-meta");
+    const kindInfo = name?.getAttribute("title");
+    if (kindInfo) {
+      const item = document.createElement("span");
+      item.textContent = kindInfo;
+      meta.appendChild(item);
+    }
     const defaultValue = group.querySelector(".arg-default-value");
     if (defaultValue) {
       meta.appendChild(this.argDetailItem("default", defaultValue.outerHTML));
@@ -585,7 +608,7 @@ class View {
     const fullDoc = doc.cloneNode(true) as HTMLElement;
     fullDoc.classList.remove("clamped", "truncated");
     container.appendChild(fullDoc);
-    showModal(container);
+    this.openModal(container);
   }
 
   private argDetailItem(labelKey: string, html: string) {
@@ -628,7 +651,7 @@ class View {
     document.querySelectorAll(`${container} a.type`).forEach((elem) =>
       elem.addEventListener("click", (e) => {
         const typeDoc = (e.target as HTMLElement).dataset.typedoc;
-        showModal(document.querySelector(`#type-modal-${typeDoc}`));
+        this.openModal(document.querySelector(`#type-modal-${typeDoc}`));
       }),
     );
   }
@@ -647,7 +670,6 @@ class View {
     this.updateDocClamping();
     document.getElementById("keyword-statistics-header")!.innerText =
       "" + this.libdoc.keywords.length;
-    this.addCopyButtons();
   }
 
   private setTheme() {
@@ -672,12 +694,15 @@ class View {
    * because the button has to be positioned by an element that does not scroll
    * with the code.
    */
-  private addCopyButtons() {
+  private addCopyButtons(root: ParentNode = document) {
     if (!navigator.clipboard) {
       return;
     }
     this.initCopyButtonReveal();
-    document.querySelectorAll<HTMLElement>(".doc pre").forEach((pre) => {
+    root.querySelectorAll<HTMLElement>(".doc pre").forEach((pre) => {
+      if (pre.closest(".arg-doc.clamped")) {
+        return;
+      }
       const block = this.codeBlockOf(pre);
       if (block.querySelector(".code-copy-btn")) {
         return;

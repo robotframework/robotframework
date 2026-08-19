@@ -45,22 +45,6 @@
         },
         false,
       );
-      window.addEventListener(
-        "hashchange",
-        function () {
-          if (window.location.hash.indexOf("#type-") == 0) {
-            const hash =
-              "#type-modal-" + decodeURI(window.location.hash.slice(6));
-            const typeDoc = document
-              .querySelector(".data-types")
-              .querySelector(hash);
-            if (typeDoc) {
-              showModal(typeDoc);
-            }
-          }
-        },
-        false,
-      );
     </script>
 
     <style>
@@ -353,6 +337,7 @@
           <tr class="arg-row{{#if doc}} has-doc{{/if}}">
             <td class="arg-cell-name"><span
                 class="arg-name {{#if required}}arg-required{{else}}arg-optional{{/if}}"
+                title="{{argKindInfo kind required}}"
               >{{~#if (argKindIcon kind)~}}<span
                     class="arg-kind"
                     role="img"
