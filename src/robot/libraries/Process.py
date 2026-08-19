@@ -77,6 +77,7 @@ class ProcessResult:
         stdin=None,
         rc=None,
         output_encoding=None,
+        streams_to_close=(),
     ):
         self._process = process
         self.stdout_path = self._get_path(stdout)
@@ -90,6 +91,7 @@ class ProcessResult:
             for stream in (stdout, stderr, stdin)
             if self._is_custom_stream(stream)
         ]
+        self._streams_to_close = streams_to_close
 
     def _get_path(self, stream):
         return stream.name if self._is_custom_stream(stream) else None
@@ -149,24 +151,20 @@ class ProcessResult:
         return output
 
     def close_streams(self):
-        standard_streams = self._get_and_read_standard_streams(self._process)
-        for stream in standard_streams + self._custom_streams:
-            if self._is_open(stream):
-                stream.close()
-
-    def _get_and_read_standard_streams(self, process):
-        stdin, stdout, stderr = process.stdin, process.stdout, process.stderr
-        if self._is_open(stdout):
+        if self._is_open(self._process.stdout):
             self._read_stdout()
-        if self._is_open(stderr):
+        if self._is_open(self._process.stderr):
             self._read_stderr()
-        return [stdin, stdout, stderr]
+        for stream in self._streams_to_close:
+            stream.close()
+        self._streams_to_close = ()
 
     def __str__(self):
         return f"<result object with rc {self.rc}>"
 
 
 class ProcessConfiguration:
+
     def __init__(
         self,
         cwd=None,
@@ -183,6 +181,7 @@ class ProcessConfiguration:
         self.shell = shell
         self.alias = alias
         self.output_encoding = output_encoding
+        self.streams_to_close = []
         self.stdout_stream = self._new_stream(stdout)
         self.stderr_stream = self._get_stderr(stderr, stdout, self.stdout_stream)
         self.stdin_stream = self._get_stdin(stdin)
@@ -190,18 +189,21 @@ class ProcessConfiguration:
         self.env = self._construct_env(env, env_extra)
 
     def _new_stream(self, name):
+        if not name:
+            return subprocess.PIPE
         if name == "DEVNULL":
-            return open(os.devnull, "w", encoding=LOCALE_ENCODING)
-        if name:
+            stream = open(os.devnull, "w", encoding=LOCALE_ENCODING)
+        else:
             path = os.path.normpath(os.path.join(self.cwd, name))
-            return open(path, "w", encoding=LOCALE_ENCODING)
-        return subprocess.PIPE
+            stream = open(path, "w", encoding=LOCALE_ENCODING)
+        self.streams_to_close.append(stream)
+        return stream
 
     def _get_stderr(self, stderr, stdout, stdout_stream):
         if stderr and stderr in ["STDOUT", stdout]:
-            if stdout_stream != subprocess.PIPE:
-                return stdout_stream
-            return subprocess.STDOUT
+            if stdout_stream == subprocess.PIPE:
+                return subprocess.STDOUT
+            return stdout_stream
         return self._new_stream(stderr)
 
     def _get_stdin(self, stdin):
@@ -217,10 +219,12 @@ class ProcessConfiguration:
             return subprocess.PIPE
         path = os.path.normpath(os.path.join(self.cwd, stdin))
         if os.path.isfile(path):
-            return open(path, encoding=LOCALE_ENCODING)
-        stdin_file = NamedTemporaryFile(prefix="stdin-")
-        stdin_file.write(console_encode(stdin, self.output_encoding, force=True))
-        stdin_file.seek(0)
+            stdin_file = open(path, encoding=LOCALE_ENCODING)
+        else:
+            stdin_file = NamedTemporaryFile(prefix="stdin-")
+            stdin_file.write(console_encode(stdin, self.output_encoding, force=True))
+            stdin_file.seek(0)
+        self.streams_to_close.append(stdin_file)
         return stdin_file
 
     def _construct_env(self, env, extra):
@@ -296,6 +300,7 @@ class ProcessConfiguration:
             "stderr": self.stderr_stream,
             "stdin": self.stdin_stream,
             "output_encoding": self.output_encoding,
+            "streams_to_close": tuple(self.streams_to_close),
         }
 
     def __str__(self):
