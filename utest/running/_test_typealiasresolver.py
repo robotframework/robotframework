@@ -3,7 +3,7 @@ import unittest
 from types import NoneType, UnionType
 from typing import get_args, get_origin, TypeVar, Union
 
-from robot.running.arguments.typealiasresolver import resolve_type_alias
+from robot.running.arguments.typealiasresolver import RecursiveAlias, resolve_type_alias
 from robot.utils.asserts import assert_equal, assert_raises
 
 type Forward = SimpleValue
@@ -24,6 +24,10 @@ if sys.version_info >= (3, 13):
 else:
     type ParamDefaults[X, Y, Z] = X | Y | list[Z | None]
 type Recursive = int | list[Recursive]
+type IndirectlyRecursive = list[Recursive]
+type InvalidRecursion = InvalidRecursion
+type MutualRecursion = RecursionMutual
+type RecursionMutual = MutualRecursion
 type UnusedParam1[T] = int
 type UnusedParam2[T1, T2] = int | T2
 type BadTypeVar[GOOD] = GOOD | BAD | UGLY
@@ -94,9 +98,28 @@ class TestTypeAliasResolver(unittest.TestCase):
         self._verify(ParamDefaults[str, int], Union, [str, int, list[int | None]])
         self._verify(ParamDefaults[str], Union, [str, bool, list[int | None]])
 
-    # FIXME: Support recursive type aliases!
-    #    def test_recursive(self):
-    #        self._verify(Recursive, Union, [])
+    def test_recursive(self):
+        value = resolve_type_alias(Recursive)
+        self._verify_recursive(value)
+        value = resolve_type_alias(IndirectlyRecursive)
+        assert get_origin(value) is list
+        self._verify_recursive(*get_args(value))
+
+    def _verify_recursive(self, value):
+        assert get_origin(value) is Union
+        first, second = get_args(value)
+        assert_equal(first, int)
+        assert get_origin(second) is list
+        (recursive,) = get_args(second)
+        assert isinstance(recursive, RecursiveAlias)
+        assert_equal(recursive.name, "Recursive")
+        assert_equal(recursive.value, Union[first, second])
+
+    def test_invalid_recursion(self):
+        error = "Resolving type alias '{}' failed: Invalid recursion."
+        self._fails(InvalidRecursion, error.format("InvalidRecursion"))
+        self._fails(MutualRecursion, error.format("MutualRecursion"))
+        self._fails(RecursionMutual, error.format("RecursionMutual"))
 
     def test_unused_param(self):
         self._verify(UnusedParam1[int], int)
@@ -132,7 +155,7 @@ class TestTypeAliasResolver(unittest.TestCase):
 
     def _fails(self, alias, message):
         error = assert_raises(ValueError, resolve_type_alias, alias)
-        if not str(error).startswith(message):
+        if not (str(error).startswith(message) and message):
             raise AssertionError(
                 f"Expected error to start with:\n{message}\n\nGot:\n{error}\n"
             )

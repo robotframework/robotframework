@@ -16,6 +16,12 @@ Union value
 Forward reference
     Check Test Case    ${TESTNAME}
 
+Recursion
+    Check Test Case    ${TESTNAME}
+
+Failing recursive conversion
+    Check Test Case    ${TESTNAME}
+
 Generic simple
     Check Test Case    ${TESTNAME}
 

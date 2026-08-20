@@ -23,35 +23,68 @@ else:
     NoDefault = None
 
 
-def resolve_type_alias(alias):
+class RecursiveAlias:
+
+    def __init__(self, alias):
+        self.name = alias.__name__ if isinstance(alias, TypeAliasType) else None
+        self.value = None
+
+
+def resolve_type_alias(alias, context=None):
+    if context is None:
+        context = {}
+    if alias in context:
+        return context[alias]
+    # RecursiveAlias is used if an alias is used in its own value.
+    context[alias] = RecursiveAlias(alias)
     origin = get_origin(alias)
     if origin:
-        return resolve_generic_type_alias(origin, get_args(alias))
-    value = alias
-    while isinstance(value, TypeAliasType):
-        try:
-            value = value.__value__
-        except Exception as err:
-            raise ValueError(f"Resolving type alias '{value}' failed: {err}")
+        value = _resolve_generic(origin, get_args(alias), context)
+    else:
+        value = _resolve(alias, context)
+    # Add the resolved value to RecursiveAlias that may be used in the value itself.
+    context[alias].value = value
+    # Set value in context to the resolved value.
+    context[alias] = value
+    return value
+
+
+def _resolve(alias, context):
+    value = _get_value(alias)
     origin = get_origin(value)
     if origin:
         origin = Union if origin is UnionType else origin
-        args = [resolve_type_alias(a) for a in get_args(value)]
+        args = [resolve_type_alias(a, context) for a in get_args(value)]
         return origin[*args]
     return value
 
 
-def resolve_generic_type_alias(alias, args):
-    value = resolve_type_alias(alias)
+def _get_value(alias):
+    seen = set()
+    while isinstance(alias, TypeAliasType):
+        try:
+            value = alias.__value__
+            if value in seen:
+                raise ValueError("Invalid recursion.")
+        except Exception as err:
+            raise ValueError(f"Resolving type alias '{alias}' failed: {err}") from None
+        else:
+            alias = value
+            seen.add(value)
+    return alias
+
+
+def _resolve_generic(alias, args, context):
+    value = resolve_type_alias(alias, context)
     origin = get_origin(value)
     if origin:
         type_vars = _get_type_var_mapping(value.__parameters__, args)
         args = [_resolve_type_var(arg, type_vars) for arg in get_args(value)]
-        return resolve_generic_type_alias(origin, args)
+        return _resolve_generic(origin, args, context)
     if isinstance(alias, TypeAliasType):
         type_vars = _get_type_var_mapping(alias.__parameters__, args)
         return _resolve_type_var(value, type_vars)
-    args = [resolve_type_alias(a) for a in args]
+    args = [resolve_type_alias(a, context) for a in args]
     return value[*args]
 
 

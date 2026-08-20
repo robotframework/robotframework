@@ -5,6 +5,7 @@ type GenericForwardRef[T] = GenericParams[T]
 type SimpleValue = int
 type ParamsValue = list[int]
 type UnionValue = int | float
+type Recursive = int | list[Recursive]
 type GenericSimple[T] = T
 type GenericParams[T] = list[T]
 type GenericUnion[X, Y] = X | Y
@@ -33,6 +34,11 @@ def union_value(arg: UnionValue, expected: int | float):
 
 def forward_ref(arg: ForwardRef, expected: int):
     simple_value(arg, expected)
+
+
+def recursive(argument: Recursive, expected: int | list = -1):
+    assert isinstance(argument, type(expected))
+    assert argument == expected
 
 
 def generic_simple(arg: GenericSimple[int], expected: int):

@@ -1,6 +1,7 @@
 *** Settings ***
-Library         TypeStatement.py
 Test Tags       require-py3.12
+Library         TypeStatement.py
+Resource        conversion.resource
 
 *** Test Cases ***
 Simple value
@@ -16,6 +17,18 @@ Union value
 
 Forward reference
     Forward Ref            1                1
+
+Recursion
+    Recursive              1                1
+    Recursive              [1, 2, 3]        [1, 2, 3]
+    Recursive              [1.0, "2", 3]    [1, 2, 3]
+    Recursive              [[[1, "2"]]]     [[[1, 2]]]
+    Recursive              [[[[[[0]]]]]]    [[[[[[0]]]]]]
+
+Failing recursive conversion
+    [Template]             Conversion Should Fail
+    Recursive              bad              type=integer or list[Recursive]
+    Recursive              [1, 2.3]         type=integer or list[Recursive]
 
 Generic simple
     Generic Simple         1                1

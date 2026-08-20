@@ -63,6 +63,7 @@ from robot.variables import search_variable, VariableMatch
 
 from ..context import EXECUTION_CONTEXTS
 from .customconverters import CustomArgumentConverters
+from .typealiasresolver import RecursiveAlias
 from .typeconverters import TypeConverter
 
 TYPE_NAMES = {
@@ -262,6 +263,8 @@ class TypeInfo(metaclass=SetterAwareType):
             return cls("None", type(None))
         if hint is Ellipsis:
             return cls("...", hint)
+        if isinstance(hint, RecursiveAlias):
+            return cls(hint.name, RecursiveAlias, nested=[hint.value])
         if isinstance(hint, type):
             return cls(type_repr(hint), hint)
         if isinstance(hint, Sequence):
@@ -454,7 +457,7 @@ class TypeInfo(metaclass=SetterAwareType):
         if self.is_union:
             return " | ".join(str(n) for n in self.nested)
         name = self.name or ""
-        if self.nested is None:
+        if self.nested is None or self.type is RecursiveAlias:
             return name
         nested = ", ".join(str(n) for n in self.nested)
         return f"{name}[{nested}]"
