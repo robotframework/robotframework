@@ -43,6 +43,15 @@ else:
         from typing_extensions import NotRequired, Required
     except ImportError:
         NotRequired = Required = object()
+# TypeAliasType and `type` syntax are new in Python 3.12.
+if sys.version_info >= (3, 12):
+    from typing import TypeAliasType
+
+    from .typealiasresolver import resolve_type_alias
+else:
+    TypeAliasType = type("TypeAliasType", (), {})
+    resolve_type_alias = lambda alias: alias
+
 
 from robot.conf import Languages, LanguagesLike
 from robot.errors import DataError
@@ -220,6 +229,8 @@ class TypeInfo(metaclass=SetterAwareType):
             return cls()
         if isinstance(hint, cls):
             return hint
+        if isinstance(hint, TypeAliasType):
+            hint = cls._resolve_type_alias(hint)
         if isinstance(hint, ForwardRef):
             hint = hint.__forward_arg__
         if isinstance(hint, typeddict_types):
@@ -229,6 +240,9 @@ class TypeInfo(metaclass=SetterAwareType):
             return cls("Union", nested=cls._validate_union_params(nested))
         origin = get_origin(hint)
         if origin:
+            if isinstance(origin, TypeAliasType):
+                hint = cls._resolve_type_alias(hint)
+                return cls.from_type_hint(hint, sequence_is_union)
             args = get_args(hint)
             if origin is Literal or origin is ExtLiteral:
                 origin = Literal
@@ -258,6 +272,13 @@ class TypeInfo(metaclass=SetterAwareType):
                 items = [t.__name__ if isinstance(t, type) else repr(t) for t in hint]
                 return cls(f"[{', '.join(items)}]")
         return cls(str(hint))
+
+    @classmethod
+    def _resolve_type_alias(cls, alias):
+        try:
+            return resolve_type_alias(alias)
+        except ValueError as err:
+            raise DataError(str(err))
 
     @classmethod
     def _validate_union_params(cls, nested):
