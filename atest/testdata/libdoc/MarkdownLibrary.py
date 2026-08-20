@@ -8,7 +8,14 @@ class MarkdownLibrary:
     def __init__(self, arg: str = "default", other: int = 1):
         """Importing doc."""
 
-    def positional_and_named(self, pos_only: str, /, normal: int = 1, *, named_only: str = "default") -> str:
+    def positional_and_named(
+        self,
+        pos_only: str,
+        /,
+        normal: int = 1,
+        *,
+        named_only: str = "default",
+    ) -> str:
         """Keyword doc.
 
         Args:

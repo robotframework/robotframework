@@ -36,7 +36,7 @@ from robot.utils import (
 from robot.version import get_version
 
 LOCALE_ENCODING = "locale" if sys.version_info >= (3, 10) else None
-Handle = Union[subprocess.Popen, "str", None]
+Handle = Union[subprocess.Popen, str, None]
 Stdin = Union[str, Secret, Path, int, IOBase, None]
 OnTimeout = Literal["continue", "terminate", "kill"]
 

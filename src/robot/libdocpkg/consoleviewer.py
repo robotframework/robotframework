@@ -62,7 +62,7 @@ class ConsoleViewer:
     def version(self):
         self._console(self._libdoc.version or "N/A")
 
-    def _console(self, msg, end = "\n"):
+    def _console(self, msg, end="\n"):
         print(console_encode(msg), end=end)
 
     def _format_intro(self, lib) -> str:
