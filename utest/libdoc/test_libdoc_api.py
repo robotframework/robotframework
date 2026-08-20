@@ -47,6 +47,22 @@ class TestLibdoc(unittest.TestCase):
         doc = libdoc.LibraryDocumentation("OperatingSystem")
         assert_equal(doc.name, "OperatingSystem")
 
+    def test_operating_system_docs_use_markdown_and_document_arguments(self):
+        doc = libdoc.LibraryDocumentation("OperatingSystem")
+        assert_equal(doc.doc_format, "MARKDOWN")
+        for keyword in doc.keywords:
+            for argument in keyword.args:
+                self.assertTrue(
+                    argument.doc,
+                    f"{keyword.name}: argument '{argument.name}' has no documentation",
+                )
+            data = keyword.to_dictionary()
+            if data["returnType"]:
+                self.assertTrue(
+                    data["returnDoc"],
+                    f"{keyword.name}: return value has no documentation",
+                )
+
 
 if __name__ == "__main__":
     unittest.main()
