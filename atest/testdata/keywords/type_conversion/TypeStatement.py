@@ -16,24 +16,24 @@ else:
 type Invalid = NonExisting  # noqa: F821
 
 
-def simple_value(arg: SimpleValue, expected: int):
-    assert isinstance(arg, int)
-    assert arg == expected
+def simple_value(argument: SimpleValue, expected: int):
+    assert isinstance(argument, int)
+    assert argument == expected
 
 
-def params_value(arg: ParamsValue, expected: list[int]):
-    assert isinstance(arg, list)
-    assert all(isinstance(i, int) for i in arg)
-    assert arg == expected
+def params_value(argument: ParamsValue, expected: list[int]):
+    assert isinstance(argument, list)
+    assert all(isinstance(i, int) for i in argument)
+    assert argument == expected
 
 
-def union_value(arg: UnionValue, expected: int | float):
-    assert isinstance(arg, type(expected))
-    assert arg == expected
+def union_value(argument: UnionValue, expected: int | float):
+    assert isinstance(argument, type(expected))
+    assert argument == expected
 
 
-def forward_ref(arg: ForwardRef, expected: int):
-    simple_value(arg, expected)
+def forward_ref(argument: ForwardRef, expected: int):
+    simple_value(argument, expected)
 
 
 def recursive(argument: Recursive, expected: int | list = -1):
@@ -41,31 +41,31 @@ def recursive(argument: Recursive, expected: int | list = -1):
     assert argument == expected
 
 
-def generic_simple(arg: GenericSimple[int], expected: int):
-    simple_value(arg, expected)
+def generic_simple(argument: GenericSimple[int], expected: int):
+    simple_value(argument, expected)
 
 
-def generic_params(arg: GenericParams[int], expected: list[int]):
-    params_value(arg, expected)
+def generic_params(argument: GenericParams[int], expected: list[int]):
+    params_value(argument, expected)
 
 
-def generic_union(arg: GenericUnion[int, float], expected: int | float):
-    union_value(arg, expected)
+def generic_union(argument: GenericUnion[int, float], expected: int | float):
+    union_value(argument, expected)
 
 
-def generic_defaults_1(arg: GenericDefaults[int], expected: int | None):
-    assert isinstance(arg, type(expected))
-    assert arg == expected
+def generic_defaults_1(argument: GenericDefaults[int], expected: int | None):
+    assert isinstance(argument, type(expected))
+    assert argument == expected
 
 
-def generic_defaults_2(arg: GenericDefaults[int, float], expected: int | float):
-    assert isinstance(arg, type(expected))
-    assert arg == expected
+def generic_defaults_2(argument: GenericDefaults[int, float], expected: int | float):
+    assert isinstance(argument, type(expected))
+    assert argument == expected
 
 
-def generic_forward_ref(arg: GenericForwardRef[int], expected: list[int]):
-    params_value(arg, expected)
+def generic_forward_ref(argument: GenericForwardRef[int], expected: list[int]):
+    params_value(argument, expected)
 
 
-def invalid(arg: Invalid):
+def invalid(argument: Invalid):
     pass
