@@ -295,22 +295,14 @@ function renderSelector(args, template, stats) {
 function drawTestDetailsTable(tests, sortByStatus) {
     if (!tests.length)
         return;
-    var hasMetadata = anyTestHasMetadata(tests);
-    renderTestDetailsHeader(hasMetadata);
+    renderTestDetailsHeader();
     window.elementsToRender = tests;
     var target = $('#test-details').find('tbody');
-    renderTestDetails(sortByStatus, target, hasMetadata);
+    renderTestDetails(sortByStatus, target);
 }
 
-function anyTestHasMetadata(tests) {
-    for (var i = 0, len = tests.length; i < len; i++)
-        if (tests[i].metadata.length)
-            return true;
-    return false;
-}
-
-function renderTestDetailsHeader(hasMetadata) {
-    var header = $.tmpl('testDetailsTableTemplate', {hasMetadata: hasMetadata});
+function renderTestDetailsHeader() {
+    var header = $.tmpl('testDetailsTableTemplate');
     hideHiddenDetailsColumns(header);
     header.appendTo('#test-details-container');
 }
@@ -348,36 +340,32 @@ function calculateStats(tests) {
     };
 }
 
-function renderTestDetails(sortByStatus, target, hasMetadata) {
+function renderTestDetails(sortByStatus, target) {
     if (!window.elementsToRender.length)
         return;
     var tests = popUpTo(window.elementsToRender, 50);
-    renderTestDetailsRows(tests, target, hasMetadata);
+    renderTestDetailsRows(tests, target);
     if (window.elementsToRender.length)
-        setTimeout(function () {renderTestDetails(sortByStatus, target, hasMetadata);}, 0);
+        setTimeout(function () {renderTestDetails(sortByStatus, target);}, 0);
     else
-        configureTableSorter(sortByStatus, hasMetadata);
+        configureTableSorter(sortByStatus);
 }
 
-function renderTestDetailsRows(tests, target, hasMetadata) {
+function renderTestDetailsRows(tests, target) {
     var rows = $.tmpl('testDetailsTableRowTemplate', tests,
-                      {logURL: window.settings.logURL, hasMetadata: hasMetadata});
+                      {logURL: window.settings.logURL});
     rows.find('a').click(stopPropagation);
     hideHiddenDetailsColumns(rows);
     rows.appendTo(target);
 }
 
-function configureTableSorter(sortByStatus, hasMetadata) {
-    // The metadata column is only shown if some test has metadata. When it is
-    // shown, it shifts all columns after the documentation column by one.
-    var offset = hasMetadata ? 1 : 0;
-    var headers = {};
-    headers[3 + offset] = {sorter: 'status'};
-    headers[5 + offset] = {sortInitialOrder: 'desc'};
-    headers[6 + offset] = {sorter: 'times'};
-    var config = {headers: headers, selectorSort: '.details-col-header'};
+function configureTableSorter(sortByStatus) {
+    var config = {headers: {4: {sorter: 'status'},
+                            6: {sortInitialOrder: 'desc'},
+                            7: {sorter: 'times'}},
+                  selectorSort: '.details-col-header'};
     if (sortByStatus)
-        config['sortList'] = [[3 + offset, 0]];
+        config['sortList'] = [[4, 0]];
     $('#test-details').tablesorter(config);
 }
 
@@ -810,12 +798,10 @@ function hideHiddenDetailsColumns(elem) {
           <div class='details-col-toggle' onclick="toggleDetailsColumn('doc')">&times;</div>
           <div class='details-col-header'>Documentation</div>
         </th>
-        {{if hasMetadata}}
         <th class="details-col-metadata" title="Metadata">
           <div class='details-col-toggle' onclick="toggleDetailsColumn('metadata')">&times;</div>
           <div class='details-col-header'>Metadata</div>
         </th>
-        {{/if}}
         <th class="details-col-tags" title="Tags">
           <div class='details-col-toggle' onclick="toggleDetailsColumn('tags')">&times;</div>
           <div class='details-col-header'>Tags</div>
@@ -854,9 +840,7 @@ function hideHiddenDetailsColumns(elem) {
     </td>
   {{/if}}
     <td class="details-col-doc"><div class="doc details-limited">{{html doc()}}</div></td>
-    {{if $item.hasMetadata}}
     <td class="details-col-metadata"><div class="doc details-limited">{{each metadata}}<div>{{html $value[0]}}: {{html $value[1]}}</div>{{/each}}</div></td>
-    {{/if}}
     <td class="details-col-tags"><div>{{html tags.join(', ')}}</div></td>
     <td class="details-col-status"><div><span class="label ${status.toLowerCase()}">${status}</span></div></td>
     <td class="details-col-msg"><div class="message details-limited">{{html message()}}</div></td>
