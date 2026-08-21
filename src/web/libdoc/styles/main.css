@@ -3,24 +3,58 @@
   --text-color: black;
   --border-color: #e0e0e2;
   --light-background-color: #f3f3f3;
+  --code-background-color: #fafafa;
   --robot-highlight: #00c0b5;
   --highlighted-color: var(--text-color);
   --highlighted-background-color: yellow;
   --less-important-text-color: gray;
+  --muted-text-color: #5b5b60; /* argument documentation */
+  --arg-kind-color: var(--less-important-text-color); /* argument markers */
   --link-color: #0000ee;
+  --hover-tint: #fafafa;
+  --more-hover-color: var(--link-color);
+
+  /* Type scale. In `rem`, not `em`: sizes multiply as soon as elements nest,
+     and `monospace` makes browsers restart from their 13px fixed font default. */
+  --font-size-keyword: 1.625rem; /* keyword and data type names */
+  --font-size-section: 1.25rem; /* Arguments, Returns, Documentation, ... */
+  --font-size-doc: 0.9375rem; /* argument documentation */
+  --font-size-code: 0.875rem; /* a step smaller: monospace looks larger */
+  --font-size-small: 0.875rem; /* keyword list, `more...` */
+  --font-size-label: 0.75rem; /* uppercase column headers */
 }
 
 [data-theme="dark"] {
   --background-color: #1c2227;
-  --text-color: #e2e1d7;
+  --text-color: #ffffff;
   --border-color: #4e4e4e;
-  --light-background-color: #002b36;
+  --light-background-color: #033441;
+  --code-background-color: #002b36;
   --robot-highlight: yellow;
   --highlighted-color: var(--background-color);
   --highlighted-background-color: yellow;
   --less-important-text-color: #5b6a6f;
+  --muted-text-color: #c6c9cb;
+  --arg-kind-color: #9fb0b6; /* --less-important-text-color is too dim here */
   --link-color: #52adff;
+  --hover-tint: #232a30;
+  --more-hover-color: var(--robot-highlight);
   color-scheme: dark;
+}
+
+/* Mobile browsers inflate the text of narrow blocks, but not the headings,
+   which flattens the type scale into no hierarchy at all. */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* The minifier drops the prefix above, which Safari needs. Inside a feature
+   query it survives, and the query itself is a Safari-only test. */
+@supports (-webkit-touch-callout: none) {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
 }
 
 body {
@@ -101,27 +135,64 @@ a {
   padding-left: 2%;
   padding-right: 2%;
   overflow: auto;
-  max-width: 1000px;
+  /* Deliberately not animated: a transition relayouts the whole document on
+     every frame, which on a large library can make the renderer run out of
+     memory. Tried and reverted for the paddings inside the keywords as well. */
+  max-width: 1060px;
 }
 
 .libdoc-title {
   position: fixed;
   left: 0;
   top: 0;
-  width: 300px;
+  /* Only as wide as the name, so the background does not cover what is next
+     to it. */
+  width: auto;
+  max-width: calc(100% - 80px);
   height: 36px;
   padding: 0.5rem;
-  margin: 0.5rem;
   display: flex;
   align-items: center;
   text-decoration: none;
   color: var(--text-color);
+  /* The documentation scrolls underneath and paints its own background. */
+  background: var(--background-color);
+  z-index: 2;
+}
+
+/* Large while the top of the page is visible, compact once scrolled. */
+.libdoc-title h1 {
+  margin: 0;
+  min-width: 0;
+  font-size: 2rem;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: font-size 0.2s ease;
+}
+
+/* Scrolled down the title must not reach into the documentation. */
+html.scrolled .libdoc-title {
+  max-width: 300px;
+}
+
+/* Only names that do not fit are made smaller; `title-fits` is set by the
+   view, which measures the name off screen. */
+html.scrolled:not(.title-fits) .libdoc-title h1 {
+  font-size: 1.25rem;
+}
+
+/* Scrolled down the room is needed for the name itself. */
+html.scrolled .libdoc-title > svg {
+  display: none;
 }
 
 #language-container {
   position: fixed;
   top: 0;
   right: 0;
+  width: 50px;
   z-index: 1000;
 }
 
@@ -136,13 +207,14 @@ a {
   height: 20px;
 }
 
-#language-container svg path {
-  stroke: var(--text-color);
-  fill: var(--background-color);
-}
-
 #language-container ul {
   list-style: none;
+  /* Sized to its entries and hung on the right edge of the button, which is
+     narrower than the list. */
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: max-content;
   margin: 0;
   padding: 10px;
   background-color: var(--background-color);
@@ -175,7 +247,7 @@ input.hamburger-menu {
   cursor: pointer;
 
   opacity: 0;
-  z-index: 2;
+  z-index: 4; /* above the title bar, which paints its own background */
 
   -webkit-touch-callout: none;
 }
@@ -191,7 +263,7 @@ span.hamburger-menu {
   background: var(--text-color);
   border-radius: 2px;
 
-  z-index: 1;
+  z-index: 3;
 
   transform-origin: 4px 0;
 
@@ -234,13 +306,14 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3 {
   padding-top: 2px;
   height: 42px;
   width: 42px;
+  flex: none;
 }
 
-#robot-svg-path {
-  fill: var(--text-color);
-  stroke: none;
-  fill-opacity: 1;
-  fill-rule: nonzero;
+/* An element referencing a `symbol` has no intrinsic size of its own. */
+.modal-close-button svg {
+  display: block;
+  height: 2em;
+  width: 2em;
 }
 
 .keywords-overview {
@@ -272,7 +345,7 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3 {
 }
 
 .shortcuts {
-  font-size: 0.9em;
+  font-size: var(--font-size-small);
   overflow: auto;
   list-style: none;
   padding-left: 0;
@@ -336,7 +409,7 @@ h4 a:hover {
   text-decoration: none;
   color: var(--text-color);
   display: inline-block;
-  font-size: 0.9em;
+  font-size: var(--font-size-small);
 }
 .dt-usages a::first-letter {
   font-weight: bold;
@@ -359,19 +432,77 @@ h4 a:hover {
   -webkit-text-size-adjust: none;
 }
 
+.tags .section-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
 .tag-link {
+  padding: 0.05rem 0.6rem;
+  font-size: var(--font-size-small);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
   cursor: pointer;
 }
 
 .tag-link:hover {
-  text-decoration: underline;
+  background: var(--light-background-color);
 }
 
-.args .arg-kind {
-  color: transparent;
-  text-shadow: 0 0 0 var(--less-important-text-color);
+/* A matched tag highlights as a whole pill: a highlighted word inside a
+   border reads as two things rather than one selected tag. */
+.tag-link:has(mark) {
+  background: var(--highlighted-background-color);
+  color: var(--highlighted-color);
+  border-color: var(--highlighted-background-color);
+}
+
+.tag-link mark {
+  background: none;
+  color: inherit;
   padding: 0;
-  font-size: 0.8em;
+}
+
+.arg-kind {
+  color: var(--arg-kind-color);
+  /* Separates marker and name, which the template joins without whitespace. */
+  padding: 0 0.45em 0 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* The sprite only holds definitions and must not take any space. */
+.icon-sprite {
+  display: none;
+}
+
+/* Normalised by height, not width: the icons have different proportions. The
+   ratios belong here because an element referencing a `symbol` has no
+   intrinsic size of its own and would fall back to 300x150. */
+.arg-kind-icon {
+  fill: currentColor;
+  width: 1.3em;
+  height: auto;
+  max-height: 0.6em;
+}
+
+.arg-kind-icon-varargs {
+  aspect-ratio: 1;
+}
+
+.arg-kind-icon-kwargs {
+  aspect-ratio: 199.39 / 98.98;
+}
+
+.arg-kind-icon-named {
+  aspect-ratio: 23.93 / 15.36;
+}
+
+/* Long and thin: at the shared height it reads as a hairline. */
+.arg-kind-icon-positional {
+  aspect-ratio: 23.12 / 7.64;
+  height: 0.75em;
 }
 
 @media only screen and (min-width: 900px) {
@@ -414,17 +545,57 @@ h4 a:hover {
     display: none;
   }
 
+  /* One navigation bar: the name on the left, the language menu and the
+     hamburger button on top of it on the right. */
   .libdoc-title {
     width: 100%;
-    padding: 0.5rem;
-    margin: 0;
+    max-width: 100%;
+    height: 52px;
+    padding: 0 108px 0 0.5rem;
     border-bottom: 1px solid var(--border-color);
     background: white;
     background: var(--background-color);
+    box-sizing: border-box;
   }
 
+  /* The bar needs the room for the name. */
   .libdoc-title > svg {
-    margin-right: 60px;
+    display: none;
+  }
+
+  .libdoc-title h1 {
+    font-size: 1.4rem;
+  }
+
+  html.scrolled:not(.title-fits) .libdoc-title h1 {
+    font-size: 1.15rem;
+  }
+
+  /* The bar spans the window, so there is nothing to keep clear of. */
+  html.scrolled .libdoc-title {
+    max-width: 100%;
+  }
+
+  /* Left of the hamburger button, above it (3 and 4) and the bar (2). */
+  #language-container {
+    right: 50px;
+    z-index: 5;
+  }
+
+  #language-container button {
+    padding: 0;
+    height: 52px;
+    width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    cursor: pointer;
+  }
+
+  #language-container ul {
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
   }
 
   .libdoc-details {
@@ -440,53 +611,30 @@ h4 a:hover {
   }
 
   .hamburger-menu:checked ~ .libdoc-overview {
-    display: block;
+    display: flex;
     position: fixed;
-    height: calc(100vh - 44px);
+    /* `height: 100vh` falls short while a mobile browser hides its address
+       bar and the documentation shows through below the menu. */
+    inset: 0;
+    height: auto;
     width: 100%;
+    /* `content-visibility` makes every keyword card a stacking context, and
+       those come later in the document. Stays below the bar (2) and the
+       hamburger button (3 and 4). */
+    z-index: 1;
+    /* Leaves the bar visible above the opened menu. */
+    padding-top: 53px;
+    box-sizing: border-box;
   }
 
   .keywords-overview {
     border: none;
-    margin: 60px 0 0;
+    margin: 0;
   }
 
   .shortcuts {
     max-width: 100vw;
     overscroll-behavior: none;
-  }
-
-  #language-container {
-    display: none;
-  }
-
-  input.hamburger-menu:checked ~ #language-container {
-    display: block;
-    top: auto;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: auto;
-    padding: 0.4rem 0.75rem;
-    border-top: 1px solid var(--border-color);
-    background: var(--background-color);
-    z-index: 150;
-  }
-
-  input.hamburger-menu:checked ~ #language-container button {
-    display: none;
-  }
-
-  /* Show language list inline, overriding the .hidden class used by the desktop dropdown */
-  input.hamburger-menu:checked ~ #language-container ul,
-  input.hamburger-menu:checked ~ #language-container ul.hidden {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem 0.75rem;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    background: none;
   }
 }
 
@@ -501,6 +649,7 @@ h4 a:hover {
 a.name,
 span.name {
   font-style: italic;
+  white-space: pre;
 }
 .libdoc-details a img {
   border: 1px solid #c30 !important;
@@ -521,7 +670,7 @@ a:hover {
 .shortcut-list-toggle,
 .tag-list-toggle {
   margin-bottom: 1em;
-  font-size: 0.9em;
+  font-size: var(--font-size-small);
 }
 input.switch {
   display: none;
@@ -552,17 +701,6 @@ input.switch:checked + .slider::before {
   display: flex;
   flex-direction: column;
 }
-.kw-overview {
-  display: flex;
-  flex-direction: column;
-  justify-content: start;
-}
-@media only screen and (min-width: 899px) {
-  .kw-overview {
-    max-width: 850px;
-    margin-right: 1.5rem;
-  }
-}
 .kw-docs {
   display: flex;
   flex-direction: column;
@@ -589,6 +727,17 @@ h4 {
   margin-right: 0.5rem;
 }
 
+/* Sized here: by browser default an `h3` is as large as the body text. */
+.libdoc-details h2 {
+  font-size: var(--font-size-keyword);
+}
+
+.libdoc-details h3 {
+  font-size: var(--font-size-section);
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+
 .keyword-container {
   border: 1px solid var(--border-color);
   border-radius: 3px;
@@ -597,6 +746,29 @@ h4 {
   display: flex;
   flex-direction: column;
   scroll-margin-top: 60px;
+  /* A large library is over 100 000 pixels tall and every width change would
+     otherwise relayout all of it. The size is the measured median height of a
+     keyword card; guessing too low makes cards grow as they render, which
+     shifts the content under the reader. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 800px;
+}
+
+/* No skipping on a narrow screen: card heights range from 200 to 3800 pixels,
+   so any estimate shifts the content under the reader's thumb. Skipping is
+   here to keep resizing cheap, and a phone only changes width on rotation.
+   Must come after the rule above, which a media query does not outweigh. */
+@media only screen and (max-width: 899px) {
+  .keyword-container {
+    content-visibility: visible;
+  }
+}
+
+/* Printing needs every keyword laid out. */
+@media print {
+  .keyword-container {
+    content-visibility: visible;
+  }
 }
 
 .keyword-container:target {
@@ -633,142 +805,402 @@ h4 {
   text-decoration: none;
   font-weight: bold;
 }
-.args {
+.args,
+.return-info,
+.raises-info {
   min-width: 200px;
 }
 
-/* Shared styles for arguments and return-info tables */
+/* Arguments, returns and raises share one `tbody` per entry. */
+/* A table that cannot shrink any further scrolls inside its own box instead
+   of making the keyword card wider than the screen. `min-width: 0` because the
+   automatic minimum size of a flex item is its content size. */
+.table-scroll {
+  overflow-x: auto;
+  min-width: 0;
+}
+
+/* As wide as its content and no wider; `width: 100%` would leave short tables
+   floating in empty space. Which column gives way when the content does not
+   fit is settled by the `nowrap` rules below -- a percentage width would ask
+   for a multiple of a table that is sized by its content. */
 .kw-info-table {
-  width: 100%;
-  table-layout: fixed;
+  width: auto;
+  max-width: 1200px;
+  table-layout: auto;
   border-collapse: separate;
   border-spacing: 0;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  overflow: hidden;
   margin-bottom: 1.33rem;
 }
 
 .kw-info-table th,
 .kw-info-table td {
   text-align: left;
-  vertical-align: top;
-  padding: 0.4rem 0.55rem;
+  vertical-align: baseline;
+  /* The gutter grows with the window, within bounds. */
+  padding: 0.4rem clamp(1.5rem, 2.5vw, 3rem) 0.4rem 0;
+  overflow-wrap: break-word;
+}
+
+/* The last column ends the table and gets a margin instead of the gutter
+   above: less, but not nothing, or the table stops flush with its content. */
+.kw-info-table th:last-child,
+.kw-info-table td:last-child {
+  padding-right: clamp(0.7rem, 1.5vw, 1.5rem);
 }
 
 .kw-info-table thead th {
-  border-bottom: 2px solid var(--border-color);
+  font-size: var(--font-size-label);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  /* --less-important-text-color misses the contrast required at this size. */
+  color: var(--muted-text-color);
   white-space: nowrap;
-}
-
-.kw-info-table tbody td {
+  padding-bottom: 0.2rem;
   border-bottom: 1px solid var(--border-color);
 }
 
-.kw-info-table tbody tr:last-child td {
+.kw-info-table .arg-group > tr > td {
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* One entry, so the hairline is drawn below its documentation instead. */
+.kw-info-table .arg-group > tr.arg-row.has-doc > td {
+  border-bottom: none;
+  padding-bottom: 0.15rem;
+}
+
+.kw-info-table .arg-group:last-child > tr:last-child > td {
   border-bottom: none;
 }
 
-.kw-info-table td .doc {
-  font-size: 0.95em;
+.kw-info-table .arg-group:hover > tr > td {
+  background: var(--hover-tint);
 }
 
-.kw-info-table td .doc > p {
+.kw-info-table .doc-row > td {
+  padding-top: 0;
+  padding-bottom: 0.5rem;
+}
+
+/* Set apart from the signature by indentation and a bar. */
+.arg-doc-wrap {
+  max-width: 1000px;
+  margin: 0.5rem 1.6rem;
+  padding-left: 0.75rem;
+  border-left: 3px solid var(--border-color);
+  transition: border-color 0.15s;
+}
+
+.arg-group:hover .arg-doc-wrap {
+  border-left-color: var(--robot-highlight);
+}
+
+.arg-doc {
+  font-size: var(--font-size-doc);
+  color: var(--muted-text-color);
+}
+
+/* A long URL would otherwise raise the table's min-content width and push it
+   past the viewport: `break-word` does not affect intrinsic sizing, `anywhere`
+   does. The descendants are listed because the inherited value loses against
+   the rules matching links and code directly. */
+.arg-doc,
+.arg-doc a,
+.arg-doc code {
+  overflow-wrap: anywhere;
+}
+
+/* A code block does not wrap and would keep the table as wide as its longest
+   line, even while clamped out of sight. `width: 0` takes it out of the
+   intrinsic width, `min-width: 100%` gives it the cell back. */
+.arg-doc pre {
+  width: 0;
+  min-width: 100%;
+  overflow-x: auto;
+}
+
+/* `truncated` is set by the view after measuring; only then a click opens
+   the modal. */
+.arg-doc.clamped {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.arg-doc.truncated {
+  cursor: pointer;
+}
+
+/* Tighter than doc_formatting.css, which is loaded after this file. */
+.arg-doc.doc > p {
   margin: 0 0 0.35rem;
 }
 
-.kw-info-table td .doc > p:last-child {
+.arg-doc.doc > p:last-child {
   margin-bottom: 0;
 }
 
-.kw-info-table td .doc > ul,
-.kw-info-table td .doc > ol,
-.kw-info-table td .doc > pre {
+.arg-doc.doc > *:first-child {
+  margin-top: 0;
+}
+
+.arg-doc.doc > ul,
+.arg-doc.doc > ol,
+.arg-doc.doc > pre {
   margin-top: 0.25rem;
   margin-bottom: 0.4rem;
 }
 
-.kw-info-table td .doc code,
-.kw-info-table td .doc .docutils.literal {
-  font-size: 1em;
+/* A button for the keyboard, looking like the text it replaced. */
+.doc-more {
+  display: inline-flex;
+  align-items: center;
+  /* Big enough to be hit reliably (WCAG 2.5.8). */
+  min-height: 24px;
+  margin-top: 0.15rem;
+  padding: 0 0.25rem 0 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: var(--font-size-small);
+  color: var(--muted-text-color);
+  cursor: pointer;
 }
 
-@media only screen and (max-width: 899px) {
-  .kw-info-table {
-    display: block;
-    overflow-x: auto;
+.arg-doc-wrap:hover .doc-more {
+  color: var(--more-hover-color);
+  font-weight: 600;
+}
+
+/* Without hover there is nothing to reveal it, so it is shown right away. */
+@media (hover: none) {
+  .doc-more {
+    color: var(--more-hover-color);
+    font-weight: 600;
   }
 }
 
-/* Arguments table column widths */
-.args .arguments-table .arg-col-name {
-  width: 20%;
+/* Argument details shown in the modal. */
+.arg-detail-container {
+  padding: 0.5rem 1.5rem 1.5rem;
 }
 
-.args .arguments-table .arg-col-default {
-  width: 10%;
+.arg-detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
 }
 
-.args .arguments-table .arg-col-type {
-  width: 24%;
+.arg-detail-label {
+  margin-right: 0.4rem;
+  color: var(--less-important-text-color);
 }
 
-.args .arguments-table .arg-col-doc {
-  width: auto;
+/* For the arguments the documentation column only exists in the wide layout
+   below. */
+.arg-col-doc {
+  display: none;
 }
 
-/* Importing section has longer argument names than keywords — widen Name, narrow Type */
-#importing-container .args .arguments-table .arg-col-name {
-  width: 30%;
+/* A single type leaves room for the documentation next to it at any width. */
+.return-info-table .arg-col-doc,
+.raises-table .arg-col-doc {
+  display: table-cell;
 }
 
-#importing-container .args .arguments-table .arg-col-type {
-  width: 18%;
+/* Not the usual `1%`: measured against a table that is sized by its content,
+   a percentage asks for a hundred times the column. */
+.return-info-table .arg-col-type,
+.raises-table .arg-col-type {
+  width: 1px;
 }
 
-.args .arguments-table td:nth-child(1),
-.args .arguments-table td:nth-child(2),
-.args .arguments-table td:nth-child(3) {
-  overflow-wrap: break-word;
+/* A name, a type or a default value is one token and is never broken up.
+   Documentation is running text and wraps, inline code included. */
+.arg-cell-name,
+.arg-cell-type {
+  white-space: nowrap;
 }
 
-.args .arguments-table td:nth-child(4) {
-  width: 100%;
+/* Its own column needs neither the indentation nor the bar. */
+.return-info-table .arg-doc-wrap,
+.raises-table .arg-doc-wrap {
+  margin: 0;
+  padding-left: 0;
+  border-left: none;
 }
 
-/* Return info table column widths */
-.return-info {
-  min-width: 200px;
+/* Not the last column any more, so it keeps its gutter. */
+.return-info-table .arg-cell-type,
+.raises-table .arg-cell-type {
+  padding-right: 1.5rem;
 }
 
-.return-info .return-info-table .ret-col-type {
-  width: 22%;
+/* The empty cell keeps the columns aligned in the wide layout; here it is an
+   empty row and must not take any space. */
+.doc-row.no-doc {
+  display: none;
 }
 
-.return-info .return-info-table .ret-col-doc {
-  width: auto;
+/* A readable measure even when the details pane is wider. */
+.kwdoc {
+  max-width: 1200px;
 }
 
-.return-info .return-info-table td {
-  overflow-wrap: break-word;
+/* Room for a fourth column, so the documentation moves next to the signature.
+   `display: contents` drops the row boxes of a group and lets their cells
+   share one row; the `colspan` then spans phantom columns that collapse. */
+@media only screen and (min-width: 1280px) {
+  .libdoc-details {
+    max-width: 1200px;
+  }
+
+  /* Room for more than the reading measure; the content still decides. */
+  .arguments-table,
+  .return-info-table,
+  .raises-table {
+    max-width: none;
+  }
+
+  /* The signature stays on one line, so a table that has to give way gives
+     way in the documentation column. */
+  .arguments-table.has-doc-column thead th:not(.arg-col-doc) {
+    white-space: nowrap;
+  }
+
+  .arguments-table .arg-col-doc {
+    display: table-cell;
+  }
+
+  /* Room for an exception name of ordinary length, so that neighbouring rows
+     start their documentation at the same place. */
+  .return-info-table .arg-col-type,
+  .raises-table .arg-col-type {
+    min-width: 7rem;
+  }
+
+  .arguments-table .arg-group > tr {
+    display: contents;
+  }
+
+  /* One row now, so the hairline below the signature is wanted again. */
+  .arguments-table .arg-group > tr.arg-row.has-doc > td {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.4rem;
+  }
+
+  /* No trailing line, and the signature cells have to drop it as well or it
+     stops where the documentation column starts. */
+  .arguments-table .arg-group:last-child > tr.arg-row.has-doc > td,
+  .arguments-table .arg-group:last-child > tr > td {
+    border-bottom: none;
+  }
+
+  .arguments-table .doc-row > td {
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+  }
+
+  /* Not the last cells of the table any more, so they keep their gutter. */
+  .arguments-table.has-doc-column thead th:not(.arg-col-doc),
+  .arguments-table.has-doc-column .arg-group > tr.arg-row > td {
+    padding-right: 1.5rem;
+  }
+
+  /* Its own column needs neither the indentation nor the bar. */
+  .arguments-table .arg-doc-wrap {
+    padding-left: 0;
+    border-left: none;
+    margin: 0;
+  }
+}
+
+/* The columns are kept; only the paddings are tightened up. */
+@media only screen and (max-width: 640px) {
+  .kw-info-table th,
+  .kw-info-table td {
+    padding-right: 0.7rem;
+  }
+
+  .arg-doc-wrap {
+    margin-left: 0.85rem;
+  }
 }
 
 .enum-type-members span,
-.args span,
-.return-info span,
-.args a {
+.arg-default-value,
+.raise-name {
   font-family: monospace;
   background: var(--light-background-color);
-  padding: 0 0.1em;
-  font-size: 1.1em;
+  border-radius: 3px;
+  padding: 0.1em 0.8em;
+  font-size: var(--font-size-code);
 }
 
-.arg-type,
+.arg-name {
+  font-family: monospace;
+  font-size: var(--font-size-code);
+  white-space: nowrap;
+}
+
+/* One unit: a line break would leave the marker dangling on its own line. */
+
+/* What the marker means, spelled out on hover and on tap. The same text serves
+   the screen reader, hence `aria-label` rather than a data attribute.
+   `display` rather than `visibility`: an invisible box still counts towards
+   the scrollable overflow and put a scroll bar on every table. */
+.arg-kind[aria-label]::after {
+  content: attr(aria-label);
+  display: none;
+  position: absolute;
+  /* Above the symbol, not over the name it belongs to. */
+  left: 0;
+  bottom: calc(100% + 0.3rem);
+  z-index: 3;
+  width: max-content;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--robot-highlight);
+  border-radius: 3px;
+  background: var(--light-background-color);
+  color: var(--text-color);
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-size: var(--font-size-small);
+  white-space: nowrap;
+}
+
+.arg-kind[aria-label] {
+  position: relative;
+  /* Not a link: clicking gives a mouse nothing that pointing does not. */
+  cursor: default;
+}
+
+.arg-kind[aria-label]:hover::after {
+  display: block;
+}
+
+/* Without hover, tapping the symbol is the only way to ask. */
+.arg-kind[aria-label].show-info::after {
+  display: block;
+}
+
 span.type,
 a.type {
-  font-size: 1em;
+  font-family: monospace;
+  font-size: var(--font-size-code);
+  color: var(--link-color);
   background: none;
   padding: 0 0;
+}
+
+a.type {
+  text-decoration: underline;
 }
 
 .typed-dict-item .td-type::after {
@@ -789,12 +1221,14 @@ a.type {
   padding: 0.4rem;
   font-family: monospace;
   background: var(--light-background-color);
-  font-size: 1.1em;
+  font-size: var(--font-size-code);
 }
 
-.args span .highlight {
+/* Search matches found by mark.js. */
+mark {
   background: var(--highlighted-background-color);
   color: var(--highlighted-color);
+  border-radius: 3px;
 }
 
 .tags a {
@@ -802,9 +1236,17 @@ a.type {
   text-decoration: none;
   padding: 0 0.1em;
 }
-/* Code blocks need a stacking context for the absolutely-positioned copy button */
-.doc .code {
+/* Code blocks need a stacking context for the absolutely-positioned copy
+   button. `.code` is what Markdown and reST produce, `.code-block` is the
+   wrapper added to the bare blocks of the other documentation formats. */
+.doc .code,
+.doc .code-block {
   position: relative;
+}
+
+/* The wrapper must not disturb the spacing the block had on its own. */
+.doc .code-block > pre {
+  margin: 0;
 }
 
 .code-copy-btn {
@@ -813,26 +1255,89 @@ a.type {
   border-radius: 3px;
   color: var(--less-important-text-color);
   cursor: pointer;
+  /* Stacks both icons in the same cell so that swapping them can be animated
+     without the button changing size. */
+  display: grid;
   height: 1.6rem;
+  /* Stays out of the way until the block is hovered or tapped. */
+  opacity: 0;
   padding: 0.15rem;
   position: absolute;
   right: 0.3rem;
   top: 0.3rem;
+  transition:
+    color 0.15s,
+    border-color 0.15s,
+    opacity 0.15s,
+    transform 0.1s;
   width: 1.6rem;
+}
+
+/* Touch devices cannot hover, so there the block is tapped instead and the
+   view marks it with `copy-visible`. */
+@media (hover: hover) {
+  .doc .code:hover .code-copy-btn,
+  .doc .code-block:hover .code-copy-btn {
+    opacity: 1;
+  }
+}
+
+.doc .code.copy-visible .code-copy-btn,
+.doc .code-block.copy-visible .code-copy-btn,
+/* Reachable by keyboard, and the result of a copy stays visible even when the
+   pointer has already left the block. */
+.code-copy-btn:focus-visible,
+.code-copy-btn.copied {
+  opacity: 1;
 }
 
 .code-copy-btn:hover {
   color: var(--text-color);
 }
 
+/* Without this the button gives no sign that it was hit at all. */
+.code-copy-btn:active {
+  transform: scale(0.88);
+}
+
+.code-copy-btn.copied {
+  border-color: var(--robot-highlight);
+  color: var(--robot-highlight);
+}
+
 .code-copy-btn svg {
-  display: block;
+  grid-area: 1 / 1;
   height: 100%;
+  transition:
+    opacity 0.15s,
+    transform 0.15s;
   width: 100%;
 }
 
+.code-copy-btn .code-check-icon,
+.code-copy-btn.copied .code-copy-icon {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+.code-copy-btn.copied .code-check-icon {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .code-copy-btn,
+  .code-copy-btn svg {
+    transition: none;
+  }
+
+  .code-copy-btn:active {
+    transform: none;
+  }
+}
+
 .footer {
-  font-size: 0.9em;
+  font-size: var(--font-size-small);
 }
 .highlight {
   background: var(--highlighted-background-color);
@@ -852,22 +1357,6 @@ a.type {
   color: var(--less-important-text-color);
 }
 
-.modal-icon {
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
-  margin: 0 0.25rem;
-  width: 1rem;
-  height: 1rem;
-  padding: 0;
-  border: none;
-  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="100%" width="100%"><path stroke="black" fill="none" stroke-width="2px" stroke-linecap="round" d="M1 8 L1 1 L8 1 M16 1 L23 1 L23 8 M23 16 L23 23 L16 23 M8 23 L1 23 L1 16"></path><path fill="black" stroke="none" stroke-width="1px" transform="scale(1.3) translate(-3 -2.5)" d="M19 7.97zm-8 9.2-4-2.3v-4.63l4 2.33v4.6zm1-6.33L8.04 8.53 12 6.25l3.96 2.28L12 10.84zm5 4.03-4 2.3v-4.6l4-2.33v4.63z"></path></svg>');
-}
-@media (prefers-color-scheme: dark) {
-  .modal-icon {
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="100%" width="100%"><path stroke="%23e2e1d7" fill="none" stroke-width="2px" stroke-linecap="round" d="M1 8 L1 1 L8 1 M16 1 L23 1 L23 8 M23 16 L23 23 L16 23 M8 23 L1 23 L1 16"></path><path fill="%23e2e1d7" stroke="none" stroke-width="1px" transform="scale(1.3) translate(-3 -2.5)" d="M19 7.97zm-8 9.2-4-2.3v-4.63l4 2.33v4.6zm1-6.33L8.04 8.53 12 6.25l3.96 2.28L12 10.84zm5 4.03-4 2.3v-4.6l4-2.33v4.63z"></path></svg>');
-  }
-}
 .modal-background,
 .modal {
   opacity: 0;
@@ -881,15 +1370,26 @@ a.type {
   bottom: 0;
   left: 0;
   background-color: rgba(0, 0, 0, 0.7);
-  z-index: 1;
+  /* Above the title bar and the language menu. The dialog and its close
+     button stack inside this element. */
+  z-index: 2000;
 }
+/* Holds the dialog and the close button above it, and takes the width the
+   content needs. */
+.modal-frame {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  max-width: min(1000px, calc(100vw - 2rem));
+  margin: 0 auto;
+}
+
 .modal {
   display: flex;
   flex-wrap: nowrap;
   flex-direction: column;
-  width: 720px;
-  max-width: calc(100vw - 2rem);
-  margin: 0 auto;
+  /* The width comes from the frame; the height is fixed so that the dialog
+     does not jump around between one entry and the next. */
   height: calc(100vh - 6rem);
   overflow: auto;
   background-color: var(--background-color);
@@ -910,10 +1410,9 @@ a.type {
 }
 
 .modal-close-button-container {
-  width: 720px;
-  max-width: calc(100vw - 2rem);
-  margin: 0 auto;
-  overflow: auto;
+  /* Follows the frame, so the button stays at the edge of the dialog. */
+  display: flex;
+  justify-content: flex-end;
 }
 
 .modal-close-button {

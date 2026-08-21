@@ -1,4 +1,4 @@
-function createModal() {
+function createModal(closeLabel: string = "Close") {
   const modalBackground = document.createElement("div");
   modalBackground.id = "modal-background";
   modalBackground.classList.add("modal-background");
@@ -7,18 +7,24 @@ function createModal() {
   });
 
   const modalCloseButton = document.createElement("button");
-  modalCloseButton.innerHTML = `<svg xmlns="
-    http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="2em" height="2em" className="block" data-v-2754030d="" data-v-512b0344="">
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"
-                  data-v-2754030d="" fill="var(--text-color)"></path></svg>`;
+  modalCloseButton.innerHTML =
+    '<svg aria-hidden="true"><use href="#icon-close"></use></svg>';
   modalCloseButton.classList.add("modal-close-button");
+  // The button holds nothing but an icon, so it needs a name of its own.
+  modalCloseButton.setAttribute("aria-label", closeLabel);
+  modalCloseButton.setAttribute("type", "button");
   const modalCloseButtonContainer = document.createElement("div");
   modalCloseButtonContainer.classList.add("modal-close-button-container");
   modalCloseButtonContainer.appendChild(modalCloseButton);
   modalCloseButton.addEventListener("click", () => {
     hideModal();
   });
-  modalBackground.appendChild(modalCloseButtonContainer);
+  // The close button sits above the dialog and has to end where the dialog
+  // ends, so both take their width from a shared frame.
+  const modalFrame = document.createElement("div");
+  modalFrame.classList.add("modal-frame");
+  modalFrame.appendChild(modalCloseButtonContainer);
+  modalBackground.appendChild(modalFrame);
   modalCloseButtonContainer.addEventListener("click", () => {
     hideModal();
   });
@@ -35,7 +41,7 @@ function createModal() {
   modalContent.classList.add("modal-content");
   modal.appendChild(modalContent);
 
-  modalBackground.appendChild(modal);
+  modalFrame.appendChild(modal);
   document.body.appendChild(modalBackground);
   document.addEventListener("keydown", ({ key }) => {
     if (key === "Escape") hideModal();

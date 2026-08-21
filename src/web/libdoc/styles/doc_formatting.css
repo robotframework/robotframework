@@ -3,12 +3,12 @@
 .doc > h2,
 .section > h1,
 .section > h2 {
-  margin-top: 2rem;
+  margin-top: 3rem;
   margin-bottom: 1rem;
 }
 .doc > h3,
 .section > h3 {
-  margin-top: 1.5rem;
+  margin-top: 2rem;
   margin-bottom: 1rem;
 }
 .doc > h4,
@@ -46,12 +46,16 @@
   letter-spacing: 0.1em;
 }
 .doc pre {
-  font-size: 1.1em;
+  font-size: var(--font-size-code);
   letter-spacing: 0.05em;
-  background: var(--light-background-color);
+  background: var(--code-background-color);
   overflow-y: auto;
   padding: 0.3rem;
   border-radius: 3px;
+  border: 1px solid var(--border-color);
+}
+.doc pre code {
+  background: var(--code-background-color);
 }
 
 .doc div:not(.admonition) > *:last-child {
@@ -60,14 +64,40 @@
 
 .doc code,
 .docutils.literal {
-  font-size: 1.1em;
+  font-size: var(--font-size-code);
   letter-spacing: 0.05em;
   background: var(--light-background-color);
   padding: 1px;
   border-radius: 3px;
 }
+/* Code in a table is not running text: it stays in one piece and a table that
+   does not fit scrolls, the way a code block does. */
+.doc table code {
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
 .doc ul > li {
   list-style-type: square;
+}
+/* Keeps the links of consecutive items far enough apart to be hit reliably
+   (WCAG 2.5.8). Between the items, not in their line height, which would
+   stretch multi-line entries as well. */
+.doc li + li {
+  margin-top: 0.4rem;
+}
+/* The first item of a nested list has no item before it. */
+.doc li > ul,
+.doc li > ol,
+.doc ul > ul,
+.doc ul > ol,
+.doc ol > ul,
+.doc ol > ol {
+  margin-top: 0.4rem;
+}
+/* Half of the browser default, which keeps nested lists readable on a phone. */
+.doc ul,
+.doc ol {
+  padding-left: 20px;
 }
 .doc img {
   border: 1px solid #ccc;
