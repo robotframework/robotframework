@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
 from ast import literal_eval
 from collections import OrderedDict
 from collections.abc import Collection, Mapping, Sequence, Set
@@ -30,7 +31,10 @@ from robot.utils import (
     eq, get_error_message, plural_or_not as s, safe_str, Secret, seq2str, type_name
 )
 
-from .typealiasresolver import RecursiveAlias
+if sys.version_info >= (3, 12):
+    from .typealiasresolver import RecursiveAlias
+else:
+    RecursiveAlias = type("RecursiveAlias", (), {})
 
 if TYPE_CHECKING:
     from .customconverters import ConverterInfo, CustomArgumentConverters

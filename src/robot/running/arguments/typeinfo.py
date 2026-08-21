@@ -47,9 +47,10 @@ else:
 if sys.version_info >= (3, 12):
     from typing import TypeAliasType
 
-    from .typealiasresolver import resolve_type_alias
+    from .typealiasresolver import resolve_type_alias, RecursiveAlias
 else:
     TypeAliasType = type("TypeAliasType", (), {})
+    RecursiveAlias = type("RecursiveAlias", (), {})
     resolve_type_alias = lambda alias: alias
 
 
@@ -63,7 +64,6 @@ from robot.variables import search_variable, VariableMatch
 
 from ..context import EXECUTION_CONTEXTS
 from .customconverters import CustomArgumentConverters
-from .typealiasresolver import RecursiveAlias
 from .typeconverters import TypeConverter
 
 TYPE_NAMES = {
@@ -202,8 +202,12 @@ class TypeInfo(metaclass=SetterAwareType):
         )
 
     @property
-    def is_union(self):
-        return self.name and self.name.title() == "Union"
+    def is_union(self) -> bool:
+        return bool(self.name and self.name.title() == "Union")
+
+    @property
+    def is_recursive(self) -> bool:
+        return self.type is RecursiveAlias
 
     @classmethod
     def from_type_hint(cls, hint: Any, sequence_is_union: bool = False) -> "TypeInfo":

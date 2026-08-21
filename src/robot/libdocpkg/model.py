@@ -233,12 +233,13 @@ class KeywordDoc(Sortable):
             "repr": str(arg),
         }
 
-    def _type_to_dict(self, type: "TypeInfo | None", type_docs: dict):
-        if not type:
+    def _type_to_dict(self, info: "TypeInfo | None", type_docs: dict):
+        if not info:
             return None
+        nested = info.nested if info.nested and not info.is_recursive else ()
         return {
-            "name": type.name,
-            "typedoc": type_docs.get(type.name),
-            "nested": [self._type_to_dict(t, type_docs) for t in type.nested or ()],
-            "union": type.is_union,
+            "name": info.name,
+            "typedoc": type_docs.get(info.name),
+            "nested": [self._type_to_dict(i, type_docs) for i in nested],
+            "union": info.is_union,
         }
