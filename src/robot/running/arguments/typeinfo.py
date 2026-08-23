@@ -35,6 +35,11 @@ if sys.version_info < (3, 10, 1):
         ExtLiteral = Literal
 else:
     ExtLiteral = Literal
+# Starting from Python 3.14 Union is UnionType
+if sys.version_info >= (3, 10):
+    from types import UnionType
+else:
+    UnionType = Union
 # NotRequired and Required are new in Python 3.11.
 if sys.version_info >= (3, 11):
     from typing import NotRequired, Required
@@ -47,7 +52,7 @@ else:
 if sys.version_info >= (3, 12):
     from typing import TypeAliasType
 
-    from .typealiasresolver import resolve_type_alias, RecursiveAlias
+    from .typealiasresolver import RecursiveAlias, resolve_type_alias
 else:
     TypeAliasType = type("TypeAliasType", (), {})
     RecursiveAlias = type("RecursiveAlias", (), {})
@@ -57,8 +62,8 @@ else:
 from robot.conf import Languages, LanguagesLike
 from robot.errors import DataError
 from robot.utils import (
-    is_union, NOT_SET, plural_or_not as s, Secret, setter, SetterAwareType, type_name,
-    type_repr, typeddict_types
+    NOT_SET, plural_or_not as s, Secret, setter, SetterAwareType, type_name, type_repr,
+    typeddict_types
 )
 from robot.variables import search_variable, VariableMatch
 
@@ -240,16 +245,18 @@ class TypeInfo(metaclass=SetterAwareType):
             hint = hint.__forward_arg__
         if isinstance(hint, typeddict_types):
             return TypedDictInfo(hint.__name__, hint)
-        if is_union(hint) or hint is Union:
-            nested = [cls.from_type_hint(a) for a in get_args(hint)]
-            return cls("Union", nested=cls._validate_union_params(nested))
         origin = get_origin(hint)
         if origin:
             if isinstance(origin, TypeAliasType):
                 hint = cls._resolve_type_alias(hint)
                 return cls.from_type_hint(hint, sequence_is_union)
             args = get_args(hint)
-            if origin is Literal or origin is ExtLiteral:
+            if origin is UnionType or origin is Union:
+                origin = NOT_SET
+                nested = cls._validate_union_params(
+                    [cls.from_type_hint(a) for a in args]
+                )
+            elif origin is Literal or origin is ExtLiteral:
                 origin = Literal
                 nested = [
                     cls(a.name if isinstance(a, Enum) else repr(a), a) for a in args
@@ -261,16 +268,8 @@ class TypeInfo(metaclass=SetterAwareType):
             return cls(type_repr(hint, nested=False), origin, nested)
         if isinstance(hint, str):
             return cls.from_string(hint)
-        if hint is Any:
-            return cls("Any", hint)
-        if hint is None:
-            return cls("None", type(None))
-        if hint is Ellipsis:
-            return cls("...", hint)
         if isinstance(hint, RecursiveAlias):
             return cls(hint.name, RecursiveAlias, nested=[hint.value])
-        if isinstance(hint, type):
-            return cls(type_repr(hint), hint)
         if isinstance(hint, Sequence):
             if sequence_is_union:
                 return cls.from_sequence(cls._validate_union_params(hint))
@@ -278,7 +277,21 @@ class TypeInfo(metaclass=SetterAwareType):
                 # Better string representation with Callable params and other lists.
                 items = [t.__name__ if isinstance(t, type) else repr(t) for t in hint]
                 return cls(f"[{', '.join(items)}]")
-        return cls(str(hint))
+        if hint is Any:
+            name = "Any"
+        elif hint is None:
+            name = "None"
+            hint = type(None)
+        elif hint is Ellipsis:
+            name = "..."
+        elif isinstance(hint, type):
+            name = type_repr(hint)
+        elif hint is Union:
+            raise DataError("Union cannot be empty.")
+        else:
+            name = str(hint)
+            hint = NOT_SET
+        return cls(name, hint)
 
     @classmethod
     def _resolve_type_alias(cls, alias):
