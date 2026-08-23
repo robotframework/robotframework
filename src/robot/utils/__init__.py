@@ -140,7 +140,6 @@ from .robottypes import (
     is_falsy as is_falsy,
     is_list_like as is_list_like,
     is_truthy as is_truthy,
-    is_union as is_union,
     type_name as type_name,
     type_repr as type_repr,
     typeddict_types as typeddict_types,
@@ -180,9 +179,16 @@ def __getattr__(name):
     # See also 'unic' above and 'PY2' in 'platform.py'.
     # https://github.com/robotframework/robotframework/issues/4501
 
+    import sys
     from io import StringIO
     from os import PathLike
+    from typing import get_origin, Union
     from xml.etree import ElementTree as ET
+
+    if sys.version_info >= (3, 10):
+        from types import UnionType
+    else:
+        UnionType = ()
 
     from .robottypes import FALSE_STRINGS, TRUE_STRINGS
 
@@ -227,6 +233,9 @@ def __getattr__(name):
             tags = [tag.strip() for tag in lines[-1].split(":", 1)[1].split(",")]
         return doc, tags
 
+    def is_union(item):
+        return isinstance(item, UnionType) or get_origin(item) is Union
+
     deprecated = {
         "RERAISED_EXCEPTIONS": (KeyboardInterrupt, SystemExit, MemoryError),
         "FALSE_STRINGS": FALSE_STRINGS,
@@ -249,6 +258,7 @@ def __getattr__(name):
         "py3to2": py3to2,
         "read_rest_data": read_rest_data,
         "split_tags_from_doc": split_tags_from_doc,
+        "is_union": is_union,
     }
 
     if name in deprecated:

@@ -60,17 +60,11 @@ def is_dict_like(item):
         return False
 
 
-def is_union(item):
-    return isinstance(item, UnionType) or get_origin(item) is Union
-
-
 def type_name(item, capitalize=False):
     """Return "non-technical" type name for objects and types.
 
     For example, 'integer' instead of 'int' and 'file' instead of 'TextIOWrapper'.
     """
-    if is_union(item):
-        return "Union"
     item = get_origin(item) or item
     if isinstance(item, _SpecialForm):
         # Prior to Python 3.10, typing special forms (Any, Union, ...) didn't
@@ -87,6 +81,7 @@ def type_name(item, capitalize=False):
                 int: "integer",
                 type(None): "None",
                 dict: "dictionary",
+                UnionType: "Union",
             }
             name = named_types.get(typ, typ.__name__.strip("_"))
     return name.capitalize() if capitalize and name.islower() else name
@@ -102,7 +97,7 @@ def type_repr(typ, nested=True):
         return "None"
     if typ is Ellipsis:
         return "..."
-    if is_union(typ):
+    if get_origin(typ) in (Union, UnionType):
         return " | ".join(type_repr(a) for a in get_args(typ)) if nested else "Union"
     name = _get_type_name(typ)
     if nested:
