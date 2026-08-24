@@ -294,6 +294,23 @@ class TestXmlSpec(unittest.TestCase):
         self.assertDictEqual(orig_data, spec_data)
 
 
+class TestLibdocMarkdownWriter(unittest.TestCase):
+
+    def test_markdown_source_written_as_is(self):
+        path = TEMPDIR / "libdoc-utest-spec.md"
+        lib = LibraryDocumentation(DATADIR / "MarkdownLibrary.py")
+        lib.save(path, format="MARKDOWN")
+        expected = (DATADIR / "MarkdownLibrary.txt").read_text(encoding="UTF-8")
+        self.assertEqual(path.read_text(encoding="UTF-8"), expected)
+
+    def test_non_markdown_source_written_verbatim_not_converted(self):
+        path = TEMPDIR / "libdoc-utest-spec.md"
+        lib = LibraryDocumentation(DATADIR / "DocFormatHtml.py")
+        lib.save(path, format="MARKDOWN")
+        content = path.read_text(encoding="UTF-8")
+        self.assertIn("*bold* or <b>bold</b> http://example.com", content)
+
+
 class TestLibdocTypedDictKeys(unittest.TestCase):
 
     def test_typed_dict_keys(self):

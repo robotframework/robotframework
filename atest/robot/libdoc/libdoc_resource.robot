@@ -9,6 +9,7 @@ ${OUTBASE}        %{TEMPDIR}${/}${LIBNAME}
 ${OUTXML}         ${OUTBASE}.xml
 ${OUTHTML}        ${OUTBASE}.html
 ${OUTJSON}        ${OUTBASE}.json
+${OUTMARKDOWN}    ${OUTBASE}.md
 ${NEWDIR_XML}     %{TEMPDIR}${/}tempdir${/}${LIBNAME}.xml
 ${NEWDIR_HTML}    %{TEMPDIR}${/}tempdir${/}${LIBNAME}.html
 

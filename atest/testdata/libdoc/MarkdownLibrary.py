@@ -43,3 +43,15 @@ class MarkdownLibrary:
             *args (str): varargs doc.
             **kwargs (str): keyword args doc.
         """
+        pass
+
+    def only_arg_doc(self, arg: str):
+        """
+        Args:
+            arg: arg doc.
+        """
+        pass
+
+    def no_args_doc(self, arg: str):
+        """Only doc."""
+        pass

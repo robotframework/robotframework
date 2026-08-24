@@ -128,7 +128,7 @@ Should Contain Keyword
         ${expected}    Catenate    SEPARATOR=\n
         ...    ${expected}
         ...    ${EMPTY}
-        ...    **Arguments:**
+        ...    \#### Arguments
         ...    ${EMPTY}
         ...    @{args}
     END
@@ -137,7 +137,7 @@ Should Contain Keyword
         ${expected}    Catenate    SEPARATOR=\n
         ...    ${expected}
         ...    ${EMPTY}
-        ...    **Tags:**
+        ...    \#### Tags
         ...    ${EMPTY}
         ...    @{tags}
     END
@@ -145,7 +145,10 @@ Should Contain Keyword
     ${expected}    Catenate    SEPARATOR=\n
     ...    ${expected}
     ...    ${EMPTY}
+    ...    \#### Documentation
+    ...    ${EMPTY}
     ...    @{doc}
+    Log    ${expected}
     Should Contain    ${OUTPUT}    ${expected}
 
 Should Contain Importing
