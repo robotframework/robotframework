@@ -3908,6 +3908,13 @@ class _Misc(_BuiltInBase):
             Sleep    2 minutes 10 seconds
             Sleep    10s    Wait for a reply
         ```
+
+        !!! note
+            The `time_` argument will be renamed to `time` in Robot Framework 8.0.
+            Users should avoid using the named argument syntax like `time_=1.5`
+            and pass the time positionally like `1.5` instead. See issue
+            [#5762](https://github.com/robotframework/robotframework/issues/5762)
+            for more information.
         """
         seconds = timestr_to_secs(time_)
         # Python hangs with negative values

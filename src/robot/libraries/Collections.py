@@ -81,6 +81,12 @@ class _List:
            Should Be Equal    ${appended_1}    ["a", "b", "c", "xxx"]    type=list
            Should Be Equal    ${appended_2}    ["a", "b", "c", "d", "e", "x", "y", "z"]    type=list
         ```
+
+        !!! note
+            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+            Users should avoid using the named argument syntax like `list_=${mylist}`
+            and pass the list positionally like `${mylist}` instead. See issue
+            [#5762] for more information.
         """
         list_.extend(values)
         return list_
@@ -124,6 +130,12 @@ class _List:
             Should Be Equal    ${inserted_1}    ["xxx", "a", "b", "c"]    type=list
             Should Be Equal    ${inserted_2}    ["a", "b", "xxx", "c"]    type=list
         ```
+
+        !!! note
+            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+            Users should avoid using the named argument syntax like `list_=${mylist}`
+            and pass the list positionally like `${mylist}` instead. See issue
+            [#5762] for more information.
         """
         list_.insert(index, value)
         return list_
@@ -202,6 +214,12 @@ class _List:
             Should Be Equal    ${list_1}    ["a", "xxx", "c"]    type=list
             Should Be Equal    ${list_2}    ["a", "b", "yyy"]    type=list
         ```
+
+        !!! note
+            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+            Users should avoid using the named argument syntax like `list_=${mylist}`
+            and pass the list positionally like `${mylist}` instead. See issue
+            [#5762] for more information.
         """
         try:
             list_[index] = value
@@ -236,6 +254,12 @@ class _List:
             ${removed} =    Remove Values From List    ${list_1}    a    c    e    f
             Should Be Equal    ${removed}    ["b", "d"]    type=list
         ```
+
+        !!! note
+            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+            Users should avoid using the named argument syntax like `list_=${mylist}`
+            and pass the list positionally like `${mylist}` instead. See issue
+            [#5762] for more information.
         """
         for value in values:
             while value in list_:
@@ -268,6 +292,12 @@ class _List:
             ${removed} =    Remove From List    ${list_1}    0
             Should Be Equal    ${list_1}    ["b", "c"]    type=list
         ```
+
+        !!! note
+            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+            Users should avoid using the named argument syntax like `list_=${mylist}`
+            and pass the list positionally like `${mylist}` instead. See issue
+            [#5762] for more information.
         """
         try:
             return list_.pop(index)
@@ -287,6 +317,12 @@ class _List:
         list so that one item can appear only once. Order of the items in
         the new list is the same as in the original except for missing
         duplicates. Number of the removed duplicates is logged.
+
+        !!! note
+            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+            Users should avoid using the named argument syntax like `list_=${mylist}`
+            and pass the list positionally like `${mylist}` instead. See issue
+            [#5762] for more information.
         """
         ret = []
         for item in list_:
@@ -325,6 +361,12 @@ class _List:
             Should Be Equal    ${item_1}    a
             Should Be Equal    ${item_2}    d
         ```
+
+        !!! note
+            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+            Users should avoid using the named argument syntax like `list_=${mylist}`
+            and pass the list positionally like `${mylist}` instead. See issue
+            [#5762] for more information.
         """
         try:
             return list_[index]
@@ -371,6 +413,12 @@ class _List:
             Should Be Equal    ${slice_2}    ["b", "c", "d", "e"]    type=list
             Should Be Equal    ${slice_3}    ["a", "b", "c"]    type=list
         ```
+
+        !!! note
+            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+            Users should avoid using the named argument syntax like `list_=${mylist}`
+            and pass the list positionally like `${mylist}` instead. See issue
+            [#5762] for more information.
         """
         if start == "":
             # Deprecated in RF 7.4. TODO: Remove in RF 9.
@@ -412,6 +460,12 @@ class _List:
             ${count} =    Count Values In List    ${list_1}    b
             Should Be Equal    ${count}    ${1}
         ```
+
+        !!! note
+            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+            Users should avoid using the named argument syntax like `list_=${mylist}`
+            and pass the list positionally like `${mylist}` instead. See issue
+            [#5762] for more information.
         """
         return self.get_slice_from_list(list_, start, end).count(value)
 
@@ -452,6 +506,12 @@ class _List:
         if the value is found. With earlier versions negative start indices
         yielded negative return values making it impossible to know did `-1`
         mean that the value had that index or that the value was not found.
+
+        !!! note
+            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+            Users should avoid using the named argument syntax like `list_=${mylist}`
+            and pass the list positionally like `${mylist}` instead. See issue
+            [#5762] for more information.
         """
         if start == "":
             # Deprecated in RF 7.4. TODO: Remove in RF 9.
@@ -483,6 +543,12 @@ class _List:
         By default, returns a new list with same items as in the original.
         Set the `deepcopy` argument to a true value if also items should
         be copied.
+
+        !!! note
+            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+            Users should avoid using the named argument syntax like `list_=${mylist}`
+            and pass the list positionally like `${mylist}` instead. See issue
+            [#5762] for more information.
         """
         if deepcopy:
             return copy.deepcopy(list_)
@@ -508,6 +574,12 @@ class _List:
             ${reversed} =    Reverse List    ${list_1}
             Should Be Equal    ${reversed}    ["c", "b", "a"]    type=list
         ```
+
+        !!! note
+            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+            Users should avoid using the named argument syntax like `list_=${mylist}`
+            and pass the list positionally like `${mylist}` instead. See issue
+            [#5762] for more information.
         """
         list_.reverse()
         return list_
@@ -528,6 +600,12 @@ class _List:
         For example, sorting a list containing strings and numbers is not possible.
 
         Starting from Robot Framework 7.4, the sorted list is also returned.
+
+        !!! note
+            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+            Users should avoid using the named argument syntax like `list_=${mylist}`
+            and pass the list positionally like `${mylist}` instead. See issue
+            [#5762] for more information.
         """
         if isinstance(list_, list):
             list_.sort()
@@ -553,6 +631,12 @@ class _List:
         The `ignore_case` argument can be used to make comparison case-insensitive.
         See the [Ignore case] section for more details. This option is new in
         Robot Framework 7.0.
+
+        !!! note
+            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+            Users should avoid using the named argument syntax like `list_=${mylist}`
+            and pass the list positionally like `${mylist}` instead. See issue
+            [#5762] for more information.
         """
         normalize = Normalizer(ignore_case).normalize
         if normalize(value) not in normalize(list_):
@@ -576,6 +660,12 @@ class _List:
         The `ignore_case` argument can be used to make comparison case-insensitive.
         See the [Ignore case] section for more details. This option is new in
         Robot Framework 7.0.
+
+        !!! note
+            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+            Users should avoid using the named argument syntax like `list_=${mylist}`
+            and pass the list positionally like `${mylist}` instead. See issue
+            [#5762] for more information.
         """
         normalize = Normalizer(ignore_case).normalize
         if normalize(value) in normalize(list_):
@@ -605,6 +695,12 @@ class _List:
         The `ignore_case` argument can be used to make comparison case-insensitive.
         See the [Ignore case] section for more details. This option is new in
         Robot Framework 7.0.
+
+        !!! note
+            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+            Users should avoid using the named argument syntax like `list_=${mylist}`
+            and pass the list positionally like `${mylist}` instead. See issue
+            [#5762] for more information.
         """
         dupes = []
         list_ = Normalizer(ignore_case).normalize(list_)
@@ -772,6 +868,12 @@ class _List:
         Args:
             list_: The list to log.
             level: The log level to use.
+
+        !!! note
+            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+            Users should avoid using the named argument syntax like `list_=${mylist}`
+            and pass the list positionally like `${mylist}` instead. See issue
+            [#5762] for more information.
         """
         logger.write("\n".join(self._log_list(list_)), level)
 
@@ -1567,6 +1669,7 @@ class Collections(_List, _Dictionary):
     --->
 
     [BuiltIn]: https://robotframework.org/robotframework/latest/libraries/BuiltIn.html
+    [#5762]: https://github.com/robotframework/robotframework/issues/5762
     """
 
     ROBOT_LIBRARY_SCOPE = "GLOBAL"
