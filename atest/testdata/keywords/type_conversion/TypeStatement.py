@@ -1,10 +1,27 @@
 import sys
+from enum import Enum
+from typing import TypedDict
+
+TypedDict.robot_not_keyword = True
+
+
+class Toggle(Enum):
+    ON = "ON"
+    OFF = "OFF"
+
+
+class Point(TypedDict):
+    x: int
+    y: int
+
 
 type ForwardRef = SimpleValue
 type GenericForwardRef[T] = GenericParams[T]
 type SimpleValue = int
 type ParamsValue = list[int]
 type UnionValue = int | float
+type EnumValue = Toggle
+type TypedDictValue = Point
 type Recursive = int | list[Recursive]
 type GenericSimple[T] = T
 type GenericParams[T] = list[T]
@@ -29,6 +46,16 @@ def params_value(argument: ParamsValue, expected: list[int]):
 
 def union_value(argument: UnionValue, expected: int | float):
     assert isinstance(argument, type(expected))
+    assert argument == expected
+
+
+def enum_value(argument: EnumValue, expected: Toggle):
+    assert isinstance(argument, Toggle)
+    assert argument is expected
+
+
+def typed_dict_value(argument: TypedDictValue, expected: Point):
+    assert isinstance(argument, dict)
     assert argument == expected
 
 
@@ -65,6 +92,21 @@ def generic_defaults_2(argument: GenericDefaults[int, float], expected: int | fl
 
 def generic_forward_ref(argument: GenericForwardRef[int], expected: list[int]):
     params_value(argument, expected)
+
+
+def alias_as_param(argument: list[SimpleValue], expected: list[int]):
+    params_value(argument, expected)
+
+
+def alias_in_union(
+    argument: SimpleValue | GenericParams[int], expected: int | list[int]
+):
+    if isinstance(expected, int):
+        assert isinstance(argument, int)
+        simple_value(argument, expected)
+    else:
+        assert isinstance(argument, list)
+        params_value(argument, expected)
 
 
 def invalid(argument: Invalid):

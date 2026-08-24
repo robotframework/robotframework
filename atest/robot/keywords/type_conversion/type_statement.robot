@@ -13,6 +13,12 @@ Params in value
 Union value
     Check Test Case    ${TESTNAME}
 
+Enum value
+    Check Test Case    ${TESTNAME}
+
+Typed dict value
+    Check Test Case    ${TESTNAME}
+
 Forward reference
     Check Test Case    ${TESTNAME}
 
@@ -36,6 +42,12 @@ Generic with defaults
     Check Test Case    ${TESTNAME}
 
 Generic forward reference
+    Check Test Case    ${TESTNAME}
+
+Alias as generic parameter
+    Check Test Case    ${TESTNAME}
+
+Alias in union
     Check Test Case    ${TESTNAME}
 
 Invalid

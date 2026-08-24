@@ -15,6 +15,13 @@ Union value
     Union value            1                1
     Union value            1.2              1.2
 
+Enum value
+    Enum value             ON               ON
+    Enum value             off              OFF
+
+Typed dict value
+    Typed dict value       {"x": 1, "y": 0}    {"x": 1, "y": 0}
+
 Forward reference
     Forward Ref            1                1
 
@@ -50,4 +57,16 @@ Generic with defaults
 
 Generic forward reference
     Generic Forward Ref    []               []
+    Generic Forward Ref    [1]              [1]
     Generic Forward Ref    [1.0, 2, "3"]    [1, 2, 3]
+
+Alias as generic parameter
+    Alias as param         []               []
+    Alias as param         [1]              [1]
+    Alias as param         [1.0, 2, "3"]    [1, 2, 3]
+
+Alias in union
+    Alias in union         1                1
+    Alias in union         []               []
+    Alias in union         [1]              [1]
+    Alias in union         [1.0, 2, "3"]    [1, 2, 3]
