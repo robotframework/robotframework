@@ -192,8 +192,10 @@ class DocToHtml:
                     LinkifyExtension(),
                 ],
                 extension_configs={
-                    "codehilite": {"css_class": "code", "linenums": False},
                     "toc": {"baselevel": 2, "toc_depth": 3, "marker": "%TOC%"},
+                    "codehilite": {
+                        "css_class": "code", "linenums": False, "guess_lang": False
+                    },
                 },
                 output_format="html",
             )
