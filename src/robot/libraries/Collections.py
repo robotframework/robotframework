@@ -35,6 +35,7 @@ ListLike = Union[Sequence, Mapping, Set]
 
 
 class _List:
+
     def convert_to_list(self, item: object) -> list:
         """Converts the given `item` to a Python `list` type.
 
@@ -60,7 +61,7 @@ class _List:
         """Adds `values` to the end of `list`.
 
         Args:
-            list: The list to modify.
+            list_: The list to modify.
             *values: Values to append.
 
         Returns:
@@ -93,7 +94,7 @@ class _List:
         """Inserts `value` into `list` to the position specified with `index`.
 
         Args:
-            list: The list to modify.
+            list_: The list to modify.
             index: Index where to insert the value.
             value: The value to insert.
 
@@ -119,7 +120,7 @@ class _List:
             ${list_1} =    Copy List    ${LIST_ABC}
             ${list_2} =    Copy List    ${LIST_ABC}
             ${inserted_1} =    Insert Into List    ${list_1}    0    xxx
-            ${inserted_2} =    Insert Into List    ${list_2}    ${-1}    xxx
+            ${inserted_2} =    Insert Into List    ${list_2}    -1    xxx
             Should Be Equal    ${inserted_1}    ["xxx", "a", "b", "c"]    type=list
             Should Be Equal    ${inserted_2}    ["a", "b", "xxx", "c"]    type=list
         ```
@@ -158,7 +159,7 @@ class _List:
         """Sets the value of `list` specified by `index` to the given `value`.
 
         Args:
-            list: The list to modify.
+            list_: The list to modify.
             index: Index of the value to set.
             value: The new value.
 
@@ -193,7 +194,7 @@ class _List:
 
         ```robotframework
         *** Test Cases ***
-        Set list value
+        Set list value using item assignment syntax
             ${list_1} =    Copy List    ${LIST_ABC}
             ${list_2} =    Copy List    ${LIST_ABC}
             ${list_1}[1] =    Set Variable    xxx
@@ -216,7 +217,7 @@ class _List:
         """Removes all occurrences of given `values` from `list`.
 
         Args:
-            list: The list to modify.
+            list_: The list to modify.
             *values: Values to remove.
 
         Returns:
@@ -245,7 +246,7 @@ class _List:
         """Removes and returns the value specified with an `index` from `list`.
 
         Args:
-            list: The list to modify.
+            list_: The list to modify.
             index: Index of the value to remove.
 
         Returns:
@@ -277,7 +278,7 @@ class _List:
         """Returns a list without duplicates based on the given `list`.
 
         Args:
-            list: The list to process.
+            list_: The list to remove duplicates from.
 
         Returns:
             A new list without duplicates.
@@ -299,7 +300,7 @@ class _List:
         """Returns the value specified with an `index` from `list`.
 
         Args:
-            list: The list to read from.
+            list_: The list to get a value from.
             index: Index of the value to get.
 
         Returns:
@@ -318,8 +319,8 @@ class _List:
         ```robotframework
         *** Test Cases ***
         Get from list
-            ${list_1} =    ${LIST_ABCDE}
-            ${item_1} =    Get From List    ${list_1}    0    # list_1[0]
+            ${list_1} =    Copy List    ${LIST_ABCDE}
+            ${item_1} =    Get From List    ${list_1}    0     # list_1[0]
             ${item_2} =    Get From List    ${list_1}    -2    # list_1[-2]
             Should Be Equal    ${item_1}    a
             Should Be Equal    ${item_2}    d
@@ -339,7 +340,7 @@ class _List:
         """Returns a slice of the given list between `start` and `end` indices.
 
         Args:
-            list: The list to read from.
+            list_: The list to get a slice from.
             start: Start index of the slice.
             end: End index of the slice.
 
@@ -362,9 +363,9 @@ class _List:
         ```robotframework
         *** Test Cases ***
         Get slice from list
-            ${list_1} =    ${LIST_ABCDE}
+            ${list_1} =    Copy List    ${LIST_ABCDE}
             ${slice_1} =    Get Slice From List    ${list_1}    2    4    # list_1[2:4]
-            ${slice_2} =    Get Slice From List    ${list_1}    1    # list_1[1:]
+            ${slice_2} =    Get Slice From List    ${list_1}    1         # list_1[1:]
             ${slice_3} =    Get Slice From List    ${list_1}    end=-2    # list_1[0:-2]
             Should Be Equal    ${slice_1}    ["c", "d"]    type=list
             Should Be Equal    ${slice_2}    ["b", "c", "d", "e"]    type=list
@@ -390,8 +391,8 @@ class _List:
         """Returns the number of occurrences of the given `value` in `list`.
 
         Args:
-            list: The list to search.
-            value: The value to count.
+            list_: The list to search the value from.
+            value: The value to search for.
             start: Optional start index for the search.
             end: Optional end index for the search.
 
@@ -407,7 +408,7 @@ class _List:
         ```robotframework
         *** Test Cases ***
         Count values in list
-            ${list_1} =    ${LIST_ABC}
+            ${list_1} =   Copy List    ${LIST_ABC}
             ${count} =    Count Values In List    ${list_1}    b
             Should Be Equal    ${count}    ${1}
         ```
@@ -424,8 +425,8 @@ class _List:
         """Returns the index of the first occurrence of the `value` on the list.
 
         Args:
-            list: The list to search.
-            value: The value to find.
+            list_: The list to search the value from.
+            value: The value to search ofr.
             start: Optional start index for the search.
             end: Optional end index for the search.
 
@@ -437,14 +438,12 @@ class _List:
         keyword. The returned index is always the index of the value in the
         original list.
 
-        If the value is not found, `-1` is returned.
-
         Examples:
 
         ```robotframework
         *** Test Cases ***
         Get index from list
-            ${list_1} =    ${LIST_ABCDE}
+            ${list_1} =    Copy List    ${LIST_ABCDE}
             ${index} =    Get Index From List    ${list_1}    d    start=1
             Should Be Equal    ${index}    ${3}
         ```
@@ -475,7 +474,7 @@ class _List:
         """Returns a copy of the given list.
 
         Args:
-            list: The list to copy.
+            list_: The list to copy.
             deepcopy: Whether to also copy items.
 
         Returns:
@@ -493,7 +492,7 @@ class _List:
         """Reverses the given list.
 
         Args:
-            list: The list to reverse.
+            list_: The list to reverse.
 
         Returns:
             The reversed list.
@@ -517,7 +516,7 @@ class _List:
         """Sorts the given list.
 
         Args:
-            list: The list to sort.
+            list_: The list to sort.
 
         Returns:
             The sorted list.
@@ -546,12 +545,10 @@ class _List:
         """Fails if the `value` is not found from `list`.
 
         Args:
-            list: The list to verify.
+            list_: The list to verify.
             value: The value that should be found.
             msg: Optional custom error message.
             ignore_case: Whether to ignore case in comparison.
-
-        Use the `msg` argument to override the default error message.
 
         The `ignore_case` argument can be used to make comparison case-insensitive.
         See the [Ignore case] section for more details. This option is new in
@@ -571,12 +568,10 @@ class _List:
         """Fails if the `value` is found from `list`.
 
         Args:
-            list: The list to verify.
+            list_: The list to verify.
             value: The value that should not be found.
             msg: Optional custom error message.
             ignore_case: Whether to ignore case in comparison.
-
-        Use the `msg` argument to override the default error message.
 
         The `ignore_case` argument can be used to make comparison case-insensitive.
         See the [Ignore case] section for more details. This option is new in
@@ -595,7 +590,7 @@ class _List:
         """Fails if any element in the `list` is found from it more than once.
 
         Args:
-            list: The list to verify.
+            list_: The list to verify.
             msg: Optional custom error message.
             ignore_case: Whether to ignore case in comparison.
 
@@ -638,7 +633,8 @@ class _List:
             list1: The first list.
             list2: The second list.
             msg: Optional custom error message.
-            values: Controls whether default differences are included in the error message.
+            values: When true, the default error message is added at the end of
+              the possible custom error message.
             names: Optional names for indices shown in the error message.
             ignore_order: Whether to ignore the order of elements.
             ignore_case: Whether to ignore case in comparison.
@@ -649,12 +645,12 @@ class _List:
         Abc`. The types of the lists do not need to be the same. For example,
         Python tuple and list with same content are considered equal.
 
-        The error message can be configured using `msg` and `values`
-        arguments:
+        The error message can be configured using `msg` and `values` arguments:
+
         - If `msg` is not given, the default error message is used.
         - If `msg` is given and `values` gets a value considered true,
-          the error message starts with the given
-          `msg` followed by a newline and the default message.
+          the error message starts with the given `msg` followed by
+          a newline and the default message.
         - If `msg` is given and `values`  is not given a true value,
           the error message is just the given `msg`.
 
@@ -668,14 +664,25 @@ class _List:
         Examples:
 
         ```robotframework
+        *** Variables ***
+        @{USER1}         Jane    Doe    jane@example.com
+        @{USER2}         John    Doe    john@example.com
+
         *** Test Cases ***
-        Lists should be equal
-            Lists Should Be Equal    ${LIST_MATCH}    ${LIST_MATCH}    names=${LIST_NAMES}
+        Names as list
+            VAR    @{names}    First Name    Family Name    Email
+            Lists Should Be Equal    ${USER1}    ${USER2}    names=${names}
+
+        Names as dict
+            VAR    &{names}    0=First Name    1=Family Name    2=Email
+            Lists Should Be Equal    ${USER1}    ${USER2}    names=${names}
         ```
 
-        If the items in index 2 would differ in the above examples, the error
-        message would contain a row like `Index 2 (email): name@foo.com !=
-        name@bar.com`.
+        Both of the above examples fail with this message:
+
+            Lists are different:
+            Index 0 (First Name): Jane != John
+            Index 2 (Email): jane@example.com != john@example.com
 
         The optional `ignore_order` argument can be used to ignore the order
         of the elements in the lists. Using it requires items to be sortable.
@@ -686,10 +693,10 @@ class _List:
 
         ```robotframework
         *** Test Cases ***
-        Lists should be equal
-            ${list_1} =    Create List    apple    cherry    banana
-            ${list_2} =    Create List    cherry    banana    apple
-            Lists Should Be Equal    ${list_1}    ${list_2}    ignore_order=True
+        Lists should be equal ignoring order
+            VAR    @{list1}    apple     cherry    banana
+            VAR    @{list2}    cherry    banana    apple
+            Lists Should Be Equal    ${list}    ${list}    ignore_order=True
         ```
 
         The `ignore_case` argument can be used to make comparison case-insensitive.
@@ -737,7 +744,8 @@ class _List:
             list1: The list that should contain all values.
             list2: The list whose values should be found.
             msg: Optional custom error message.
-            values: Controls whether default differences are included in the error message.
+            values: When true, the default error message is added at the end of
+              the possible custom error message.
             ignore_case: Whether to ignore case in comparison.
 
         The order of values and the number of values are not taken into
@@ -762,12 +770,12 @@ class _List:
         """Logs contents of the `list` using the given `level`.
 
         Args:
-            list: The list to log.
+            list_: The list to log.
             level: The log level to use.
         """
         logger.write("\n".join(self._log_list(list_)), level)
 
-    def _log_list(self, list_: "Sequence[object]") -> "Iterator[str]":
+    def _log_list(self, list_: Sequence) -> "Iterator[str]":
         if not list_:
             yield "List is empty."
         elif len(list_) == 1:
@@ -783,6 +791,7 @@ class _List:
 
 
 class _Dictionary:
+
     def convert_to_dictionary(self, item: object) -> dict:
         """Converts the given `item` to a Python `dict` type.
 
@@ -818,17 +827,16 @@ class _Dictionary:
             The modified dictionary.
 
         Raises:
-            ValueError: If `key_value_pairs` does not contain an even number of arguments.
+            ValueError: If `key_value_pairs` does not contain an even number
+              of arguments.
 
         If given items already exist in the dictionary, their values are updated.
-
-        The modified dictionary is also returned.
 
         It is easiest to specify items using the `name=value` syntax:
 
         ```robotframework
         *** Test Cases ***
-        Set to dictionary
+        `name=value` syntax
             ${dict_1} =    Copy Dictionary    ${DICT_A}
             ${expected} =    Copy Dictionary    ${DICT_A}
             Set To Dictionary    ${expected}    key=value    second=${2}
@@ -842,7 +850,7 @@ class _Dictionary:
 
         ```robotframework
         *** Test Cases ***
-        Set to dictionary
+        Keys and values separately
             ${dict_1} =    Copy Dictionary    ${DICT_A}
             ${expected} =    Copy Dictionary    ${DICT_A}
             Set To Dictionary    ${expected}    key    value    ${2}    value 2
@@ -855,7 +863,7 @@ class _Dictionary:
 
         ```robotframework
         *** Test Cases ***
-        Set to dictionary
+        Item assignment syntax
             ${dict_1} =    Copy Dictionary    ${DICT_A}
             ${expected} =    Copy Dictionary    ${DICT_A}
             Set To Dictionary    ${expected}    key    value    ${2}    value 2
@@ -928,9 +936,6 @@ class _Dictionary:
         Returns:
             The value of the removed key.
 
-        Raises:
-            RuntimeError: If `key` is not found and `default` is not given.
-
         The keyword fails if the given `key` cannot be found from the `dictionary`
         by default. If optional `default` value is given, it will be returned instead.
 
@@ -1001,8 +1006,7 @@ class _Dictionary:
             A copy of the dictionary.
 
         By default, returns a new dictionary with same items as in the original.
-        Set the `deepcopy` argument to a true value if also items should
-        be copied.
+        Set the `deepcopy` argument to a true value if also items should be copied.
         """
         if deepcopy:
             return copy.deepcopy(dictionary)
@@ -1016,7 +1020,7 @@ class _Dictionary:
         """Returns keys of the given `dictionary` as a list.
 
         Args:
-            dictionary: The dictionary to read from.
+            dictionary: The dictionary to get keys from.
             sort_keys: Whether to sort keys.
 
         Returns:
@@ -1050,7 +1054,7 @@ class _Dictionary:
         """Returns values of the given `dictionary` as a list.
 
         Args:
-            dictionary: The dictionary to read from.
+            dictionary: The dictionary to get values from.
             sort_keys: Whether to sort keys.
 
         Returns:
@@ -1080,7 +1084,7 @@ class _Dictionary:
         """Returns items of the given `dictionary` as a list.
 
         Args:
-            dictionary: The dictionary to read from.
+            dictionary: The dictionary to get items from.
             sort_keys: Whether to sort keys.
 
         Returns:
@@ -1115,15 +1119,12 @@ class _Dictionary:
         """Returns a value from the given `dictionary` based on the given `key`.
 
         Args:
-            dictionary: The dictionary to read from.
+            dictionary: The dictionary to get a value from.
             key: The key whose value to get.
             default: Default value returned if the key is not found.
 
         Returns:
             The value of the given key.
-
-        Raises:
-            RuntimeError: If `key` is not found and `default` is not given.
 
         If the given `key` cannot be found from the `dictionary`, this
         keyword fails. If optional `default` value is given, it will be
@@ -1162,8 +1163,6 @@ class _Dictionary:
             msg: Optional custom error message.
             ignore_case: Whether to ignore case in comparison.
 
-        Use the `msg` argument to override the default error message.
-
         The `ignore_case` argument can be used to make comparison case-insensitive.
         See the [Ignore case] section for more details. This option is new in
         Robot Framework 7.0.
@@ -1187,8 +1186,6 @@ class _Dictionary:
             msg: Optional custom error message.
             ignore_case: Whether to ignore case in comparison.
 
-        Use the `msg` argument to override the default error message.
-
         The `ignore_case` argument can be used to make comparison case-insensitive.
         See the [Ignore case] section for more details. This option is new in
         Robot Framework 7.0.
@@ -1205,16 +1202,14 @@ class _Dictionary:
         msg: "str | None" = None,
         ignore_case: IgnoreCase = False,
     ):
-        """An item of `key` / `value` must be found in a `dictionary`.
+        """Fails is item `key` does not exist and have value `value`.
 
         Args:
             dictionary: The dictionary to verify.
-            key: The key to verify.
+            key: The item to search for.
             value: The expected value.
             msg: Optional custom error message.
             ignore_case: Whether to ignore case in comparison.
-
-        Use the `msg` argument to override the default error message.
 
         The `ignore_case` argument can be used to make comparison case-insensitive.
         See the [Ignore case] section for more details. This option is new in
@@ -1244,8 +1239,6 @@ class _Dictionary:
             msg: Optional custom error message.
             ignore_case: Whether to ignore case in comparison.
 
-        Use the `msg` argument to override the default error message.
-
         The `ignore_case` argument can be used to make comparison case-insensitive.
         See the [Ignore case] section for more details. This option is new in
         Robot Framework 7.0.
@@ -1268,8 +1261,6 @@ class _Dictionary:
             value: The value that should not be found.
             msg: Optional custom error message.
             ignore_case: Whether to ignore case in comparison.
-
-        Use the `msg` argument to override the default error message.
 
         The `ignore_case` argument can be used to make comparison case-insensitive.
         See the [Ignore case] section for more details. This option is new in
@@ -1312,11 +1303,25 @@ class _Dictionary:
         Examples:
 
         ```robotframework
+        *** Variables ***
+        &{DICT1}         first=same    second=different case
+        &{DICT2}         first=same
+        &{DICT3}         first=same    second=DIFFERENT CASE
+
         *** Test Cases ***
-        Dictionaries should be equal
-            Dictionaries Should Be Equal    ${DICT_EQUAL}    ${DICT_EQUAL}
-            Dictionaries Should Be Equal    ${DICT_EQUAL}    ${DICT_EQUAL}    ignore_keys=['key1']
-            Dictionaries Should Be Equal    ${DICT_EQUAL}    ${DICT_EQUAL}    ignore_keys=['key1', 'key2']
+        Comparison fails with different items
+            Dictionaries Should Be Equal    ${DICT1}    ${DICT2}
+
+        Comparison fails with different values
+            Dictionaries Should Be Equal    ${DICT1}    ${DICT3}
+
+        Comparison when ignoring case
+            Dictionaries Should Be Equal    ${DICT1}    ${DICT3}    ignore_case=True
+
+        Comparison when ignoring keys
+            VAR    @{ignore}    second
+            Dictionaries Should Be Equal    ${DICT1}    ${DICT2}    ignore_keys=${ignore}
+            Dictionaries Should Be Equal    ${DICT1}    ${DICT3}    ignore_keys=${ignore}
         ```
 
         See [Lists Should Be Equal] for more information about configuring
@@ -1462,22 +1467,22 @@ class Collections(_List, _Dictionary):
 
     # Related keywords in BuiltIn
 
-    Following keywords in the BuiltIn library can also be used with
+    Following keywords in the [BuiltIn] library can also be used with
     lists and dictionaries:
 
-    | Keyword Name                 | Applicable With |
+    |         Keyword Name         | Applicable With |
     | ---------------------------- | --------------- |
-    | [Create List]                | lists           |
-    | [Create Dictionary]          | dicts           |
-    | [Get Length]                 | both            |
-    | [Length Should Be]           | both            |
-    | [Should Be Empty]            | both            |
-    | [Should Not Be Empty]        | both            |
-    | [Should Contain]             | both            |
-    | [Should Not Contain]         | both            |
-    | [Should Contain X Times]     | lists           |
-    | [Should Not Contain X Times] | lists           |
-    | [Get Count]                  | lists           |
+    | `Create List`                | lists           |
+    | `Create Dictionary`          | dicts           |
+    | `Get Length`                 | both            |
+    | `Length Should Be`           | both            |
+    | `Should Be Empty`            | both            |
+    | `Should Not Be Empty`        | both            |
+    | `Should Contain`             | both            |
+    | `Should Not Contain`         | both            |
+    | `Should Contain X Times`     | lists           |
+    | `Should Not Contain X Times` | lists           |
+    | `Get Count`                  | lists           |
 
     # Using with list-like and dictionary-like objects
 
@@ -1521,12 +1526,12 @@ class Collections(_List, _Dictionary):
     ```robotframework
     *** Test Cases ***
     Ignore case
-        ${list_1} =    Create List    abc    DEF
-        ${list_2} =    Create List    ABC    def
-        ${dict_1} =    Create Dictionary    key=value
-        ${dict_2} =    Create Dictionary    key=VALUE
-        Lists Should Be Equal    ${list_1}    ${list_2}    ignore_case=True
-        Dictionaries Should Be Equal    ${dict_1}    ${dict_2}    ignore_case=VALUES
+        VAR    @{list1}    abc    DEF
+        VAR    @{list2}    ABC    def
+        VAR    &{dict1}    key=value
+        VAR    &{dict2}    key=VALUE
+        Lists Should Be Equal    ${list1}    ${list2}    ignore_case=True
+        Dictionaries Should Be Equal    ${dict1}    ${dict2}    ignore_case=VALUES
     ```
 
     Notice that some keywords accept also an older `case_insensitive` argument
@@ -1544,16 +1549,24 @@ class Collections(_List, _Dictionary):
 
     ```robotframework
     *** Variables ***
-    @{LIST_ABC}    a    b    c
+    @{LIST_ABC}      a    b    c
     @{LIST_ABCDE}    a    b    c    d    e
-    @{LIST_NAMES}    FirstName    FamilyName    Email    Code
-    @{LIST_MATCH}    Apple    art    a b    ticket123456
 
-    &{DICT_A}    a=${1}
-    &{DICT_ABC}    b=${2}    a=${1}    c=${3}
-    &{DICT_ABCD}    a=${1}    b=${2}    c=${3}    d=${4}
-    &{DICT_EQUAL}    key1=value1    key2=value2
+    &{DICT_A}        a=${1}
+    &{DICT_ABC}      b=${2}    a=${1}    c=${3}
+    &{DICT_ABCD}     a=${1}    b=${2}    c=${3}    d=${4}
     ```
+
+    <!---  Markdown comment to hide library import that eases testing examples.
+           Can be removed if a separate example with the import is added.
+
+    ```robotframework
+    *** Settings ***
+    Library          Collections
+    ```
+    --->
+
+    [BuiltIn]: https://robotframework.org/robotframework/latest/libraries/BuiltIn.html
     """
 
     ROBOT_LIBRARY_SCOPE = "GLOBAL"
@@ -1570,7 +1583,7 @@ class Collections(_List, _Dictionary):
         ignore_case: bool = False,
         ignore_whitespace: bool = False,
     ):
-        """Fails if `pattern` is not found in `list`.
+        r"""Fails if `pattern` is not found in `list`.
 
         Args:
             list: The list to search.
@@ -1581,22 +1594,19 @@ class Collections(_List, _Dictionary):
             ignore_case: Whether to ignore case when matching.
             ignore_whitespace: Whether to ignore whitespace when matching.
 
-        Raises:
-            TypeError: If `pattern` is not a string.
-
         By default, pattern matching is similar to matching files in a shell
         and is case-sensitive and whitespace-sensitive. In the pattern syntax,
         `*` matches to anything and `?` matches to any single character. You
         can also prepend `glob=` to your pattern to explicitly use this pattern
         matching behavior.
 
-        If you prepend `regexp=` to your pattern, your pattern will be used
-        according to the Python
-        [re module] regular expression
-        syntax. Notice that the backslash character often used with regular
+        If you prepend `regexp=` to your pattern, the pattern is considered to
+        be a regular expression that uses Python's
+        [regular expression syntax](http://docs.python.org/library/re.html).
+        Notice that the backslash character often used with regular
         expressions is an escape character in Robot Framework data and needs
-        to be escaped with another backslash like `regexp=\\\\d{6}`. See
-        [BuiltIn.Should Match Regexp] for more details.
+        to be escaped with another backslash like `regexp=\\d{6}`. See the
+        [BuiltIn] keyword `Should Match Regexp` for more details.
 
         Matching is case-sensitive by default, but that can be changed by giving
         the `ignore_case` argument a true value.
@@ -1612,22 +1622,27 @@ class Collections(_List, _Dictionary):
 
         Non-string values in lists are ignored when matching patterns.
 
-        Use the `msg` argument to override the default error message.
-
         Examples:
 
         ```robotframework
-        *** Test Cases ***
-        Should contain match
-            Should Contain Match    ${LIST_MATCH}    a*    # Match strings beginning with 'a'.
-            Should Contain Match    ${LIST_MATCH}    regexp=a.*    # Same as the above but with regexp.
-            Should Contain Match    ${LIST_MATCH}    regexp=\\\\d{6}    # Match strings containing six digits.
-            Should Contain Match    ${LIST_MATCH}    a*    ignore_case=True    # Match strings beginning with 'a' or 'A'.
-            Should Contain Match    ${LIST_MATCH}    ab*    ignore_whitespace=yes    # Match strings beginning with 'ab' with possible whitespace ignored.
-            Should Contain Match    ${LIST_MATCH}    ab*    ignore_whitespace=true    ignore_case=true    # Same as the above but also ignore case.
-        ```
+        *** Variables ***
+        @{LIST}          foo    bar    abc 123
 
-        [re module]: http://docs.python.org/library/re.html
+        *** Test Cases ***
+        Match using glob pattern
+            Should Contain Match    ${LIST}    f*
+            Should Contain Match    ${LIST}    b?r
+            Should Contain Match    ${LIST}    abc [1-9][1-9][1-9]
+
+        Match using regexp
+            Should Contain Match    ${LIST}    regexp=f.*
+            Should Contain Match    ${LIST}    regexp=b.r
+            Should Contain Match    ${LIST}    regexp=abc \\d\\d\\d
+
+        Normalization
+            Should Contain Match    ${LIST}    ABC *     ignore_case=True
+            Should Contain Match    ${LIST}    abc???    ignore_whitespace=True
+        ```
         """
         matches = self._get_matches(
             sequence=list,
@@ -1697,10 +1712,7 @@ class Collections(_List, _Dictionary):
             ignore_whitespace: Whether to ignore whitespace when matching.
 
         Returns:
-            Matching strings from the list.
-
-        Raises:
-            TypeError: If `pattern` is not a string.
+            A list containing matching items.
 
         For more information on `pattern`, `case_insensitive/ignore_case`, and
         `whitespace_insensitive/ignore_whitespace`, see [Should Contain Match].
@@ -1708,10 +1720,17 @@ class Collections(_List, _Dictionary):
         Examples:
 
         ```robotframework
+        *** Variables ***
+        @{LIST}          foo    bar    abc 123
+
         *** Test Cases ***
         Get matches
-            ${matches} =    Get Matches    ${LIST_MATCH}    a*    ignore_case=True
-            Should Be Equal    ${matches}    ["Apple", "art"]    type=list
+            ${matches} =    Get Matches    ${LIST}    *A*    ignore_case=True
+            Should Be Equal    ${matches}    ["bar", "abc 123"]    type=list
+
+        Get no matches
+            ${matches} =    Get Matches    ${LIST}    no match
+            Should Be Empty    ${matches}
         ```
         """
         return self._get_matches(
@@ -1735,7 +1754,7 @@ class Collections(_List, _Dictionary):
         """Returns the count of matches to `pattern` in `list`.
 
         Args:
-            list: The list to search.
+            list: The list to search matches from.
             pattern: The pattern to match.
             case_insensitive: Deprecated. Use `ignore_case` instead.
             whitespace_insensitive: Deprecated. Use `ignore_whitespace` instead.
@@ -1745,19 +1764,23 @@ class Collections(_List, _Dictionary):
         Returns:
             The number of matches.
 
-        Raises:
-            TypeError: If `pattern` is not a string.
-
         For more information on `pattern`, `case_insensitive/ignore_case`, and
         `whitespace_insensitive/ignore_whitespace`, see [Should Contain Match].
 
         Examples:
 
         ```robotframework
+        *** Variables ***
+        @{LIST}          foo    bar    abc 123
+
         *** Test Cases ***
         Get match count
-            ${count} =    Get Match Count    ${LIST_MATCH}    a*    ignore_case=True
-            Should Be Equal    ${count}    ${2}
+            ${matches} =    Get Match Count    ${LIST}    *A*    ignore_case=True
+            Should Be Equal    ${matches}    2    type=int
+
+        Get zero match count
+            ${matches} =    Get Match Count    ${LIST}    no match
+            Should Be Equal    ${matches}    0    type=int
         ```
         """
         matches = self.get_matches(
@@ -1772,7 +1795,7 @@ class Collections(_List, _Dictionary):
 
     def _get_matches(
         self,
-        sequence: Sequence,
+        sequence: ListLike,
         pattern: str,
         case_insensitive: "bool | None" = None,
         whitespace_insensitive: "bool | None" = None,
