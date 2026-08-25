@@ -284,10 +284,10 @@ class TypeInfo(metaclass=SetterAwareType):
             hint = type(None)
         elif hint is Ellipsis:
             name = "..."
-        elif isinstance(hint, type):
-            name = type_repr(hint)
         elif hint is Union:
             raise DataError("Union cannot be empty.")
+        elif isinstance(hint, type):
+            name = type_repr(hint)
         else:
             name = str(hint)
             hint = NOT_SET
