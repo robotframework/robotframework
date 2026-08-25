@@ -1746,18 +1746,30 @@ class Collections(_List, _Dictionary):
             Should Contain Match    ${LIST}    ABC *     ignore_case=True
             Should Contain Match    ${LIST}    abc???    ignore_whitespace=True
         ```
+
+        !!! note
+            When using glob patterns, the pattern must match items fully, but
+            when using regular expressions, it is enough if the pattern matches
+            the beginning. This will be changed in the future, though, and a
+            full match will be required regardless the pattern type. Starting
+            from Robot Framework 7.5, there is a warning if this forthcoming
+            change affects the results of this keyword. To avoid the warning,
+            add `.*` at the end of the pattern to preserve the current behavior,
+            or add `$` to require a full match already now.
         """
         matches = self._get_matches(
-            sequence=list,
+            list=list,
             pattern=pattern,
             case_insensitive=case_insensitive,
             whitespace_insensitive=whitespace_insensitive,
             ignore_case=ignore_case,
             ignore_whitespace=ignore_whitespace,
+            regexp_warn_bool_change_only=True,
         )
         if not matches:
-            list = seq2str2(list)
-            report_error(f"{list} does not contain match for pattern '{pattern}'.", msg)
+            report_error(
+                f"{seq2str2(list)} does not contain match for pattern '{pattern}'.", msg
+            )
 
     def should_not_contain_match(
         self,
@@ -1782,18 +1794,30 @@ class Collections(_List, _Dictionary):
 
         Exact opposite of [Should Contain Match] keyword. See that keyword
         for information about arguments and usage in general.
+
+        !!! note
+            When using glob patterns, the pattern must match items fully, but
+            when using regular expressions, it is enough if the pattern matches
+            the beginning. This will be changed in the future, though, and a
+            full match will be required regardless the pattern type. Starting
+            from Robot Framework 7.5, there is a warning if this forthcoming
+            change affects the results of this keyword. To avoid the warning,
+            add `.*` at the end of the pattern to preserve the current behavior,
+            or add `$` to require a full match already now.
         """
         matches = self._get_matches(
-            sequence=list,
+            list=list,
             pattern=pattern,
             case_insensitive=case_insensitive,
             whitespace_insensitive=whitespace_insensitive,
             ignore_case=ignore_case,
             ignore_whitespace=ignore_whitespace,
+            regexp_warn_bool_change_only=True,
         )
         if matches:
-            list = seq2str2(list)
-            report_error(f"{list} contains match for pattern '{pattern}'.", msg)
+            report_error(
+                f"{seq2str2(list)} contains match for pattern '{pattern}'.", msg
+            )
 
     def get_matches(
         self,
@@ -1835,9 +1859,19 @@ class Collections(_List, _Dictionary):
             ${matches} =    Get Matches    ${LIST}    no match
             Should Be Empty    ${matches}
         ```
+
+        !!! note
+            When using glob patterns, the pattern must match items fully, but
+            when using regular expressions, it is enough if the pattern matches
+            the beginning. This will be changed in the future, though, and a
+            full match will be required regardless the pattern type. Starting
+            from Robot Framework 7.5, there is a warning if this forthcoming
+            change affects the results of this keyword. To avoid the warning,
+            add `.*` at the end of the pattern to preserve the current behavior,
+            or add `$` to require a full match already now.
         """
         return self._get_matches(
-            sequence=list,
+            list=list,
             pattern=pattern,
             case_insensitive=case_insensitive,
             whitespace_insensitive=whitespace_insensitive,
@@ -1885,6 +1919,16 @@ class Collections(_List, _Dictionary):
             ${matches} =    Get Match Count    ${LIST}    no match
             Should Be Equal    ${matches}    0    type=int
         ```
+
+        !!! note
+            When using glob patterns, the pattern must match items fully, but
+            when using regular expressions, it is enough if the pattern matches
+            the beginning. This will be changed in the future, though, and a
+            full match will be required regardless the pattern type. Starting
+            from Robot Framework 7.5, there is a warning if this forthcoming
+            change affects the results of this keyword. To avoid the warning,
+            add `.*` at the end of the pattern to preserve the current behavior,
+            or add `$` to require a full match already now.
         """
         matches = self.get_matches(
             list=list,
@@ -1898,12 +1942,13 @@ class Collections(_List, _Dictionary):
 
     def _get_matches(
         self,
-        sequence: ListLike,
+        list: ListLike,
         pattern: str,
         case_insensitive: "bool | None" = None,
         whitespace_insensitive: "bool | None" = None,
         ignore_case: bool = True,
         ignore_whitespace: bool = False,
+        regexp_warn_bool_change_only: bool = False,
     ) -> "list[str]":
         # `ignore_xxx` were added in RF 7.0 for consistency reasons.
         # The idea is that they eventually replace `xxx_insensitive`.
@@ -1920,13 +1965,31 @@ class Collections(_List, _Dictionary):
             regexp = True
         elif pattern.startswith("glob="):
             pattern = pattern[5:]
-        matcher = Matcher(
+        match = Matcher(
             pattern,
             caseless=ignore_case,
             spaceless=ignore_whitespace,
             regexp=regexp,
+        ).match
+        matches = [i for i in list if isinstance(i, str) and match(i)]
+        if regexp:
+            full = [i for i in list if isinstance(i, str) and match(i, full=True)]
+            check = bool if regexp_warn_bool_change_only else len
+            if check(matches) != check(full):
+                self._regexp_change_warning(pattern, matches, full)
+        return matches
+
+    def _regexp_change_warning(self, pattern, matches, full_matches):
+        logger.warn(
+            f"Matching list items with regular expressions will change. Currently "
+            f"patterns only need to match the beginning, but a full match is "
+            f"required in the future. The used pattern '{pattern}' currently "
+            f"matches {len(matches)} item{s(matches)}, but in the future it will "
+            f"match {len(full_matches)} item{s(full_matches)}. Change the "
+            f"pattern to '{pattern}.*' if you want to preserve the current "
+            f"behavior, or to '{pattern}$' if you want to require a full match "
+            f"already now."
         )
-        return [s for s in sequence if isinstance(s, str) and matcher.match(s)]
 
 
 def deprecate_no_values(values: "bool | str") -> bool:

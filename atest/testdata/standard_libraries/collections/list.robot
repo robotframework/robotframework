@@ -427,7 +427,6 @@ Get Match Count, Regexp
     1    ${STRINGS}    regexp=wOrD
     2    ${STRINGS}    regexp=word     case_insensitive=True
     2    ${STRINGS}    regexp=wo.*     case_insensitive=True
-    7    ${STRINGS}    regexp=[a-z]    case_insensitive=True
     13   ${STRINGS}    regexp=.*       case_insensitive=False
     6    ${STRINGS}    regexp=.$       case_insensitive=No
 
@@ -439,6 +438,12 @@ Get Match Count, Glob
     2    ${STRINGS}    glob=wo*     case_insensitive=please
     13   ${STRINGS}    glob=*       case_insensitive=
     6    ${STRINGS}    glob=?       case_insensitive=${FALSE}
+
+Get Match Count, regexp change affects results
+    [Template]    Match Count Should Be
+    13   ${STRINGS}    regexp=.
+    13   ${STRINGS}    regexp=.*
+    6    ${STRINGS}    regexp=.$
 
 Get Matches, Case Insensitive
     [Template]    List Should Equal Matches
@@ -461,7 +466,6 @@ Get Matches, Regexp
     ${STRINGS}    regexp=wOrD     ${False}    ${False}    wOrD
     ${STRINGS}    regexp=word     true        false       wOrD    WOrd
     ${STRINGS}    regexp=wo.*     yes         no          wOrD    WOrd
-    ${STRINGS}    regexp=[a-z]    True        False       a       B    b    wOrD    WOrd    regexp=blah    glob=test
     ${STRINGS}    regexp=.*       0           0           @{STRINGS}
     ${STRINGS}    regexp=.$       ${0}        ${0}        a       B    b    1    2    3
 
@@ -473,6 +477,12 @@ Get Matches, Glob
     ${STRINGS}    glob=wo*     ${1}        ${0}        wOrD    WOrd
     ${STRINGS}    glob=*       False       FALSE       @{STRINGS}
     ${STRINGS}    glob=?       ${False}    ${False}    a       B    b    1    2    3
+
+Get Matches, regexp change affects results
+    [Template]    List Should Equal Matches
+    ${STRINGS}    regexp=w      False    False    wOrD
+    ${STRINGS}    regexp=w.*    False    False    wOrD
+    ${STRINGS}    regexp=w$     False    False
 
 Should Contain Match, Case Insensitive
     [Template]    Should Contain Match
@@ -569,6 +579,13 @@ Should Contain Match, Value Not Found And Own Error Message Glob
     [Documentation]    FAIL My error message!
     Should Contain Match    ${STRING}    glob=wOrD?    My error message!
 
+Should Contain Match, regexp change affects results
+    [Documentation]    FAIL    No match!
+    [Template]    Should Contain Match
+    ${STRINGS}    regexp=wOr
+    ${STRINGS}    regexp=wOr.*
+    ${STRINGS}    regexp=wOr$    msg=No match!
+
 Should Not Contain Match, Case Insensitive
     [Template]    Should Not Contain Match
     ${STRINGS}    word
@@ -643,6 +660,13 @@ Should Not Contain Match, Value Found And Own Error Message Regexp
 Should Not Contain Match, Value Found And Own Error Message Glob
     [Documentation]    FAIL My error message!
     Should Not Contain Match    ${STRING}    glob=*    My error message!
+
+Should Not Contain Match, regexp change affects results
+    Run Keyword And Expect Error    Match!
+    ...    Should Not Contain Match    ${STRINGS}    regexp=reg    msg=Match!
+    Run Keyword And Expect Error    Match!
+    ...    Should Not Contain Match    ${STRINGS}    regexp=reg.*    msg=Match!
+    Should Not Contain Match    ${STRINGS}    regexp=reg$
 
 Validate argument conversion errors
     [Template]    Validate invalid argument error

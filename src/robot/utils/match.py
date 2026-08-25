@@ -50,13 +50,24 @@ class Matcher:
             self._normalize = lambda s: s
         self._regexp = self._compile(self._normalize(pattern), regexp=regexp)
 
-    def _compile(self, pattern, regexp=False):
+    def _compile(self, pattern: str, regexp: bool = False) -> "re.Pattern[str]":
         if not regexp:
             pattern = fnmatch.translate(pattern)
         return re.compile(pattern, re.DOTALL)
 
-    def match(self, string: str) -> bool:
-        return self._regexp.match(self._normalize(string)) is not None
+    def match(self, string: str, full: bool = False) -> bool:
+        """Match `string` against the pattern this matcher represents.
+
+        If `full` is true, uses `re.fullmatch` and otherwise uses `re.match`.
+        This only has an effect when using regular expressions. Glob patterns
+        must always match fully.
+
+        `full´ is new in Robot Framework 7.5. Its default value will be changed
+        to `True` in the future and the argument will eventually be removed.
+        """
+        if not full:
+            return self._regexp.match(self._normalize(string)) is not None
+        return self._regexp.fullmatch(self._normalize(string)) is not None
 
     def match_any(self, strings: Iterable[str]) -> bool:
         return any(self.match(s) for s in strings)

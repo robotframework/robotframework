@@ -270,6 +270,10 @@ Get Match Count, Regexp
 Get Match Count, Glob
     Check Test Case    ${TEST NAME}
 
+Get Match Count, regexp change affects results
+    Check Test Case    ${TEST NAME}
+    Check Regexp Change Message    5    .    13    6
+
 Get Matches, Case Insensitive
     Check Test Case    ${TEST NAME}
 
@@ -281,6 +285,10 @@ Get Matches, Regexp
 
 Get Matches, Glob
     Check Test Case    ${TEST NAME}
+
+Get Matches, regexp change affects results
+    Check Test Case    ${TEST NAME}
+    Check Regexp Change Message    7    w    1    0
 
 Should Contain Match, Case Insensitive
     Check Test Case    ${TEST NAME}
@@ -318,6 +326,10 @@ Should Contain Match, Value Not Found and Own Error Message Regexp
 Should Contain Match, Value Not Found and Own Error Message Glob
     Check Test Case    ${TEST NAME}
 
+Should Contain Match, regexp change affects results
+    Check Test Case    ${TEST NAME}
+    Check Regexp Change Message    9    wOr    1    0
+
 Should Not Contain Match, Case Insensitive
     Check Test Case    ${TEST NAME}
 
@@ -351,8 +363,27 @@ Should Not Contain Match, Value Found and Own Error Message Regexp
 Should Not Contain Match, Value Found and Own Error Message Glob
     Check Test Case    ${TEST NAME}
 
+Should Not Contain Match, regexp change affects results
+    Check Test Case    ${TEST NAME}
+    Check Regexp Change Message    9    wOr    1    0
+
 Validate argument conversion errors
     Check Test Case    ${TEST NAME}
 
 Bytes normalization
     Check Test Case    ${TEST NAME}
+
+*** Keywords ***
+Check Regexp Change Message
+    [Arguments]    ${index}    ${pattern}    ${current}    ${future}
+    VAR    ${cs}    ${{robot.utils.plural_or_not(${current})}}
+    VAR    ${fs}    ${{robot.utils.plural_or_not(${future})}}
+    VAR    ${message}
+    ...    Matching list items with regular expressions will change.
+    ...    Currently patterns only need to match the beginning,
+    ...    but a full match is required in the future.
+    ...    The used pattern '${pattern}' currently matches ${current} item${cs},
+    ...    but in the future it will match ${future} item${fs}.
+    ...    Change the pattern to '${pattern}.*' if you want to preserve the current behavior,
+    ...    or to '${pattern}$' if you want to require a full match already now.
+    Check Log Message    ${ERRORS}[${index}]      ${message}    WARN
