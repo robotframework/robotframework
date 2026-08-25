@@ -132,6 +132,12 @@ List Should Contain Value, Value Not Found
 List Should Contain Value, Value Not Found and Own Error Message
     Check Test Case    ${TEST NAME}
 
+List Should Contain Value, Ignore Case
+    Check Test Case    ${TEST NAME}
+
+List Should Contain Value, Ignore Case And Nested List and Dictionary
+    Check Test Case    ${TEST NAME}
+
 List Should Not Contain Value
     Check Test Case    ${TEST NAME}
 
@@ -139,6 +145,9 @@ List Should Not Contain Value, Value Found
     Check Test Case    ${TEST NAME}
 
 List Should Not Contain Value, Value Found and Own Error Message
+    Check Test Case    ${TEST NAME}
+
+List Should Not Contain Value, Ignore Case Does Contain Value
     Check Test Case    ${TEST NAME}
 
 List Should Not Contain Duplicates With No Duplicates
@@ -162,6 +171,9 @@ List Should Not Contain Duplicates With Multiple Duplicates
 List Should Not Contain Duplicates With Custom Error Message
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc[1, 0]}    '6' found 7 times.
+
+List Should Not Contain Duplicates With Ignore Case
+    Check Test Case    ${TEST NAME}
 
 Lists Should Be Equal
     Check Test Case    ${TEST NAME}
@@ -199,6 +211,12 @@ Lists Should Be Equal With Named Indices As Dictionary With Too Few Values
 Lists Should Be Equal Ignore Order
     Check Test Case    ${TEST NAME}
 
+Lists Should Be Equal With Ignore Case
+    Check Test Case    ${TEST NAME}
+
+Lists Should be equal with Ignore Case and Order
+    Check Test Case    ${TEST NAME}
+
 Ignore Order Is Recursive
     Check Test Case    ${TEST NAME}
 
@@ -215,6 +233,9 @@ List Should Contain Sub List With Missing Values And Own Error Message
     Check Test Case    ${TEST NAME}
 
 List Should Contain Sub List With Missing Values And Own and Default Error Messages
+    Check Test Case    ${TEST NAME}
+
+List Should Contain Sub List With Ignore Case
     Check Test Case    ${TEST NAME}
 
 'NO VALUES' is deprecated
@@ -237,118 +258,97 @@ Log List
     Check Log Message    ${tc[4, 0]}    ${three items}    WARN
     Check Log Message    ${tc[5, 0]}    ${three items}    DEBUG
 
-Count Matches In List Case Insensitive
+Get Match Count, Case Insensitive
     Check Test Case    ${TEST NAME}
 
-Count Matches In List Whitespace Insensitive
+Get Match Count, Whitespace Insensitive
     Check Test Case    ${TEST NAME}
 
-Count Matches In List Regexp
+Get Match Count, Regexp
     Check Test Case    ${TEST NAME}
 
-Count Matches In List Glob
+Get Match Count, Glob
     Check Test Case    ${TEST NAME}
 
-Get Matches In List Case Insensitive
+Get Matches, Case Insensitive
     Check Test Case    ${TEST NAME}
 
-Get Matches In List Whitespace Insensitive
+Get Matches, Whitespace Insensitive
     Check Test Case    ${TEST NAME}
 
-Get Matches In List Regexp
+Get Matches, Regexp
     Check Test Case    ${TEST NAME}
 
-Get Matches In List Glob
+Get Matches, Glob
     Check Test Case    ${TEST NAME}
 
-List Should Contain Value Case Insensitive
+Should Contain Match, Case Insensitive
     Check Test Case    ${TEST NAME}
 
-List Should Contain Value Whitespace Insensitive
+Should Contain Match, Whitespace Insensitive
     Check Test Case    ${TEST NAME}
 
-List Should Contain Value Regexp
+Should Contain Match, Regexp
     Check Test Case    ${TEST NAME}
 
-List Should Contain Value Glob
+Should Contain Match, Glob
     Check Test Case    ${TEST NAME}
 
-List Should Contain Value, Value Not Found Case Insensitive
+Should Contain Match, Value Not Found Case Insensitive
     Check Test Case    ${TEST NAME}
 
-List Should Contain Value, Value Not Found Whitespace Insensitive
+Should Contain Match, Value Not Found Whitespace Insensitive
     Check Test Case    ${TEST NAME}
 
-List Should Contain Value, Value Not Found Regexp
+Should Contain Match, Value Not Found Regexp
     Check Test Case    ${TEST NAME}
 
-List Should Contain Value, Value Not Found Glob
+Should Contain Match, Value Not Found Glob
     Check Test Case    ${TEST NAME}
 
-List Should Contain Value, Value Not Found And Own Error Message Case Insensitive
+Should Contain Match, Value Not Found And Own Error Message Case Insensitive
     Check Test Case    ${TEST NAME}
 
-List Should Contain Value, Value Not Found And Own Error Message Whitespace Insensitive
+Should Contain Match, Value Not Found And Own Error Message Whitespace Insensitive
     Check Test Case    ${TEST NAME}
 
-List Should Contain Value, Value Not Found and Own Error Message Regexp
+Should Contain Match, Value Not Found and Own Error Message Regexp
     Check Test Case    ${TEST NAME}
 
-List Should Contain Value, Value Not Found and Own Error Message Glob
+Should Contain Match, Value Not Found and Own Error Message Glob
     Check Test Case    ${TEST NAME}
 
-List Should Not Contain Value Case Insensitive
+Should Not Contain Match, Case Insensitive
     Check Test Case    ${TEST NAME}
 
-List Should Not Contain Value Whitespace Insensitive
+Should Not Contain Match, Whitespace Insensitive
     Check Test Case    ${TEST NAME}
 
-List Should Not Contain Value Regexp
+Should Not Contain Match, Regexp
     Check Test Case    ${TEST NAME}
 
-List Should Not Contain Value Glob
+Should Not Contain Match, Glob
     Check Test Case    ${TEST NAME}
 
-List Should Not Contain Value, Value Found Case Insensitive
+Should Not Contain Match, Value Found Case Insensitive
     Check Test Case    ${TEST NAME}
 
-List Should Not Contain Value, Value Found Whitespace Insensitive
+Should Not Contain Match, Value Found Whitespace Insensitive
     Check Test Case    ${TEST NAME}
 
-List Should Not Contain Value, Value Found Regexp
+Should Not Contain Match, Value Found Regexp
     Check Test Case    ${TEST NAME}
 
-List Should Not Contain Value, Value Found Glob
+Should Not Contain Match, Value Found Glob
     Check Test Case    ${TEST NAME}
 
-List Should Not Contain Value, Value Found and Own Error Message Case Insensitive
+Should Not Contain Match, Value Found and Own Error Message Case Insensitive
     Check Test Case    ${TEST NAME}
 
-List Should Not Contain Value, Value Found and Own Error Message Regexp
+Should Not Contain Match, Value Found and Own Error Message Regexp
     Check Test Case    ${TEST NAME}
 
-List Should Not Contain Value, Value Found and Own Error Message Glob
-    Check Test Case    ${TEST NAME}
-
-Lists Should Be Equal With Ignore Case
-    Check Test Case    ${TEST NAME}
-
-List Should Contain Value With Ignore Case
-    Check Test Case    ${TEST NAME}
-
-List Should Not Contain Value With Ignore Case Does Contain Value
-    Check Test Case    ${TEST NAME}
-
-List Should Contain Sub List With Ignore Case
-    Check Test Case    ${TEST NAME}
-
-List Should Not Contain Duplicates With Ignore Case
-    Check Test Case    ${TEST NAME}
-
-List Should Contain Value With Ignore Case And Nested List and Dictionary
-    Check Test Case    ${TEST NAME}
-
-Lists Should be equal with Ignore Case and Order
+Should Not Contain Match, Value Found and Own Error Message Glob
     Check Test Case    ${TEST NAME}
 
 Validate argument conversion errors

@@ -228,6 +228,12 @@ List Should Contain Value, Value Not Found And Own Error Message
     [Documentation]    FAIL My error message!
     List Should Contain Value    ${L1}    2    My error message!
 
+List Should Contain Value, Ignore Case
+    List Should Contain Value    ['a', 'b']    value=A    ignore_case=True
+
+List Should Contain Value, Ignore Case And Nested List and Dictionary
+    List Should Contain Value    ['a', ['b', 'c']]    ${{['B', 'C']}}    ignore_case=True
+
 List Should Not Contain Value
     List Should Not Contain Value    ${L1}      2
     List Should Not Contain Value    ${DICT}    2
@@ -239,6 +245,10 @@ List Should Not Contain Value, Value Found
 List Should Not Contain Value, Value Found And Own Error Message
     [Documentation]    FAIL My error message!
     List Should Not Contain Value    ${L1}    1    My error message!
+
+List Should Not Contain Value, Ignore Case Does Contain Value
+    [Documentation]  FAIL [ a | b ] contains value 'A'.
+    List Should Not Contain Value    ['a', 'b']    value=A    ignore_case=True
 
 List Should Not Contain Duplicates With No Duplicates
     FOR    ${list}    IN    ${L0}    ${L1}    ${L2}    ${L3}    ${L4}    ${TUPLE}
@@ -263,6 +273,10 @@ List Should Not Contain Duplicates With Custom Error Message
     [Documentation]    FAIL My special error
     List Should Not Contain Duplicates    ${L0}           Not used custom error
     List Should Not Contain Duplicates    ${{[6] * 7}}    My special error
+
+List Should Not Contain Duplicates With Ignore Case
+    [Documentation]    FAIL 'a' and 'c' found multiple times.
+    List Should Not Contain Duplicates    ['A', 'B', 'C', 'a', 'c']    ignore_case=True
 
 Lists Should Be Equal
     [Template]    Lists Should Be Equal
@@ -341,6 +355,18 @@ Lists Should Be Equal Ignore Order
     VAR    @{list2}    D    B    C    A
     Lists Should Be Equal    ${list1}    ${list2}    ignore_order=True
 
+Lists Should Be Equal With Ignore Case
+    [Template]    Lists Should Be Equal
+    ${L0}                       ${L0}                        ignore_case=True
+    ${LONG}                     ${LONG}                      ignore_case=True
+    \['a', 'b', 'c', 1, 2]       ['A', 'B', 'C', 1, 2]       ignore_case=True
+    (['a', {'b': 'c'}], 'd')     [['A', {'B': 'C'}], 'D']    ignore_case=True
+
+Lists Should be equal with Ignore Case and Order
+    [Template]    Lists Should Be Equal
+    \['a', 'b', 'c']    ['B', 'C', 'A']    ignore_case=True    ignore_order=True
+    \[('A', 'B')]       [('b', 'a')]       ignore_case=True    ignore_order=True
+
 Ignore Order Is Recursive
     Lists Should Be Equal    [(1, 2, 3), (4, 5, 6)]    [(6, 4, 5), (3, 1, 2)]    ignore_order=yes
 
@@ -364,6 +390,9 @@ List Should Contain Sub List With Missing Values And Own And Default Error Messa
     ...    Following values are missing: 'x' and 'y'
     List Should Contain Sub List    ${L4}    ${{'x', 'y'}}    My error message!    values=please
 
+List Should Contain Sub List With Ignore Case
+    List Should Contain Sub List    ['A', 'b', 'C']    ['B', 'c']    ignore_case=True
+
 'NO VALUES' is deprecated
     [Documentation]    FAIL Message
     Lists Should Be Equal    ${L4}    ${L4}    values=NO VALUES
@@ -377,7 +406,7 @@ Log List
     Log List    ${L3}    warn
     Log List    ${L3}    DEbug
 
-Count Matches In List Case Insensitive
+Get Match Count, Case Insensitive
     [Template]    Match Count Should Be
     1    ${STRINGS}    a
     0    ${STRINGS}    A
@@ -386,13 +415,13 @@ Count Matches In List Case Insensitive
     2    ${STRINGS}    b       case_insensitive=True
     1    ${STRINGS}    b
 
-Count Matches In List Whitespace Insensitive
+Get Match Count, Whitespace Insensitive
     [Template]    Match Count Should Be
     4    ${WHITESPACE_STRINGS}    word     whitespace_insensitive=True    case_insensitive=True
     3    ${WHITESPACE_STRINGS}    word     whitespace_insensitive=yes
     0    ${WHITESPACE_STRINGS}    words    whitespace_insensitive=${1}    case_insensitive=${2}
 
-Count Matches In List Regexp
+Get Match Count, Regexp
     [Template]    Match Count Should Be
     2    ${STRINGS}    regexp=.*a.*
     1    ${STRINGS}    regexp=wOrD
@@ -402,7 +431,7 @@ Count Matches In List Regexp
     13   ${STRINGS}    regexp=.*       case_insensitive=False
     6    ${STRINGS}    regexp=.$       case_insensitive=No
 
-Count Matches In List Glob
+Get Match Count, Glob
     [Template]    Match Count Should Be
     2    ${STRINGS}    glob=*a*
     1    ${STRINGS}    glob=wOrD
@@ -411,7 +440,7 @@ Count Matches In List Glob
     13   ${STRINGS}    glob=*       case_insensitive=
     6    ${STRINGS}    glob=?       case_insensitive=${FALSE}
 
-Get Matches In List Case Insensitive
+Get Matches, Case Insensitive
     [Template]    List Should Equal Matches
     ${STRINGS}    a       ${False}    ${False}    a
     ${STRINGS}    A       ${True}     ${False}    a
@@ -420,13 +449,13 @@ Get Matches In List Case Insensitive
     ${STRINGS}    b       1           0           B       b
     ${STRINGS}    b       no          NO          b
 
-Get Matches In List Whitespace Insensitive
+Get Matches, Whitespace Insensitive
     [Template]    List Should Equal Matches
     ${WHITESPACE_STRINGS}    word    False      True    w o r d    w\no\nr\nd    w\no r\nd
     ${WHITESPACE_STRINGS}    word    ${True}    ${True}    w o r d    w\no\nr\nd    w\no r\nd    W O R D
     ${WHITESPACE_STRINGS}    words   yes        yes
 
-Get Matches In List Regexp
+Get Matches, Regexp
     [Template]    List Should Equal Matches
     ${STRINGS}    regexp=.*a.*    False       False       a      regexp=blah
     ${STRINGS}    regexp=wOrD     ${False}    ${False}    wOrD
@@ -436,7 +465,7 @@ Get Matches In List Regexp
     ${STRINGS}    regexp=.*       0           0           @{STRINGS}
     ${STRINGS}    regexp=.$       ${0}        ${0}        a       B    b    1    2    3
 
-Get Matches In List Glob
+Get Matches, Glob
     [Template]    List Should Equal Matches
     ${STRINGS}    glob=*a*     False       False       a       regexp=blah
     ${STRINGS}    glob=wOrD    false       false       wOrD
@@ -445,7 +474,7 @@ Get Matches In List Glob
     ${STRINGS}    glob=*       False       FALSE       @{STRINGS}
     ${STRINGS}    glob=?       ${False}    ${False}    a       B    b    1    2    3
 
-List Should Contain Value Case Insensitive
+Should Contain Match, Case Insensitive
     [Template]    Should Contain Match
     ${STRINGS}    a
     ${STRINGS}    \${cmd list}
@@ -466,7 +495,7 @@ List Should Contain Value Case Insensitive
     ${STRINGS}    WORD    ignore_case=TRUE
     ${STRINGS}    WoRd    ignore_case=true
 
-List Should Contain Value Whitespace Insensitive
+Should Contain Match, Whitespace Insensitive
     [Template]    Should Contain Match
     # Old config.
     ${WHITESPACE_STRINGS}    word           whitespace_insensitive=1    case_insensitive=${0}
@@ -483,7 +512,7 @@ List Should Contain Value Whitespace Insensitive
     ${WHITESPACE_STRINGS}    glob=wo*       ignore_whitespace=5
     ${WHITESPACE_STRINGS}    glob=Wo*       ignore_whitespace=6    ignore_case=${3}
 
-List Should Contain Value Regexp
+Should Contain Match, Regexp
     [Template]    Should Contain Match
     ${STRINGS}    regexp=.*a.*
     ${STRINGS}    regexp=wOrD
@@ -495,7 +524,7 @@ List Should Contain Value Regexp
     ${STRINGS}    regexp=\\w{4}
     ${STRINGS}    regexp=glob=.*
 
-List Should Contain Value Glob
+Should Contain Match, Glob
     [Template]    Should Contain Match
     ${STRINGS}    glob=*a*
     ${STRINGS}    glob=wOrD
@@ -508,39 +537,39 @@ List Should Contain Value Glob
     ${STRINGS}    glob=?o??        case_insensitive=yes
     ${STRINGS}    glob=regexp=*    case_insensitive=xxx
 
-List Should Contain Value, Value Not Found Case Insensitive
+Should Contain Match, Value Not Found Case Insensitive
     [Documentation]    FAIL [ wOrD ] does not contain match for pattern 'words'.
     Should Contain Match    ${STRING}    words    case_insensitive=True
 
-List Should Contain Value, Value Not Found Whitespace Insensitive
+Should Contain Match, Value Not Found Whitespace Insensitive
     [Documentation]    FAIL [ w o r d | w\no\nr\nd | w\no r\nd | W O R D ] does not contain match for pattern 'words'.
     Should Contain Match    ${WHITESPACE_STRINGS}    words    whitespace_insensitive=True
 
-List Should Contain Value, Value Not Found Regexp
+Should Contain Match, Value Not Found Regexp
     [Documentation]    FAIL [ wOrD ] does not contain match for pattern 'regexp=wOrD.'.
     Should Contain Match    ${STRING}    regexp=wOrD.
 
-List Should Contain Value, Value Not Found Glob
+Should Contain Match, Value Not Found Glob
     [Documentation]    FAIL [ wOrD ] does not contain match for pattern 'glob=wOrD?'.
     Should Contain Match    ${STRING}    glob=wOrD?
 
-List Should Contain Value, Value Not Found And Own Error Message Case Insensitive
+Should Contain Match, Value Not Found And Own Error Message Case Insensitive
     [Documentation]    FAIL My error message!
     Should Contain Match    ${STRING}    words    My error message!    case_insensitive=True
 
-List Should Contain Value, Value Not Found And Own Error Message Whitespace Insensitive
+Should Contain Match, Value Not Found And Own Error Message Whitespace Insensitive
     [Documentation]    FAIL My error message!
     Should Contain Match    ${WHITESPACE_STRINGS}    words    My error message!    whitespace_insensitive=True
 
-List Should Contain Value, Value Not Found And Own Error Message Regexp
+Should Contain Match, Value Not Found And Own Error Message Regexp
     [Documentation]    FAIL My error message!
     Should Contain Match    ${STRING}    regexp=wOrD.    My error message!
 
-List Should Contain Value, Value Not Found And Own Error Message Glob
+Should Contain Match, Value Not Found And Own Error Message Glob
     [Documentation]    FAIL My error message!
     Should Contain Match    ${STRING}    glob=wOrD?    My error message!
 
-List Should Not Contain Value Case Insensitive
+Should Not Contain Match, Case Insensitive
     [Template]    Should Not Contain Match
     ${STRINGS}    word
     # Old config.
@@ -552,7 +581,7 @@ List Should Not Contain Value Case Insensitive
     ${STRINGS}    5        ignore_case=yes
     ${STRINGS}    AB       ignore_case=${True}
 
-List Should Not Contain Value Whitespace Insensitive
+Should Not Contain Match, Whitespace Insensitive
     [Template]    Should Not Contain Match
     ${WHITESPACE_STRINGS}    wOrD
     ${WHITESPACE_STRINGS}    regexp=.*words.*
@@ -572,7 +601,7 @@ List Should Not Contain Value Whitespace Insensitive
     ${WHITESPACE_STRINGS}    glob=*words*        ignore_whitespace=1
     ${WHITESPACE_STRINGS}    glob=*words*        ignore_whitespace=${1}         ignore_case=${2}
 
-List Should Not Contain Value Regexp
+Should Not Contain Match, Regexp
     [Template]    Should Not Contain Match
     ${STRINGS}    regexp=.*words.*
     ${STRINGS}    regexp=[5-7]
@@ -580,69 +609,40 @@ List Should Not Contain Value Regexp
     ${STRINGS}    regexp=(AB)         case_insensitive=True
     ${STRINGS}    regexp=\\w{9}
 
-List Should Not Contain Value Glob
+Should Not Contain Match, Glob
     [Template]    Should Not Contain Match
     ${STRINGS}    glob=*words*    case_insensitive=True
     ${STRINGS}    glob=[5]        case_insensitive=yes
     ${STRINGS}    glob=*word?
     ${STRINGS}    glob=AB*        case_insensitive=${True}
 
-List Should Not Contain Value, Value Found Case Insensitive
+Should Not Contain Match, Value Found Case Insensitive
     [Documentation]    FAIL [ wOrD ] contains match for pattern 'word'.
     Should Not Contain Match    ${STRING}    word    case_insensitive=True
 
-List Should Not Contain Value, Value Found Whitespace Insensitive
+Should Not Contain Match, Value Found Whitespace Insensitive
     [Documentation]    FAIL [ w o r d | w\no\nr\nd | w\no r\nd | W O R D ] contains match for pattern 'word'.
     Should Not Contain Match    ${WHITESPACE_STRINGS}    word    whitespace_insensitive=True
 
-List Should Not Contain Value, Value Found Regexp
+Should Not Contain Match, Value Found Regexp
     [Documentation]    FAIL [ wOrD ] contains match for pattern 'regexp=.*w.*'.
     Should Not Contain Match    ${STRING}    regexp=.*w.*
 
-List Should Not Contain Value, Value Found Glob
+Should Not Contain Match, Value Found Glob
     [Documentation]    FAIL [ wOrD ] contains match for pattern 'glob=*'.
     Should Not Contain Match    ${STRING}    glob=*
 
-List Should Not Contain Value, Value Found And Own Error Message Case Insensitive
+Should Not Contain Match, Value Found And Own Error Message Case Insensitive
     [Documentation]    FAIL My error message!
     Should Not Contain Match    ${STRING}    word    My error message!    case_insensitive=True
 
-List Should Not Contain Value, Value Found And Own Error Message Regexp
+Should Not Contain Match, Value Found And Own Error Message Regexp
     [Documentation]    FAIL My error message!
     Should Not Contain Match    ${STRING}    regexp=.*w.*    My error message!
 
-List Should Not Contain Value, Value Found And Own Error Message Glob
+Should Not Contain Match, Value Found And Own Error Message Glob
     [Documentation]    FAIL My error message!
     Should Not Contain Match    ${STRING}    glob=*    My error message!
-
-Lists Should Be Equal With Ignore Case
-    [Template]    Lists Should Be Equal
-    ${L0}                       ${L0}                        ignore_case=True
-    ${LONG}                     ${LONG}                      ignore_case=True
-    \['a', 'b', 'c', 1, 2]       ['A', 'B', 'C', 1, 2]       ignore_case=True
-    (['a', {'b': 'c'}], 'd')     [['A', {'B': 'C'}], 'D']    ignore_case=True
-
-List Should Contain Value With Ignore Case
-    List Should Contain Value    ['a', 'b']    value=A    ignore_case=True
-
-List Should Not Contain Value With Ignore Case Does Contain Value
-    [Documentation]  FAIL [ a | b ] contains value 'A'.
-    List Should Not Contain Value    ['a', 'b']    value=A    ignore_case=True
-
-List Should Contain Sub List With Ignore Case
-    List Should Contain Sub List    ['A', 'b', 'C']    ['B', 'c']    ignore_case=True
-
-List Should Not Contain Duplicates With Ignore Case
-    [Documentation]    FAIL 'a' and 'c' found multiple times.
-    List Should Not Contain Duplicates    ['A', 'B', 'C', 'a', 'c']    ignore_case=True
-
-List Should Contain Value With Ignore Case And Nested List and Dictionary
-    List Should Contain Value    ['a', ['b', 'c']]    ${{['B', 'C']}}    ignore_case=True
-
-Lists Should be equal with Ignore Case and Order
-    [Template]    Lists Should Be Equal
-    \['a', 'b', 'c']    ['B', 'C', 'A']    ignore_case=True    ignore_order=True
-    \[('A', 'B')]       [('b', 'a')]       ignore_case=True    ignore_order=True
 
 Validate argument conversion errors
     [Template]    Validate invalid argument error
@@ -702,7 +702,7 @@ Create Lists For The Tests
     VAR    @{STRING}     wOrD                                scope=TEST
     VAR    @{STRINGS}    a    B    b    wOrD    WOrd
     ...    !@#$%^&*()_+-=    \${cmd list}    1    2    3
-    ...    äö .    regexp=blah    glob=test    scope=TEST
+    ...    äö .    regexp=blah    glob=test                  scope=TEST
     VAR    @{WHITESPACE STRINGS}
     ...    w o r d    w\no\nr\nd    w\no r\nd    W O R D     scope=TEST
 
