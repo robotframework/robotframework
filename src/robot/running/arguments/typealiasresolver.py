@@ -25,8 +25,8 @@ else:
 
 class RecursiveAlias:
 
-    def __init__(self, alias):
-        self.name = alias.__name__ if isinstance(alias, TypeAliasType) else None
+    def __init__(self, name: "str | None"):
+        self.name = name
         self.value = None
 
 
@@ -35,16 +35,19 @@ def resolve_type_alias(alias, context=None):
         context = {}
     if alias in context:
         return context[alias]
-    # RecursiveAlias is used if an alias is used in its own value.
-    context[alias] = RecursiveAlias(alias)
+    # RecursiveAlias is returned above if an alias uses itself in its value.
+    if isinstance(alias, TypeAliasType):
+        context[alias] = recursive = RecursiveAlias(alias.__name__)
+    else:
+        recursive = None
     origin = get_origin(alias)
     if origin:
         value = _resolve_generic(origin, get_args(alias), context)
     else:
         value = _resolve(alias, context)
-    # Add the resolved value to RecursiveAlias that may be used in the value itself.
-    context[alias].value = value
-    # Set value in context to the resolved value.
+    # Update RecursiveAlias and context with the resolved value.
+    if recursive:
+        recursive.value = value
     context[alias] = value
     return value
 

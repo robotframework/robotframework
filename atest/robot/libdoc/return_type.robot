@@ -26,6 +26,10 @@ Union return
 Stringified return
     5    Union    int    float
 
+Type Alias
+    [Tags]    require-py3.12
+    9    int    alias=TypeAlias
+
 Unknown return
     6    Unknown
 
@@ -49,5 +53,6 @@ Return types are in typedocs
     ...    D Parameterized Return
     ...    E Union Return
     ...    F Stringified Return
+    ...    K Type Alias
     2    Standard    list
     ...    D Parameterized Return

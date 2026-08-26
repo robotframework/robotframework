@@ -124,19 +124,21 @@ class TypeInfo(metaclass=SetterAwareType):
     """
 
     is_typed_dict = False
-    __slots__ = ("name", "type")
+    __slots__ = ("name", "type", "alias")
 
     def __init__(
         self,
         name: "str | None" = None,
         type: Any = NOT_SET,
         nested: "Sequence[TypeInfo] | None" = None,
+        alias: "str | None" = None,
     ):
         if type is NOT_SET:
             type = TYPE_NAMES.get(name.lower()) if name else None
         self.name = name
         self.type = type
         self.nested = nested
+        self.alias = alias
 
     @setter
     def nested(
@@ -235,22 +237,27 @@ class TypeInfo(metaclass=SetterAwareType):
         need to handle sequences as unions, it is recommended to call
         :meth:`from_sequence` explicitly.
         """
+        alias = None
         if hint is NOT_SET:
             return cls()
         if isinstance(hint, cls):
             return hint
         if isinstance(hint, TypeAliasType):
+            alias = hint.__name__
             hint = cls._resolve_type_alias(hint)
         if isinstance(hint, ForwardRef):
             hint = hint.__forward_arg__
         if isinstance(hint, typeddict_types):
-            return TypedDictInfo(hint.__name__, hint)
+            return TypedDictInfo(hint.__name__, hint, alias=alias)
         origin = get_origin(hint)
         if origin:
-            if isinstance(origin, TypeAliasType):
-                hint = cls._resolve_type_alias(hint)
-                return cls.from_type_hint(hint, sequence_is_union)
             args = get_args(hint)
+            if isinstance(origin, TypeAliasType):
+                info = cls.from_type_hint(
+                    cls._resolve_type_alias(hint), sequence_is_union
+                )
+                info.alias = f"{hint.__name__}[{', '.join(type_repr(a) for a in args)}]"
+                return info
             if origin is UnionType or origin is Union:
                 origin = NOT_SET
                 nested = cls._validate_union_params(
@@ -265,7 +272,7 @@ class TypeInfo(metaclass=SetterAwareType):
                 nested = [cls.from_type_hint(a) for a in args]
             else:
                 nested = None
-            return cls(type_repr(hint, nested=False), origin, nested)
+            return cls(type_repr(hint, nested=False), origin, nested, alias=alias)
         if isinstance(hint, str):
             return cls.from_string(hint)
         if isinstance(hint, RecursiveAlias):
@@ -291,7 +298,7 @@ class TypeInfo(metaclass=SetterAwareType):
         else:
             name = str(hint)
             hint = NOT_SET
-        return cls(name, hint)
+        return cls(name, hint, alias=alias)
 
     @classmethod
     def _resolve_type_alias(cls, alias):
@@ -471,6 +478,8 @@ class TypeInfo(metaclass=SetterAwareType):
         return converter
 
     def __str__(self):
+        if self.alias:
+            return self.alias
         if self.is_union:
             return " | ".join(str(n) for n in self.nested)
         name = self.name or ""
@@ -489,8 +498,8 @@ class TypedDictInfo(TypeInfo):
     is_typed_dict = True
     __slots__ = ("annotations", "required")
 
-    def __init__(self, name: str, type: type):
-        super().__init__(name, type)
+    def __init__(self, name: str, type: Any, alias: "str | None" = None):
+        super().__init__(name, type, alias=alias)
         type_hints = self._get_type_hints(type)
         # __required_keys__ is new in Python 3.9.
         self.required = getattr(type, "__required_keys__", frozenset())

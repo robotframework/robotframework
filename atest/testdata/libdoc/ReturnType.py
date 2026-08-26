@@ -1,9 +1,15 @@
+import sys
 from typing import List, NoReturn, Union
 
-try:
+if sys.version_info >= (3, 11):
     from typing import Never
-except ImportError:  # Python < 3.11
+else:
     from typing_extensions import Never
+
+if sys.version_info >= (3, 12):
+    exec("type TypeAlias = int")
+else:
+    TypeAlias = int
 
 
 class Unknown:
@@ -48,3 +54,7 @@ def I_Never() -> Never:
 
 def J_NoReturn() -> NoReturn:
     raise AssertionError
+
+
+def K_type_alias() -> TypeAlias:
+    return 42

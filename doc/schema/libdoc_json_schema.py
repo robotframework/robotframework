@@ -86,6 +86,7 @@ class TypeInfo(BaseModel):
     typedoc: Union[str, None] = Field(description="Map type to info in 'typedocs'.")
     nested: List["TypeInfo"]
     union: bool
+    alias: Union[str, None]
 
 
 class Argument(BaseModel):

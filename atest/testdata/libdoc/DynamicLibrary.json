@@ -3,7 +3,7 @@
   "name": "DynamicLibrary",
   "doc": "<p>Dummy documentation for <span class=\"name\">__intro__</span>.</p>",
   "version": "0.1",
-  "generated": "2026-08-03T15:16:14+00:00",
+  "generated": "2026-08-26T10:47:30+00:00",
   "type": "LIBRARY",
   "scope": "TEST",
   "docFormat": "HTML",
@@ -661,7 +661,8 @@
             "name": "int",
             "typedoc": "integer",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -684,7 +685,8 @@
             "name": "bool",
             "typedoc": "boolean",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
@@ -696,7 +698,8 @@
         "name": "int",
         "typedoc": "integer",
         "nested": [],
-        "union": false
+        "union": false,
+        "alias": null
       },
       "returnDoc": "",
       "raises": {},

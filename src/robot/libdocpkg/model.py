@@ -242,4 +242,5 @@ class KeywordDoc(Sortable):
             "typedoc": type_docs.get(info.name),
             "nested": [self._type_to_dict(i, type_docs) for i in nested],
             "union": info.is_union,
+            "alias": info.alias,
         }

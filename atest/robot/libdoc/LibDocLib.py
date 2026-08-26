@@ -88,7 +88,7 @@ class LibDocLib:
             ArgInfo(
                 kind=model["kind"],
                 name=model["name"],
-                type=self._get_type_info(model["type"]),
+                type=self._get_type_info(model["type"], model["alias"]),
                 default=self._get_default(model["default"]),
             )
         )
@@ -103,13 +103,16 @@ class LibDocLib:
             )
         )
 
-    def _get_type_info(self, data):
+    def _get_type_info(self, data, alias=None):
         if not data:
             return None
         if isinstance(data, str):
-            return TypeInfo.from_string(data)
-        nested = [self._get_type_info(n) for n in data.get("nested", ())]
-        return TypeInfo(data["name"], None, nested=nested or None)
+            info = TypeInfo.from_string(data)
+        else:
+            nested = [self._get_type_info(n) for n in data.get("nested", ())]
+            info = TypeInfo(data["name"], None, nested=nested or None)
+        info.alias = alias
+        return info
 
     def _get_default(self, data):
         return data if data is not None else NOT_SET

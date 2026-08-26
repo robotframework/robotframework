@@ -87,6 +87,10 @@ class XmlDocBuilder:
 
     def _create_arguments(self, elem, kw: KeywordDoc):
         spec = kw.args
+        if not spec.docs:
+            spec.docs = {}
+        if not spec.types:
+            spec.types = {}
         positional_only = []
         positional_or_named = []
         named_only = []
@@ -108,14 +112,10 @@ class XmlDocBuilder:
                 spec.var_named = name
             doc_elem = arg.find("doc")
             if doc_elem is not None:
-                if not spec.docs:
-                    spec.docs = {}
                 spec.docs[name] = doc_elem.text or ""
             default_elem = arg.find("default")
             if default_elem is not None:
                 spec.defaults[name] = default_elem.text or ""
-            if not spec.types:
-                spec.types = {}
             type_docs = {}
             type_elems = arg.findall("type")
             if len(type_elems) == 1 and "name" in type_elems[0].attrib:
@@ -137,7 +137,7 @@ class XmlDocBuilder:
             self._parse_type_info(child, type_docs)
             for child in type_elem.findall("type")
         ]
-        return TypeInfo(name, None, nested=nested or None)
+        return TypeInfo(name, None, nested or None, type_elem.get("alias"))
 
     def _parse_legacy_type_info(self, type_elems, type_docs):
         types = []

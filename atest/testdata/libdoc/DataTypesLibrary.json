@@ -3,7 +3,7 @@
   "name": "DataTypesLibrary",
   "doc": "<p>This Library has Data Types.</p>\n<p>It has some in <code>__init__</code> and others in the <a href=\"#Keywords\" title=\"&quot;Keywords&quot; section\" class=\"name\">Keywords</a>.</p>\n<p>Custom data types include <a href=\"#type-GeoLocation\" title=\"&quot;GeoLocation&quot; type\" class=\"name\">GeoLocation</a> and <a href=\"#type-Small\" title=\"&quot;Small&quot; type\" class=\"name\">Small</a>.</p>",
   "version": "",
-  "generated": "2026-07-04T12:50:42+00:00",
+  "generated": "2026-08-26T10:46:54+00:00",
   "type": "LIBRARY",
   "scope": "TEST",
   "docFormat": "HTML",
@@ -23,7 +23,8 @@
             "name": "Small",
             "typedoc": "Small",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "one",
           "kind": "POSITIONAL_OR_NAMED",
@@ -65,16 +66,19 @@
                 "name": "AssertionOperator",
                 "typedoc": "AssertionOperator",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -88,7 +92,8 @@
             "name": "str",
             "typedoc": "string",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "something?",
           "kind": "POSITIONAL_OR_NAMED",
@@ -115,7 +120,8 @@
             "name": "CustomType",
             "typedoc": "CustomType",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -129,7 +135,8 @@
             "name": "CustomType2",
             "typedoc": "CustomType2",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -143,7 +150,8 @@
             "name": "CustomType",
             "typedoc": "CustomType",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -157,7 +165,8 @@
             "name": "Unknown",
             "typedoc": null,
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -188,52 +197,61 @@
                 "name": "bool",
                 "typedoc": "boolean",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "float",
                 "typedoc": "float",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "AssertionOperator",
                 "typedoc": "AssertionOperator",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "Small",
                 "typedoc": "Small",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "GeoLocation",
                 "typedoc": "GeoLocation",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "equal",
           "kind": "POSITIONAL_OR_NAMED",
@@ -249,7 +267,8 @@
             "name": "int",
             "typedoc": "integer",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           {
             "name": "List",
@@ -259,13 +278,16 @@
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": false
+            "union": false,
+            "alias": null
           }
         ],
-        "union": true
+        "union": true,
+        "alias": null
       },
       "returnDoc": "",
       "raises": {},
@@ -285,7 +307,8 @@
             "name": "GeoLocation",
             "typedoc": "GeoLocation",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -297,7 +320,8 @@
         "name": "bool",
         "typedoc": "boolean",
         "nested": [],
-        "union": false
+        "union": false,
+        "alias": null
       },
       "returnDoc": "",
       "raises": {},
@@ -321,10 +345,12 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -342,16 +368,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -365,7 +394,8 @@
             "name": "Any",
             "typedoc": "Any",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -383,10 +413,12 @@
                 "name": "object",
                 "typedoc": "object",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
@@ -417,40 +449,47 @@
                 "name": "1",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "'xxx'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "b'yyy'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "True",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "one",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -519,7 +558,7 @@
     {
       "type": "Standard",
       "name": "boolean",
-      "doc": "<p>Strings <code>TRUE</code>, <code>YES</code>, <code>ON</code>, <code>1</code> and possible localization specific \"true strings\" are converted to Boolean <code>True</code>, the empty string, strings <code>FALSE</code>, <code>NO</code>, <code>OFF</code> and <code>0</code> and possibly localization specific \"false strings\" are converted to Boolean <code>False</code>, and the string <code>NONE</code> is converted to the Python <code>None</code> object. Other strings and all other values are passed as-is, allowing keywords to handle them specially if needed. All string comparisons are case-insensitive.</p>\n<p>Examples: <code>TRUE</code> (converted to <code>True</code>), <code>off</code> (converted to <code>False</code>), <code>example</code> (used as-is)</p>",
+      "doc": "<p>Strings <code>TRUE</code>, <code>YES</code>, <code>ON</code>, <code>1</code> and possible localization specific \"true strings\"\nare converted to Boolean <code>True</code>, the empty string, strings <code>FALSE</code>, <code>NO</code>, <code>OFF</code>\nand <code>0</code> and possibly localization specific \"false strings\" are converted to\nBoolean <code>False</code>, and the string <code>NONE</code> is converted to the Python <code>None</code> object.\nOther strings and all other values are passed as-is, allowing keywords to handle\nthem specially if needed.</p>\n<p>All string comparisons are case-insensitive.</p>\n<p>Examples: <code>TRUE</code> (converted to <code>True</code>), <code>off</code> (converted to <code>False</code>), <code>example</code>\n(used as-is)</p>",
       "usages": [
         "Funny Unions",
         "Set Location"
@@ -555,7 +594,7 @@
     {
       "type": "Standard",
       "name": "dictionary",
-      "doc": "<p>Strings must be Python <a href=\"https://docs.python.org/library/stdtypes.html#dict\">dictionary</a> literals. They are converted to actual dictionaries using the <a href=\"https://docs.python.org/library/ast.html#ast.literal_eval\">ast.literal_eval</a> function. They can contain any values <code>ast.literal_eval</code> supports, including dictionaries and other collections.</p>\n<p>Any mapping is accepted and converted to a <code>dict</code>.</p>\n<p>If the type has nested types like <code>dict[str, int]</code>, items are converted to those types automatically. This in new in Robot Framework 6.0.</p>\n<p>Examples: <code>{'a': 1, 'b': 2}</code>, <code>{'key': 1, 'nested': {'key': 2}}</code></p>",
+      "doc": "<p>Strings must be Python <a href=\"https://docs.python.org/library/stdtypes.html#dict\">dictionary</a> literals. They are converted to actual\ndictionaries using the <a href=\"https://docs.python.org/library/stdtypes.html#ast.literal_eval\">ast.literal_eval</a> function. They can contain any values\n<code>ast.literal_eval</code> supports, including dictionaries and other collections.</p>\n<p>Any mapping is accepted and converted to a <code>dict</code>.</p>\n<p>If the type has nested types like <code>dict[str, int]</code>, items are converted to those\ntypes automatically. This in new in Robot Framework 6.0.</p>\n<p>Examples: <code>{'a': 1, 'b': 2}</code>, <code>{'key': 1, 'nested': {'key': 2}}</code></p>",
       "usages": [
         "Typing Types"
       ],
@@ -609,7 +648,7 @@
     {
       "type": "Standard",
       "name": "integer",
-      "doc": "<p>Conversion is done using Python's <a href=\"https://docs.python.org/library/functions.html#int\">int</a> built-in function. Floating point numbers are accepted only if they can be represented as integers exactly. For example, <code>1.0</code> is accepted and <code>1.1</code> is not.</p>\n<p>It is possible to use hexadecimal, octal and binary numbers by prefixing values with <code>0x</code>, <code>0o</code> and <code>0b</code>, respectively. Spaces and underscores can be used as visual separators for digit grouping purposes.</p>\n<p>Examples: <code>42</code>, <code>-1</code>, <code>0b1010</code>, <code>10 000 000</code>, <code>0xBAD_C0FFEE</code></p>",
+      "doc": "<p>Conversion is done using Python's <a href=\"https://docs.python.org/library/functions.html#int\">int</a> built-in function. Floating point numbers\nare accepted only if they can be represented as integers exactly. For example,\n<code>1.0</code> is accepted but <code>1.1</code> is not.</p>\n<p>It is possible to use hexadecimal, octal and binary numbers by prefixing values\nwith <code>0x</code>, <code>0o</code> and <code>0b</code>, respectively.</p>\n<p>Spaces and underscores can be used as visual separators for digit grouping purposes.</p>\n<p>Examples: <code>42</code>, <code>-1</code>, <code>0b1010</code>, <code>10 000 000</code>, <code>0xBAD_C0FFEE</code></p>",
       "usages": [
         "Funny Unions",
         "Typing Types"
@@ -622,7 +661,7 @@
     {
       "type": "Standard",
       "name": "list",
-      "doc": "<p>Strings must be Python <a href=\"https://docs.python.org/library/stdtypes.html#list\">list</a> or <a href=\"https://docs.python.org/library/stdtypes.html#tuple\">tuple</a> literals. They are converted using the <a href=\"https://docs.python.org/library/ast.html#ast.literal_eval\">ast.literal_eval</a> function and possible tuples converted further to lists. They can contain any values <code>ast.literal_eval</code> supports, including lists and other collections.</p>\n<p>If the argument is a list, it is used without conversion. Tuples and other sequences are converted to lists.</p>\n<p>If the type has nested types like <code>list[int]</code>, items are converted to those types automatically.</p>\n<p>Examples: <code>['one', 'two']</code>, <code>[('one', 1), ('two', 2)]</code></p>\n<p>Support to convert nested types is new in Robot Framework 6.0. Support for tuple literals is new in Robot Framework 7.4.</p>",
+      "doc": "<p>Strings must be Python <a href=\"https://docs.python.org/library/stdtypes.html#list\">list</a> or <a href=\"https://docs.python.org/library/stdtypes.html#tuple\">tuple</a> literals. They are converted using the\n<a href=\"https://docs.python.org/library/stdtypes.html#ast.literal_eval\">ast.literal_eval</a> function and possible tuples are converted further to lists.\nThey can contain any values <code>ast.literal_eval</code> supports, including lists and\nother collections.</p>\n<p>If the argument is a list, it is used without conversion. Tuples and other\nsequences are converted to lists.</p>\n<p>If the type has nested types like <code>list[int]</code>, items are converted to those\ntypes automatically.</p>\n<p>Examples: <code>['one', 'two']</code>, <code>[('one', 1), ('two', 2)]</code></p>\n<p>Support to convert nested types is new in Robot Framework 6.0. Support for tuple\nliterals is new in Robot Framework 7.4.</p>",
       "usages": [
         "Funny Unions",
         "Typing Types"
@@ -635,7 +674,7 @@
     {
       "type": "Standard",
       "name": "Literal",
-      "doc": "<p>Only specified values are accepted. Values can be strings, integers, bytes, Booleans, enums and None, and used arguments are converted using the value type specific conversion logic.</p>\n<p>Strings are case, space, underscore and hyphen insensitive, but exact matches have precedence over normalized matches.</p>",
+      "doc": "<p>Only specified values are accepted. Values can be strings, integers, bytes,\nBooleans, enums and None, and used arguments are converted using the value type\nspecific conversion logic.</p>\n<p>String matching is case, space, underscore and hyphen insensitive, but exact\nmatches have precedence over normalized matches.</p>",
       "usages": [
         "X Literal"
       ],
@@ -646,7 +685,7 @@
     {
       "type": "Standard",
       "name": "None",
-      "doc": "<p>String <code>NONE</code> (case-insensitive) and the empty string are converted to the Python <code>None</code> object. Other values cause an error.</p>\n<p>Converting the empty string is new in Robot Framework 7.4.</p>",
+      "doc": "<p>String <code>NONE</code> (case-insensitive) and the empty string are converted to the Python\n<code>None</code> object. Other values cause an error.</p>\n<p>Converting the empty string is new in Robot Framework 7.4.</p>",
       "usages": [
         "Assert Something",
         "Funny Unions"
@@ -700,7 +739,7 @@
     {
       "type": "Standard",
       "name": "string",
-      "doc": "<p>All arguments are converted to Unicode strings.</p>\n<p>Most values are converted simply by using <code>str(value)</code>. An exception is that bytes are mapped directly to Unicode code points with same ordinals. This means that, for example, <code>b\"hyv\\xe4\"</code> becomes <code>\"hyv\u00e4\"</code>.</p>\n<p>Converting bytes specially is new Robot Framework 7.4.</p>",
+      "doc": "<p>All arguments are converted to Unicode strings.</p>\n<p>Most values are converted simply by using <code>str(value)</code>. An exception is that\nbytes are mapped directly to Unicode code points with same ordinals. This means\nthat, for example, <code>b\"hyv\\xe4\"</code> becomes <code>\"hyv\u00e4\"</code>.</p>\n<p>Converting bytes specially is new Robot Framework 7.4.</p>",
       "usages": [
         "Assert Something",
         "Funny Unions",

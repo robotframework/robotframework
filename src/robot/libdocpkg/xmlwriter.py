@@ -101,6 +101,8 @@ class LibdocXmlWriter:
         attrs = {"name": type_info.name}
         if type_info.is_union:
             attrs["union"] = "true"
+        if type_info.alias:
+            attrs["alias"] = type_info.alias
         if type_info.name in type_docs:
             attrs["typedoc"] = type_docs[type_info.name]
         if type_info.nested and not type_info.is_recursive:
