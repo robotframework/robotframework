@@ -46,9 +46,9 @@ class _List:
             The converted list.
 
         Mainly useful for converting tuples and other iterable to lists.
-        Use [Create List] from the [BuiltIn] library for constructing new lists.
+        Use [Create List] for constructing new lists.
 
-        Use [Split String To Characters] from the [String] library for splitting
+        Use [Split String To Characters] for splitting
         strings to a list of characters.
         """
         return list(item)  # type: ignore
@@ -81,7 +81,8 @@ class _List:
            ${appended_1} =    Append To List    ${list_app_1}    xxx
            ${appended_2} =    Append To List    ${list_app_2}    x    y    z
            Should Be Equal    ${appended_1}    ["a", "b", "c", "xxx"]    type=list
-           Should Be Equal    ${appended_2}    ["f", "g", "d", "x", "y", "z"]    type=list
+           Should Be Equal    ${appended_2}    ["f", "g", "d", "x", "y", "z"]
+           ...    type=list
         ```
 
         !!! note
@@ -165,7 +166,8 @@ class _List:
         *** Test Cases ***
         Combine lists
             ${combined} =    Combine Lists    ${LIST_COMB_1}    ${LIST_COMB_2}
-            Should Be Equal    ${combined}    ["a", "b", "c", "a", "b", "c", "d", "e"]    type=list
+            Should Be Equal    ${combined}    ["a", "b", "c", "a", "b", "c", "d", "e"]
+            ...    type=list
         ```
         """
         return list(chain.from_iterable(lists))
@@ -206,8 +208,10 @@ class _List:
         Item Assignment
             ${set_1} =    Set List Value    ${item_assignment_1}    1    xxx
             ${set_2} =    Set List Value    ${item_assignment_2}    -1    yyy
-            Should Be Equal    ${set_1}    ["mmm", "xxx", "ooo", "qqq", "zzz"]    type=list
-            Should Be Equal    ${set_2}    ["aaa", "bbb", "ccc", "ddd", "yyy"]    type=list
+            Should Be Equal    ${set_1}    ["mmm", "xxx", "ooo", "qqq", "zzz"]
+            ...    type=list
+            Should Be Equal    ${set_2}    ["aaa", "bbb", "ccc", "ddd", "yyy"]
+            ...    type=list
         ```
 
         Starting from Robot Framework 6.1, it is also possible to use the native
@@ -222,7 +226,8 @@ class _List:
         Native Item Assignment
             ${native_assignment}[1] =    Set Variable    xxx
             ${native_assignment}[-1] =    Set Variable    yyy
-            Should Be Equal    ${native_assignment}    ["abc", "xxx", "ghi", "jkl", "yyy"]    type=list
+            Should Be Equal    ${native_assignment}
+            ...    ["abc", "xxx", "ghi", "jkl", "yyy"]    type=list
         ```
 
         !!! note
@@ -424,12 +429,12 @@ class _List:
 
         *** Test Cases ***
         Get slice from list
-            ${slice_1} =    Get Slice From List    ${LIST_SLICE}    2    4    # list[2:4]
-            ${slice_2} =    Get Slice From List    ${LIST_SLICE}    1         # list[1:]
-            ${slice_3} =    Get Slice From List    ${LIST_SLICE}    end=-2    # list[0:-2]
-            Should Be Equal    ${slice_1}    ["c", "d"]    type=list
-            Should Be Equal    ${slice_2}    ["b", "c", "d", "e"]    type=list
-            Should Be Equal    ${slice_3}    ["a", "b", "c"]    type=list
+            ${slc_1} =    Get Slice From List    ${LIST_SLICE}    2    4    # list[2:4]
+            ${slc_2} =    Get Slice From List    ${LIST_SLICE}    1    # list[1:]
+            ${slc_3} =    Get Slice From List    ${LIST_SLICE}    end=-2    # list[0:-2]
+            Should Be Equal    ${slc_1}    ["c", "d"]    type=list
+            Should Be Equal    ${slc_2}    ["b", "c", "d", "e"]    type=list
+            Should Be Equal    ${slc_3}    ["a", "b", "c"]    type=list
         ```
 
         !!! note
@@ -933,8 +938,8 @@ class _Dictionary:
         This includes converting Robot Framework's own `DotDict` instances
         that it uses if variables are created using the `&{var}` syntax.
 
-        Use [Create Dictionary](https://robotframework.org/robotframework/latest/libraries/BuiltIn.html#Create%20Dictionary)
-        from the BuiltIn library for constructing new dictionaries.
+        Use [Create Dictionary] from the BuiltIn library for constructing new
+        dictionaries.
         """
         return dict(item)  # type: ignore
 
@@ -970,7 +975,8 @@ class _Dictionary:
         *** Test Cases ***
         `name=value` syntax
             Set To Dictionary    ${expected_name_value}    key=value    second=${2}
-            ${updated} =    Set To Dictionary    ${DICT_NAME_VALUE}    key=value    second=${2}
+            ${updated} =    Set To Dictionary    ${DICT_NAME_VALUE}    key=value
+            ...    second=${2}
             Dictionaries Should Be Equal    ${updated}    ${expected_name_value}
         ```
 
@@ -985,8 +991,10 @@ class _Dictionary:
 
         *** Test Cases ***
         Keys and values separately
-            Set To Dictionary    ${expected_keys_values}    key    value    ${2}    value 2
-            ${updated} =    Set To Dictionary    ${DICT_KEYS_VALUES}    key    value    ${2}    value 2
+            Set To Dictionary    ${expected_keys_values}    key    value    ${2}
+            ...    value 2
+            ${updated} =    Set To Dictionary    ${DICT_KEYS_VALUES}    key    value
+            ...    ${2}    value 2
             Dictionaries Should Be Equal    ${updated}    ${expected_keys_values}
         ```
 
@@ -1438,7 +1446,8 @@ class _Dictionary:
             dict1: The first dictionary.
             dict2: The second dictionary.
             msg: Optional custom error message.
-            values: Controls whether default differences are included in the error message.
+            values: Controls whether default differences are included in the
+                error message.
             ignore_keys: Keys to ignore in the comparison.
             ignore_case: Whether to ignore case in comparison.
             ignore_value_order: Whether to ignore order in list-like values.
@@ -1472,8 +1481,10 @@ class _Dictionary:
 
         Comparison when ignoring keys
             VAR    @{ignore}    second
-            Dictionaries Should Be Equal    ${DICT1}    ${DICT2}    ignore_keys=${ignore}
-            Dictionaries Should Be Equal    ${DICT1}    ${DICT3}    ignore_keys=${ignore}
+            Dictionaries Should Be Equal    ${DICT1}    ${DICT2}
+            ...    ignore_keys=${ignore}
+            Dictionaries Should Be Equal    ${DICT1}    ${DICT3}
+            ...    ignore_keys=${ignore}
         ```
 
         See [Lists Should Be Equal] for more information about configuring
@@ -1550,7 +1561,8 @@ class _Dictionary:
             dict1: The dictionary that should contain all items.
             dict2: The dictionary whose items should be found.
             msg: Optional custom error message.
-            values: Controls whether default differences are included in the error message.
+            values: Controls whether default differences are included in the
+                error message.
             ignore_case: Whether to ignore case in comparison.
             ignore_value_order: Whether to ignore order in list-like values.
 
@@ -1685,7 +1697,8 @@ class Collections(_List, _Dictionary):
     *** Test Cases ***
     Ignore case
         Lists Should Be Equal    ${LIST_COMP_1}    ${LIST_COMP_2}    ignore_case=True
-        Dictionaries Should Be Equal    ${DICT_COMP_1}    ${DICT_COMP_2}    ignore_case=VALUES
+        Dictionaries Should Be Equal    ${DICT_COMP_1}    ${DICT_COMP_2}
+        ...    ignore_case=VALUES
     ```
 
     Notice that some keywords accept also an older `case_insensitive` argument
@@ -1706,7 +1719,7 @@ class Collections(_List, _Dictionary):
     --->
 
     [BuiltIn]: https://robotframework.org/robotframework/latest/libraries/BuiltIn.html
-    [String]: https://robotframework.org/robotframework/latest/libraries/String.html
+    [Create Dictionary]: https://robotframework.org/robotframework/latest/libraries/BuiltIn.html#Create%20Dictionary
     [Create List]: https://robotframework.org/robotframework/latest/libraries/BuiltIn.html#Create%20List
     [Split String To Characters]: https://robotframework.org/robotframework/latest/libraries/String.html#Split%20String%20To%20Characters
     [Should Match Regexp]: https://robotframework.org/robotframework/latest/libraries/BuiltIn.html#Should%20Match%20Regexp
