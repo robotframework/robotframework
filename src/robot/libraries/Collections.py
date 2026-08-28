@@ -46,9 +46,9 @@ class _List:
             The converted list.
 
         Mainly useful for converting tuples and other iterable to lists.
-        Use Create List from the [BuiltIn] library for constructing new lists.
+        Use `Create List` from the [BuiltIn] library for constructing new lists.
 
-        Use Split String To Characters from the [String] library for
+        Use `Split String To Characters` from the [String] library for
         splitting strings to a list of characters.
         """
         return list(item)  # type: ignore
@@ -72,16 +72,12 @@ class _List:
         Examples:
 
         ```robotframework
-        *** Variables ***
-        @{APPEND_1}      a    b    c
-        @{APPEND_2}      f    g
-
         *** Test Cases ***
         Append to list
-           ${appended_1} =    Append To List    ${APPEND_1}    xxx
-           ${appended_2} =    Append To List    ${APPEND_2}    y    z
-           Should Be Equal    ${appended_1}    ["a", "b", "c", "xxx"]    type=list
-           Should Be Equal    ${appended_2}    ["f", "g", "y", "z"]    type=list
+            VAR    @{list}    a    b    c
+            Append To List    ${list}    d
+            Append To List    ${list}    e    f    g
+            Lists Should Be Equal    ${list}    ["a", "b", "c", "d", "e", "f", "g"]
         ```
 
         !!! note
@@ -123,16 +119,13 @@ class _List:
         Examples:
 
         ```robotframework
-        *** Variables ***
-        @{INSERT_1}      a    b    c
-        @{INSERT_2}      f    g    d
-
         *** Test Cases ***
         Insert in list
-            ${insert_begin} =    Insert Into List    ${INSERT_1}    0    xxx
-            ${insert_end} =    Insert Into List    ${INSERT_2}    -1    xxx
-            Should Be Equal    ${insert_begin}    ["xxx", "a", "b", "c"]    type=list
-            Should Be Equal    ${insert_end}    ["f", "g", "xxx", "d"]    type=list
+            VAR    @{list}    a    b    c
+            Insert Into List    ${list}     0    x
+            Insert Into List    ${list}     1    y
+            Insert Into List    ${list}    -1    z
+            Lists Should Be Equal    ${list}    ["x", "y", "a", "b", "z", "c"]
         ```
 
         !!! note
@@ -158,15 +151,13 @@ class _List:
         Examples:
 
         ```robotframework
-        *** Variables ***
-        @{COMBINE_1}     a    b    c
-        @{COMBINE_2}     a    b    c    d    e
-
         *** Test Cases ***
         Combine lists
-            ${combined} =    Combine Lists    ${COMBINE_1}    ${COMBINE_2}
-            Should Be Equal    ${combined}    ["a", "b", "c", "a", "b", "c", "d", "e"]
-            ...    type=list
+            VAR    @{list1}    a    b    c
+            VAR    @{list2}
+            VAR    @{list3}    d    e    f    g
+            ${combined} =    Combine Lists    ${list1}    ${list2}    ${list3}
+            Lists Should Be Equal    ${combined}    ["a", "b", "c", "d", "e", "f", "g"]
         ```
         """
         return list(chain.from_iterable(lists))
@@ -199,18 +190,13 @@ class _List:
         Examples:
 
         ```robotframework
-        *** Variables ***
-        @{ITEM_ASSIGNMENT_1}    mmm    nnn    ooo    qqq    zzz
-        @{ITEM_ASSIGNMENT_2}    aaa    bbb    ccc    ddd    eee
-
         *** Test Cases ***
         Item Assignment
-            ${set_1} =    Set List Value    ${ITEM_ASSIGNMENT_1}    1    xxx
-            ${set_2} =    Set List Value    ${ITEM_ASSIGNMENT_2}    -1    yyy
-            Should Be Equal    ${set_1}    ["mmm", "xxx", "ooo", "qqq", "zzz"]
-            ...    type=list
-            Should Be Equal    ${set_2}    ["aaa", "bbb", "ccc", "ddd", "yyy"]
-            ...    type=list
+            VAR    @{list}    a    b    c    d    e
+            Set List Value    ${list}     0    x
+            Set List Value    ${list}     1    y
+            Set List Value    ${list}    -1    z
+            Lists Should Be Equal    ${list}    ["x", "y", "c", "d", "z"]
         ```
 
         Starting from Robot Framework 6.1, it is also possible to use the native
@@ -218,15 +204,13 @@ class _List:
         the above:
 
         ```robotframework
-        *** Variables ***
-        @{NATIVE_ASSIGNMENT}    abc    def    ghi   jkl    mno
-
         *** Test Cases ***
         Native Item Assignment
-            ${NATIVE_ASSIGNMENT}[1] =    Set Variable    xxx
-            ${NATIVE_ASSIGNMENT}[-1] =    Set Variable    yyy
-            Should Be Equal    ${native_assignment}
-            ...    ["abc", "xxx", "ghi", "jkl", "yyy"]    type=list
+            VAR    @{list}    a    b    c    d    e
+            ${list}[0] =     Set Variable    x
+            ${list}[1] =     Set Variable    y
+            ${list}[-1] =    Set Variable    z
+            Lists Should Be Equal    ${list}    ["x", "y", "c", "d", "z"]
         ```
 
         !!! note
@@ -262,13 +246,11 @@ class _List:
         Examples:
 
         ```robotframework
-        *** Variables ***
-        @{REMOVE}        a    b    c    d    e    f
-
         *** Test Cases ***
         Remove values from list
-            ${removed} =    Remove Values From List    ${REMOVE}    a    c    e    f
-            Should Be Equal    ${removed}    ["b", "d"]    type=list
+            VAR    @{list}    a    b    b    a    c    d
+            Remove Values From List    ${list}    a    c    x
+            Lists Should Be Equal    ${list}    ["b", "b", "d"]
         ```
 
         !!! note
@@ -302,13 +284,14 @@ class _List:
         Examples:
 
         ```robotframework
-        *** Variables ***
-        @{REMOVE_SINGLE}    a    b    c
-
         *** Test Cases ***
         Remove from list
-            ${removed} =    Remove From List    ${REMOVE_SINGLE}    0
-            Should Be Equal    ${REMOVE_SINGLE}    ["b", "c"]    type=list
+            VAR    @{list}    a    b    c
+            ${value1} =    Remove From List    ${list}    1
+            ${value2} =    Remove From List    ${list}    -1
+            Should Be Equal    ${value1}    b
+            Should Be Equal    ${value2}    c
+            Lists Should Be Equal    ${list}    ["a"]
         ```
 
         !!! note
@@ -335,6 +318,17 @@ class _List:
         list so that one item can appear only once. Order of the items in
         the new list is the same as in the original except for missing
         duplicates. Number of the removed duplicates is logged.
+
+        Examples:
+
+        ```robotframework
+        *** Test Cases ***
+        Remove duplicates
+            VAR    @{list}    a    b    b    a
+            ${no_dupes} =    Remove Duplicates    ${list}
+            Lists Should Be Equal    ${no_dupes}    ["a", "b"]
+            Lists Should Be Equal    ${list}        ["a", "b", "b", "a"]
+        ```
 
         !!! note
             The `list_` argument will be renamed to `list` in Robot Framework 8.0.
@@ -368,18 +362,17 @@ class _List:
         the second last, and so on. Using an index that does not exist on
         the list causes an error.
 
-        Examples (including Python equivalents in comments):
+        Examples:
 
         ```robotframework
-        *** Variables ***
-        @{LIST_GET}      a    b    c    d    e
-
         *** Test Cases ***
         Get from list
-            ${item_1} =    Get From List    ${LIST_GET}    0     # list[0]
-            ${item_2} =    Get From List    ${LIST_GET}    -2    # list[-2]
-            Should Be Equal    ${item_1}    a
-            Should Be Equal    ${item_2}    d
+            VAR    @{list}    a    b    c
+            ${value1} =    Get From List    ${list}    1
+            ${value2} =    Get From List    ${list}    -1
+            Should Be Equal    ${value1}    b
+            Should Be Equal    ${value2}    c
+            Lists Should Be Equal    ${list}    ["a", "b", "c"]
         ```
 
         !!! note
@@ -423,17 +416,15 @@ class _List:
         Examples (incl. Python equivalents in comments):
 
         ```robotframework
-        *** Variables ***
-        @{SLICE}         a    b    c    d    e
-
         *** Test Cases ***
         Get slice from list
-            ${slc_1} =    Get Slice From List    ${SLICE}    2    4    # list[2:4]
-            ${slc_2} =    Get Slice From List    ${SLICE}    1    # list[1:]
-            ${slc_3} =    Get Slice From List    ${SLICE}    end=-2    # list[0:-2]
-            Should Be Equal    ${slc_1}    ["c", "d"]    type=list
-            Should Be Equal    ${slc_2}    ["b", "c", "d", "e"]    type=list
-            Should Be Equal    ${slc_3}    ["a", "b", "c"]    type=list
+            VAR    @{list}    a    b    c    d    e
+            ${slice1} =    Get Slice From List    ${list}    2    4    # list[2:4]
+            ${slice2} =    Get Slice From List    ${list}    1         # list[1:]
+            ${slice3} =    Get Slice From List    ${list}    end=-2    # list[0:-2]
+            Lists Should Be Equal    ${slice1}    ["c", "d"]
+            Lists Should Be Equal    ${slice2}    ["b", "c", "d", "e"]
+            Lists Should Be Equal    ${slice3}    ["a", "b", "c"]
         ```
 
         !!! note
@@ -476,13 +467,15 @@ class _List:
         Examples:
 
         ```robotframework
-        *** Variables ***
-        @{COUNT}         a    b    c
-
         *** Test Cases ***
         Count values in list
-            ${counted} =    Count Values In List    ${COUNT}    b
-            Should Be Equal    ${counted}    ${1}
+            VAR    @{list}    a    b    b    a    c
+            ${a} =    Count Values In List    ${list}    a
+            ${c} =    Count Values In List    ${list}    c
+            ${x} =    Count Values In List    ${list}    x
+            Should Be Equal    ${a}    2    type=int
+            Should Be Equal    ${c}    1    type=int
+            Should Be Equal    ${x}    0    type=int
         ```
 
         !!! note
@@ -519,13 +512,15 @@ class _List:
         Examples:
 
         ```robotframework
-        *** Variables ***
-        @{GET_INDEX}     a    b    c    d    e
-
         *** Test Cases ***
         Get index from list
-            ${index} =    Get Index From List    ${GET_INDEX}    d    start=1
-            Should Be Equal    ${index}    ${3}
+            VAR    @{list}    a    b    b    a    c
+            ${b} =    Get Index From List    ${list}    b
+            ${a} =    Get Index From List    ${list}    a    start=1
+            ${x} =    Get Index From List    ${list}    x
+            Should Be Equal    ${b}     1    type=int
+            Should Be Equal    ${a}     3    type=int
+            Should Be Equal    ${x}    -1    type=int
         ```
 
         Starting from Robot Framework 7.5, the returned index is always positive
@@ -594,13 +589,11 @@ class _List:
         Examples:
 
         ```robotframework
-        *** Variables ***
-        @{REVERSE}       a    b    c
-
         *** Test Cases ***
         Reverse list
-            ${reversed} =    Reverse List    ${REVERSE}
-            Should Be Equal    ${reversed}    ["c", "b", "a"]    type=list
+            VAR    @{list}    a    b    c
+            Reverse List    ${list}
+            Lists Should Be Equal    ${list}    ["c", "b", "a"]
         ```
 
         !!! note
@@ -789,8 +782,8 @@ class _List:
 
         ```robotframework
         *** Variables ***
-        @{USER_1}         Jane    Doe    jane@example.com
-        @{USER_2}         John    Doe    john@example.com
+        @{USER_1}        Jane    Doe    jane@example.com
+        @{USER_2}        John    Doe    john@example.com
 
         *** Test Cases ***
         Names as list
@@ -816,13 +809,11 @@ class _List:
         Examples:
 
         ```robotframework
-        *** Variables ***
-        @{ASC}           apple     cherry    banana
-        @{DESC}          cherry    banana    apple
-
         *** Test Cases ***
-        Lists should be equal ignoring order
-            Lists Should Be Equal    ${ASC}    ${DESC}    ignore_order=True
+        Ignore orger
+            VAR    @{abc}    Apple     Banana    Cherry
+            VAR    @{cab}    Cherry    Apple     Banana
+            Lists Should Be Equal    ${abc}    ${cab}    ignore_order=True
         ```
 
         The `ignore_case` argument can be used to make comparison case-insensitive.
@@ -937,8 +928,8 @@ class _Dictionary:
         This includes converting Robot Framework's own `DotDict` instances
         that it uses if variables are created using the `&{var}` syntax.
 
-        Use Create Dictionary from the [BuiltIn] library for constructing new
-        dictionaries.
+        Use `Create Dictionary` from the [BuiltIn] library for constructing
+        new dictionaries.
         """
         return dict(item)  # type: ignore
 
@@ -967,50 +958,34 @@ class _Dictionary:
         It is easiest to specify items using the `name=value` syntax:
 
         ```robotframework
-        *** Variables ***
-        &{DICT_NAME_VALUE}        a=${1}
-        ${EXPECTED_NAME_VALUE}    &{DICT_NAME_VALUE}
-
         *** Test Cases ***
         `name=value` syntax
-            Set To Dictionary    ${EXPECTED_NAME_VALUE}    key=value    second=${2}
-            ${updated} =    Set To Dictionary    ${DICT_NAME_VALUE}    key=value
-            ...    second=${2}
-            Dictionaries Should Be Equal    ${updated}    ${EXPECTED_NAME_VALUE}
+            VAR    &{dict}    a=${1}    b=${2}
+            Set To Dictionary    ${dict}    c=${3}    a=${0}
+            Dictionaries Should Be Equal    ${dict}    {"a": 0, "b": 2, "c": 3}
         ```
 
         A limitation of the above syntax is that keys must be strings.
-
         That can be avoided by passing keys and values as separate arguments:
 
         ```robotframework
-        *** Variables ***
-        &{DICT_KEYS_VALUES}        a=${1}
-        ${EXPECTED_KEYS_VALUES}    &{DICT_KEYS_VALUES}
-
         *** Test Cases ***
         Keys and values separately
-            Set To Dictionary    ${EXPECTED_KEYS_VALUES}    key    value    ${2}
-            ...    value 2
-            ${updated} =    Set To Dictionary    ${DICT_KEYS_VALUES}    key    value
-            ...    ${2}    value 2
-            Dictionaries Should Be Equal    ${updated}    ${EXPECTED_KEYS_VALUES}
+            VAR    &{dict}    ${1}=a    ${2}=b
+            Set To Dictionary    ${dict}    ${3}    c    ${1}    x
+            Dictionaries Should Be Equal    ${dict}    {1: "x", 2: "b", 3: "c"}
         ```
 
         Starting from Robot Framework 6.1, it is also possible to use the native
         item assignment syntax. This is equivalent to the above:
 
         ```robotframework
-        *** Variables ***
-        &{DICT_ITEM}         a=${1}
-        ${EXPECTED_ITEM}     &{DICT_ITEM}
-
         *** Test Cases ***
         Item assignment syntax
-            Set To Dictionary    ${EXPECTED_ITEM}    key    value    ${2}    value 2
-            ${DICT_ITEM}[key] =    Set Variable    value
-            ${DICT_ITEM}[${2}] =    Set Variable    value 2
-            Dictionaries Should Be Equal    ${DICT_ITEM}    ${EXPECTED_ITEM}
+            VAR    &{dict}    ${1}=a    ${2}=b
+            ${dict}[${3}] =    Set Variable    c
+            ${dict}[${1}] =    Set Variable    x
+            Dictionaries Should Be Equal    ${dict}    {1: "x", 2: "b", 3: "c"}
         ```
         """
         if len(key_value_pairs) % 2 != 0:
@@ -1044,15 +1019,11 @@ class _Dictionary:
         Examples:
 
         ```robotframework
-        *** Variables ***
-        &{DICT_REMOVE}        a=${1}    b=${2}    c=${3}
-        ${EXPECTED_REMOVE}    &{DICT_REMOVE}
-
         *** Test Cases ***
         Remove from dictionary
-            Remove From Dictionary    ${EXPECTED_REMOVE}    b
-            ${updated} =    Remove From Dictionary    ${DICT_REMOVE}    b    x    y
-            Dictionaries Should Be Equal    ${updated}    ${EXPECTED_REMOVE}
+            VAR    &{dict}    a=1    b=2    c=3
+            Remove From Dictionary    ${dict}    b    x
+            Dictionaries Should Be Equal    ${dict}    {"a": "1", "c": "3"}
         ```
         """
         for key in keys:
@@ -1085,16 +1056,14 @@ class _Dictionary:
         Examples:
 
         ```robotframework
-        *** Variables ***
-        &{DICT_POP}        a=${1}    b=${2}    c=${3}
-        ${EXPECTED_POP}    &{DICT_POP}
-
         *** Test Cases ***
         Pop from dictionary
-            Remove From Dictionary    ${EXPECTED_POP}    b
-            ${val} =    Pop From Dictionary    ${DICT_POP}    b
-            Should Be Equal    ${val}    ${2}
-            Dictionaries Should Be Equal    ${DICT_POP}    ${EXPECTED_POP}
+            VAR    &{dict}    a=1    b=2    c=3
+            ${value} =    Pop From Dictionary    ${dict}    b
+            Should Be Equal    ${value}    2
+            ${value} =    Pop From Dictionary    ${dict}    x    default
+            Should Be Equal    ${value}    default
+            Dictionaries Should Be Equal    ${dict}    {"a": "1", "c": "3"}
         ```
         """
         if default is NOT_SET:
@@ -1123,15 +1092,11 @@ class _Dictionary:
         Examples:
 
         ```robotframework
-        *** Variables ***
-        &{DICT_KEEP}         a=${1}    b=${2}    c=${3}
-        ${EXPECTED_KEEP}     &{DICT_KEEP}
-
         *** Test Cases ***
         Keep in dictionary
-            Remove From Dictionary    ${EXPECTED_KEEP}    a    c
-            ${updated} =    Keep In Dictionary    ${DICT_KEEP}    b    x    d
-            Dictionaries Should Be Equal    ${updated}    ${EXPECTED_KEEP}
+            VAR    &{dict}    a=1    b=2    c=3
+            Keep In Dictionary    ${dict}    a    c    x
+            Dictionaries Should Be Equal    ${dict}    {"a": "1", "c": "3"}
         ```
         """
         remove_keys = [k for k in dictionary if k not in keys]
@@ -1180,13 +1145,11 @@ class _Dictionary:
         Examples:
 
         ```robotframework
-        *** Variables ***
-        &{GET_KEYS}      a=${1}    b=${2}    c=${3}
-
         *** Test Cases ***
         Get dictionary keys
-            ${keys} =    Get Dictionary Keys    ${GET_KEYS}
-            Should Be Equal    ${keys}    ["a", "b", "c"]    type=list
+            VAR    &{dict}    a=1    b=2    c=3
+            ${keys} =    Get Dictionary Keys    ${dict}
+            Lists Should Be Equal    ${keys}    ["a", "b", "c"]
         ```
         """
         if sort_keys:
@@ -1217,13 +1180,11 @@ class _Dictionary:
         Examples:
 
         ```robotframework
-        *** Variables ***
-        &{GET_VALUES}    a=${1}    b=${2}    c=${3}
-
         *** Test Cases ***
         Get dictionary values
-            ${values} =    Get Dictionary Values    ${GET_VALUES}
-            Should Be Equal    ${values}    [1, 2, 3]    type=list
+            VAR    &{dict}    a=1    b=2    c=3
+            ${values} =    Get Dictionary Values    ${dict}
+            Lists Should Be Equal    ${values}    ["1", "2", "3"]
         ```
         """
         keys = self.get_dictionary_keys(dictionary, sort_keys=sort_keys)
@@ -1254,13 +1215,11 @@ class _Dictionary:
         Examples:
 
         ```robotframework
-        *** Variables ***
-        &{GET_ITEMS}     a=${1}    b=${2}    c=${3}
-
         *** Test Cases ***
         Get dictionary items
-            ${items} =    Get Dictionary Items    ${GET_ITEMS}
-            Should Be Equal    ${items}    ["a", 1, "b", 2, "c", 3]    type=list
+            VAR    &{dict}    a=1    b=2    c=3
+            ${items} =    Get Dictionary Items    ${dict}
+            Lists Should Be Equal    ${items}    ["a", "1", "b", "2", "c", "3"]
         ```
         """
         keys = self.get_dictionary_keys(dictionary, sort_keys=sort_keys)
@@ -1289,13 +1248,13 @@ class _Dictionary:
         Examples:
 
         ```robotframework
-        *** Variables ***
-        &{DICT_GET}      a=${1}    b=${2}    c=${3}
-
         *** Test Cases ***
         Get from dictionary
-            ${value} =    Get From Dictionary    ${DICT_GET}    b
-            Should Be Equal    ${value}    ${2}
+            VAR    &{dict}    a=1    b=2    c=3
+            ${value} =    Get From Dictionary    ${dict}    b
+            Should Be Equal    ${value}    2
+            ${value} =    Get From Dictionary    ${dict}    x    default
+            Should Be Equal    ${value}    default
         ```
 
         Support for `default` is new in Robot Framework 6.0.
@@ -1480,10 +1439,8 @@ class _Dictionary:
 
         Comparison when ignoring keys
             VAR    @{ignore}    second
-            Dictionaries Should Be Equal    ${DICT_1}    ${DICT_2}
-            ...    ignore_keys=${ignore}
-            Dictionaries Should Be Equal    ${DICT_1}    ${DICT_3}
-            ...    ignore_keys=${ignore}
+            Dictionaries Should Be Equal    ${DICT_1}    ${DICT_2}    ignore_keys=${ignore}
+            Dictionaries Should Be Equal    ${DICT_1}    ${DICT_3}    ignore_keys=${ignore}
         ```
 
         See [Lists Should Be Equal] for more information about configuring
@@ -1687,17 +1644,19 @@ class Collections(_List, _Dictionary):
     Examples:
 
     ```robotframework
-    *** Variables ***
-    @{LIST_COMPARE_1}    abc    DEF
-    @{LIST_COMPARE_2}    ABC    def
-    &{DICT_COMPARE_1}    key=value
-    &{DICT_COMPARE_2}    key=VALUE
-
     *** Test Cases ***
     Ignore case
-        Lists Should Be Equal    ${LIST_COMPARE_1}    ${LIST_COMPARE_2}    ignore_case=True
-        Dictionaries Should Be Equal    ${DICT_COMPARE_1}    ${DICT_COMPARE_2}
-        ...    ignore_case=VALUES
+        VAR    @{list1}    abc    DEF
+        VAR    @{list2}    ABC    def
+        Lists Should Be Equal    ${list1}    ${list2}    ignore_case=True
+
+    Ignore key/value case
+        VAR    &{dict1}    a=x    b=y    c=z
+        VAR    &{dict2}    A=x    B=y    C=z
+        VAR    &{dict3}    a=X    b=Y    c=Z
+        Dictionaries Should Be Equal    ${dict1}    ${dict2}    ignore_case=KEYS
+        Dictionaries Should Be Equal    ${dict1}    ${dict3}    ignore_case=VALUES
+        Dictionaries Should Be Equal    ${dict1}    ${dict3}    ignore_case=True
     ```
 
     Notice that some keywords accept also an older `case_insensitive` argument
@@ -1759,7 +1718,7 @@ class Collections(_List, _Dictionary):
         Notice that the backslash character often used with regular
         expressions is an escape character in Robot Framework data and needs
         to be escaped with another backslash like `regexp=\\d{6}`.
-        See Should Match Regexp from the [BuiltIn] library for more details.
+        See `Should Match Regexp` from the [BuiltIn] library for more details.
 
         Matching is case-sensitive by default, but that can be changed by giving
         the `ignore_case` argument a true value.
@@ -1779,22 +1738,22 @@ class Collections(_List, _Dictionary):
 
         ```robotframework
         *** Variables ***
-        @{LIST}          foo    bar    abc 123
+        @{MATCHED}       foo    bar    abc 123
 
         *** Test Cases ***
         Match using glob pattern
-            Should Contain Match    ${LIST}    f*
-            Should Contain Match    ${LIST}    b?r
-            Should Contain Match    ${LIST}    abc [1-9][1-9][1-9]
+            Should Contain Match    ${MATCHED}    f*
+            Should Contain Match    ${MATCHED}    b?r
+            Should Contain Match    ${MATCHED}    abc [1-9][1-9][1-9]
 
         Match using regexp
-            Should Contain Match    ${LIST}    regexp=f.*
-            Should Contain Match    ${LIST}    regexp=b.r
-            Should Contain Match    ${LIST}    regexp=abc \\d\\d\\d
+            Should Contain Match    ${MATCHED}    regexp=f.*
+            Should Contain Match    ${MATCHED}    regexp=b.r
+            Should Contain Match    ${MATCHED}    regexp=abc \\d\\d\\d
 
         Normalization
-            Should Contain Match    ${LIST}    ABC *     ignore_case=True
-            Should Contain Match    ${LIST}    abc???    ignore_whitespace=True
+            Should Contain Match    ${MATCHED}    ABC *     ignore_case=True
+            Should Contain Match    ${MATCHED}    abc???    ignore_whitespace=True
         ```
 
         !!! note
@@ -1898,15 +1857,15 @@ class Collections(_List, _Dictionary):
 
         ```robotframework
         *** Variables ***
-        @{LIST}          foo    bar    abc 123
+        @{MATCHED}       foo    bar    abc 123
 
         *** Test Cases ***
         Get matches
-            ${matches} =    Get Matches    ${LIST}    *A*    ignore_case=True
-            Should Be Equal    ${matches}    ["bar", "abc 123"]    type=list
+            ${matches} =    Get Matches    ${MATCHED}    *A*    ignore_case=True
+            Lists Should Be Equal    ${matches}    ["bar", "abc 123"]
 
         Get no matches
-            ${matches} =    Get Matches    ${LIST}    no match
+            ${matches} =    Get Matches    ${MATCHED}    no match
             Should Be Empty    ${matches}
         ```
 
@@ -1958,15 +1917,15 @@ class Collections(_List, _Dictionary):
 
         ```robotframework
         *** Variables ***
-        @{LIST}          foo    bar    abc 123
+        @{MATCHED}       foo    bar    abc 123
 
         *** Test Cases ***
         Get match count
-            ${matches} =    Get Match Count    ${LIST}    *A*    ignore_case=True
+            ${matches} =    Get Match Count    ${MATCHED}    *A*    ignore_case=True
             Should Be Equal    ${matches}    2    type=int
 
         Get zero match count
-            ${matches} =    Get Match Count    ${LIST}    no match
+            ${matches} =    Get Match Count    ${MATCHED}    no match
             Should Be Equal    ${matches}    0    type=int
         ```
 
