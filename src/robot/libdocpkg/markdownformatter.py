@@ -21,7 +21,7 @@ from robot.running import ArgInfo, ArgumentSpec
 from robot.utils import file_writer
 
 if TYPE_CHECKING:
-    from .model import KeywordDoc
+    from .model import KeywordDoc, LibraryDoc
 
 
 class LibdocMarkdownWriter:
@@ -40,7 +40,7 @@ class LibdocMarkdownWriter:
 
 class MarkdownFormatter:
 
-    def __init__(self, libdoc):
+    def __init__(self, libdoc: "LibraryDoc"):
         self.libdoc = libdoc
 
     def format(self) -> str:
@@ -66,18 +66,18 @@ class MarkdownFormatter:
         if not self.libdoc.inits:
             return ""
         md = "## Importing\n\n"
-        kw_formatter = KeywordFormatter(init=True)
+        formatter = KeywordFormatter(init=True)
         for init in self.libdoc.inits:
-            md += kw_formatter.format(init)
+            md += formatter.format(init)
         return md
 
-    def format_keywords(self, show_heading: bool = True) -> str:
+    def format_keywords(self, header: bool = True) -> str:
         if not self.libdoc.keywords:
             return ""
-        md = "## Keywords\n\n" if show_heading else ""
-        kw_formatter = KeywordFormatter()
+        md = "## Keywords\n\n" if header else ""
+        formatter = KeywordFormatter()
         for kw in self.libdoc.keywords:
-            md += kw_formatter.format(kw)
+            md += formatter.format(kw)
         return md
 
 
@@ -86,10 +86,7 @@ class KeywordFormatter:
     def __init__(self, init=False):
         self.init = init
 
-    def format(
-        self,
-        keyword: "KeywordDoc",
-    ) -> str:
+    def format(self, keyword: "KeywordDoc") -> str:
         md = f"### {keyword.name}\n\n" if not self.init else ""
         md += self._format_args(keyword.args)
         md += self._format_returns(keyword.args)

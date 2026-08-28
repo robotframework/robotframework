@@ -22,11 +22,11 @@ from .markdownformatter import MarkdownFormatter
 class ConsoleViewer:
 
     def __init__(self, libdoc):
-        self._libdoc = libdoc
+        self.libdoc = libdoc
 
     @classmethod
     def handles(cls, command):
-        return command.lower() in ["list", "show", "version"]
+        return command.lower() in ("list", "show", "version")
 
     @classmethod
     def validate_command(cls, command, args):
@@ -40,34 +40,33 @@ class ConsoleViewer:
         getattr(self, command.lower())(*args)
 
     def list(self, *patterns):
-        for kw in self._search_keywords(f"*{p}*" for p in patterns):
+        keywords = self.libdoc.keywords
+        if patterns:
+            matcher = MultiMatcher([f"*{p}*" for p in patterns])
+            keywords = [kw for kw in keywords if matcher.match(kw.name)]
+        for kw in keywords:
             self._console(kw.name)
 
     def show(self, *names):
-        libdoc = self._libdoc
+        libdoc = self.libdoc
         if names:
-            libdoc.keywords = self._search_keywords(names)
-            show_intro = MultiMatcher(names, match_if_no_patterns=True).match("intro")
+            matcher = MultiMatcher(names)
+            libdoc.keywords = [kw for kw in libdoc.keywords if matcher.match(kw.name)]
+            show_intro = matcher.match("intro")
         else:
             show_intro = True
         formatter = MarkdownFormatter(libdoc)
         if show_intro:
-            self._console(formatter.format_introduction(), end="")
-            self._console(formatter.format_importing(), end="")
-        show_kw_heading = self._keyword_heading(libdoc, show_intro)
-        self._console(formatter.format_keywords(show_kw_heading), end="")
+            output = formatter.format_introduction() + formatter.format_importing()
+            show_kws_header = bool(libdoc.keywords)
+        else:
+            output = ""
+            show_kws_header = len(libdoc.keywords) > 1
+        output += formatter.format_keywords(show_kws_header)
+        self._console(output, end="")
 
     def version(self):
-        self._console(self._libdoc.version or "N/A")
+        self._console(self.libdoc.version or "N/A")
 
     def _console(self, msg, end="\n"):
         print(console_encode(msg), end=end)
-
-    def _keyword_heading(self, libdoc, show_intro: bool) -> bool:
-        if not show_intro and len(libdoc.keywords) < 2:
-            return False
-        return True
-
-    def _search_keywords(self, patterns):
-        matcher = MultiMatcher(patterns, match_if_no_patterns=True)
-        return [kw for kw in self._libdoc.keywords if matcher.match(kw.name)]
