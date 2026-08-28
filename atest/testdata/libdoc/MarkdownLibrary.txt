@@ -9,18 +9,37 @@ Intro doc.
 
 ## Importing
 
-**Arguments:**
+#### Arguments
 
 * `arg` (type: `str`, default: `default`)
 * `other` (type: `int`, default: `1`)
+
+#### Documentation
 
 Importing doc.
 
 ## Keywords
 
+### No Args Doc
+
+#### Arguments
+
+* `arg` (type: `str`)
+
+#### Documentation
+
+Only doc.
+
+### Only Arg Doc
+
+#### Arguments
+
+* `arg` (type: `str`) -
+  arg doc.
+
 ### Positional And Named
 
-**Arguments:**
+#### Arguments
 
 * `pos_only` (type: `str`, positional-only) -
   positional-only argument.
@@ -30,33 +49,37 @@ Importing doc.
 * `named_only` (type: `str`, default: `default`, named-only) -
   named-only argument.
 
-**Returns:**
+#### Returns
 
 * `str` -
   Always string.
 
-**Raises:**
+#### Raises
 
 * `ValueError` -
   Never
 * `TypeError` -
   Not ever
 
-**Tags:**
+#### Tags
 
 * `tag1`
 * `tag2`
+
+#### Documentation
 
 Keyword doc.
 
 ### Varargs And Kwargs
 
-**Arguments:**
+#### Arguments
 
 * `*args` (type: `str`) -
   varargs doc.
 * `**kwargs` (type: `str`) -
   keyword args doc.
+
+#### Documentation
 
 Doc for variable arguments and keyword arguments.
 

@@ -17,18 +17,21 @@ Invalid option
     --invalid         option --invalid not recognized
 
 Invalid format
-    -f XXX BuiltIn ${OUT HTML}               Format must be 'HTML', 'XML', 'JSON' or 'LIBSPEC', got 'XXX'.
-    --format XML:XXX BuiltIn ${OUT HTML}     Format must be 'HTML', 'XML', 'JSON' or 'LIBSPEC', got 'XML:XXX'.
-    --format XML:HTML BuiltIn ${OUT HTML}    Format must be 'HTML', 'XML', 'JSON' or 'LIBSPEC', got 'XML:HTML'.
-    BuiltIn out.ext                          Format must be 'HTML', 'XML', 'JSON' or 'LIBSPEC', got 'EXT'.
-    BuiltIn BuiltIn                          Format must be 'HTML', 'XML', 'JSON' or 'LIBSPEC', got ''.
+    -f XXX BuiltIn ${OUT HTML}               Format must be 'HTML', 'XML', 'JSON', 'LIBSPEC' or 'MARKDOWN', got 'XXX'.
+    --format XML:XXX BuiltIn ${OUT HTML}     Format must be 'HTML', 'XML', 'JSON', 'LIBSPEC' or 'MARKDOWN', got 'XML:XXX'.
+    --format XML:HTML BuiltIn ${OUT HTML}    Format must be 'HTML', 'XML', 'JSON', 'LIBSPEC' or 'MARKDOWN', got 'XML:HTML'.
+    BuiltIn out.ext                          Format must be 'HTML', 'XML', 'JSON', 'LIBSPEC' or 'MARKDOWN', got 'EXT'.
+    BuiltIn BuiltIn                          Format must be 'HTML', 'XML', 'JSON', 'LIBSPEC' or 'MARKDOWN', got ''.
 
 Invalid specdocformat
     -s XXX BuiltIn ${OUT HTML}                Spec doc format must be 'RAW' or 'HTML', got 'XXX'.
-    --specdocformat MD BuiltIn ${OUT HTML}    Spec doc format must be 'RAW' or 'HTML', got 'MD'.
+    --specdocformat MARKDOWN BuiltIn ${OUT HTML}    Spec doc format must be 'RAW' or 'HTML', got 'MARKDOWN'.
 
 Invalid specdocformat for HTML output format
-    --specdocformat HTML BuiltIn ${OUT HTML}    The --specdocformat option is not applicable with HTML outputs.
+    --specdocformat HTML BuiltIn ${OUT HTML}    The --specdocformat option is only applicable with XML, JSON and LIBSPEC outputs.
+
+Invalid specdocformat for MARKDOWN output format
+    --specdocformat RAW BuiltIn ${OUT MARKDOWN}    The --specdocformat option is only applicable with XML, JSON and LIBSPEC outputs.
 
 Invalid doc format
     --docformat inv BuiltIn ${OUT HTML}    Doc format must be 'ROBOT', 'MARKDOWN', 'TEXT', 'HTML' or 'REST', got 'INV'.
@@ -39,6 +42,10 @@ Invalid doc format in library
 Invalid theme
     --theme bad String ${OUT XML}                    Theme must be 'DARK', 'LIGHT' or 'NONE', got 'BAD'.
     --theme light --format xml String ${OUT XML}     The --theme option is only applicable with HTML outputs.
+    --theme light String ${OUT MARKDOWN}                   The --theme option is only applicable with HTML outputs.
+
+Invalid language for MARKDOWN output format
+    --language en String ${OUT MARKDOWN}    The --language option is not applicable with MARKDOWN outputs.
 
 Non-existing library
     NonExistingLib ${OUT HTML}   Importing library 'NonExistingLib' failed: *
