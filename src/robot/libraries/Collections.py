@@ -46,10 +46,10 @@ class _List:
             The converted list.
 
         Mainly useful for converting tuples and other iterable to lists.
-        Use [Create List] from the BuiltIn library for constructing new lists.
+        Use Create List from the [BuiltIn] library for constructing new lists.
 
-        Use [Split String To Characters] from the String library for splitting
-        strings to a list of characters.
+        Use Split String To Characters from the [String] library for
+        splitting strings to a list of characters.
         """
         return list(item)  # type: ignore
 
@@ -72,14 +72,16 @@ class _List:
         Examples:
 
         ```robotframework
+        *** Variables ***
+        @{APPEND_1}      a    b    c
+        @{APPEND_2}      f    g
+
         *** Test Cases ***
         Append to list
-           ${list_1} =    Copy List    ${LIST_ABC}
-           ${list_2} =    Copy List    ${LIST_ABCDE}
-           ${appended_1} =    Append To List    ${list_1}    xxx
-           ${appended_2} =    Append To List    ${list_2}    x    y    z
+           ${appended_1} =    Append To List    ${APPEND_1}    xxx
+           ${appended_2} =    Append To List    ${APPEND_2}    y    z
            Should Be Equal    ${appended_1}    ["a", "b", "c", "xxx"]    type=list
-           Should Be Equal    ${appended_2}    ["a", "b", "c", "d", "e", "x", "y", "z"]    type=list
+           Should Be Equal    ${appended_2}    ["f", "g", "y", "z"]    type=list
         ```
 
         !!! note
@@ -121,14 +123,16 @@ class _List:
         Examples:
 
         ```robotframework
+        *** Variables ***
+        @{INSERT_1}      a    b    c
+        @{INSERT_2}      f    g    d
+
         *** Test Cases ***
         Insert in list
-            ${list_1} =    Copy List    ${LIST_ABC}
-            ${list_2} =    Copy List    ${LIST_ABC}
-            ${inserted_1} =    Insert Into List    ${list_1}    0    xxx
-            ${inserted_2} =    Insert Into List    ${list_2}    -1    xxx
-            Should Be Equal    ${inserted_1}    ["xxx", "a", "b", "c"]    type=list
-            Should Be Equal    ${inserted_2}    ["a", "b", "xxx", "c"]    type=list
+            ${insert_begin} =    Insert Into List    ${INSERT_1}    0    xxx
+            ${insert_end} =    Insert Into List    ${INSERT_2}    -1    xxx
+            Should Be Equal    ${insert_begin}    ["xxx", "a", "b", "c"]    type=list
+            Should Be Equal    ${insert_end}    ["f", "g", "xxx", "d"]    type=list
         ```
 
         !!! note
@@ -154,10 +158,15 @@ class _List:
         Examples:
 
         ```robotframework
+        *** Variables ***
+        @{COMBINE_1}     a    b    c
+        @{COMBINE_2}     a    b    c    d    e
+
         *** Test Cases ***
         Combine lists
-            ${combined} =    Combine Lists    ${LIST_ABC}    ${LIST_ABCDE}
-            Should Be Equal    ${combined}    ["a", "b", "c", "a", "b", "c", "d", "e"]    type=list
+            ${combined} =    Combine Lists    ${COMBINE_1}    ${COMBINE_2}
+            Should Be Equal    ${combined}    ["a", "b", "c", "a", "b", "c", "d", "e"]
+            ...    type=list
         ```
         """
         return list(chain.from_iterable(lists))
@@ -190,14 +199,18 @@ class _List:
         Examples:
 
         ```robotframework
+        *** Variables ***
+        @{ITEM_ASSIGNMENT_1}    mmm    nnn    ooo    qqq    zzz
+        @{ITEM_ASSIGNMENT_2}    aaa    bbb    ccc    ddd    eee
+
         *** Test Cases ***
-        Set list value
-            ${list_1} =    Copy List    ${LIST_ABC}
-            ${list_2} =    Copy List    ${LIST_ABC}
-            ${set_1} =    Set List Value    ${list_1}    1    xxx
-            ${set_2} =    Set List Value    ${list_2}    -1    yyy
-            Should Be Equal    ${set_1}    ["a", "xxx", "c"]    type=list
-            Should Be Equal    ${set_2}    ["a", "b", "yyy"]    type=list
+        Item Assignment
+            ${set_1} =    Set List Value    ${ITEM_ASSIGNMENT_1}    1    xxx
+            ${set_2} =    Set List Value    ${ITEM_ASSIGNMENT_2}    -1    yyy
+            Should Be Equal    ${set_1}    ["mmm", "xxx", "ooo", "qqq", "zzz"]
+            ...    type=list
+            Should Be Equal    ${set_2}    ["aaa", "bbb", "ccc", "ddd", "yyy"]
+            ...    type=list
         ```
 
         Starting from Robot Framework 6.1, it is also possible to use the native
@@ -205,14 +218,15 @@ class _List:
         the above:
 
         ```robotframework
+        *** Variables ***
+        @{NATIVE_ASSIGNMENT}    abc    def    ghi   jkl    mno
+
         *** Test Cases ***
-        Set list value using item assignment syntax
-            ${list_1} =    Copy List    ${LIST_ABC}
-            ${list_2} =    Copy List    ${LIST_ABC}
-            ${list_1}[1] =    Set Variable    xxx
-            ${list_2}[-1] =    Set Variable    yyy
-            Should Be Equal    ${list_1}    ["a", "xxx", "c"]    type=list
-            Should Be Equal    ${list_2}    ["a", "b", "yyy"]    type=list
+        Native Item Assignment
+            ${NATIVE_ASSIGNMENT}[1] =    Set Variable    xxx
+            ${NATIVE_ASSIGNMENT}[-1] =    Set Variable    yyy
+            Should Be Equal    ${native_assignment}
+            ...    ["abc", "xxx", "ghi", "jkl", "yyy"]    type=list
         ```
 
         !!! note
@@ -248,10 +262,12 @@ class _List:
         Examples:
 
         ```robotframework
+        *** Variables ***
+        @{REMOVE}        a    b    c    d    e    f
+
         *** Test Cases ***
         Remove values from list
-            ${list_1} =    Copy List    ${LIST_ABCDE}
-            ${removed} =    Remove Values From List    ${list_1}    a    c    e    f
+            ${removed} =    Remove Values From List    ${REMOVE}    a    c    e    f
             Should Be Equal    ${removed}    ["b", "d"]    type=list
         ```
 
@@ -286,11 +302,13 @@ class _List:
         Examples:
 
         ```robotframework
+        *** Variables ***
+        @{REMOVE_SINGLE}    a    b    c
+
         *** Test Cases ***
         Remove from list
-            ${list_1} =    Copy List    ${LIST_ABC}
-            ${removed} =    Remove From List    ${list_1}    0
-            Should Be Equal    ${list_1}    ["b", "c"]    type=list
+            ${removed} =    Remove From List    ${REMOVE_SINGLE}    0
+            Should Be Equal    ${REMOVE_SINGLE}    ["b", "c"]    type=list
         ```
 
         !!! note
@@ -353,11 +371,13 @@ class _List:
         Examples (including Python equivalents in comments):
 
         ```robotframework
+        *** Variables ***
+        @{LIST_GET}      a    b    c    d    e
+
         *** Test Cases ***
         Get from list
-            ${list_1} =    Copy List    ${LIST_ABCDE}
-            ${item_1} =    Get From List    ${list_1}    0     # list_1[0]
-            ${item_2} =    Get From List    ${list_1}    -2    # list_1[-2]
+            ${item_1} =    Get From List    ${LIST_GET}    0     # list[0]
+            ${item_2} =    Get From List    ${LIST_GET}    -2    # list[-2]
             Should Be Equal    ${item_1}    a
             Should Be Equal    ${item_2}    d
         ```
@@ -403,15 +423,17 @@ class _List:
         Examples (incl. Python equivalents in comments):
 
         ```robotframework
+        *** Variables ***
+        @{SLICE}         a    b    c    d    e
+
         *** Test Cases ***
         Get slice from list
-            ${list_1} =    Copy List    ${LIST_ABCDE}
-            ${slice_1} =    Get Slice From List    ${list_1}    2    4    # list_1[2:4]
-            ${slice_2} =    Get Slice From List    ${list_1}    1         # list_1[1:]
-            ${slice_3} =    Get Slice From List    ${list_1}    end=-2    # list_1[0:-2]
-            Should Be Equal    ${slice_1}    ["c", "d"]    type=list
-            Should Be Equal    ${slice_2}    ["b", "c", "d", "e"]    type=list
-            Should Be Equal    ${slice_3}    ["a", "b", "c"]    type=list
+            ${slc_1} =    Get Slice From List    ${SLICE}    2    4    # list[2:4]
+            ${slc_2} =    Get Slice From List    ${SLICE}    1    # list[1:]
+            ${slc_3} =    Get Slice From List    ${SLICE}    end=-2    # list[0:-2]
+            Should Be Equal    ${slc_1}    ["c", "d"]    type=list
+            Should Be Equal    ${slc_2}    ["b", "c", "d", "e"]    type=list
+            Should Be Equal    ${slc_3}    ["a", "b", "c"]    type=list
         ```
 
         !!! note
@@ -454,11 +476,13 @@ class _List:
         Examples:
 
         ```robotframework
+        *** Variables ***
+        @{COUNT}         a    b    c
+
         *** Test Cases ***
         Count values in list
-            ${list_1} =   Copy List    ${LIST_ABC}
-            ${count} =    Count Values In List    ${list_1}    b
-            Should Be Equal    ${count}    ${1}
+            ${counted} =    Count Values In List    ${COUNT}    b
+            Should Be Equal    ${counted}    ${1}
         ```
 
         !!! note
@@ -495,10 +519,12 @@ class _List:
         Examples:
 
         ```robotframework
+        *** Variables ***
+        @{GET_INDEX}     a    b    c    d    e
+
         *** Test Cases ***
         Get index from list
-            ${list_1} =    Copy List    ${LIST_ABCDE}
-            ${index} =    Get Index From List    ${list_1}    d    start=1
+            ${index} =    Get Index From List    ${GET_INDEX}    d    start=1
             Should Be Equal    ${index}    ${3}
         ```
 
@@ -568,10 +594,12 @@ class _List:
         Examples:
 
         ```robotframework
+        *** Variables ***
+        @{REVERSE}       a    b    c
+
         *** Test Cases ***
         Reverse list
-            ${list_1} =    Copy List    ${LIST_ABC}
-            ${reversed} =    Reverse List    ${list_1}
+            ${reversed} =    Reverse List    ${REVERSE}
             Should Be Equal    ${reversed}    ["c", "b", "a"]    type=list
         ```
 
@@ -761,17 +789,17 @@ class _List:
 
         ```robotframework
         *** Variables ***
-        @{USER1}         Jane    Doe    jane@example.com
-        @{USER2}         John    Doe    john@example.com
+        @{USER_1}         Jane    Doe    jane@example.com
+        @{USER_2}         John    Doe    john@example.com
 
         *** Test Cases ***
         Names as list
             VAR    @{names}    First Name    Family Name    Email
-            Lists Should Be Equal    ${USER1}    ${USER2}    names=${names}
+            Lists Should Be Equal    ${USER_1}    ${USER_2}    names=${names}
 
         Names as dict
             VAR    &{names}    0=First Name    1=Family Name    2=Email
-            Lists Should Be Equal    ${USER1}    ${USER2}    names=${names}
+            Lists Should Be Equal    ${USER_1}    ${USER_2}    names=${names}
         ```
 
         Both of the above examples fail with this message:
@@ -788,11 +816,13 @@ class _List:
         Examples:
 
         ```robotframework
+        *** Variables ***
+        @{ASC}           apple     cherry    banana
+        @{DESC}          cherry    banana    apple
+
         *** Test Cases ***
         Lists should be equal ignoring order
-            VAR    @{list1}    apple     cherry    banana
-            VAR    @{list2}    cherry    banana    apple
-            Lists Should Be Equal    ${list}    ${list}    ignore_order=True
+            Lists Should Be Equal    ${ASC}    ${DESC}    ignore_order=True
         ```
 
         The `ignore_case` argument can be used to make comparison case-insensitive.
@@ -907,7 +937,7 @@ class _Dictionary:
         This includes converting Robot Framework's own `DotDict` instances
         that it uses if variables are created using the `&{var}` syntax.
 
-        Use [Create Dictionary] from the BuiltIn library for constructing new
+        Use Create Dictionary from the [BuiltIn] library for constructing new
         dictionaries.
         """
         return dict(item)  # type: ignore
@@ -937,13 +967,16 @@ class _Dictionary:
         It is easiest to specify items using the `name=value` syntax:
 
         ```robotframework
+        *** Variables ***
+        &{DICT_NAME_VALUE}        a=${1}
+        ${EXPECTED_NAME_VALUE}    &{DICT_NAME_VALUE}
+
         *** Test Cases ***
         `name=value` syntax
-            ${dict_1} =    Copy Dictionary    ${DICT_A}
-            ${expected} =    Copy Dictionary    ${DICT_A}
-            Set To Dictionary    ${expected}    key=value    second=${2}
-            ${updated} =    Set To Dictionary    ${dict_1}    key=value    second=${2}
-            Dictionaries Should Be Equal    ${updated}    ${expected}
+            Set To Dictionary    ${EXPECTED_NAME_VALUE}    key=value    second=${2}
+            ${updated} =    Set To Dictionary    ${DICT_NAME_VALUE}    key=value
+            ...    second=${2}
+            Dictionaries Should Be Equal    ${updated}    ${EXPECTED_NAME_VALUE}
         ```
 
         A limitation of the above syntax is that keys must be strings.
@@ -951,27 +984,33 @@ class _Dictionary:
         That can be avoided by passing keys and values as separate arguments:
 
         ```robotframework
+        *** Variables ***
+        &{DICT_KEYS_VALUES}        a=${1}
+        ${EXPECTED_KEYS_VALUES}    &{DICT_KEYS_VALUES}
+
         *** Test Cases ***
         Keys and values separately
-            ${dict_1} =    Copy Dictionary    ${DICT_A}
-            ${expected} =    Copy Dictionary    ${DICT_A}
-            Set To Dictionary    ${expected}    key    value    ${2}    value 2
-            ${updated} =    Set To Dictionary    ${dict_1}    key    value    ${2}    value 2
-            Dictionaries Should Be Equal    ${updated}    ${expected}
+            Set To Dictionary    ${EXPECTED_KEYS_VALUES}    key    value    ${2}
+            ...    value 2
+            ${updated} =    Set To Dictionary    ${DICT_KEYS_VALUES}    key    value
+            ...    ${2}    value 2
+            Dictionaries Should Be Equal    ${updated}    ${EXPECTED_KEYS_VALUES}
         ```
 
         Starting from Robot Framework 6.1, it is also possible to use the native
         item assignment syntax. This is equivalent to the above:
 
         ```robotframework
+        *** Variables ***
+        &{DICT_ITEM}         a=${1}
+        ${EXPECTED_ITEM}     &{DICT_ITEM}
+
         *** Test Cases ***
         Item assignment syntax
-            ${dict_1} =    Copy Dictionary    ${DICT_A}
-            ${expected} =    Copy Dictionary    ${DICT_A}
-            Set To Dictionary    ${expected}    key    value    ${2}    value 2
-            ${dict_1}[key] =    Set Variable    value
-            ${dict_1}[${2}] =    Set Variable    value 2
-            Dictionaries Should Be Equal    ${dict_1}    ${expected}
+            Set To Dictionary    ${EXPECTED_ITEM}    key    value    ${2}    value 2
+            ${DICT_ITEM}[key] =    Set Variable    value
+            ${DICT_ITEM}[${2}] =    Set Variable    value 2
+            Dictionaries Should Be Equal    ${DICT_ITEM}    ${EXPECTED_ITEM}
         ```
         """
         if len(key_value_pairs) % 2 != 0:
@@ -1005,13 +1044,15 @@ class _Dictionary:
         Examples:
 
         ```robotframework
+        *** Variables ***
+        &{DICT_REMOVE}        a=${1}    b=${2}    c=${3}
+        ${EXPECTED_REMOVE}    &{DICT_REMOVE}
+
         *** Test Cases ***
         Remove from dictionary
-            ${dict_1} =    Copy Dictionary    ${DICT_ABC}
-            ${expected} =    Copy Dictionary    ${DICT_ABC}
-            Remove From Dictionary    ${expected}    b
-            ${updated} =    Remove From Dictionary    ${dict_1}    b    x    y
-            Dictionaries Should Be Equal    ${updated}    ${expected}
+            Remove From Dictionary    ${EXPECTED_REMOVE}    b
+            ${updated} =    Remove From Dictionary    ${DICT_REMOVE}    b    x    y
+            Dictionaries Should Be Equal    ${updated}    ${EXPECTED_REMOVE}
         ```
         """
         for key in keys:
@@ -1044,14 +1085,16 @@ class _Dictionary:
         Examples:
 
         ```robotframework
+        *** Variables ***
+        &{DICT_POP}        a=${1}    b=${2}    c=${3}
+        ${EXPECTED_POP}    &{DICT_POP}
+
         *** Test Cases ***
         Pop from dictionary
-            ${dict_1} =    Copy Dictionary    ${DICT_ABC}
-            ${expected} =    Copy Dictionary    ${DICT_ABC}
-            Remove From Dictionary    ${expected}    b
-            ${val} =    Pop From Dictionary    ${dict_1}    b
+            Remove From Dictionary    ${EXPECTED_POP}    b
+            ${val} =    Pop From Dictionary    ${DICT_POP}    b
             Should Be Equal    ${val}    ${2}
-            Dictionaries Should Be Equal    ${dict_1}    ${expected}
+            Dictionaries Should Be Equal    ${DICT_POP}    ${EXPECTED_POP}
         ```
         """
         if default is NOT_SET:
@@ -1080,13 +1123,15 @@ class _Dictionary:
         Examples:
 
         ```robotframework
+        *** Variables ***
+        &{DICT_KEEP}         a=${1}    b=${2}    c=${3}
+        ${EXPECTED_KEEP}     &{DICT_KEEP}
+
         *** Test Cases ***
         Keep in dictionary
-            ${dict_1} =    Copy Dictionary    ${DICT_ABCD}
-            ${expected} =    Copy Dictionary    ${DICT_ABCD}
-            Remove From Dictionary    ${expected}    a    c
-            ${updated} =    Keep In Dictionary    ${dict_1}    b    x    d
-            Dictionaries Should Be Equal    ${updated}    ${expected}
+            Remove From Dictionary    ${EXPECTED_KEEP}    a    c
+            ${updated} =    Keep In Dictionary    ${DICT_KEEP}    b    x    d
+            Dictionaries Should Be Equal    ${updated}    ${EXPECTED_KEEP}
         ```
         """
         remove_keys = [k for k in dictionary if k not in keys]
@@ -1135,9 +1180,12 @@ class _Dictionary:
         Examples:
 
         ```robotframework
+        *** Variables ***
+        &{GET_KEYS}      a=${1}    b=${2}    c=${3}
+
         *** Test Cases ***
         Get dictionary keys
-            ${keys} =    Get Dictionary Keys    ${DICT_ABC}
+            ${keys} =    Get Dictionary Keys    ${GET_KEYS}
             Should Be Equal    ${keys}    ["a", "b", "c"]    type=list
         ```
         """
@@ -1169,9 +1217,12 @@ class _Dictionary:
         Examples:
 
         ```robotframework
+        *** Variables ***
+        &{GET_VALUES}    a=${1}    b=${2}    c=${3}
+
         *** Test Cases ***
         Get dictionary values
-            ${values} =    Get Dictionary Values    ${DICT_ABC}
+            ${values} =    Get Dictionary Values    ${GET_VALUES}
             Should Be Equal    ${values}    [1, 2, 3]    type=list
         ```
         """
@@ -1203,9 +1254,12 @@ class _Dictionary:
         Examples:
 
         ```robotframework
+        *** Variables ***
+        &{GET_ITEMS}     a=${1}    b=${2}    c=${3}
+
         *** Test Cases ***
         Get dictionary items
-            ${items} =    Get Dictionary Items    ${DICT_ABC}
+            ${items} =    Get Dictionary Items    ${GET_ITEMS}
             Should Be Equal    ${items}    ["a", 1, "b", 2, "c", 3]    type=list
         ```
         """
@@ -1235,9 +1289,12 @@ class _Dictionary:
         Examples:
 
         ```robotframework
+        *** Variables ***
+        &{DICT_GET}      a=${1}    b=${2}    c=${3}
+
         *** Test Cases ***
         Get from dictionary
-            ${value} =    Get From Dictionary    ${DICT_ABC}    b
+            ${value} =    Get From Dictionary    ${DICT_GET}    b
             Should Be Equal    ${value}    ${2}
         ```
 
@@ -1388,7 +1445,8 @@ class _Dictionary:
             dict1: The first dictionary.
             dict2: The second dictionary.
             msg: Optional custom error message.
-            values: Controls whether default differences are included in the error message.
+            values: Controls whether default differences are included in the
+                error message.
             ignore_keys: Keys to ignore in the comparison.
             ignore_case: Whether to ignore case in comparison.
             ignore_value_order: Whether to ignore order in list-like values.
@@ -1406,24 +1464,26 @@ class _Dictionary:
 
         ```robotframework
         *** Variables ***
-        &{DICT1}         first=same    second=different case
-        &{DICT2}         first=same
-        &{DICT3}         first=same    second=DIFFERENT CASE
+        &{DICT_1}         first=same    second=different case
+        &{DICT_2}         first=same
+        &{DICT_3}         first=same    second=DIFFERENT CASE
 
         *** Test Cases ***
         Comparison fails with different items
-            Dictionaries Should Be Equal    ${DICT1}    ${DICT2}
+            Dictionaries Should Be Equal    ${DICT_1}    ${DICT_2}
 
         Comparison fails with different values
-            Dictionaries Should Be Equal    ${DICT1}    ${DICT3}
+            Dictionaries Should Be Equal    ${DICT_1}    ${DICT_3}
 
         Comparison when ignoring case
-            Dictionaries Should Be Equal    ${DICT1}    ${DICT3}    ignore_case=True
+            Dictionaries Should Be Equal    ${DICT_1}    ${DICT_3}    ignore_case=True
 
         Comparison when ignoring keys
             VAR    @{ignore}    second
-            Dictionaries Should Be Equal    ${DICT1}    ${DICT2}    ignore_keys=${ignore}
-            Dictionaries Should Be Equal    ${DICT1}    ${DICT3}    ignore_keys=${ignore}
+            Dictionaries Should Be Equal    ${DICT_1}    ${DICT_2}
+            ...    ignore_keys=${ignore}
+            Dictionaries Should Be Equal    ${DICT_1}    ${DICT_3}
+            ...    ignore_keys=${ignore}
         ```
 
         See [Lists Should Be Equal] for more information about configuring
@@ -1500,7 +1560,8 @@ class _Dictionary:
             dict1: The dictionary that should contain all items.
             dict2: The dictionary whose items should be found.
             msg: Optional custom error message.
-            values: Controls whether default differences are included in the error message.
+            values: Controls whether default differences are included in the
+                error message.
             ignore_case: Whether to ignore case in comparison.
             ignore_value_order: Whether to ignore order in list-like values.
 
@@ -1626,14 +1687,17 @@ class Collections(_List, _Dictionary):
     Examples:
 
     ```robotframework
+    *** Variables ***
+    @{LIST_COMPARE_1}    abc    DEF
+    @{LIST_COMPARE_2}    ABC    def
+    &{DICT_COMPARE_1}    key=value
+    &{DICT_COMPARE_2}    key=VALUE
+
     *** Test Cases ***
     Ignore case
-        VAR    @{list1}    abc    DEF
-        VAR    @{list2}    ABC    def
-        VAR    &{dict1}    key=value
-        VAR    &{dict2}    key=VALUE
-        Lists Should Be Equal    ${list1}    ${list2}    ignore_case=True
-        Dictionaries Should Be Equal    ${dict1}    ${dict2}    ignore_case=VALUES
+        Lists Should Be Equal    ${LIST_COMPARE_1}    ${LIST_COMPARE_2}    ignore_case=True
+        Dictionaries Should Be Equal    ${DICT_COMPARE_1}    ${DICT_COMPARE_2}
+        ...    ignore_case=VALUES
     ```
 
     Notice that some keywords accept also an older `case_insensitive` argument
@@ -1643,21 +1707,6 @@ class Collections(_List, _Dictionary):
 
     Starting from Robot Framework 7.4, case-insensitivity works also with
     bytes, not only with strings.
-
-    # Variables in examples
-
-    The following shared variables are used in examples throughout this
-    documentation to keep test data consistent and easy to read.
-
-    ```robotframework
-    *** Variables ***
-    @{LIST_ABC}      a    b    c
-    @{LIST_ABCDE}    a    b    c    d    e
-
-    &{DICT_A}        a=${1}
-    &{DICT_ABC}      b=${2}    a=${1}    c=${3}
-    &{DICT_ABCD}     a=${1}    b=${2}    c=${3}    d=${4}
-    ```
 
     <!---  Markdown comment to hide library import that eases testing examples.
            Can be removed if a separate example with the import is added.
@@ -1669,6 +1718,7 @@ class Collections(_List, _Dictionary):
     --->
 
     [BuiltIn]: https://robotframework.org/robotframework/latest/libraries/BuiltIn.html
+    [String]: https://robotframework.org/robotframework/latest/libraries/String.html
     [#5762]: https://github.com/robotframework/robotframework/issues/5762
     """
 
@@ -1708,8 +1758,8 @@ class Collections(_List, _Dictionary):
         [regular expression syntax](http://docs.python.org/library/re.html).
         Notice that the backslash character often used with regular
         expressions is an escape character in Robot Framework data and needs
-        to be escaped with another backslash like `regexp=\\d{6}`. See the
-        [BuiltIn] keyword `Should Match Regexp` for more details.
+        to be escaped with another backslash like `regexp=\\d{6}`.
+        See Should Match Regexp from the [BuiltIn] library for more details.
 
         Matching is case-sensitive by default, but that can be changed by giving
         the `ignore_case` argument a true value.
