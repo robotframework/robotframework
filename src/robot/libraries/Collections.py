@@ -30,6 +30,7 @@ from robot.version import get_version
 from .normalizer import IgnoreCase, Normalizer
 
 NOT_SET = NotSet()
+_list_type = list  # Alias to avoid shadowing when 'list' is used as a parameter name.
 
 ListLike = Union[Sequence, Mapping, Set]
 
@@ -55,13 +56,13 @@ class _List:
 
     def append_to_list(
         self,
-        list_: MutableSequence,
+        list: MutableSequence,
         *values: object,
     ) -> MutableSequence:
         """Adds `values` to the end of `list`.
 
         Args:
-            list_: The list to modify.
+            list: The list to modify.
             *values: Values to append.
 
         Returns:
@@ -80,25 +81,20 @@ class _List:
             Lists Should Be Equal    ${list}    ["a", "b", "c", "d", "e", "f", "g"]
         ```
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
         """
-        list_.extend(values)
-        return list_
+        list.extend(values)
+        return list
 
     def insert_into_list(
         self,
-        list_: MutableSequence,
+        list: MutableSequence,
         index: int,
         value: object,
     ) -> MutableSequence:
         """Inserts `value` into `list` to the position specified with `index`.
 
         Args:
-            list_: The list to modify.
+            list: The list to modify.
             index: Index where to insert the value.
             value: The value to insert.
 
@@ -128,14 +124,9 @@ class _List:
             Lists Should Be Equal    ${list}    ["x", "y", "a", "b", "z", "c"]
         ```
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
         """
-        list_.insert(index, value)
-        return list_
+        list.insert(index, value)
+        return list
 
     def combine_lists(self, *lists: ListLike) -> list:
         """Combines the given `lists` together and returns the result.
@@ -164,14 +155,14 @@ class _List:
 
     def set_list_value(
         self,
-        list_: MutableSequence,
+        list: MutableSequence,
         index: int,
         value: object,
     ) -> MutableSequence:
         """Sets the value of `list` specified by `index` to the given `value`.
 
         Args:
-            list_: The list to modify.
+            list: The list to modify.
             index: Index of the value to set.
             value: The new value.
 
@@ -213,27 +204,22 @@ class _List:
             Lists Should Be Equal    ${list}    ["x", "y", "c", "d", "z"]
         ```
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
         """
         try:
-            list_[index] = value
+            list[index] = value
         except IndexError:
-            self._index_error(list_, index)
-        return list_
+            self._index_error(list, index)
+        return list
 
     def remove_values_from_list(
         self,
-        list_: MutableSequence,
+        list: MutableSequence,
         *values: object,
     ) -> MutableSequence:
         """Removes all occurrences of given `values` from `list`.
 
         Args:
-            list_: The list to modify.
+            list: The list to modify.
             *values: Values to remove.
 
         Returns:
@@ -253,22 +239,17 @@ class _List:
             Lists Should Be Equal    ${list}    ["b", "b", "d"]
         ```
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
         """
         for value in values:
-            while value in list_:
-                list_.remove(value)
-        return list_
+            while value in list:
+                list.remove(value)
+        return list
 
-    def remove_from_list(self, list_: MutableSequence, index: int) -> object:
+    def remove_from_list(self, list: MutableSequence, index: int) -> object:
         """Removes and returns the value specified with an `index` from `list`.
 
         Args:
-            list_: The list to modify.
+            list: The list to modify.
             index: Index of the value to remove.
 
         Returns:
@@ -294,22 +275,17 @@ class _List:
             Lists Should Be Equal    ${list}    ["a"]
         ```
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
         """
         try:
-            return list_.pop(index)
+            return list.pop(index)
         except IndexError:
-            self._index_error(list_, index)
+            self._index_error(list, index)
 
-    def remove_duplicates(self, list_: Sequence) -> list:
+    def remove_duplicates(self, list: Sequence) -> list:
         """Returns a list without duplicates based on the given `list`.
 
         Args:
-            list_: The list to remove duplicates from.
+            list: The list to remove duplicates from.
 
         Returns:
             A new list without duplicates.
@@ -329,26 +305,20 @@ class _List:
             Lists Should Be Equal    ${no_dupes}    ["a", "b"]
             Lists Should Be Equal    ${list}        ["a", "b", "b", "a"]
         ```
-
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
         """
         ret = []
-        for item in list_:
+        for item in list:
             if item not in ret:
                 ret.append(item)
-        removed = len(list_) - len(ret)
+        removed = len(list) - len(ret)
         logger.info(f"{removed} duplicate{s(removed)} removed.")
         return ret
 
-    def get_from_list(self, list_: Sequence, index: int) -> object:
+    def get_from_list(self, list: Sequence, index: int) -> object:
         """Returns the value specified with an `index` from `list`.
 
         Args:
-            list_: The list to get a value from.
+            list: The list to get a value from.
             index: Index of the value to get.
 
         Returns:
@@ -375,27 +345,22 @@ class _List:
             Lists Should Be Equal    ${list}    ["a", "b", "c"]
         ```
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
         """
         try:
-            return list_[index]
+            return list[index]
         except IndexError:
-            self._index_error(list_, index)
+            self._index_error(list, index)
 
     def get_slice_from_list(
         self,
-        list_: Sequence,
+        list: Sequence,
         start: "int | Literal['']" = 0,
         end: "int | None" = None,
     ) -> Sequence:
         """Returns a slice of the given list between `start` and `end` indices.
 
         Args:
-            list_: The list to get a slice from.
+            list: The list to get a slice from.
             start: Start index of the slice.
             end: End index of the slice.
 
@@ -427,11 +392,6 @@ class _List:
             Lists Should Be Equal    ${slice3}    ["a", "b", "c"]
         ```
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
         """
         if start == "":
             # Deprecated in RF 7.4. TODO: Remove in RF 9.
@@ -440,11 +400,11 @@ class _List:
                 "keyword is deprecated. Use '0' instead."
             )
             start = 0
-        return list_[start:end]
+        return list[start:end]
 
     def count_values_in_list(
         self,
-        list_: Sequence,
+        list: Sequence,
         value: object,
         start: int = 0,
         end: "int | None" = None,
@@ -452,7 +412,7 @@ class _List:
         """Returns the number of occurrences of the given `value` in `list`.
 
         Args:
-            list_: The list to search the value from.
+            list: The list to search the value from.
             value: The value to search for.
             start: Optional start index for the search.
             end: Optional end index for the search.
@@ -478,17 +438,12 @@ class _List:
             Should Be Equal    ${x}    0    type=int
         ```
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
         """
-        return self.get_slice_from_list(list_, start, end).count(value)
+        return self.get_slice_from_list(list, start, end).count(value)
 
     def get_index_from_list(
         self,
-        list_: Sequence,
+        list: Sequence,
         value: object,
         start: "int | Literal['']" = 0,
         end: "int | None" = None,
@@ -496,8 +451,8 @@ class _List:
         """Returns the index of the first occurrence of the `value` on the list.
 
         Args:
-            list_: The list to search the value from.
-            value: The value to search ofr.
+            list: The list to search the value from.
+            value: The value to search for.
             start: Optional start index for the search.
             end: Optional end index for the search.
 
@@ -528,11 +483,6 @@ class _List:
         yielded negative return values making it impossible to know did `-1`
         mean that the value had that index or that the value was not found.
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
         """
         if start == "":
             # Deprecated in RF 7.4. TODO: Remove in RF 9.
@@ -542,20 +492,20 @@ class _List:
             )
             start = 0
         if start < 0:
-            increment = max(start + len(list_), 0)
+            increment = max(start + len(list), 0)
         else:
             increment = start
-        list_ = self.get_slice_from_list(list_, start, end)
+        list = self.get_slice_from_list(list, start, end)
         try:
-            return list_.index(value) + increment
+            return list.index(value) + increment
         except ValueError:
             return -1
 
-    def copy_list(self, list_: Sequence, deepcopy: bool = False) -> Sequence:
+    def copy_list(self, list: Sequence, deepcopy: bool = False) -> Sequence:
         """Returns a copy of the given list.
 
         Args:
-            list_: The list to copy.
+            list: The list to copy.
             deepcopy: Whether to also copy items.
 
         Returns:
@@ -565,21 +515,16 @@ class _List:
         Set the `deepcopy` argument to a true value if also items should
         be copied.
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
         """
         if deepcopy:
-            return copy.deepcopy(list_)
-        return list_[:]
+            return copy.deepcopy(list)
+        return list[:]
 
-    def reverse_list(self, list_: MutableSequence) -> MutableSequence:
+    def reverse_list(self, list: MutableSequence) -> MutableSequence:
         """Reverses the given list.
 
         Args:
-            list_: The list to reverse.
+            list: The list to reverse.
 
         Returns:
             The reversed list.
@@ -596,20 +541,15 @@ class _List:
             Lists Should Be Equal    ${list}    ["c", "b", "a"]
         ```
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
         """
-        list_.reverse()
-        return list_
+        list.reverse()
+        return list
 
-    def sort_list(self, list_: MutableSequence) -> MutableSequence:
+    def sort_list(self, list: MutableSequence) -> MutableSequence:
         """Sorts the given list.
 
         Args:
-            list_: The list to sort.
+            list: The list to sort.
 
         Returns:
             The sorted list.
@@ -622,21 +562,16 @@ class _List:
 
         Starting from Robot Framework 7.4, the sorted list is also returned.
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
         """
-        if isinstance(list_, list):
-            list_.sort()
+        if isinstance(list, _list_type):
+            list.sort()
         else:
-            list_ = sorted(list_)
-        return list_
+            list = sorted(list)
+        return list
 
     def list_should_contain_value(
         self,
-        list_: ListLike,
+        list: ListLike,
         value: object,
         msg: "str | None" = None,
         ignore_case: bool = False,
@@ -644,7 +579,7 @@ class _List:
         """Fails if the `value` is not found from `list`.
 
         Args:
-            list_: The list to verify.
+            list: The list to verify.
             value: The value that should be found.
             msg: Optional custom error message.
             ignore_case: Whether to ignore case in comparison.
@@ -653,19 +588,14 @@ class _List:
         See the [Ignore case] section for more details. This option is new in
         Robot Framework 7.0.
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
         """
         normalize = Normalizer(ignore_case).normalize
-        if normalize(value) not in normalize(list_):
-            report_error(f"{seq2str2(list_)} does not contain value '{value}'.", msg)
+        if normalize(value) not in normalize(list):
+            report_error(f"{seq2str2(list)} does not contain value '{value}'.", msg)
 
     def list_should_not_contain_value(
         self,
-        list_: ListLike,
+        list: ListLike,
         value: object,
         msg: "str | None" = None,
         ignore_case: bool = False,
@@ -673,7 +603,7 @@ class _List:
         """Fails if the `value` is found from `list`.
 
         Args:
-            list_: The list to verify.
+            list: The list to verify.
             value: The value that should not be found.
             msg: Optional custom error message.
             ignore_case: Whether to ignore case in comparison.
@@ -682,26 +612,21 @@ class _List:
         See the [Ignore case] section for more details. This option is new in
         Robot Framework 7.0.
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
         """
         normalize = Normalizer(ignore_case).normalize
-        if normalize(value) in normalize(list_):
-            report_error(f"{seq2str2(list_)} contains value '{value}'.", msg)
+        if normalize(value) in normalize(list):
+            report_error(f"{seq2str2(list)} contains value '{value}'.", msg)
 
     def list_should_not_contain_duplicates(
         self,
-        list_: Sequence,
+        list: Sequence,
         msg: "str | None" = None,
         ignore_case: bool = False,
     ):
         """Fails if any element in the `list` is found from it more than once.
 
         Args:
-            list_: The list to verify.
+            list: The list to verify.
             msg: Optional custom error message.
             ignore_case: Whether to ignore case in comparison.
 
@@ -717,17 +642,12 @@ class _List:
         See the [Ignore case] section for more details. This option is new in
         Robot Framework 7.0.
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
         """
         dupes = []
-        list_ = Normalizer(ignore_case).normalize(list_)
-        for item in list_:
+        list = Normalizer(ignore_case).normalize(list)
+        for item in list:
             if item not in dupes:
-                count = list_.count(item)
+                count = list.count(item)
                 if count > 1:
                     logger.info(f"'{item}' found {count} times.")
                     dupes.append(item)
@@ -883,34 +803,28 @@ class _List:
         if diffs:
             report_error(f"Following values are missing: {diffs}", msg, values)
 
-    def log_list(self, list_: Sequence, level: logger.LogLevel = "INFO"):
+    def log_list(self, list: Sequence, level: logger.LogLevel = "INFO"):
         """Logs contents of the `list` using the given `level`.
 
         Args:
-            list_: The list to log.
+            list: The list to log.
             level: The log level to use.
-
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
         """
-        logger.write("\n".join(self._log_list(list_)), level)
+        logger.write("\n".join(self._log_list(list)), level)
 
-    def _log_list(self, list_: Sequence) -> "Iterator[str]":
-        if not list_:
+    def _log_list(self, list: Sequence) -> "Iterator[str]":
+        if not list:
             yield "List is empty."
-        elif len(list_) == 1:
+        elif len(list) == 1:
             yield "List has one item:"
-            yield str(list_[0])
+            yield str(list[0])
         else:
-            yield f"List length is {len(list_)} and it contains following items:"
-            for index, item in enumerate(list_):
+            yield f"List length is {len(list)} and it contains following items:"
+            for index, item in enumerate(list):
                 yield f"{index}: {item}"
 
-    def _index_error(self, list_: Sequence, index: int) -> NoReturn:
-        raise IndexError(f"Given index {index} is out of the range 0-{len(list_) - 1}.")
+    def _index_error(self, list: Sequence, index: int) -> NoReturn:
+        raise IndexError(f"Given index {index} is out of the range 0-{len(list) - 1}.")
 
 
 class _Dictionary:

@@ -3891,11 +3891,11 @@ class _Misc(_BuiltInBase):
         Useful as a placeholder in places where a block cannot be empty.
         """
 
-    def sleep(self, time_: timedelta, reason: "str | None" = None):
+    def sleep(self, time: timedelta, reason: "str | None" = None):
         """Pauses execution for the given time.
 
         Args:
-            time_: The time to sleep.
+            time: The time to sleep.
             reason: The optional reason for sleeping.
 
         Both the time slept and the optional reason are logged.
@@ -3908,15 +3908,8 @@ class _Misc(_BuiltInBase):
             Sleep    2 minutes 10 seconds
             Sleep    10s    Wait for a reply
         ```
-
-        !!! note
-            The `time_` argument will be renamed to `time` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `time_=1.5`
-            and pass the time positionally like `1.5` instead. See issue
-            [#5762](https://github.com/robotframework/robotframework/issues/5762)
-            for more information.
         """
-        seconds = timestr_to_secs(time_)
+        seconds = timestr_to_secs(time)
         # Python hangs with negative values
         if seconds < 0:
             seconds = 0
@@ -4417,13 +4410,13 @@ class _Misc(_BuiltInBase):
     def get_time(
         self,
         format: str = "timestamp",
-        time_: "int | float | str | datetime" = "NOW",
+        time: "int | float | str | datetime" = "NOW",
     ) -> "int | str | list[str]":
         """Returns the given time in the requested format.
 
         Args:
             format: Requested time format. See below for details.
-            time_: Time to use. Defaults to current local time (`NOW`).
+            time: Time to use. Defaults to current local time (`NOW`).
 
         Returns:
             The requested time value.
@@ -4494,7 +4487,7 @@ class _Misc(_BuiltInBase):
             ${tomorrow} =     Get Time    timestamp    NOW + 1 day
         ```
         """
-        return get_time(format, parse_time(time_))
+        return get_time(format, parse_time(time))
 
     def evaluate(
         self,
