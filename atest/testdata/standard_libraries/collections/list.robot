@@ -707,7 +707,7 @@ Bytes normalization
 
 *** Keywords ***
 Validate invalid argument error
-    [Arguments]    ${keyword}    ${argument}=I'm not a list, I'm a string.    @{args}    ${arg_name}=list_    ${annotation}=Sequence, Mapping or set    ${invalid_argument}=${NONE}
+    [Arguments]    ${keyword}    ${argument}=I'm not a list, I'm a string.    @{args}    ${arg_name}=list    ${annotation}=Sequence, Mapping or set    ${invalid_argument}=${NONE}
     IF    not $invalid_argument
         VAR    ${invalid_argument}    ${argument}
     END
