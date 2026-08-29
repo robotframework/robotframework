@@ -959,6 +959,33 @@ class ListenerV3:
         if it is enabled.
         """
 
+    def start_library_import(self, importer: running.Import):
+        """Called before a library is imported.
+
+        ``importer`` contains information about the library to be imported and
+        can be modified to change its name, arguments, or alias.
+
+        New in Robot Framework 7.6.
+        """
+
+    def start_resource_import(self, importer: running.Import):
+        """Called before a resource file is imported.
+
+        ``importer`` contains information about the resource file to be
+        imported and can be modified to change its name before importing.
+
+        New in Robot Framework 7.6.
+        """
+
+    def start_variables_import(self, importer: running.Import):
+        """Called before a variable file is imported.
+
+        ``importer`` contains information about the variable file to be
+        imported and can be modified to change its name or arguments.
+
+        New in Robot Framework 7.6.
+        """
+
     def library_import(self, library: running.TestLibrary, importer: running.Import):
         """Called after a library has been imported.
 
