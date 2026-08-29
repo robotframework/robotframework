@@ -4410,13 +4410,13 @@ class _Misc(_BuiltInBase):
     def get_time(
         self,
         format: str = "timestamp",
-        time_: "int | float | str | datetime" = "NOW",
+        time: "int | float | str | datetime" = "NOW",
     ) -> "int | str | list[str]":
         """Returns the given time in the requested format.
 
         Args:
             format: Requested time format. See below for details.
-            time_: Time to use. Defaults to current local time (`NOW`).
+            time: Time to use. Defaults to current local time (`NOW`).
 
         Returns:
             The requested time value.
@@ -4487,7 +4487,7 @@ class _Misc(_BuiltInBase):
             ${tomorrow} =     Get Time    timestamp    NOW + 1 day
         ```
         """
-        return get_time(format, parse_time(time_))
+        return get_time(format, parse_time(time))
 
     def evaluate(
         self,
