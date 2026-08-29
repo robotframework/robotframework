@@ -452,7 +452,7 @@ class _List:
 
         Args:
             list: The list to search the value from.
-            value: The value to search ofr.
+            value: The value to search for.
             start: Optional start index for the search.
             end: Optional end index for the search.
 
