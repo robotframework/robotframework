@@ -70,7 +70,7 @@ Execute
     Set Execution Environment
     @{arguments} =    Get Execution Arguments    ${options}    ${sources}    ${default options}
     ${result} =    Run Process    @{executor}    @{arguments}
-    ...    stdout=${STDOUTFILE}    stderr=${STDERRFILE}    output_encoding=SYSTEM
+    ...    stdout=${STDOUTFILE}    stderr=${STDERRFILE}    output_encoding=UTF-8
     ...    timeout=5min    on_timeout=terminate
     RETURN    ${result}
 
@@ -170,8 +170,11 @@ All Keywords Should Have Passed
 
 Get Output File
     [Arguments]    ${path}
-    [Documentation]    Output encoding avare helper
-    ${encoding} =    Set Variable If    r'${path}' in [r'${STDERR FILE}', r'${STDOUT FILE}']    SYSTEM    UTF-8
+    IF    $path in ($STDERR_FILE, $STDOUT_FILE) and $INTERPRETER.version_info < (3, 15)
+        VAR    ${encoding}    SYSTEM
+    ELSE
+        VAR    ${encoding}    UTF-8
+    END
     ${file} =    Get File    ${path}    ${encoding}
     RETURN    ${file}
 

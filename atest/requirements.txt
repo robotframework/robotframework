@@ -2,7 +2,7 @@
 # See atest/README.rst for more information.
 
 pygments
-lxml
+lxml; python_version < '3.15'
 pillow >= 7.1.0; platform_system == 'Windows'
 telnetlib-313-and-up; python_version >= '3.13'
 

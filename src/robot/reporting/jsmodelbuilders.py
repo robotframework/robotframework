@@ -83,6 +83,11 @@ class Builder:
         self._html = self._context.html
         self._timestamp = self._context.timestamp
 
+    def _yield_metadata(self, item):
+        for name, value in item.metadata.items():
+            yield self._string(name)
+            yield self._html(value)
+
     def _get_status(self, item, note_only=False):
         model = (
             STATUSES[item.status],
@@ -144,11 +149,6 @@ class SuiteBuilder(Builder):
                 stats,
             )
 
-    def _yield_metadata(self, suite):
-        for name, value in suite.metadata.items():
-            yield self._string(name)
-            yield self._html(value)
-
     def _get_statistics(self, suite):
         stats = suite.statistics  # Access property only once
         return (stats.total, stats.passed, stats.failed, stats.skipped)
@@ -168,6 +168,7 @@ class TestBuilder(Builder):
                 self._string(test.timeout),
                 self._html(test.doc),
                 tuple(self._string(t) for t in test.tags),
+                tuple(self._yield_metadata(test)),
                 self._get_status(test),
                 self._build_body(body, split=True),
             )

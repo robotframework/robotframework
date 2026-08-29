@@ -220,8 +220,7 @@ Invalid setting
     Fail    Should not be run
 
 Setting not valid with tests
-    [Documentation]    FAIL Setting 'Metadata' is not allowed with tests or tasks.
-    [Metadata]    Not valid.
+    [Documentation]    FAIL Setting 'Arguments' is not allowed with tests or tasks.
     [Arguments]    Not valid.
     Fail    Should not be run
 

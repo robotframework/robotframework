@@ -330,6 +330,7 @@ class SectionHeader(Statement):
                 "Tasks",
                 "Keywords",
                 "Comments",
+                "Invalid",
             )
             name = dict(zip(cls.handles_types, names))[type]
         header = f"*** {name} ***" if not name.startswith("*") else name
@@ -1559,7 +1560,7 @@ class Var(Statement):
                 Token(Token.SEPARATOR, separator),
                 Token(Token.OPTION, f"scope={scope}"),
             ]
-        if value_separator:
+        if value_separator is not None:
             tokens += [
                 Token(Token.SEPARATOR, separator),
                 Token(Token.OPTION, f"separator={value_separator}"),

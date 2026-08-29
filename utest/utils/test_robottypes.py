@@ -16,8 +16,7 @@ except ImportError:
     TypeForm = ExtTypeForm
 
 from robot.utils import (
-    is_dict_like, is_falsy, is_list_like, is_truthy, is_union, PY_VERSION, type_name,
-    type_repr
+    is_dict_like, is_falsy, is_list_like, is_truthy, PY_VERSION, type_name, type_repr
 )
 from robot.utils.asserts import assert_equal, assert_true
 
@@ -44,17 +43,6 @@ class NoClassAttr:
         if name == "__class__":
             raise AttributeError(name)
         return super().__getattribute__(name)
-
-
-class TestIsMisc(unittest.TestCase):
-
-    def test_is_union(self):
-        assert is_union(Union[int, str])
-        assert not is_union((int, str))
-        if PY_VERSION >= (3, 10):
-            assert is_union(eval("int | str"))
-        for not_union in "string", 3, [int, str], list, List[int]:
-            assert not is_union(not_union)
 
 
 class TestListLike(unittest.TestCase):

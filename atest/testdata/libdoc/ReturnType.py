@@ -1,7 +1,22 @@
-from typing import List, Union
+import sys
+from typing import List, NoReturn, Union
+
+if sys.version_info >= (3, 11):
+    from typing import Never
+else:
+    from typing_extensions import Never
+
+if sys.version_info >= (3, 12):
+    exec("type TypeAlias = int")
+else:
+    TypeAlias = int
 
 
-def A_no_return():
+class Unknown:
+    pass
+
+
+def A_no_return_type():
     pass
 
 
@@ -25,13 +40,21 @@ def F_stringified_return() -> "int | float":
     return 42
 
 
-class Unknown:
-    pass
-
-
 def G_unknown_return() -> Unknown:
     return Unknown()
 
 
 def H_invalid_return() -> "list[int":  # noqa: F722
     pass
+
+
+def I_Never() -> Never:
+    raise AssertionError
+
+
+def J_NoReturn() -> NoReturn:
+    raise AssertionError
+
+
+def K_type_alias() -> TypeAlias:
+    return 42

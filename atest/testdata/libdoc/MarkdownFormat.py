@@ -11,8 +11,10 @@ Basic Markdown formatting such as **bold**, *italics* and `code` works as expect
 ## Link syntax
 
 Normal Markdown [inline](http://example.com) and [reference] links are supported.
+[No title] is needed.
 
 [reference]: http://example.com "An "example"!"
+[no title]: http://example.com
 
 URLs like http://example.com are automatically linkified as a custom feature.
 Surrounding URLs with angle brackets like <http://example.com> works too.
@@ -134,8 +136,8 @@ def syntax_highlighting():
     ```
     ~~~python
     def keyword(arg):
-        print(arg)
         # This is comment in code, not a Markdown header!
+        return arg
     ~~~
 
     Indented code blocks are a standard Markdown feature:

@@ -2,15 +2,16 @@ import unittest
 
 from robot.libdocpkg.standardtypes import STANDARD_TYPE_DOCS
 from robot.running.arguments.typeconverters import (
-    CustomConverter, EnumConverter, TypeConverter, TypedDictConverter, UnionConverter,
-    UnknownConverter
+    CustomConverter, EnumConverter, RecursiveConverter, TypeConverter,
+    TypedDictConverter, UnionConverter, UnknownConverter
 )
 
 
 class TestStandardTypeDocs(unittest.TestCase):
     no_std_docs = (
-        EnumConverter,
         CustomConverter,
+        EnumConverter,
+        RecursiveConverter,
         TypedDictConverter,
         UnionConverter,
         UnknownConverter,

@@ -158,6 +158,7 @@ class TestCase(WithStatus):
     id: str | None
     doc: str | None
     tags: Sequence[str] | None
+    metadata: dict[str, str] | None
     template: str | None
     timeout: str | None
     lineno: int | None

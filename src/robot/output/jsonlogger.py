@@ -60,6 +60,7 @@ class JsonLogger:
             name=test.name,
             doc=test.doc,
             tags=test.tags,
+            metadata=test.metadata,
             lineno=test.lineno,
             timeout=str(test.timeout) if test.timeout else None,
             **self._status(test),

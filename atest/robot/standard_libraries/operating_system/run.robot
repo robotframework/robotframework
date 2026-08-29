@@ -4,8 +4,7 @@ Resource          atest_resource.robot
 
 *** Variables ***
 ${DEPRECATED}    _This keyword is considered deprecated. Use the
-...              [Process](http://robotframework.org/robotframework/latest/libraries/Process.html)
-...              library instead._
+...              [Process] library instead._
 ...              separator=\n
 
 *** Test Cases ***

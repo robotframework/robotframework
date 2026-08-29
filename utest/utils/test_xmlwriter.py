@@ -2,13 +2,14 @@ import os
 import tempfile
 import unittest
 from collections import OrderedDict
+from pathlib import Path
 from xml.etree import ElementTree as ET
 
 from robot.errors import DataError
 from robot.utils import ETSource, XmlWriter
 from robot.utils.asserts import assert_equal, assert_raises, assert_true
 
-PATH = os.path.join(tempfile.gettempdir(), "test_xmlwriter.xml")
+PATH = Path(os.getenv("TEMPDIR") or tempfile.gettempdir()) / "test_xmlwriter.xml"
 
 
 class XmlWriterWithoutPreamble(XmlWriter):

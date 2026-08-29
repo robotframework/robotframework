@@ -360,12 +360,12 @@ function renderTestDetailsRows(tests, target) {
 }
 
 function configureTableSorter(sortByStatus) {
-    var config = {headers: {3: {sorter: 'status'},
-                            5: {sortInitialOrder: 'desc'},
-                            6: {sorter: 'times'}},
+    var config = {headers: {4: {sorter: 'status'},
+                            6: {sortInitialOrder: 'desc'},
+                            7: {sorter: 'times'}},
                   selectorSort: '.details-col-header'};
     if (sortByStatus)
-        config['sortList'] = [[3, 0]];
+        config['sortList'] = [[4, 0]];
     $('#test-details').tablesorter(config);
 }
 
@@ -385,7 +385,7 @@ function toggleDetailsColumn(name) {
 }
 
 function hideHiddenDetailsColumns(elem) {
-    var names = ['doc', 'tags', 'msg', 'elapsed', 'times'];
+    var names = ['doc', 'metadata', 'tags', 'msg', 'elapsed', 'times'];
     for (var i = 0; i < names.length; i++) {
         var name = names[i];
         if (storage.get(name, 'visible') == 'hidden') {
@@ -798,6 +798,10 @@ function hideHiddenDetailsColumns(elem) {
           <div class='details-col-toggle' onclick="toggleDetailsColumn('doc')">&times;</div>
           <div class='details-col-header'>Documentation</div>
         </th>
+        <th class="details-col-metadata" title="Metadata">
+          <div class='details-col-toggle' onclick="toggleDetailsColumn('metadata')">&times;</div>
+          <div class='details-col-header'>Metadata</div>
+        </th>
         <th class="details-col-tags" title="Tags">
           <div class='details-col-toggle' onclick="toggleDetailsColumn('tags')">&times;</div>
           <div class='details-col-header'>Tags</div>
@@ -836,6 +840,7 @@ function hideHiddenDetailsColumns(elem) {
     </td>
   {{/if}}
     <td class="details-col-doc"><div class="doc details-limited">{{html doc()}}</div></td>
+    <td class="details-col-metadata"><div class="doc details-limited">{{each metadata}}<div>{{html $value[0]}}: {{html $value[1]}}</div>{{/each}}</div></td>
     <td class="details-col-tags"><div>{{html tags.join(', ')}}</div></td>
     <td class="details-col-status"><div><span class="label ${status.toLowerCase()}">${status}</span></div></td>
     <td class="details-col-msg"><div class="message details-limited">{{html message()}}</div></td>

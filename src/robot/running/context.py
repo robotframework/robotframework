@@ -269,6 +269,7 @@ class _ExecutionContext:
         self.namespace.start_test()
         self.variables.set_test("${TEST_NAME}", result.name)
         self.variables.set_test("${TEST_DOCUMENTATION}", result.doc)
+        self.variables.set_test("${TEST_METADATA}", result.metadata.copy())
         self.variables.set_test("@{TEST_TAGS}", list(result.tags))
         self.output.start_test(data, result)
 

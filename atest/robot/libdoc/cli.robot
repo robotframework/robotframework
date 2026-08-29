@@ -5,7 +5,8 @@ Test Template    Run Libdoc And Verify Created Output File
 *** Test Cases ***
 Default format is got from output file extension
     String ${OUTHTML}            HTML         String
-    String ${OUTXML}             XML          String    path=${OUTXML}
+    String ${OUTXML}             XML          String    path=${OUTXML}    docformat=MARKDOWN
+    String ${OUTMARKDOWN}        MARKDOWN     String    path=${OUTMARKDOWN}
 
 '*.libspec' extension creates XML file with HTML docs
     String ${OUTBASE}.libspec    LIBSPEC     String    path=${OUTBASE}.libspec
@@ -13,12 +14,13 @@ Default format is got from output file extension
 Using --format overrides output file extension
     -f XmL ${TESTDATADIR}/resource.resource ${OUTHTML}    XML         resource
     --format hTmL BuiltIn ${OUTBASE}.xxx                  HTML        BuiltIn     path=${OUTBASE}.xxx
-    --format XML String ${OUTBASE}.libspec                XML         String      path=${OUTBASE}.libspec
+    --format XML String ${OUTBASE}.libspec                XML         String      path=${OUTBASE}.libspec    docformat=MARKDOWN
+    --format MARKDOWN String ${OUTBASE}.xxx               MARKDOWN    String      path=${OUTBASE}.xxx
 
 Using --specdocformat to specify doc format in output
-    --format XML --specdocformat RAW String ${OUTXML}              XML        String      path=${OUTXML}
+    --format XML --specdocformat RAW String ${OUTXML}              XML        String      path=${OUTXML}    docformat=MARKDOWN
     --format XML --specdocformat HTML String ${OUTXML}             LIBSPEC    String      path=${OUTXML}
-    --format XML --specdocformat RAW String ${OUTBASE}.libspec     XML        String      path=${OUTBASE}.libspec
+    --format XML --specdocformat RAW String ${OUTBASE}.libspec     XML        String      path=${OUTBASE}.libspec    docformat=MARKDOWN
     --format XML --specdocformat HTML String ${OUTBASE}.libspec    LIBSPEC    String      path=${OUTBASE}.libspec
 
 Library arguments
@@ -47,11 +49,11 @@ Library argument matching resource extension when import fails
 
 Override name and version
     --name MyName --version 42 String ${OUTHTML}    HTML    MyName    42
-    -n MyName -v 42 -f xml BuiltIn ${OUTHTML}       XML     MyName    42
+    -n MyName -v 42 -f xml BuiltIn ${OUTHTML}       XML     MyName    42    docformat=MARKDOWN
 
 Missing destination subdirectory is created
     String ${NEWDIR_HTML}        HTML    String    path=${NEWDIR_HTML}
-    String ${NEWDIR_XML}         XML     String    path=${NEWDIR_XML}
+    String ${NEWDIR_XML}         XML     String    path=${NEWDIR_XML}    docformat=MARKDOWN
 
 Quiet
     --quiet String ${OUTHTML}    HTML    String    quiet=True
@@ -65,6 +67,7 @@ Language
     --language EN String ${OUTHTML}     HTML    String    lang=en
     --language fI String ${OUTHTML}     HTML    String    lang=fi
     --language NoNe String ${OUTHTML}   HTML    String    language=
+    --language NoNe String ${OUTMARKDOWN}     MARKDOWN      String    path=${OUTMARKDOWN}
 
 Relative path with Python libraries
     [Template]    NONE
@@ -91,9 +94,13 @@ Non-existing resource
 
 *** Keywords ***
 Run Libdoc And Verify Created Output File
-    [Arguments]    ${args}   ${format}    ${name}    ${version}=    ${path}=${OUTHTML}    ${theme}=    ${lang}=    ${quiet}=False
+    [Arguments]    ${args}   ${format}    ${name}    ${version}=    ${path}=${OUTHTML}    ${theme}=    ${lang}=    ${quiet}=False    ${docformat}=
     ${stdout} =    Run Libdoc    ${args}
-    Run Keyword    ${format} Doc Should Have Been Created    ${path}    ${name}    ${version}
+    IF    $docformat
+        Run Keyword    ${format} Doc Should Have Been Created    ${path}    ${name}    ${version}    ${docformat}
+    ELSE
+        Run Keyword    ${format} Doc Should Have Been Created    ${path}    ${name}    ${version}
+    END
     File Should Have Correct Line Separators    ${path}
     IF    "${theme}"
         File Should Contain    ${path}    "theme": "${theme}"
@@ -131,6 +138,14 @@ LIBSPEC Doc Should Have Been Created
     Name Should Be       ${name}
     Format Should Be     ${docformat}
     Run Keyword If       "${version}"    Version Should Match    ${version}
+
+MARKDOWN Doc Should Have Been Created
+    [Arguments]    ${path}    ${name}    ${version}
+    ${libdoc}=    Get File    ${path}
+    Should Start With    ${libdoc}    \# ${name}
+    IF    "${version}"
+        Should Contain    ${libdoc}    * Version: ${version}
+    END
 
 Path to output should be in stdout
     [Arguments]    ${path}    ${stdout}

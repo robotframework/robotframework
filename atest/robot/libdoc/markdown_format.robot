@@ -9,6 +9,7 @@ Basic formatting
 
 Linking
     Normal Markdown <a href="http://example.com">inline</a> and <a href="http://example.com" title="An &quot;example&quot;!">reference</a> links are supported.
+    ...    <a href="http://example.com">No title</a> is needed.
     URLs like <a href="http://example.com">http://example.com</a> are automatically linkified as a custom feature.
     ...    Surrounding URLs with angle brackets like <a href="http://example.com">http://example.com</a> works too.
 
@@ -111,8 +112,7 @@ Syntax highlighting
     ...    model=${MODEL}[keywords][3]
     <span class="c1"># This is comment in code, not a Markdown header!</span>
     ...    model=${MODEL}[keywords][3]
-    <div class="code"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fenced blocks are more commonly used.&quot;</span><span class="p">)</span>
-    ...    </code></pre></div>
+    <div class="code"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="s2">
     ...    model=${MODEL}[keywords][3]
 
 Admonitions

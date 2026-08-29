@@ -35,6 +35,11 @@ if sys.version_info < (3, 10, 1):
         ExtLiteral = Literal
 else:
     ExtLiteral = Literal
+# Starting from Python 3.14 Union is UnionType
+if sys.version_info >= (3, 10):
+    from types import UnionType
+else:
+    UnionType = Union
 # NotRequired and Required are new in Python 3.11.
 if sys.version_info >= (3, 11):
     from typing import NotRequired, Required
@@ -43,12 +48,22 @@ else:
         from typing_extensions import NotRequired, Required
     except ImportError:
         NotRequired = Required = object()
+# TypeAliasType and `type` syntax are new in Python 3.12.
+if sys.version_info >= (3, 12):
+    from typing import TypeAliasType
+
+    from .typealiasresolver import RecursiveAlias, resolve_type_alias
+else:
+    TypeAliasType = type("TypeAliasType", (), {})
+    RecursiveAlias = type("RecursiveAlias", (), {})
+    resolve_type_alias = lambda alias: alias
+
 
 from robot.conf import Languages, LanguagesLike
 from robot.errors import DataError
 from robot.utils import (
-    is_union, NOT_SET, plural_or_not as s, Secret, setter, SetterAwareType, type_name,
-    type_repr, typeddict_types
+    NOT_SET, plural_or_not as s, Secret, setter, SetterAwareType, type_name, type_repr,
+    typeddict_types
 )
 from robot.variables import search_variable, VariableMatch
 
@@ -109,29 +124,33 @@ class TypeInfo(metaclass=SetterAwareType):
     """
 
     is_typed_dict = False
-    __slots__ = ("name", "type")
+    __slots__ = ("name", "type", "alias")
 
     def __init__(
         self,
         name: "str | None" = None,
         type: Any = NOT_SET,
         nested: "Sequence[TypeInfo] | None" = None,
+        alias: "str | None" = None,
     ):
         if type is NOT_SET:
             type = TYPE_NAMES.get(name.lower()) if name else None
         self.name = name
         self.type = type
         self.nested = nested
+        self.alias = alias
 
     @setter
-    def nested(self, nested: "Sequence[TypeInfo]") -> "tuple[TypeInfo, ...] | None":
+    def nested(
+        self, nested: "Sequence[TypeInfo] | None"
+    ) -> "tuple[TypeInfo, ...] | None":
         """Nested types as a tuple of ``TypeInfo`` objects.
 
         Used with parameterized types and unions.
         """
         typ = self.type
         if self.is_union:
-            return self._validate_union(nested)
+            return tuple(nested or ())
         if nested is None:
             return None
         if typ is None:
@@ -156,11 +175,6 @@ class TypeInfo(metaclass=SetterAwareType):
                 return self._validate_nested_count(nested, 2)
         if typ in TYPE_NAMES.values():
             self._report_nested_error(nested)
-        return tuple(nested)
-
-    def _validate_union(self, nested):
-        if not nested:
-            raise DataError("Union cannot be empty.")
         return tuple(nested)
 
     def _validate_literal(self, nested):
@@ -195,8 +209,12 @@ class TypeInfo(metaclass=SetterAwareType):
         )
 
     @property
-    def is_union(self):
-        return self.name == "Union"
+    def is_union(self) -> bool:
+        return bool(self.name and self.name.title() == "Union")
+
+    @property
+    def is_recursive(self) -> bool:
+        return self.type is RecursiveAlias
 
     @classmethod
     def from_type_hint(cls, hint: Any, sequence_is_union: bool = False) -> "TypeInfo":
@@ -219,21 +237,33 @@ class TypeInfo(metaclass=SetterAwareType):
         need to handle sequences as unions, it is recommended to call
         :meth:`from_sequence` explicitly.
         """
+        alias = None
         if hint is NOT_SET:
             return cls()
         if isinstance(hint, cls):
             return hint
+        if isinstance(hint, TypeAliasType):
+            alias = hint.__name__
+            hint = cls._resolve_type_alias(hint)
         if isinstance(hint, ForwardRef):
             hint = hint.__forward_arg__
         if isinstance(hint, typeddict_types):
-            return TypedDictInfo(hint.__name__, hint)
-        if is_union(hint):
-            nested = [cls.from_type_hint(a) for a in get_args(hint)]
-            return cls("Union", nested=nested)
+            return TypedDictInfo(hint.__name__, hint, alias=alias)
         origin = get_origin(hint)
         if origin:
             args = get_args(hint)
-            if origin is Literal or origin is ExtLiteral:
+            if isinstance(origin, TypeAliasType):
+                info = cls.from_type_hint(
+                    cls._resolve_type_alias(hint), sequence_is_union
+                )
+                info.alias = f"{hint.__name__}[{', '.join(type_repr(a) for a in args)}]"
+                return info
+            if origin is UnionType or origin is Union:
+                origin = NOT_SET
+                nested = cls._validate_union_params(
+                    [cls.from_type_hint(a) for a in args]
+                )
+            elif origin is Literal or origin is ExtLiteral:
                 origin = Literal
                 nested = [
                     cls(a.name if isinstance(a, Enum) else repr(a), a) for a in args
@@ -242,27 +272,46 @@ class TypeInfo(metaclass=SetterAwareType):
                 nested = [cls.from_type_hint(a) for a in args]
             else:
                 nested = None
-            return cls(type_repr(hint, nested=False), origin, nested)
+            return cls(type_repr(hint, nested=False), origin, nested, alias=alias)
         if isinstance(hint, str):
             return cls.from_string(hint)
-        if hint is Any:
-            return cls("Any", hint)
-        if hint is None:
-            return cls("None", type(None))
-        if hint is Ellipsis:
-            return cls("...", hint)
-        if hint is Union:  # Plain Union without params.
-            return cls("Union")
-        if isinstance(hint, type):
-            return cls(type_repr(hint), hint)
+        if isinstance(hint, RecursiveAlias):
+            return cls(hint.name, RecursiveAlias, nested=[hint.value])
         if isinstance(hint, Sequence):
             if sequence_is_union:
-                return cls.from_sequence(hint)
+                return cls.from_sequence(cls._validate_union_params(hint))
             if isinstance(hint, list):
                 # Better string representation with Callable params and other lists.
                 items = [t.__name__ if isinstance(t, type) else repr(t) for t in hint]
                 return cls(f"[{', '.join(items)}]")
-        return cls(str(hint))
+        if hint is Any:
+            name = "Any"
+        elif hint is None:
+            name = "None"
+            hint = type(None)
+        elif hint is Ellipsis:
+            name = "..."
+        elif hint is Union:
+            raise DataError("Union cannot be empty.")
+        elif isinstance(hint, type):
+            name = type_repr(hint)
+        else:
+            name = str(hint)
+            hint = NOT_SET
+        return cls(name, hint, alias=alias)
+
+    @classmethod
+    def _resolve_type_alias(cls, alias):
+        try:
+            return resolve_type_alias(alias)
+        except ValueError as err:
+            raise DataError(str(err))
+
+    @classmethod
+    def _validate_union_params(cls, nested):
+        if not nested:
+            raise DataError("Union cannot be empty.")
+        return tuple(nested)
 
     @classmethod
     def from_type(cls, hint: type) -> "TypeInfo":
@@ -429,10 +478,12 @@ class TypeInfo(metaclass=SetterAwareType):
         return converter
 
     def __str__(self):
+        if self.alias:
+            return self.alias
         if self.is_union:
             return " | ".join(str(n) for n in self.nested)
         name = self.name or ""
-        if self.nested is None:
+        if self.nested is None or self.type is RecursiveAlias:
             return name
         nested = ", ".join(str(n) for n in self.nested)
         return f"{name}[{nested}]"
@@ -447,8 +498,8 @@ class TypedDictInfo(TypeInfo):
     is_typed_dict = True
     __slots__ = ("annotations", "required")
 
-    def __init__(self, name: str, type: type):
-        super().__init__(name, type)
+    def __init__(self, name: str, type: Any, alias: "str | None" = None):
+        super().__init__(name, type, alias=alias)
         type_hints = self._get_type_hints(type)
         # __required_keys__ is new in Python 3.9.
         self.required = getattr(type, "__required_keys__", frozenset())

@@ -138,7 +138,7 @@ class TestHandler(ElementHandler):
     tag = "test"
     # "tags" is for RF < 4 compatibility.
     children = frozenset((
-        "doc", "tags", "tag", "timeout", "status", "kw", "if", "for", "try", "while",
+        "doc", "meta", "tags", "tag", "timeout", "status", "kw", "if", "for", "try", "while",
         "group", "variable", "return", "break", "continue", "error", "msg"
     ))  # fmt: skip
 

@@ -118,6 +118,10 @@ class TypeInfoParser:
         info = self.type()
         if not self.at_end:
             self.error(f"Extra content after '{info}'.")
+        if info.is_union and len(info.nested) < 2:
+            if not len(info.nested):
+                self.error("Union cannot be empty.")
+            return info.nested[0]
         return info
 
     def type(self) -> TypeInfo:

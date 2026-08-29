@@ -8,10 +8,10 @@ Library documentation tool (Libdoc)
    :local:
 
 Libdoc is Robot Framework's built-in tool that can generate documentation for
-Robot Framework libraries and resource files. It can generate HTML documentation
-for humans as well as machine readable spec files in XML and JSON formats.
-Libdoc also has few special commands to show library or resource information
-on the console.
+Robot Framework libraries and resource files. It can generate HTML and Markdown
+documentation for humans as well as machine readable spec files in XML and JSON
+formats. Libdoc also has few special commands to show library or resource
+information on the console.
 
 Documentation can be created for:
 
@@ -44,24 +44,27 @@ Synopsis
 Options
 ~~~~~~~
 
-  -f, --format <html|xml|json|libspec>
-                           Specifies whether to generate an HTML output for humans or
-                           a machine readable spec file in XML or JSON format. The
-                           `libspec` format means XML spec with documentations converted
-                           to HTML. The default format is got from the output file
-                           extension.
+  -f, --format <html|xml|json|libspec|markdown>
+                           Specifies whether to generate an HTML output for humans,
+                           a machine readable spec file in XML or JSON format, or
+                           a Markdown file. The `libspec` format means XML spec with
+                           documentations converted to HTML. The default format is got
+                           from the output file extension. The `markdown` format is new
+                           in Robot Framework 7.5.
   -s, --specdocformat <raw|html>
                            Specifies the documentation format used with XML and JSON
                            spec files. `raw` means preserving the original documentation
                            format and `html` means converting documentation to HTML. The
                            default is `raw` with XML spec files and `html` with JSON
-                           specs and when using the special `libspec` format.
-  -F, --docformat <robot|html|text|rest>
+                           specs and when using the special `libspec` format. Not
+                           applicable with `html` or `markdown` outputs.
+  -F, --docformat <robot|markdown|html|text|rest>
                            Specifies the source documentation format. Possible
                            values are Robot Framework's documentation format,
-                           HTML, plain text, and reStructuredText. Default value
-                           can be specified in test library source code and
-                           the initial default value is `robot`.
+                           Markdown, HTML, plain text, and reStructuredText. Default
+                           value can be specified in test library source code and
+                           the initial default value is `robot`. Markdown support is
+                           new in Robot Framework 7.5.
   --theme <dark|light|none>
                            Use dark or light HTML theme. If this option is not used,
                            or the value is `none`, the theme is selected based on
@@ -70,7 +73,8 @@ Options
   --language <lang>
                           Set the default language in documentation. `lang`
                           must be a code of a built-in language, which are
-                          `en` and `fi`. New in Robot Framework 7.2.
+                          `en` and `fi`. Only applicable with HTML outputs.
+                          New in Robot Framework 7.2.
   -N, --name <newname>     Sets the name of the documented library or resource.
   -V, --version <newversion>  Sets the version of the documented library or
                            resource. The default value for test libraries is
@@ -158,10 +162,10 @@ This works if spec files use either :file:`*.xml`, :file:`*.libspec` or
 Generating documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Libdoc can generate documentation in HTML (for humans) and XML or JSON (for tools)
-formats. The file where to write the documentation is specified as the second
-argument after the library/resource name or path, and the output format is
-got from the output file extension by default.
+Libdoc can generate documentation in HTML, Markdown, XML or JSON formats.
+The file where to write the documentation is specified as the second argument
+after the library/resource name or path, and the output format is got from the
+output file extension by default.
 
 Libdoc HTML documentation
 '''''''''''''''''''''''''
@@ -268,6 +272,32 @@ The spec file format may change between Robot Framework major releases.
 
 __ https://json-schema.org/
 
+Libdoc Markdown documentation
+'''''''''''''''''''''''''''''
+
+Starting from Robot Framework 7.5, Libdoc can also write documentation into
+a Markdown_ file. Markdown files are human readable plain text files, but they
+can also be converted to HTML or otherwise processed by external tools.
+
+Libdoc automatically uses the Markdown format if the output file extension is
+:file:`*.md`. The format can also be set explicitly with the :option:`--format`
+option::
+
+   libdoc OperatingSystem OperatingSystem.md
+   libdoc test/resource.robot doc/resource.md
+   libdoc --format markdown MyLibrary MyLibrary.markdown
+
+Documentation is taken from the library or resource as-is without converting it
+to any other format. The result is thus proper Markdown only if the library uses
+the `Markdown documentation syntax`_ itself.
+
+The :option:`--specdocformat`, :option:`--theme` and :option:`--language` options
+are not applicable with Markdown outputs.
+
+.. note:: The Markdown output format is not guaranteed to stay stable between
+          Robot Framework versions. If you need a stable, machine readable format,
+          use `Libdoc spec files`_ instead.
+
 Viewing information on console
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -298,6 +328,53 @@ Examples::
   libdoc Dialogs show PauseExecution execute*
   libdoc SeleniumLibrary show intro
   libdoc SeleniumLibrary version
+
+When showing documentation of a whole library or some keywords, the overall
+structure is formatted using Markdown_. This is the same formatting that is
+used with `Libdoc Markdown documentation`_ outputs. It is especially convenient
+with libraries that use `Markdown documentation syntax`_ themselves, because
+then the whole output is in Markdown format. This is demonstrated by the
+following example from the beginning of the Dialogs library documentation::
+
+    # Dialogs
+
+    * Version: 7.5
+    * Scope: GLOBAL
+
+    ## Introduction
+
+    A library providing dialogs for interacting with users.
+
+    `Dialogs` is Robot Framework's standard library that provides means
+    for pausing the test or task execution and getting input from users.
+
+    Long lines in the provided messages are wrapped automatically. If you want
+    to wrap lines manually, you can add newlines using the `\n` character sequence.
+
+    ## Keywords
+
+    ### Execute Manual Step
+
+    #### Arguments
+
+    * `message` (type: `str`) -
+      The instruction shown in the initial dialog.
+    * `default_error` (type: `str`, default: ``) -
+      The default value shown in the possible error message dialog.
+
+    #### Documentation
+
+    Pauses execution until user sets the keyword status.
+
+    User can press either `PASS` or `FAIL` button. In the latter case execution
+    fails and an additional dialog is opened for defining the error message.
+
+.. note:: Prior to Robot Framework 7.5 console output used custom formatting.
+
+.. note:: The console output format is not guaranteed to stay stable between
+          Robot Framework versions. If you need a stable, machine readable format,
+          use `Libdoc spec files`_ instead. If you want to save the documentation
+          in this format, use `Libdoc Markdown documentation`_ outputs.
 
 Writing documentation
 ---------------------
@@ -954,10 +1031,13 @@ Possible unrecognized sections are left to the documentation without modificatio
 Supported formatting
 ~~~~~~~~~~~~~~~~~~~~
 
-There are often needs to process keyword documentation also using other tools
-than Libdoc. If the whole documentation is to be rendered as Markdown or
-reStructuredText, an empty line should be added after a header like `Args:`
-to avoid the header and following block to be rendered as a single paragraph::
+There are some times needs to process keyword documentation also using other
+tools than Libdoc. Such tools can support Markdown or reStructuredText, but
+all tools do not understand `Google style`_ documentation conventions.
+
+If the whole documentation is to be rendered as Markdown or reStructuredText,
+an empty line can be added after a block header to avoid the header and the
+following block to be rendered as a single paragraph::
 
     Args:
 
@@ -967,26 +1047,43 @@ to avoid the header and following block to be rendered as a single paragraph::
 
 The above is enough to get arguments rendered as a `code block`__ in Markdown.
 This syntax still would not work too well with reStructuredText, but Robot Framework
-allows headers to end with two colons like `Args::` and that would turn the above
-into a `literal block`__-
+allows headers to end with two colons like `Args::` and then arguments would
+be rendered as a `literal block`__-
 
 __ https://daringfireball.net/projects/markdown/syntax#precode
 __ https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#literal-blocks
 
+An alternative to the above is using a list::
+
+    Args:
+
+      - first: Documentation of the first argument.
+      - second: If documentation gets long, it can be split to multiple
+        lines. Wrapped lines should be indented consistently.
+
+Robot Framework supports `-`, `+` and `*`, followed by a space, as list markers
+in this context. The whole list also needs to indented with two or more spaces
+the same way as other blocks.
+
 Robot Framework also supports formatting section headers using the asterisk (`*`)
 and underscore (`_`) characters that are typically used for bold and italics in
-different documentation formats. The colon can be either inside (e.g. `**Args:**`)
-or outside (e.g. `*Returns*:`) formatting.
+different documentation formats. The colon can be either inside or outside
+formatting so, for example, both `*Args:*` and `*Args*:` are supported.
 
 Argument names can be formatted using the backtick character (:codesc:`\``)
-that is typically used for inline code. In this case the colon must not be
-formatted, so only something like :codesc:`\`first\`: The doc of the first argument`
-is supported.
+that is typically used for inline code. It is possible to use both single
+backticks like :codesc:`\`name\`` and double backticks like :codesc:`\`\`name\`\``.
+In this case the colon must not be formatted, so only something like
+:codesc:`\`name\`: Documentation` is supported.
 
 Possible header and argument name formatting is totally ignored by Robot Framework
 and thus has an effect only if the documentation is processed using other tools.
-Actual argument and return value documentation can also contain formatting
+Actual argument, return value and exception documentation can also contain formatting
 and that is handled the same way as `formatting elsewhere in the documentation`__.
+
+.. note:: External tools that understand `Google style`_ documentation conventions
+          may not accept extra formatting that Robot Framework supports. Test the
+          used formatting with all the used tools if interoperability is important.
 
 __ `Documentation syntax`_
 

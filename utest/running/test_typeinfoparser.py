@@ -64,6 +64,24 @@ class TestTypeInfoParser(unittest.TestCase):
         for nested, name in zip(info.nested, types):
             assert_equal(nested.name, name)
 
+    def test_union_type(self):
+        info = TypeInfoParser("Union[int, float]").parse()
+        assert_equal(info.name, "Union")
+        assert_equal(info.nested[0].name, "int")
+        assert_equal(info.nested[1].name, "float")
+
+    def test_one_type_union_reduces_to_type_itself(self):
+        info = TypeInfoParser("Union[int]").parse()
+        assert_equal(info.name, "int")
+
+    def test_empty_union_is_not_allowed(self):
+        for typ in "Union[]", "UNION[]", "Union", "union":
+            assert_raises_with_msg(
+                ValueError,
+                f"Parsing type '{typ}' failed: Error at end: Union cannot be empty.",
+                TypeInfoParser(typ).parse,
+            )
+
     def test_literal(self):
         info = TypeInfoParser("Literal[1, '2', \"3\", b'4', True, None, '']").parse()
         assert_equal(info.name, "Literal")

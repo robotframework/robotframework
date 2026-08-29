@@ -76,7 +76,7 @@ Type Docs
     Usages Should Be                0    Standard    integer    Different argument types    kw 6
     DataType Standard Should Be     1    Literal     Only specified values are accepted.
     Usages Should Be                1    Standard    Literal    kw 6
-    DataType Standard Should Be     2    None        String ``NONE`` (case-insensitive) and
+    DataType Standard Should Be     2    None        String `NONE` (case-insensitive) and
     Usages Should Be                2    Standard    None    kw 6
 
 Keyword Documentation

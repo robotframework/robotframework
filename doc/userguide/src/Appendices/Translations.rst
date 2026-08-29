@@ -856,13 +856,13 @@ Settings
     * - Task Timeout
       - Tehtävän Aikaraja
     * - Test Tags
-      - Testin Tagit
+      - Testin Tunnisteet
     * - Task Tags
-      - Tehtävän Tagit
+      - Tehtävän Tunnisteet
     * - Keyword Tags
-      - Avainsanan Tagit
+      - Avainsanan Tunnisteet
     * - Tags
-      - Tagit
+      - Tunnisteet
     * - Setup
       - Alustus
     * - Teardown
@@ -911,6 +911,31 @@ Boolean strings
       - Tosi, Kyllä, Päällä
     * - False
       - Epätosi, Ei, Pois
+
+Deprecations
+~~~~~~~~~~~~
+
+.. list-table::
+    :class: tabular
+    :width: 40em
+    :widths: 2 2 1
+    :header-rows: 1
+
+    * - Old term
+      - New term
+      - Deprecated
+    * - Tagit
+      - Tunnisteet
+      - RF 7.5
+    * - Avainsanan Tagit
+      - Avainsanan Tunnisteet
+      - RF 7.5
+    * - Testin Tagit
+      - Testin Tunnisteet
+      - RF 7.5
+    * - Tehtävän Tagit
+      - Tehtävän Tunnisteet
+      - RF 7.5
 
 French (fr)
 -----------

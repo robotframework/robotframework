@@ -99,8 +99,9 @@ class TypeDocBuilder:
     def _yield_infos(self, info: TypeInfo):
         if not info.is_union:
             yield info
-        for nested in info.nested or ():
-            yield from self._yield_infos(nested)
+        if info.nested and not info.is_recursive:
+            for nested in info.nested:
+                yield from self._yield_infos(nested)
 
 
 class ResourceDocBuilder:

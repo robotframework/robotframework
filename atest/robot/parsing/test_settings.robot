@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation     Validating parsing of test case settings. Using tags,
 ...               setups, teardowns and timeouts are tested elsewhere.
-Suite Setup       Run Tests    ${EMPTY}    parsing/test_case_settings.robot
+Suite Setup       Run Tests    ${EMPTY}    parsing/test_settings.robot
 Resource          atest_resource.robot
 
 *** Test Cases ***

@@ -386,8 +386,70 @@ either :option:`--parseinclude` or :option:`--extension` option.
 
 __ `Selecting files to parse`_
 
+Living documentation
+''''''''''''''''''''
+
+In software development, the term *living documentation* is commonly used when
+acceptance tests are written in such a way that they can be used as an
+executable specification. The executable specification acts as the single
+source of truth from which both the specification document and the test
+automation is derived. When the specification changes, the test changes,
+implying a compliant system when the tests pass.
+
+A common issue is that test automation requires documentation files to use
+the syntax of the selected automation tool, but the people responsible for
+the specification typically do not work well with such syntax-rich files.
+Robot Framework data files can in general be written using style that can
+work reasonably well with all stakeholders, but embedding Robot Framework
+data to Markdown files makes it even more convenient.
+
+.. tip:: You can use Markdown comment blocks created using the `<!--- comment -->`
+         syntax for hiding technical content from generated HTML files.
+
+Example:
+
+.. sourcecode:: markdown
+
+   # Feature title
+
+   Free text introducing the feature. You can use tables, lists, images,
+   etc. if needed.
+
+   <!---  Markdown comment block hiding technical details.
+
+   ```robotframework
+   *** Settings ***
+   Resource        example.resource
+
+   *** Test Cases ***
+   ```
+
+   -->
+
+   ## Business Rule 1
+
+   In Specification by Example, test cases are usually grouped per business
+   rule. Example scenarios illustrate the behavior of the rule. The scenarios
+   are what links the specification document and Robot Framework together. The
+   scenarios stay visible to both sides and are not inside a comment block.
+
+   ```robotframework
+   Scenario 1
+       Given we want to use BDD
+       When we use Given/When/Then prefixes
+       Then everything works fine.
+   ```
+
+   Some additional in-between explanation.
+
+   ```robotframework
+   Scenario 2
+       There is not need to use BDD if that adds no benefits
+       Complicated syntax should be avoided anyway
+   ```
+
 .. note:: Using Markdown_ files with Robot Framework does not require any
-          external Python module to be installed.
+          external Markdown module or tool to be installed.
 
 .. note:: Markdown support is new in Robot Framework 7.5.
 

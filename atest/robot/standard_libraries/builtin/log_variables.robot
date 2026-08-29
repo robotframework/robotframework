@@ -86,10 +86,11 @@ Log Variables In Test
     Check Variable Message    \${SUITE_SOURCE} = *    pattern=yes
     Check Variable Message    \${TEMPDIR} = *    pattern=yes
     Check Variable Message    \${TEST_DOCUMENTATION} =
+    Check Variable Message    \&{TEST_METADATA} = { }
     Check Variable Message    \${TEST_NAME} = Log Variables
     Check Variable Message    \@{TEST_TAGS} = [ ]
     Check Variable Message    \${True} = *    pattern=yes
-    Length Should Be    ${kw.messages}    41
+    Length Should Be    ${kw.messages}    42
 
 Log Variables After Setting New Variables
     ${test} =    Check Test Case    Log Variables
@@ -133,11 +134,12 @@ Log Variables After Setting New Variables
     Check Variable Message    \${SUITE_SOURCE} = *    DEBUG    pattern=yes
     Check Variable Message    \${TEMPDIR} = *    DEBUG    pattern=yes
     Check Variable Message    \${TEST_DOCUMENTATION} =    DEBUG
+    Check Variable Message    \&{TEST_METADATA} = { }    DEBUG
     Check Variable Message    \${TEST_NAME} = Log Variables    DEBUG
     Check Variable Message    \@{TEST_TAGS} = [ ]    DEBUG
     Check Variable Message    \${True} = *    DEBUG    pattern=yes
     Check Variable Message    \${var} = Hello    DEBUG
-    Length Should Be    ${kw.messages}    44
+    Length Should Be    ${kw.messages}    45
 
 Log Variables In User Keyword
     ${test} =    Check Test Case    Log Variables
@@ -179,11 +181,12 @@ Log Variables In User Keyword
     Check Variable Message    \${SUITE_SOURCE} = *    pattern=yes
     Check Variable Message    \${TEMPDIR} = *    pattern=yes
     Check Variable Message    \${TEST_DOCUMENTATION} =
+    Check Variable Message    \&{TEST_METADATA} = { }
     Check Variable Message    \${TEST_NAME} = Log Variables
     Check Variable Message    \@{TEST_TAGS} = [ ]
     Check Variable Message    \${True} = *    pattern=yes
     Check Variable Message    \${ukvar} = Value of an uk variable
-    Length Should Be    ${kw.messages}    42
+    Length Should Be    ${kw.messages}    43
 
 List and dict variables failing during iteration
     Check Test Case    ${TEST NAME}

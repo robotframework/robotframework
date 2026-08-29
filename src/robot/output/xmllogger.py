@@ -222,6 +222,8 @@ class XmlLogger(ResultVisitor):
 
     def end_test(self, test):
         self._writer.element("doc", test.doc)
+        for name, value in test.metadata.items():
+            self._writer.element("meta", value, {"name": name})
         self._write_list("tag", test.tags)
         if test.timeout:
             self._writer.element("timeout", attrs={"value": str(test.timeout)})

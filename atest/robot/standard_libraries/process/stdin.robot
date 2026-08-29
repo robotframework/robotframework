@@ -28,4 +28,7 @@ Stdin as text
     Check Test Case    ${TESTNAME}
 
 Stdin as stdout from another process
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc[2][0]}    Waiting for process to complete.
+    Check Log Message    ${tc[2][1]}    Process completed.
+    Check Log Message    ${tc[2][2]}    \${result2} = <result object with rc 0>

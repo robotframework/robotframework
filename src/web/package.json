@@ -9,6 +9,7 @@
   },
   "devDependencies": {
     "@parcel/plugin": "^2.16.0",
+    "@parcel/transformer-inline-string": "^2.16.4",
     "@types/jest": "^29.5.12",
     "jest": "^29.7.0",
     "parcel": "^2.16.4",

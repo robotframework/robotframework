@@ -56,7 +56,7 @@ Set Test Variable Needing Escaping
 
 Set Test Variable Affect Subsequent Keywords
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc[0].doc}    Makes a variable available everywhere within the scope of the current test.
+    Should Be Equal    ${tc[0].doc}    Makes the variable available everywhere within the scope of the current test.
 
 Set Test Variable In User Keyword
     Check Test Case    ${TESTNAME}
@@ -78,7 +78,7 @@ Test variable set on suite level can be overridden as suite variable
 
 Set Task Variable as alias for Set Test Variable
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc[0].doc}    Makes a variable available everywhere within the scope of the current task.
+    Should Be Equal    ${tc[0].doc}    Makes the variable available everywhere within the scope of the current task.
 
 Set Suite Variable
     Check Test Case    ${TESTNAME} 1

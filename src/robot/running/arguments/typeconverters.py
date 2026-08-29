@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
 from ast import literal_eval
 from collections import OrderedDict
 from collections.abc import Collection, Mapping, Sequence, Set
@@ -29,6 +30,11 @@ from robot.libraries.DateTime import convert_date, convert_time
 from robot.utils import (
     eq, get_error_message, plural_or_not as s, safe_str, Secret, seq2str, type_name
 )
+
+if sys.version_info >= (3, 12):
+    from .typealiasresolver import RecursiveAlias
+else:
+    RecursiveAlias = type("RecursiveAlias", (), {})
 
 if TYPE_CHECKING:
     from .customconverters import ConverterInfo, CustomArgumentConverters
@@ -902,6 +908,27 @@ class SecretConverter(TypeConverter):
         if name is None:
             raise ValueError(f"{kind} must have type 'Secret', got {typ}.")
         raise ValueError(f"{kind} '{name}' must have type 'Secret', got {typ}.")
+
+
+@TypeConverter.register
+class RecursiveConverter(TypeConverter):
+    type = RecursiveAlias
+
+    def _get_type_name(self) -> str:
+        return self.type_info.name
+
+    def _handles_value(self, value):
+        return True
+
+    def _get_nested(self, type_info, custom_converters, languages):
+        return None
+
+    def _convert(self, value):
+        from .typeinfo import TypeInfo
+
+        info = TypeInfo.from_type_hint(self.type_info.nested[0])
+        converter = TypeConverter.converter_for(info)
+        return converter.convert(value)
 
 
 class CustomConverter(TypeConverter):

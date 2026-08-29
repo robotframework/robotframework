@@ -4,8 +4,12 @@ Test Template      Return Type Should Be
 Resource           libdoc_resource.robot
 
 *** Test Cases ***
-No return
+No return type
     0    NOT SET
+
+Never and NoReturn
+    7    NOT SET
+    8    NOT SET
 
 None return
     1    None
@@ -21,6 +25,10 @@ Union return
 
 Stringified return
     5    Union    int    float
+
+Type Alias
+    [Tags]    require-py3.12
+    9    int    alias=TypeAlias
 
 Unknown return
     6    Unknown
@@ -45,5 +53,6 @@ Return types are in typedocs
     ...    D Parameterized Return
     ...    E Union Return
     ...    F Stringified Return
+    ...    K Type Alias
     2    Standard    list
     ...    D Parameterized Return

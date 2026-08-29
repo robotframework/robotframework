@@ -59,6 +59,8 @@ class TypeDoc(Sortable):
             return cls.for_enum(type_info.type)
         if isinstance(type_info.type, typeddict_types):
             return cls.for_typed_dict(type_info.type)
+        if type_info.is_recursive:
+            return None
         converter = TypeConverter.converter_for(type_info, converters)
         if not converter:
             return None

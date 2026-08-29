@@ -46,13 +46,15 @@ With library keyword accepting embedded arguments
 
 With keyword accepting embedded arguments as variables
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Run Keyword With Embedded Args    ${tc[0]}    Embedded "\${VARIABLE}"    value
-    Check Run Keyword With Embedded Args    ${tc[1]}    Embedded "\${1}"           1
+    Check Run Keyword With Embedded Args    ${tc[0]}    Embedded "\${VARIABLE}"         value
+    Check Run Keyword With Embedded Args    ${tc[1]}    Embedded "\${1}"                1
+    Check Run Keyword With Embedded Args    ${tc[2]}    Embedded "\${VAR_MULTILINE}"    foo\nbar
 
 With library keyword accepting embedded arguments as variables
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Run Keyword With Embedded Args    ${tc[0]}    Embedded "\${VARIABLE}" in library    value
-    Check Run Keyword With Embedded Args    ${tc[1]}    Embedded "\${1}" in library           1
+    Check Run Keyword With Embedded Args    ${tc[0]}    Embedded "\${VARIABLE}" in library         value
+    Check Run Keyword With Embedded Args    ${tc[1]}    Embedded "\${1}" in library                1
+    Check Run Keyword With Embedded Args    ${tc[2]}    Embedded "\${VAR_MULTILINE}" in library    foo\nbar
 
 With keyword accepting embedded arguments as variables containing objects
     ${tc} =    Check Test Case    ${TEST NAME}
