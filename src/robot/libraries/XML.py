@@ -83,7 +83,7 @@ else:
         Examples:
         ```robotframework
         *** Test Cases ***
-        Parse xml
+        Parsed Element
             # Get element as a return value:
             ${elem} =    Parse XML    ${CURDIR}/example.xml
             # Use element as an argument with other keywords:
@@ -93,7 +93,9 @@ else:
 
         ```
 
-        [Element]: https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element "Element"
+        [Element]:
+        https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element
+        "Element"
         """
 
 
@@ -102,7 +104,7 @@ else:
     auto_keywords=True,
 )
 class XML:
-    """Robot Framework library for verifying and modifying XML documents.
+    r"""Robot Framework library for verifying and modifying XML documents.
 
     As the name implies, *XML* is a library for verifying contents of XML files.
     In practice, it is a pretty thin wrapper on top of Python's
@@ -150,7 +152,7 @@ class XML:
     When the source is given as a path to a file, the forward slash character
     (`/`) can be used as the path separator regardless the operating system.
     On Windows also the backslash works, but in the data it needs to be
-    escaped by doubling it (`\\\\`). Using the built-in variable `${/}`
+    escaped by doubling it (`\\`). Using the built-in variable `${/}`
     naturally works too.
 
     # Using lxml
@@ -169,8 +171,8 @@ class XML:
     # Example
 
     The following simple example demonstrates parsing XML and verifying its
-    contents both using keywords in this library and in *BuiltIn* and
-    *Collections* libraries. How to use xpath expressions to find elements
+    contents both using keywords in this library and in [BuiltIn] and
+    [Collections] libraries. How to use xpath expressions to find elements
     and what attributes the returned elements contain are discussed, with
     more examples, in [Finding elements with xpath] and [Element attributes]
     sections.
@@ -180,28 +182,30 @@ class XML:
     `${XML}` could either be a path to an XML file or it could contain the XML
     itself.
 
-    ```
+    ```xml
     <example>
-    <first id="1">text</first>
-    <second id="2">
-    <child/>
-    </second>
-    <third>
-    <child>more text</child>
-    <second id="child"/>
-    <child><grandchild/></child>
-    </third>
-    <html>
-    <p>
-    Text with <b>bold</b> and <i>italics</i>.
-    </p>
-    </html>
+        <first id="1">text</first>
+        <second id="2">
+            <child />
+        </second>
+        <third>
+            <child>more text</child>
+            <second id="child" />
+            <child>
+                <grandchild />
+            </child>
+        </third>
+        <html>
+            <p>
+                Text with <b>bold</b> and <i>italics</i>.
+            </p>
+        </html>
     </example>
     ```
 
     ```robotframework
     *** Test Cases ***
-    Parse xml
+    XML Structure Check
         ${root} =    Parse XML    ${XML}
         Should Be Equal    ${root.tag}    example
         ${first} =    Get Element    ${root}    first
@@ -322,12 +326,12 @@ class XML:
     wildcards and other special syntax explained earlier. What predicates
     the standard ElementTree supports is explained in the table below.
 
-    | Predicate | Matches | Example |
-    | --- | --- | --- |
-    | `@attrib` | Elements with attribute `attrib`. | `second[@id]` |
-    | `@attrib="value"` | Elements with attribute `attrib` having value `value`. | `*[@id="2"]` |
-    | `position` | Elements at the specified position. Position can be an integer (starting from 1), expression `last()`, or relative expression like `last() - 1`. | `third/child[1]` |
-    | `tag` | Elements with a child element named `tag`. | `third/child[grandchild]` |
+    | Predicate         | Matches                                                 | Example                   |
+    | ----------------- | --------------------------------------------------------| ------------------------- |
+    | `@attrib`         | Elements with attribute `attrib`.                       | `second[@id]`             |
+    | `@attrib="value"` | Elements with attribute `attrib` having value `value`.  | `*[@id="2"]`              |
+    | `position`        | Elements at the specified position. Position can be an integer (starting from 1), expression `last()`, or relative expression like `last() - 1`. | `third/child[1]`          |
+    | `tag`             | Elements with a child element named `tag`.              | `third/child[grandchild]` |
 
     Predicates can also be stacked like `path[predicate1][predicate2]`.
     A limitation is that possible position predicate must always be first.
@@ -377,7 +381,7 @@ class XML:
         ${2nd} =    Get Element    ${XML}    second/child
         Should Be Equal    ${2nd.text}    ${NONE}
         ${p} =    Get Element    ${XML}    html/p
-        Should Be Equal    ${p.text}    \\n${SPACE*6}Text with${SPACE}
+        Should Be Equal    ${p.text}    \n${SPACE*6}Text with${SPACE}
 
     ```
 
@@ -429,12 +433,12 @@ class XML:
     How it works in practice is illustrated by the following example, where
     `${NS}` variable contains this XML document:
 
-    ```
+    ```xml
     <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns="http://www.w3.org/1999/xhtml">
-    <xsl:template match="/">
-    <html></html>
-    </xsl:template>
+     xmlns="http://www.w3.org/1999/xhtml">
+        <xsl:template match="/">
+            <html/>
+        </xsl:template>
     </xsl:stylesheet>
     ```
 
@@ -443,7 +447,7 @@ class XML:
     How ElementTree handles namespaces
         ${root} =    Parse XML    ${NS}    keep_clark_notation=yes
         Should Be Equal    ${root.tag}    {http://www.w3.org/1999/XSL/Transform}stylesheet
-        Element Should Exist    ${root}    {http://www.w3.org/1999/XSL/Transform}template/{http://www.w3.org/1999/xhtml}html
+        Element Should Exist    ${root}   {http://www.w3.org/1999/XSL/Transform}template/{http://www.w3.org/1999/xhtml}html
         Should Be Empty    ${root.attrib}
 
     ```
@@ -455,11 +459,11 @@ class XML:
     `xmlns` attributes. Unfortunately it does not restore the original
     prefixes:
 
-    ```
+    ```xml
     <ns0:stylesheet xmlns:ns0="http://www.w3.org/1999/XSL/Transform">
-    <ns0:template match="/">
-    <ns1:html xmlns:ns1="http://www.w3.org/1999/xhtml"></ns1:html>
-    </ns0:template>
+        <ns0:template match="/">
+            <ns1:html xmlns:ns1="http://www.w3.org/1999/xhtml"></ns1:html>
+        </ns0:template>
     </ns0:stylesheet>
     ```
 
@@ -492,11 +496,11 @@ class XML:
     As a result the saved output is not exactly same as the original one in
     this case either:
 
-    ```
+    ```xml
     <stylesheet xmlns="http://www.w3.org/1999/XSL/Transform">
-    <template match="/">
-    <html xmlns="http://www.w3.org/1999/xhtml"></html>
-    </template>
+        <template match="/">
+            <html xmlns="http://www.w3.org/1999/xhtml"/>
+        </template>
     </stylesheet>
     ```
 
@@ -546,30 +550,40 @@ class XML:
     Some keywords, for example [Elements Should Match], support so called
     [glob patterns] where:
 
-    | Wildcard | Description |
-    | --- | --- |
-    | `*` | matches any string, even an empty string |
-    | `?` | matches any single character |
-    | `[chars]` | matches one character in the bracket |
-    | `[!chars]` | matches one character not in the bracket |
-    | `[a-z]` | matches one character from the range in the bracket |
-    | `[!a-z]` | matches one character not from the range in the bracket |
+    | Wildcard  | Description                                             |
+    | --------- | ------------------------------------------------------- |
+    | `*`       | matches any string, even an empty string                |
+    | `?`       | matches any single character                            |
+    | `[chars]` | matches one character in the bracket                    |
+    | `[!chars]` | matches one character not in the bracket                |
+    | `[a-z]`   | matches one character from the range in the bracket     |
+    | `[!a-z]`  | matches one character not from the range in the bracket |
 
     Unlike with glob patterns normally, path separator characters `/` and
-    `\\` and the newline character `\\n` are matches by the above
+    `\` and the newline character `\n` are matches by the above
     wildcards.
 
-    [ElementTree XML API]: http://docs.python.org/library/xml.etree.elementtree.html "ElementTree XML API"
+    [ElementTree XML API]:
+    http://docs.python.org/library/xml.etree.elementtree.html "ElementTree XML API"
 
-    [ElementTree]: http://docs.python.org/library/xml.etree.elementtree.html "ElementTree"
+    [ElementTree]:
+    http://docs.python.org/library/xml.etree.elementtree.html "ElementTree"
 
     [lxml]: http://lxml.de "lxml"
 
-    [ElementTree documentation]: https://docs.python.org/library/xml.etree.elementtree.html#xpath-support "ElementTree documentation"
+    [BuiltIn]:
+    https://robotframework.org/robotframework/latest/libraries/BuiltIn.html
+
+    [Collections]:
+    https://robotframework.org/robotframework/latest/libraries/Collections.html
+
+    [ElementTree documentation]:
+    https://docs.python.org/library/xml.etree.elementtree.html#xpath-support "ElementTree documentation"
 
     [xpath 1.0 standard]: http://www.w3.org/TR/xpath/ "xpath 1.0 standard"
 
-    [Element objects]: http://docs.python.org/library/xml.etree.elementtree.html#element-objects "Element objects"
+    [Element objects]:
+    http://docs.python.org/library/xml.etree.elementtree.html#element-objects "Element objects"
 
     [Clark Notation]: http://www.jclark.com/xml/xmlns.htm "Clark Notation"
 
@@ -583,6 +597,10 @@ class XML:
     def __init__(self, use_lxml: bool = False):
         """Import library with optionally lxml mode enabled.
 
+        Args:
+            use_lxml: Enable the lxml module for parsing XML instead of the
+                standard ElementTree.
+
         This library uses Python's standard
         [ElementTree]
         module for parsing XML by default. If `use_lxml` argument is given
@@ -592,10 +610,6 @@ class XML:
         Using lxml requires that the lxml module is installed on the system.
         If lxml mode is enabled but the module is not installed, this library
         emits a warning and reverts back to using the standard ElementTree.
-
-        Args:
-            use_lxml: Enable the lxml module for parsing XML instead of the
-                standard ElementTree.
         """
         if use_lxml and lxml_etree:
             self.etree = lxml_etree  # type: ignore
@@ -620,6 +634,15 @@ class XML:
     ) -> Element:
         """Parses the given XML file or string into an element structure.
 
+        Args:
+            source: Path to an XML file or a string or bytes containing XML.
+                Does not accept an already parsed element.
+            keep_clark_notation: Disable default namespace stripping from tag names.
+            strip_namespaces: Strip namespace information altogether.
+
+        Returns:
+            The root element of the parsed structure.
+
         The `source` can either be a path to an XML file or a string
         containing XML. In both cases the XML is parsed into ElementTree
         [Element]
@@ -638,15 +661,6 @@ class XML:
         If you want to strip namespace information altogether so that it is
         not included even if XML is saved, you can give a true value to
         `strip_namespaces` argument.
-
-        Args:
-            source: Path to an XML file or a string or bytes containing XML.
-                Does not accept an already parsed element.
-            keep_clark_notation: Disable default namespace stripping from tag names.
-            strip_namespaces: Strip namespace information altogether.
-
-        Returns:
-            The root element of the parsed structure.
 
         Examples:
         ```robotframework
@@ -679,15 +693,6 @@ class XML:
     def get_element(self, source: Source, xpath: str = ".") -> Element:
         """Returns an element in the `source` matching the `xpath`.
 
-        The `source` can be a path to an XML file, a string containing XML, or
-        an already parsed XML element. The `xpath` specifies which element to
-        find. See the [introduction] for more details about both the possible
-        sources and the supported xpath syntax.
-
-        The keyword fails if more, or less, than one element matches the
-        `xpath`. Use [Get Elements] if you want all matching elements to be
-        returned.
-
         Args:
             source: Path to an XML file, XML string or bytes, or a parsed element.
             xpath: XPath expression selecting the element to return.
@@ -697,6 +702,15 @@ class XML:
 
         Raises:
             AssertionError: If zero or more than one element matches.
+
+        The `source` can be a path to an XML file, a string containing XML, or
+        an already parsed XML element. The `xpath` specifies which element to
+        find. See the [introduction] for more details about both the possible
+        sources and the supported xpath syntax.
+
+        The keyword fails if more, or less, than one element matches the
+        `xpath`. Use [Get Elements] if you want all matching elements to be
+        returned.
 
         Examples using `${XML}` structure from [Example]:
 
@@ -740,6 +754,13 @@ class XML:
     def get_elements(self, source: Source, xpath: str) -> "list[Element]":
         """Returns a list of elements in the `source` matching the `xpath`.
 
+        Args:
+            source: Path to an XML file, XML string or bytes, or a parsed element.
+            xpath: XPath expression selecting elements to return.
+
+        Returns:
+            A list of matching elements. An empty list if none match.
+
         The `source` can be a path to an XML file, a string containing XML, or
         an already parsed XML element. The `xpath` specifies which element to
         find. See the [introduction] for more details.
@@ -747,13 +768,6 @@ class XML:
         Elements matching the `xpath` are returned as a list. If no elements
         match, an empty list is returned. Use [Get Element] if you want to get
         exactly one match.
-
-        Args:
-            source: Path to an XML file, XML string or bytes, or a parsed element.
-            xpath: XPath expression selecting elements to return.
-
-        Returns:
-            A list of matching elements. An empty list if none match.
 
         Examples using `${XML}` structure from [Example]:
 
@@ -775,19 +789,19 @@ class XML:
     def get_child_elements(self, source: Source, xpath: str = ".") -> "list[Element]":
         """Returns the child elements of the specified element as a list.
 
-        The element whose children to return is specified using `source` and
-        `xpath`. They have exactly the same semantics as with [Get Element]
-        keyword.
-
-        All the direct child elements of the specified element are returned.
-        If the element has no children, an empty list is returned.
-
         Args:
             source: Path to an XML file, XML string or bytes, or a parsed element.
             xpath: XPath expression selecting the parent element.
 
         Returns:
             A list of direct child elements.
+
+        The element whose children to return is specified using `source` and
+        `xpath`. They have exactly the same semantics as with [Get Element]
+        keyword.
+
+        All the direct child elements of the specified element are returned.
+        If the element has no children, an empty list is returned.
 
         Examples using `${XML}` structure from [Example]:
 
@@ -806,17 +820,17 @@ class XML:
     def get_element_count(self, source: Source, xpath: str = ".") -> int:
         """Returns and logs how many elements the given `xpath` matches.
 
-        Arguments `source` and `xpath` have exactly the same semantics as
-        with [Get Elements] keyword that this keyword uses internally.
-
-        See also [Element Should Exist] and [Element Should Not Exist].
-
         Args:
             source: Path to an XML file, XML string or bytes, or a parsed element.
             xpath: XPath expression selecting elements to count.
 
         Returns:
             The number of matching elements.
+
+        Arguments `source` and `xpath` have exactly the same semantics as
+        with [Get Elements] keyword that this keyword uses internally.
+
+        See also [Element Should Exist] and [Element Should Not Exist].
         """
         count = len(self.get_elements(source, xpath))
         logger.info(f"{count} element{s(count)} matched '{xpath}'.")
@@ -830,6 +844,11 @@ class XML:
     ):
         """Verifies that one or more element match the given `xpath`.
 
+        Args:
+            source: Path to an XML file, XML string or bytes, or a parsed element.
+            xpath: XPath expression to match.
+            message: Optional custom error message.
+
         Arguments `source` and `xpath` have exactly the same semantics as
         with [Get Elements] keyword. Keyword passes if the `xpath` matches
         one or more elements in the `source`. The default error message can
@@ -837,11 +856,6 @@ class XML:
 
         See also [Element Should Not Exist] as well as [Get Element Count]
         that this keyword uses internally.
-
-        Args:
-            source: Path to an XML file, XML string or bytes, or a parsed element.
-            xpath: XPath expression to match.
-            message: Optional custom error message.
         """
         count = self.get_element_count(source, xpath)
         if not count:
@@ -855,6 +869,11 @@ class XML:
     ):
         """Verifies that no element match the given `xpath`.
 
+        Args:
+            source: Path to an XML file, XML string or bytes, or a parsed element.
+            xpath: XPath expression to match.
+            message: Optional custom error message.
+
         Arguments `source` and `xpath` have exactly the same semantics as
         with [Get Elements] keyword. Keyword fails if the `xpath` matches any
         element in the `source`. The default error message can be overridden
@@ -862,11 +881,6 @@ class XML:
 
         See also [Element Should Exist] as well as [Get Element Count]
         that this keyword uses internally.
-
-        Args:
-            source: Path to an XML file, XML string or bytes, or a parsed element.
-            xpath: XPath expression to match.
-            message: Optional custom error message.
         """
         count = self.get_element_count(source, xpath)
         if count:
@@ -879,6 +893,14 @@ class XML:
         normalize_whitespace: bool = False,
     ) -> str:
         """Returns all text of the element, possibly whitespace normalized.
+
+        Args:
+            source: Path to an XML file, XML string or bytes, or a parsed element.
+            xpath: XPath expression selecting the element.
+            normalize_whitespace: Normalize whitespace in the returned text.
+
+        Returns:
+            All text of the element, including text of child elements.
 
         The element whose text to return is specified using `source` and
         `xpath`. They have exactly the same semantics as with [Get Element]
@@ -894,14 +916,6 @@ class XML:
         then leading and trailing whitespace is stripped, newlines and tabs
         converted to spaces, and multiple spaces collapsed into one. This is
         especially useful when dealing with HTML data.
-
-        Args:
-            source: Path to an XML file, XML string or bytes, or a parsed element.
-            xpath: XPath expression selecting the element.
-            normalize_whitespace: Normalize whitespace in the returned text.
-
-        Returns:
-            All text of the element, including text of child elements.
 
         Examples using `${XML}` structure from [Example]:
 
@@ -946,14 +960,6 @@ class XML:
     ) -> "list[str]":
         """Returns text of all elements matching `xpath` as a list.
 
-        The elements whose text to return is specified using `source` and
-        `xpath`. They have exactly the same semantics as with [Get Elements]
-        keyword.
-
-        The text of the matched elements is returned using the same logic
-        as with [Get Element Text]. This includes optional whitespace
-        normalization using the `normalize_whitespace` option.
-
         Args:
             source: Path to an XML file, XML string or bytes, or a parsed element.
             xpath: XPath expression selecting elements.
@@ -961,6 +967,14 @@ class XML:
 
         Returns:
             A list of texts of the matched elements.
+
+        The elements whose text to return is specified using `source` and
+        `xpath`. They have exactly the same semantics as with [Get Elements]
+        keyword.
+
+        The text of the matched elements is returned using the same logic
+        as with [Get Element Text]. This includes optional whitespace
+        normalization using the `normalize_whitespace` option.
 
         Examples using `${XML}` structure from [Example]:
 
@@ -989,6 +1003,13 @@ class XML:
     ):
         """Verifies that the text of the specified element is `expected`.
 
+        Args:
+            source: Path to an XML file, XML string or bytes, or a parsed element.
+            expected: Expected text of the element.
+            xpath: XPath expression selecting the element.
+            normalize_whitespace: Normalize whitespace before comparison.
+            message: Optional custom error message.
+
         The element whose text is verified is specified using `source` and
         `xpath`. They have exactly the same semantics as with [Get Element]
         keyword.
@@ -1002,13 +1023,6 @@ class XML:
         can be overridden with the `message` argument.  Use `Element Text
         Should Match` to verify the text against a pattern instead of an exact
         value.
-
-        Args:
-            source: Path to an XML file, XML string or bytes, or a parsed element.
-            expected: Expected text of the element.
-            xpath: XPath expression selecting the element.
-            normalize_whitespace: Normalize whitespace before comparison.
-            message: Optional custom error message.
 
         Examples using `${XML}` structure from [Example]:
 
@@ -1035,6 +1049,13 @@ class XML:
     ):
         """Verifies that the text of the specified element matches `expected`.
 
+        Args:
+            source: Path to an XML file, XML string or bytes, or a parsed element.
+            pattern: Pattern the element text must match.
+            xpath: XPath expression selecting the element.
+            normalize_whitespace: Normalize whitespace before matching.
+            message: Optional custom error message.
+
         This keyword works exactly like [Element Text Should Be] except that
         the expected value can be given as a pattern that the text of the
         element must match.
@@ -1042,13 +1063,6 @@ class XML:
         Pattern matching is similar as matching files in a shell with
         `*`, `?` and `[chars]` acting as wildcards. See the
         [Pattern matching] section for more information.
-
-        Args:
-            source: Path to an XML file, XML string or bytes, or a parsed element.
-            pattern: Pattern the element text must match.
-            xpath: XPath expression selecting the element.
-            normalize_whitespace: Normalize whitespace before matching.
-            message: Optional custom error message.
 
         Examples using `${XML}` structure from [Example]:
 
@@ -1073,14 +1087,6 @@ class XML:
     ) -> "str | object":
         """Returns the named attribute of the specified element.
 
-        The element whose attribute to return is specified using `source` and
-        `xpath`. They have exactly the same semantics as with [Get Element]
-        keyword.
-
-        The value of the attribute `name` of the specified element is returned.
-        If the element does not have such element, the `default` value is
-        returned instead.
-
         Args:
             source: Path to an XML file, XML string or bytes, or a parsed element.
             name: Name of the attribute to return.
@@ -1089,6 +1095,14 @@ class XML:
 
         Returns:
             The attribute value, or ``default`` if the attribute is missing.
+
+        The element whose attribute to return is specified using `source` and
+        `xpath`. They have exactly the same semantics as with [Get Element]
+        keyword.
+
+        The value of the attribute `name` of the specified element is returned.
+        If the element does not have such element, the `default` value is
+        returned instead.
 
         Examples using `${XML}` structure from [Example]:
 
@@ -1114,19 +1128,19 @@ class XML:
     ) -> "dict[str, str]":
         """Returns all attributes of the specified element.
 
-        The element whose attributes to return is specified using `source` and
-        `xpath`. They have exactly the same semantics as with [Get Element]
-        keyword.
-
-        Attributes are returned as a Python dictionary. It is a copy of the
-        original attributes so modifying it has no effect on the XML structure.
-
         Args:
             source: Path to an XML file, XML string or bytes, or a parsed element.
             xpath: XPath expression selecting the element.
 
         Returns:
             A dictionary of all attributes of the element.
+
+        The element whose attributes to return is specified using `source` and
+        `xpath`. They have exactly the same semantics as with [Get Element]
+        keyword.
+
+        Attributes are returned as a Python dictionary. It is a copy of the
+        original attributes so modifying it has no effect on the XML structure.
 
         Examples using `${XML}` structure from [Example]:
 
@@ -1154,6 +1168,13 @@ class XML:
     ):
         """Verifies that the specified attribute is `expected`.
 
+        Args:
+            source: Path to an XML file, XML string or bytes, or a parsed element.
+            name: Name of the attribute to verify.
+            expected: Expected attribute value.
+            xpath: XPath expression selecting the element.
+            message: Optional custom error message.
+
         The element whose attribute is verified is specified using `source`
         and `xpath`. They have exactly the same semantics as with
         [Get Element] keyword.
@@ -1165,13 +1186,6 @@ class XML:
         To test that the element does not have a certain attribute, Python
         `None` (i.e. variable `${NONE}`) can be used as the expected value.
         A cleaner alternative is using [Element Should Not Have Attribute].
-
-        Args:
-            source: Path to an XML file, XML string or bytes, or a parsed element.
-            name: Name of the attribute to verify.
-            expected: Expected attribute value.
-            xpath: XPath expression selecting the element.
-            message: Optional custom error message.
 
         Examples using `${XML}` structure from [Example]:
 
@@ -1198,6 +1212,13 @@ class XML:
     ):
         """Verifies that the specified attribute matches `expected`.
 
+        Args:
+            source: Path to an XML file, XML string or bytes, or a parsed element.
+            name: Name of the attribute to verify.
+            pattern: Pattern the attribute value must match.
+            xpath: XPath expression selecting the element.
+            message: Optional custom error message.
+
         This keyword works exactly like [Element Attribute Should Be] except
         that the expected value can be given as a pattern that the attribute of
         the element must match.
@@ -1205,13 +1226,6 @@ class XML:
         Pattern matching is similar as matching files in a shell with
         `*`, `?` and `[chars]` acting as wildcards. See the
         [Pattern matching] section for more information.
-
-        Args:
-            source: Path to an XML file, XML string or bytes, or a parsed element.
-            name: Name of the attribute to verify.
-            pattern: Pattern the attribute value must match.
-            xpath: XPath expression selecting the element.
-            message: Optional custom error message.
 
         Examples using `${XML}` structure from [Example]:
 
@@ -1237,18 +1251,18 @@ class XML:
     ):
         """Verifies that the specified element does not have attribute `name`.
 
+        Args:
+            source: Path to an XML file, XML string or bytes, or a parsed element.
+            name: Name of the attribute that must not exist.
+            xpath: XPath expression selecting the element.
+            message: Optional custom error message.
+
         The element whose attribute is verified is specified using `source`
         and `xpath`. They have exactly the same semantics as with
         [Get Element] keyword.
 
         The keyword fails if the specified element has attribute `name`. The
         default error message can be overridden with the `message` argument.
-
-        Args:
-            source: Path to an XML file, XML string or bytes, or a parsed element.
-            name: Name of the attribute that must not exist.
-            xpath: XPath expression selecting the element.
-            message: Optional custom error message.
 
         Examples using `${XML}` structure from [Example]:
 
@@ -1279,6 +1293,13 @@ class XML:
     ):
         """Verifies that the given `source` element is equal to `expected`.
 
+        Args:
+            source: Element to compare.
+            expected: Expected element as a path, string, or parsed element.
+            exclude_children: Exclude child elements from comparison.
+            normalize_whitespace: Normalize whitespace in text comparison.
+            sort_children: Sort child elements by tag name before comparison.
+
         Both `source` and `expected` can be given as a path to an XML file,
         as a string containing XML, or as an already parsed XML element
         structure. See [introduction] for more information about parsing XML in
@@ -1299,13 +1320,6 @@ class XML:
         details about handling text see [Get Element Text] keyword and
         discussion about elements' [text] and [tail] attributes in the
         [introduction].
-
-        Args:
-            source: Element to compare.
-            expected: Expected element as a path, string, or parsed element.
-            exclude_children: Exclude child elements from comparison.
-            normalize_whitespace: Normalize whitespace in text comparison.
-            sort_children: Sort child elements by tag name before comparison.
 
         Examples using `${XML}` structure from [Example]:
 
@@ -1348,6 +1362,13 @@ class XML:
     ):
         """Verifies that the given `source` element matches `expected`.
 
+        Args:
+            source: Element to compare.
+            expected: Expected element as a path, string, or parsed element.
+            exclude_children: Exclude child elements from comparison.
+            normalize_whitespace: Normalize whitespace in text comparison.
+            sort_children: Sort child elements by tag name before comparison.
+
         This keyword works exactly like [Elements Should Be Equal] except that
         texts and attribute values in the expected value can be given as
         patterns.
@@ -1355,13 +1376,6 @@ class XML:
         Pattern matching is similar as matching files in a shell with
         `*`, `?` and `[chars]` acting as wildcards. See the
         [Pattern matching] section for more information.
-
-        Args:
-            source: Element to compare.
-            expected: Expected element as a path, string, or parsed element.
-            exclude_children: Exclude child elements from comparison.
-            normalize_whitespace: Normalize whitespace in text comparison.
-            sort_children: Sort child elements by tag name before comparison.
 
         Examples using `${XML}` structure from [Example]:
 
@@ -1409,11 +1423,6 @@ class XML:
     def set_element_tag(self, source: Source, tag: str, xpath: str = ".") -> Element:
         """Sets the tag of the specified element.
 
-        The element whose tag to set is specified using `source` and
-        `xpath`. They have exactly the same semantics as with [Get Element]
-        keyword. The resulting XML structure is returned, and if the `source`
-        is an already parsed XML structure, it is also modified in place.
-
         Args:
             source: Path to an XML file, XML string or bytes, or a parsed element.
             tag: New tag name.
@@ -1421,6 +1430,11 @@ class XML:
 
         Returns:
             The root of the modified XML structure.
+
+        The element whose tag to set is specified using `source` and
+        `xpath`. They have exactly the same semantics as with [Get Element]
+        keyword. The resulting XML structure is returned, and if the `source`
+        is an already parsed XML structure, it is also modified in place.
 
         Examples using `${XML}` structure from [Example]:
 
@@ -1445,9 +1459,6 @@ class XML:
     def set_elements_tag(self, source: Source, tag: str, xpath: str = ".") -> Element:
         """Sets the tag of the specified elements.
 
-        Like [Set Element Tag] but sets the tag of all elements matching
-        the given `xpath`.
-
         Args:
             source: Path to an XML file, XML string or bytes, or a parsed element.
             tag: New tag name.
@@ -1455,6 +1466,9 @@ class XML:
 
         Returns:
             The root of the modified XML structure.
+
+        Like [Set Element Tag] but sets the tag of all elements matching
+        the given `xpath`.
         """
         source = self.get_element(source)
         for elem in self.get_elements(source, xpath):
@@ -1470,15 +1484,6 @@ class XML:
     ) -> Element:
         """Sets text and/or tail text of the specified element.
 
-        The element whose text to set is specified using `source` and
-        `xpath`. They have exactly the same semantics as with [Get Element]
-        keyword. The resulting XML structure is returned, and if the `source`
-        is an already parsed XML structure, it is also modified in place.
-
-        Element's text and tail text are changed only if new `text` and/or
-        `tail` values are given. See [Element attributes] section for more
-        information about [text] and [tail] in general.
-
         Args:
             source: Path to an XML file, XML string or bytes, or a parsed element.
             text: New text for the element.
@@ -1487,6 +1492,15 @@ class XML:
 
         Returns:
             The root of the modified XML structure.
+
+        The element whose text to set is specified using `source` and
+        `xpath`. They have exactly the same semantics as with [Get Element]
+        keyword. The resulting XML structure is returned, and if the `source`
+        is an already parsed XML structure, it is also modified in place.
+
+        Element's text and tail text are changed only if new `text` and/or
+        `tail` values are given. See [Element attributes] section for more
+        information about [text] and [tail] in general.
 
         Examples using `${XML}` structure from [Example]:
 
@@ -1522,9 +1536,6 @@ class XML:
     ) -> Element:
         """Sets text and/or tail text of the specified elements.
 
-        Like [Set Element Text] but sets the text or tail of all elements
-        matching the given `xpath`.
-
         Args:
             source: Path to an XML file, XML string or bytes, or a parsed element.
             text: New text for the elements.
@@ -1533,6 +1544,9 @@ class XML:
 
         Returns:
             The root of the modified XML structure.
+
+        Like [Set Element Text] but sets the text or tail of all elements
+        matching the given `xpath`.
         """
         source = self.get_element(source)
         for elem in self.get_elements(source, xpath):
@@ -1548,15 +1562,6 @@ class XML:
     ) -> Element:
         """Sets attribute `name` of the specified element to `value`.
 
-        The element whose attribute to set is specified using `source` and
-        `xpath`. They have exactly the same semantics as with [Get Element]
-        keyword. The resulting XML structure is returned, and if the `source`
-        is an already parsed XML structure, it is also modified in place.
-
-        It is possible to both set new attributes and to overwrite existing.
-        Use [Remove Element Attribute] or [Remove Element Attributes] for
-        removing them.
-
         Args:
             source: Path to an XML file, XML string or bytes, or a parsed element.
             name: Name of the attribute to set.
@@ -1568,6 +1573,15 @@ class XML:
 
         Raises:
             RuntimeError: If ``name`` is empty.
+
+        The element whose attribute to set is specified using `source` and
+        `xpath`. They have exactly the same semantics as with [Get Element]
+        keyword. The resulting XML structure is returned, and if the `source`
+        is an already parsed XML structure, it is also modified in place.
+
+        It is possible to both set new attributes and to overwrite existing.
+        Use [Remove Element Attribute] or [Remove Element Attributes] for
+        removing them.
 
         Examples using `${XML}` structure from [Example]:
 
@@ -1599,9 +1613,6 @@ class XML:
     ) -> Element:
         """Sets attribute `name` of the specified elements to `value`.
 
-        Like [Set Element Attribute] but sets the attribute of all elements
-        matching the given `xpath`.
-
         Args:
             source: Path to an XML file, XML string or bytes, or a parsed element.
             name: Name of the attribute to set.
@@ -1610,6 +1621,9 @@ class XML:
 
         Returns:
             The root of the modified XML structure.
+
+        Like [Set Element Attribute] but sets the attribute of all elements
+        matching the given `xpath`.
         """
         source = self.get_element(source)
         for elem in self.get_elements(source, xpath):
@@ -1624,6 +1638,14 @@ class XML:
     ) -> Element:
         """Removes attribute `name` from the specified element.
 
+        Args:
+            source: Path to an XML file, XML string or bytes, or a parsed element.
+            name: Name of the attribute to remove.
+            xpath: XPath expression selecting the element to modify.
+
+        Returns:
+            The root of the modified XML structure.
+
         The element whose attribute to remove is specified using `source` and
         `xpath`. They have exactly the same semantics as with [Get Element]
         keyword. The resulting XML structure is returned, and if the `source`
@@ -1632,14 +1654,6 @@ class XML:
         It is not a failure to remove a non-existing attribute. Use `Remove
         Element Attributes[ to remove all attributes and ]Set Element Attribute`
         to set them.
-
-        Args:
-            source: Path to an XML file, XML string or bytes, or a parsed element.
-            name: Name of the attribute to remove.
-            xpath: XPath expression selecting the element to modify.
-
-        Returns:
-            The root of the modified XML structure.
 
         Examples using `${XML}` structure from [Example]:
 
@@ -1668,9 +1682,6 @@ class XML:
     ) -> Element:
         """Removes attribute `name` from the specified elements.
 
-        Like [Remove Element Attribute] but removes the attribute of all
-        elements matching the given `xpath`.
-
         Args:
             source: Path to an XML file, XML string or bytes, or a parsed element.
             name: Name of the attribute to remove.
@@ -1678,6 +1689,9 @@ class XML:
 
         Returns:
             The root of the modified XML structure.
+
+        Like [Remove Element Attribute] but removes the attribute of all
+        elements matching the given `xpath`.
         """
         source = self.get_element(source)
         for elem in self.get_elements(source, xpath):
@@ -1687,6 +1701,13 @@ class XML:
     def remove_element_attributes(self, source: Source, xpath: str = ".") -> Element:
         """Removes all attributes from the specified element.
 
+        Args:
+            source: Path to an XML file, XML string or bytes, or a parsed element.
+            xpath: XPath expression selecting the element to modify.
+
+        Returns:
+            The root of the modified XML structure.
+
         The element whose attributes to remove is specified using `source` and
         `xpath`. They have exactly the same semantics as with [Get Element]
         keyword. The resulting XML structure is returned, and if the `source`
@@ -1694,13 +1715,6 @@ class XML:
 
         Use [Remove Element Attribute] to remove a single attribute and
         [Set Element Attribute] to set them.
-
-        Args:
-            source: Path to an XML file, XML string or bytes, or a parsed element.
-            xpath: XPath expression selecting the element to modify.
-
-        Returns:
-            The root of the modified XML structure.
 
         Examples using `${XML}` structure from [Example]:
 
@@ -1722,15 +1736,15 @@ class XML:
     def remove_elements_attributes(self, source: Source, xpath: str = ".") -> Element:
         """Removes all attributes from the specified elements.
 
-        Like [Remove Element Attributes] but removes all attributes of all
-        elements matching the given `xpath`.
-
         Args:
             source: Path to an XML file, XML string or bytes, or a parsed element.
             xpath: XPath expression selecting elements to modify.
 
         Returns:
             The root of the modified XML structure.
+
+        Like [Remove Element Attributes] but removes all attributes of all
+        elements matching the given `xpath`.
         """
         source = self.get_element(source)
         for elem in self.get_elements(source, xpath):
@@ -1746,6 +1760,15 @@ class XML:
     ) -> Element:
         """Adds a child element to the specified element.
 
+        Args:
+            source: Path to an XML file, XML string or bytes, or a parsed element.
+            element: Element to add as a path, string, or parsed element.
+            index: Optional position among child elements.
+            xpath: XPath expression selecting the parent element.
+
+        Returns:
+            The root of the modified XML structure.
+
         The element to whom to add the new element is specified using `source`
         and `xpath`. They have exactly the same semantics as with [Get Element]
         keyword. The resulting XML structure is returned, and if the `source`
@@ -1759,15 +1782,6 @@ class XML:
         can be used to alter the position. Indices start from zero (0 = first
         position, 1 = second position, etc.), and negative numbers refer to
         positions at the end (-1 = second last position, -2 = third last, etc.).
-
-        Args:
-            source: Path to an XML file, XML string or bytes, or a parsed element.
-            element: Element to add as a path, string, or parsed element.
-            index: Optional position among child elements.
-            xpath: XPath expression selecting the parent element.
-
-        Returns:
-            The root of the modified XML structure.
 
         Examples using `${XML}` structure from [Example]:
 
@@ -1801,6 +1815,17 @@ class XML:
     ) -> Element:
         """Removes the element matching `xpath` from the `source` structure.
 
+        Args:
+            source: Path to an XML file, XML string or bytes, or a parsed element.
+            xpath: XPath expression selecting the element to remove.
+            remove_tail: Remove the element's tail text.
+
+        Returns:
+            The root of the modified XML structure.
+
+        Raises:
+            AssertionError: If ``xpath`` does not match exactly one element.
+
         The element to remove from the `source` is specified with `xpath`
         using the same semantics as with [Get Element] keyword. The resulting
         XML structure is returned, and if the `source` is an already parsed
@@ -1812,17 +1837,6 @@ class XML:
         Element's tail text is not removed by default, but that can be changed
         by giving `remove_tail` a true value. See the [Element attributes]
         section for more information about `tail` in general.
-
-        Args:
-            source: Path to an XML file, XML string or bytes, or a parsed element.
-            xpath: XPath expression selecting the element to remove.
-            remove_tail: Remove the element's tail text.
-
-        Returns:
-            The root of the modified XML structure.
-
-        Raises:
-            AssertionError: If ``xpath`` does not match exactly one element.
 
         Examples using `${XML}` structure from [Example]:
 
@@ -1848,6 +1862,14 @@ class XML:
     ) -> Element:
         """Removes all elements matching `xpath` from the `source` structure.
 
+        Args:
+            source: Path to an XML file, XML string or bytes, or a parsed element.
+            xpath: XPath expression selecting elements to remove.
+            remove_tail: Remove tail text of removed elements.
+
+        Returns:
+            The root of the modified XML structure.
+
         The elements to remove from the `source` are specified with `xpath`
         using the same semantics as with [Get Elements] keyword. The resulting
         XML structure is returned, and if the `source` is an already parsed
@@ -1858,14 +1880,6 @@ class XML:
 
         Element's tail text is not removed by default, but that can be changed
         by using `remove_tail` argument similarly as with [Remove Element].
-
-        Args:
-            source: Path to an XML file, XML string or bytes, or a parsed element.
-            xpath: XPath expression selecting elements to remove.
-            remove_tail: Remove tail text of removed elements.
-
-        Returns:
-            The root of the modified XML structure.
 
         Examples using `${XML}` structure from [Example]:
 
@@ -1919,6 +1933,14 @@ class XML:
     ) -> Element:
         """Clears the contents of the specified element.
 
+        Args:
+            source: Path to an XML file, XML string or bytes, or a parsed element.
+            xpath: XPath expression selecting the element to clear.
+            clear_tail: Remove the element's tail text.
+
+        Returns:
+            The root of the modified XML structure.
+
         The element to clear is specified using `source` and `xpath`. They
         have exactly the same semantics as with [Get Element] keyword.
         The resulting XML structure is returned, and if the `source` is
@@ -1928,14 +1950,6 @@ class XML:
         Element's tail text is not removed by default, but that can be changed
         by giving `clear_tail` a true value. See the [Element attributes]
         section for more information about `tail` in general.
-
-        Args:
-            source: Path to an XML file, XML string or bytes, or a parsed element.
-            xpath: XPath expression selecting the element to clear.
-            clear_tail: Remove the element's tail text.
-
-        Returns:
-            The root of the modified XML structure.
 
         Examples using `${XML}` structure from [Example]:
 
@@ -1965,18 +1979,18 @@ class XML:
     def copy_element(self, source: Source, xpath: str = ".") -> Element:
         """Returns a copy of the specified element.
 
-        The element to copy is specified using `source` and `xpath`. They
-        have exactly the same semantics as with [Get Element] keyword.
-
-        If the copy or the original element is modified afterward, the changes
-        have no effect on the other.
-
         Args:
             source: Path to an XML file, XML string or bytes, or a parsed element.
             xpath: XPath expression selecting the element to copy.
 
         Returns:
             A deep copy of the element.
+
+        The element to copy is specified using `source` and `xpath`. They
+        have exactly the same semantics as with [Get Element] keyword.
+
+        If the copy or the original element is modified afterward, the changes
+        have no effect on the other.
 
         Examples using `${XML}` structure from [Example]:
 
@@ -2004,6 +2018,14 @@ class XML:
     ) -> "bytes | str":
         """Returns the string representation of the specified element.
 
+        Args:
+            source: Path to an XML file, XML string or bytes, or a parsed element.
+            xpath: XPath expression selecting the element to convert.
+            encoding: Optional encoding. If given, returns bytes.
+
+        Returns:
+            String or bytes representation of the element.
+
         The element to convert to a string is specified using `source` and
         `xpath`. They have exactly the same semantics as with [Get Element]
         keyword.
@@ -2013,14 +2035,6 @@ class XML:
         encoding. The resulting string never contains the XML declaration.
 
         See also [Log Element] and [Save XML].
-
-        Args:
-            source: Path to an XML file, XML string or bytes, or a parsed element.
-            xpath: XPath expression selecting the element to convert.
-            encoding: Optional encoding. If given, returns bytes.
-
-        Returns:
-            String or bytes representation of the element.
         """
         source = self.get_element(source, xpath)
         if self.lxml_etree:
@@ -2039,12 +2053,6 @@ class XML:
     ) -> str:
         """Logs the string representation of the specified element.
 
-        The element specified with `source` and `xpath` is first converted
-        into a string using [Element To String] keyword internally. The
-        resulting string is then logged using the given `level`.
-
-        The logged string is also returned.
-
         Args:
             source: Path to an XML file, XML string or bytes, or a parsed element.
             level: Log level to use.
@@ -2052,6 +2060,12 @@ class XML:
 
         Returns:
             The logged string representation of the element.
+
+        The element specified with `source` and `xpath` is first converted
+        into a string using [Element To String] keyword internally. The
+        resulting string is then logged using the given `level`.
+
+        The logged string is also returned.
         """
         string = self.element_to_string(source, xpath)
         logger.write(string, level)
@@ -2064,6 +2078,11 @@ class XML:
         encoding: str = "UTF-8",
     ):
         """Saves the given element to the specified file.
+
+        Args:
+            source: Path to an XML file, XML string or bytes, or a parsed element.
+            path: Path where the XML file is saved.
+            encoding: Encoding used when saving the file.
 
         The element to save is specified with `source` using the same
         semantics as with [Get Element] keyword.
@@ -2081,11 +2100,6 @@ class XML:
 
         Use [Element To String] if you just need a string representation of
         the element.
-
-        Args:
-            source: Path to an XML file, XML string or bytes, or a parsed element.
-            path: Path where the XML file is saved.
-            encoding: Encoding used when saving the file.
         """
         path = path.absolute()
         elem = self.get_element(source)
@@ -2114,14 +2128,6 @@ class XML:
     ) -> object:
         """Evaluates the given xpath expression and returns results.
 
-        The element in which context the expression is executed is specified
-        using `source` and `context` arguments. They have exactly the same
-        semantics as `source` and `xpath` arguments have with [Get Element]
-        keyword.
-
-        The xpath expression to evaluate is given as `expression` argument.
-        The result of the evaluation is returned as-is.
-
         Args:
             source: Path to an XML file, XML string or bytes, or a parsed element.
             expression: XPath expression to evaluate.
@@ -2132,6 +2138,14 @@ class XML:
 
         Raises:
             RuntimeError: If the library is not running in lxml mode.
+
+        The element in which context the expression is executed is specified
+        using `source` and `context` arguments. They have exactly the same
+        semantics as `source` and `xpath` arguments have with [Get Element]
+        keyword.
+
+        The xpath expression to evaluate is given as `expression` argument.
+        The result of the evaluation is returned as-is.
 
         Examples using `${XML}` structure from [Example]:
 
