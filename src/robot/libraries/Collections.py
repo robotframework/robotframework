@@ -80,11 +80,11 @@ class _List:
             Lists Should Be Equal    ${list}    ["a", "b", "c", "d", "e", "f", "g"]
         ```
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
+        > [!WARNING]
+        > The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+        > Users should avoid using the named argument syntax like `list_=${mylist}`
+        > and pass the list positionally like `${mylist}` instead. See issue
+        > [#5762] for more information.
         """
         list_.extend(values)
         return list_
@@ -128,11 +128,11 @@ class _List:
             Lists Should Be Equal    ${list}    ["x", "y", "a", "b", "z", "c"]
         ```
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
+        > [!WARNING]
+        > The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+        > Users should avoid using the named argument syntax like `list_=${mylist}`
+        > and pass the list positionally like `${mylist}` instead. See issue
+        > [#5762] for more information.
         """
         list_.insert(index, value)
         return list_
@@ -213,11 +213,11 @@ class _List:
             Lists Should Be Equal    ${list}    ["x", "y", "c", "d", "z"]
         ```
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
+        > [!WARNING]
+        > The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+        > Users should avoid using the named argument syntax like `list_=${mylist}`
+        > and pass the list positionally like `${mylist}` instead. See issue
+        > [#5762] for more information.
         """
         try:
             list_[index] = value
@@ -253,11 +253,11 @@ class _List:
             Lists Should Be Equal    ${list}    ["b", "b", "d"]
         ```
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
+        > [!WARNING]
+        > The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+        > Users should avoid using the named argument syntax like `list_=${mylist}`
+        > and pass the list positionally like `${mylist}` instead. See issue
+        > [#5762] for more information.
         """
         for value in values:
             while value in list_:
@@ -294,11 +294,11 @@ class _List:
             Lists Should Be Equal    ${list}    ["a"]
         ```
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
+        > [!WARNING]
+        > The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+        > Users should avoid using the named argument syntax like `list_=${mylist}`
+        > and pass the list positionally like `${mylist}` instead. See issue
+        > [#5762] for more information.
         """
         try:
             return list_.pop(index)
@@ -330,11 +330,11 @@ class _List:
             Lists Should Be Equal    ${list}        ["a", "b", "b", "a"]
         ```
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
+        > [!WARNING]
+        > The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+        > Users should avoid using the named argument syntax like `list_=${mylist}`
+        > and pass the list positionally like `${mylist}` instead. See issue
+        > [#5762] for more information.
         """
         ret = []
         for item in list_:
@@ -375,11 +375,11 @@ class _List:
             Lists Should Be Equal    ${list}    ["a", "b", "c"]
         ```
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
+        > [!WARNING]
+        > The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+        > Users should avoid using the named argument syntax like `list_=${mylist}`
+        > and pass the list positionally like `${mylist}` instead. See issue
+        > [#5762] for more information.
         """
         try:
             return list_[index]
@@ -427,11 +427,11 @@ class _List:
             Lists Should Be Equal    ${slice3}    ["a", "b", "c"]
         ```
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
+        > [!WARNING]
+        > The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+        > Users should avoid using the named argument syntax like `list_=${mylist}`
+        > and pass the list positionally like `${mylist}` instead. See issue
+        > [#5762] for more information.
         """
         if start == "":
             # Deprecated in RF 7.4. TODO: Remove in RF 9.
@@ -478,11 +478,11 @@ class _List:
             Should Be Equal    ${x}    0    type=int
         ```
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
+        > [!WARNING]
+        > The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+        > Users should avoid using the named argument syntax like `list_=${mylist}`
+        > and pass the list positionally like `${mylist}` instead. See issue
+        > [#5762] for more information.
         """
         return self.get_slice_from_list(list_, start, end).count(value)
 
@@ -528,11 +528,11 @@ class _List:
         yielded negative return values making it impossible to know did `-1`
         mean that the value had that index or that the value was not found.
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
+        > [!WARNING]
+        > The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+        > Users should avoid using the named argument syntax like `list_=${mylist}`
+        > and pass the list positionally like `${mylist}` instead. See issue
+        > [#5762] for more information.
         """
         if start == "":
             # Deprecated in RF 7.4. TODO: Remove in RF 9.
@@ -565,11 +565,11 @@ class _List:
         Set the `deepcopy` argument to a true value if also items should
         be copied.
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
+        > [!WARNING]
+        > The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+        > Users should avoid using the named argument syntax like `list_=${mylist}`
+        > and pass the list positionally like `${mylist}` instead. See issue
+        > [#5762] for more information.
         """
         if deepcopy:
             return copy.deepcopy(list_)
@@ -596,11 +596,11 @@ class _List:
             Lists Should Be Equal    ${list}    ["c", "b", "a"]
         ```
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
+        > [!WARNING]
+        > The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+        > Users should avoid using the named argument syntax like `list_=${mylist}`
+        > and pass the list positionally like `${mylist}` instead. See issue
+        > [#5762] for more information.
         """
         list_.reverse()
         return list_
@@ -622,11 +622,11 @@ class _List:
 
         Starting from Robot Framework 7.4, the sorted list is also returned.
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
+        > [!WARNING]
+        > The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+        > Users should avoid using the named argument syntax like `list_=${mylist}`
+        > and pass the list positionally like `${mylist}` instead. See issue
+        > [#5762] for more information.
         """
         if isinstance(list_, list):
             list_.sort()
@@ -653,11 +653,11 @@ class _List:
         See the [Ignore case] section for more details. This option is new in
         Robot Framework 7.0.
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
+        > [!WARNING]
+        > The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+        > Users should avoid using the named argument syntax like `list_=${mylist}`
+        > and pass the list positionally like `${mylist}` instead. See issue
+        > [#5762] for more information.
         """
         normalize = Normalizer(ignore_case).normalize
         if normalize(value) not in normalize(list_):
@@ -682,11 +682,11 @@ class _List:
         See the [Ignore case] section for more details. This option is new in
         Robot Framework 7.0.
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
+        > [!WARNING]
+        > The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+        > Users should avoid using the named argument syntax like `list_=${mylist}`
+        > and pass the list positionally like `${mylist}` instead. See issue
+        > [#5762] for more information.
         """
         normalize = Normalizer(ignore_case).normalize
         if normalize(value) in normalize(list_):
@@ -717,11 +717,11 @@ class _List:
         See the [Ignore case] section for more details. This option is new in
         Robot Framework 7.0.
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
+        > [!WARNING]
+        > The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+        > Users should avoid using the named argument syntax like `list_=${mylist}`
+        > and pass the list positionally like `${mylist}` instead. See issue
+        > [#5762] for more information.
         """
         dupes = []
         list_ = Normalizer(ignore_case).normalize(list_)
@@ -890,11 +890,11 @@ class _List:
             list_: The list to log.
             level: The log level to use.
 
-        !!! note
-            The `list_` argument will be renamed to `list` in Robot Framework 8.0.
-            Users should avoid using the named argument syntax like `list_=${mylist}`
-            and pass the list positionally like `${mylist}` instead. See issue
-            [#5762] for more information.
+        > [!WARNING]
+        > The `list_` argument will be renamed to `list` in Robot Framework 8.0.
+        > Users should avoid using the named argument syntax like `list_=${mylist}`
+        > and pass the list positionally like `${mylist}` instead. See issue
+        > [#5762] for more information.
         """
         logger.write("\n".join(self._log_list(list_)), level)
 
@@ -1756,15 +1756,16 @@ class Collections(_List, _Dictionary):
             Should Contain Match    ${MATCHED}    abc???    ignore_whitespace=True
         ```
 
-        !!! note
-            When using glob patterns, the pattern must match items fully, but
-            when using regular expressions, it is enough if the pattern matches
-            the beginning. This will be changed in the future, though, and a
-            full match will be required regardless the pattern type. Starting
-            from Robot Framework 7.5, there is a warning if this forthcoming
-            change affects the results of this keyword. To avoid the warning,
-            add `.*` at the end of the pattern to preserve the current behavior,
-            or add `$` to require a full match already now.
+        > [!IMPORTANT]
+        > When using glob patterns, the pattern must match items fully, but
+        > when using regular expressions, it is enough if the pattern matches
+        > the beginning. This will be changed in the future, though, and a
+        > full match will be required regardless the pattern type.
+        >
+        > Starting from Robot Framework 7.5, there is a warning if the
+        > forthcoming change affects the results of this keyword. To avoid
+        > the warning, add `.*` at the end of the pattern to preserve the
+        > current behavior, or add `$` to require a full match already now.
         """
         matches = self._get_matches(
             list=list,
@@ -1804,15 +1805,16 @@ class Collections(_List, _Dictionary):
         Exact opposite of [Should Contain Match] keyword. See that keyword
         for information about arguments and usage in general.
 
-        !!! note
-            When using glob patterns, the pattern must match items fully, but
-            when using regular expressions, it is enough if the pattern matches
-            the beginning. This will be changed in the future, though, and a
-            full match will be required regardless the pattern type. Starting
-            from Robot Framework 7.5, there is a warning if this forthcoming
-            change affects the results of this keyword. To avoid the warning,
-            add `.*` at the end of the pattern to preserve the current behavior,
-            or add `$` to require a full match already now.
+        > [!IMPORTANT]
+        > When using glob patterns, the pattern must match items fully, but
+        > when using regular expressions, it is enough if the pattern matches
+        > the beginning. This will be changed in the future, though, and a
+        > full match will be required regardless the pattern type.
+        >
+        > Starting from Robot Framework 7.5, there is a warning if the
+        > forthcoming change affects the results of this keyword. To avoid
+        > the warning, add `.*` at the end of the pattern to preserve the
+        > current behavior, or add `$` to require a full match already now.
         """
         matches = self._get_matches(
             list=list,
@@ -1869,15 +1871,16 @@ class Collections(_List, _Dictionary):
             Should Be Empty    ${matches}
         ```
 
-        !!! note
-            When using glob patterns, the pattern must match items fully, but
-            when using regular expressions, it is enough if the pattern matches
-            the beginning. This will be changed in the future, though, and a
-            full match will be required regardless the pattern type. Starting
-            from Robot Framework 7.5, there is a warning if this forthcoming
-            change affects the results of this keyword. To avoid the warning,
-            add `.*` at the end of the pattern to preserve the current behavior,
-            or add `$` to require a full match already now.
+        > [!IMPORTANT]
+        > When using glob patterns, the pattern must match items fully, but
+        > when using regular expressions, it is enough if the pattern matches
+        > the beginning. This will be changed in the future, though, and a
+        > full match will be required regardless the pattern type.
+        >
+        > Starting from Robot Framework 7.5, there is a warning if the
+        > forthcoming change affects the results of this keyword. To avoid
+        > the warning, add `.*` at the end of the pattern to preserve the
+        > current behavior, or add `$` to require a full match already now.
         """
         return self._get_matches(
             list=list,
@@ -1929,15 +1932,16 @@ class Collections(_List, _Dictionary):
             Should Be Equal    ${matches}    0    type=int
         ```
 
-        !!! note
-            When using glob patterns, the pattern must match items fully, but
-            when using regular expressions, it is enough if the pattern matches
-            the beginning. This will be changed in the future, though, and a
-            full match will be required regardless the pattern type. Starting
-            from Robot Framework 7.5, there is a warning if this forthcoming
-            change affects the results of this keyword. To avoid the warning,
-            add `.*` at the end of the pattern to preserve the current behavior,
-            or add `$` to require a full match already now.
+        > [!IMPORTANT]
+        > When using glob patterns, the pattern must match items fully, but
+        > when using regular expressions, it is enough if the pattern matches
+        > the beginning. This will be changed in the future, though, and a
+        > full match will be required regardless the pattern type.
+        >
+        > Starting from Robot Framework 7.5, there is a warning if the
+        > forthcoming change affects the results of this keyword. To avoid
+        > the warning, add `.*` at the end of the pattern to preserve the
+        > current behavior, or add `$` to require a full match already now.
         """
         matches = self.get_matches(
             list=list,
