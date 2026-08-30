@@ -57,17 +57,15 @@ else:
         Can be given as a path to an XML file, as a string or bytes containing
         XML data, or as an already parsed XML element structure.
 
-        Examples:
         ```robotframework
         *** Test Cases ***
-        Parse xml
+        Example
             # Give source as a path:
             ${xml} =    Parse XML    ${CURDIR}/example.xml
             # Give source as an already parsed element:
             ${elem} =    Get Element    ${xml}    xpath=child
             # Give source as a string:
             Elements Should Be Equal    ${elem}    <child>text</child>
-
         ```
         """
 
@@ -80,26 +78,25 @@ else:
         can be accessed using the extended variable syntax like `${elem.text}`
         directly.
 
-        Examples:
         ```robotframework
         *** Test Cases ***
-        Parsed Element
+        Example
             # Get element as a return value:
             ${elem} =    Parse XML    ${CURDIR}/example.xml
             # Use element as an argument with other keywords:
             ${child} =    Get Element    ${elem}    expath=child
             # Access element attributes:
             Log    ${elem.text}
-
         ```
 
-        [Element]:
-        https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element
-        "Element"
+        [Element]: https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element "API docs"
         """
 
 
 @library(
+    scope="GLOBAL",
+    version=get_version(),
+    doc_format="MARKDOWN",
     converters={Source: lambda value: value, Element: lambda value: value},
     auto_keywords=True,
 )
@@ -157,12 +154,10 @@ class XML:
 
     # Using lxml
 
-    By default, this library uses Python's standard
-    [ElementTree]
-    module for parsing XML, but it can be configured to use
-    [lxml] module instead when [importing] the library.
-    The resulting element structure has same API regardless which module
-    is used for parsing.
+    By default, this library uses Python's standard [ElementTree] module for
+    parsing XML, but it can be configured to use [lxml] module instead when
+    [importing] the library. The resulting element structure has same API
+    regardless which module is used for parsing.
 
     The main benefits of using lxml is that it supports richer xpath syntax
     than the standard ElementTree and enables using [Evaluate Xpath] keyword.
@@ -171,16 +166,13 @@ class XML:
     # Example
 
     The following simple example demonstrates parsing XML and verifying its
-    contents both using keywords in this library and in [BuiltIn] and
-    [Collections] libraries. How to use xpath expressions to find elements
-    and what attributes the returned elements contain are discussed, with
-    more examples, in [Finding elements with xpath] and [Element attributes]
-    sections.
+    contents. How to use xpath expressions to find elements and what attributes
+    the returned elements contain are discussed, with more examples, in
+    [Finding elements with xpath] and [Element attributes] sections.
 
     In this example, as well as in many other examples in this documentation,
-    `${XML}` refers to the following example XML document. In practice
-    `${XML}` could either be a path to an XML file or it could contain the XML
-    itself.
+    `${XML}` refers to the following example XML document. In practice `${XML}`
+    could either be a path to an XML file or it could contain the XML itself.
 
     ```xml
     <example>
@@ -204,18 +196,19 @@ class XML:
     ```
 
     ```robotframework
+    *** Settings ***
+    Library         XML    use_xml=True
+
     *** Test Cases ***
-    XML Structure Check
+    Example
         ${root} =    Parse XML    ${XML}
         Should Be Equal    ${root.tag}    example
         ${first} =    Get Element    ${root}    first
         Should Be Equal    ${first.text}    text
-        Dictionary Should Contain Key    ${first.attrib}    id
         Element Text Should Be    ${first}    text
         Element Attribute Should Be    ${first}    id    1
-        Element Attribute Should Be    ${root}    id    1    xpath=first
-        Element Attribute Should Be    ${XML}    id    1    xpath=first
-
+        Element Attribute Should Be    ${root}     id    1    xpath=first
+        Element Attribute Should Be    ${XML}      id    1    xpath=first
     ```
 
     Notice that in the example three last lines are equivalent. Which one to
@@ -233,9 +226,8 @@ class XML:
     `${XML}` refers to the same XML structure as in the earlier example.
 
     If lxml support is enabled when [importing] the library, the whole
-    [xpath 1.0 standard] is supported.
-    That includes everything listed below but also a lot of other useful
-    constructs.
+    [xpath 1.0 standard] is supported. That includes everything listed below
+    but also a lot of other useful constructs.
 
     ## Tag names
 
@@ -249,7 +241,6 @@ class XML:
         Should Be Equal    ${elem.tag}    third
         @{children} =    Get Elements    ${elem}    child
         Length Should Be    ${children}    2
-
     ```
 
     ## Paths
@@ -267,7 +258,6 @@ class XML:
         Should Be Equal    ${elem.tag}    child
         ${elem} =    Get Element    ${XML}    third/child/grandchild
         Should Be Equal    ${elem.tag}    grandchild
-
     ```
 
     ## Wildcards
@@ -280,7 +270,6 @@ class XML:
     Wildcards
         @{children} =    Get Elements    ${XML}    */child
         Length Should Be    ${children}    3
-
     ```
 
     ## Current element
@@ -299,7 +288,6 @@ class XML:
     Parent element
         ${elem} =    Get Element    ${XML}    */second/..
         Should Be Equal    ${elem.tag}    third
-
     ```
 
     ## Search all sub elements
@@ -315,7 +303,6 @@ class XML:
         Length Should Be    ${elements}    2
         ${b} =    Get Element    ${XML}    html//b
         Should Be Equal    ${b.text}    bold
-
     ```
 
     ## Predicates
@@ -326,12 +313,15 @@ class XML:
     wildcards and other special syntax explained earlier. What predicates
     the standard ElementTree supports is explained in the table below.
 
-    | Predicate         | Matches                                                 | Example                   |
-    | ----------------- | --------------------------------------------------------| ------------------------- |
-    | `@attrib`         | Elements with attribute `attrib`.                       | `second[@id]`             |
-    | `@attrib="value"` | Elements with attribute `attrib` having value `value`.  | `*[@id="2"]`              |
-    | `position`        | Elements at the specified position. Position can be an integer (starting from 1), expression `last()`, or relative expression like `last() - 1`. | `third/child[1]`          |
-    | `tag`             | Elements with a child element named `tag`.              | `third/child[grandchild]` |
+    |    Predicate    |                    Matches                            |          Example          |
+    | --------------- | ------------------------------------------------------| ------------------------- |
+    | `@attr`         | Elements with attribute `attr`.                       | `second[@id]`             |
+    | `@attr="value"` | Elements with attribute `attr` having value `value`.  | `*[@id="2"]`              |
+    | `position`      | Elements at the specified position.                   | `third/child[1]`          |
+    | `tag`           | Elements with a child element named `tag`.            | `third/child[grandchild]` |
+
+    `position` can be an integer starting from 1, expression `last()`, or
+    a relative expression like `last() - 1`.
 
     Predicates can also be stacked like `path[predicate1][predicate2]`.
     A limitation is that possible position predicate must always be first.
@@ -339,14 +329,12 @@ class XML:
     # Element attributes
 
     All keywords returning elements, such as [Parse XML], and [Get Element],
-    return ElementTree's
-    [Element objects].
-    These elements can be used as inputs for other keywords, but they also
-    contain several useful attributes that can be accessed directly using
-    the extended variable syntax.
+    return ElementTree's [Element objects]. These elements can be used as
+    inputs for other keywords, but they also contain several useful attributes
+    that can be accessed directly using the extended variable syntax.
 
     The attributes that are both useful and convenient to use in the data
-    are explained below. Also other attributes, including methods, can
+    are explained below. Other attributes, including methods, can also
     be accessed, but that is typically better to do in custom libraries than
     directly in the data.
 
@@ -361,7 +349,6 @@ class XML:
     Tag
         ${root} =    Parse XML    ${XML}
         Should Be Equal    ${root.tag}    example
-
     ```
 
     ## text
@@ -381,8 +368,7 @@ class XML:
         ${2nd} =    Get Element    ${XML}    second/child
         Should Be Equal    ${2nd.text}    ${NONE}
         ${p} =    Get Element    ${XML}    html/p
-        Should Be Equal    ${p.text}    \n${SPACE*6}Text with${SPACE}
-
+        Should Be Equal    ${p.text}    \n${SPACE*12}Text with${SPACE}
     ```
 
     ## tail
@@ -396,7 +382,6 @@ class XML:
     Tail
         ${b} =    Get Element    ${XML}    html/p/b
         Should Be Equal    ${b.tail}    ${SPACE}and${SPACE}
-
     ```
 
     ## attrib
@@ -410,7 +395,6 @@ class XML:
         Should Be Equal    ${2nd.attrib['id']}    2
         ${3rd} =    Get Element    ${XML}    third
         Should Be Empty    ${3rd.attrib}
-
     ```
 
     # Handling XML namespaces
@@ -427,29 +411,28 @@ class XML:
     ## How ElementTree handles namespaces
 
     If an XML document has namespaces, ElementTree adds namespace information
-    to tag names in [Clark Notation]
-    (e.g. `{http://ns.uri}tag`) and removes original `xmlns` attributes.
-    This is done both with default namespaces and with namespaces with a prefix.
-    How it works in practice is illustrated by the following example, where
-    `${NS}` variable contains this XML document:
+    to tag names in [Clark Notation] (e.g. `{http://ns.uri}tag`) and removes
+    original `xmlns` attributes. This is done both with default namespaces
+    and with namespaces with a prefix. How it works in practice is illustrated
+    by the following example, where the `${NS}` variable contains this XML
+    document:
 
     ```xml
     <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-     xmlns="http://www.w3.org/1999/xhtml">
+                    xmlns="http://www.w3.org/1999/xhtml">
         <xsl:template match="/">
-            <html/>
+            <html></html>
         </xsl:template>
     </xsl:stylesheet>
     ```
 
     ```robotframework
     *** Test Cases ***
-    How ElementTree handles namespaces
-        ${root} =    Parse XML    ${NS}    keep_clark_notation=yes
+    Using Clark notation
+        ${root} =    Parse XML    ${NS}    keep_clark_notation=True
         Should Be Equal    ${root.tag}    {http://www.w3.org/1999/XSL/Transform}stylesheet
-        Element Should Exist    ${root}   {http://www.w3.org/1999/XSL/Transform}template/{http://www.w3.org/1999/xhtml}html
+        Element Should Exist    ${root}    {http://www.w3.org/1999/XSL/Transform}template/{http://www.w3.org/1999/xhtml}html
         Should Be Empty    ${root.attrib}
-
     ```
 
     As you can see, including the namespace URI in tag names makes xpaths
@@ -457,7 +440,7 @@ class XML:
 
     If you save the XML, ElementTree moves namespace information back to
     `xmlns` attributes. Unfortunately it does not restore the original
-    prefixes:
+    prefixes and you get something like this:
 
     ```xml
     <ns0:stylesheet xmlns:ns0="http://www.w3.org/1999/XSL/Transform">
@@ -469,7 +452,7 @@ class XML:
 
     The resulting output is semantically same as the original, but mangling
     prefixes like this may still not be desirable. Notice also that the actual
-    output depends slightly on ElementTree version.
+    output depends also on the ElementTree version.
 
     ## Default namespace handling
 
@@ -487,7 +470,6 @@ class XML:
         Element Should Exist    ${root}    template/html
         Element Attribute Should Be    ${root}    xmlns    http://www.w3.org/1999/XSL/Transform
         Element Attribute Should Be    ${root}    xmlns    http://www.w3.org/1999/xhtml    xpath=template/html
-
     ```
 
     Now that tags do not contain namespace information, xpaths are simple again.
@@ -504,7 +486,7 @@ class XML:
     </stylesheet>
     ```
 
-    Also this output is semantically same as the original. If the original XML
+    This output is semantically same as the original as well. If the original XML
     had only default namespaces, the output would also look identical.
 
     ## Namespaces when using lxml
@@ -512,7 +494,7 @@ class XML:
     This library handles namespaces same way both when [using lxml] and when
     not using it. There are, however, differences how lxml internally handles
     namespaces compared to the standard ElementTree. The main difference is
-    that lxml stores information about namespace prefixes and they are thus
+    that lxml stores information about namespace prefixes, and they are thus
     preserved if XML is saved. Another visible difference is that lxml includes
     namespace information in child elements got with [Get Element] if the
     parent element has namespaces.
@@ -542,7 +524,6 @@ class XML:
         ${root} =    Parse XML    <root id="1" ns:id="2" xmlns:ns="http://my.ns"/>
         Element Attribute Should Be    ${root}    id    1
         Element Attribute Should Be    ${root}    {http://my.ns}id    2
-
     ```
 
     ## Pattern matching
@@ -550,49 +531,28 @@ class XML:
     Some keywords, for example [Elements Should Match], support so called
     [glob patterns] where:
 
-    | Wildcard  | Description                                             |
-    | --------- | ------------------------------------------------------- |
-    | `*`       | matches any string, even an empty string                |
-    | `?`       | matches any single character                            |
-    | `[chars]` | matches one character in the bracket                    |
-    | `[!chars]` | matches one character not in the bracket                |
-    | `[a-z]`   | matches one character from the range in the bracket     |
-    | `[!a-z]`  | matches one character not from the range in the bracket |
+    |  Wildcard  |                    Description                         |
+    | ---------- | ------------------------------------------------------ |
+    | `*`        | Matches any string, even an empty string.              |
+    | `?`        | Matches any single character.                          |
+    | `[chars]`  | Matches one character in the bracket.                  |
+    | `[!chars]` | Matches one character not in the bracket.              |
+    | `[a-z]`    | Matches one character in the range in the bracket.     |
+    | `[!a-z]`   | Matches one character not in the range in the bracket. |
 
     Unlike with glob patterns normally, path separator characters `/` and
     `\` and the newline character `\n` are matches by the above
     wildcards.
 
-    [ElementTree XML API]:
-    http://docs.python.org/library/xml.etree.elementtree.html "ElementTree XML API"
-
-    [ElementTree]:
-    http://docs.python.org/library/xml.etree.elementtree.html "ElementTree"
-
+    [ElementTree XML API]: http://docs.python.org/library/xml.etree.elementtree.html "ElementTree XML API"
+    [ElementTree]: http://docs.python.org/library/xml.etree.elementtree.html "ElementTree"
     [lxml]: http://lxml.de "lxml"
-
-    [BuiltIn]:
-    https://robotframework.org/robotframework/latest/libraries/BuiltIn.html
-
-    [Collections]:
-    https://robotframework.org/robotframework/latest/libraries/Collections.html
-
-    [ElementTree documentation]:
-    https://docs.python.org/library/xml.etree.elementtree.html#xpath-support "ElementTree documentation"
-
+    [ElementTree documentation]: https://docs.python.org/library/xml.etree.elementtree.html#xpath-support "ElementTree documentation"
     [xpath 1.0 standard]: http://www.w3.org/TR/xpath/ "xpath 1.0 standard"
-
-    [Element objects]:
-    http://docs.python.org/library/xml.etree.elementtree.html#element-objects "Element objects"
-
+    [Element objects]: http://docs.python.org/library/xml.etree.elementtree.html#element-objects "Element objects"
     [Clark Notation]: http://www.jclark.com/xml/xmlns.htm "Clark Notation"
-
     [glob patterns]: http://en.wikipedia.org/wiki/Glob_(programming) "glob patterns"
     """
-
-    ROBOT_LIBRARY_SCOPE = "GLOBAL"
-    ROBOT_LIBRARY_VERSION = get_version()
-    ROBOT_LIBRARY_DOC_FORMAT = "Markdown"
 
     def __init__(self, use_lxml: bool = False):
         """Import library with optionally lxml mode enabled.
@@ -601,11 +561,10 @@ class XML:
             use_lxml: Enable the lxml module for parsing XML instead of the
                 standard ElementTree.
 
-        This library uses Python's standard
-        [ElementTree]
-        module for parsing XML by default. If `use_lxml` argument is given
-        a true value, the [lxml] module is used instead.
-        See the [Using lxml] section for benefits provided by lxml.
+        This library uses Python's standard [ElementTree] module for parsing
+        XML by default. If `use_lxml` argument is given a true value,
+        the [lxml] module is used instead. See the [Using lxml] section for
+        benefits provided by lxml.
 
         Using lxml requires that the lxml module is installed on the system.
         If lxml mode is enabled but the module is not installed, this library
@@ -637,48 +596,45 @@ class XML:
         Args:
             source: Path to an XML file or a string or bytes containing XML.
                 Does not accept an already parsed element.
-            keep_clark_notation: Disable default namespace stripping from tag names.
-            strip_namespaces: Strip namespace information altogether.
+            keep_clark_notation: When true, namespace information is not
+                removed from tag names.
+            strip_namespaces: When true, namespace information is removed altogether.
 
         Returns:
             The root element of the parsed structure.
 
-        The `source` can either be a path to an XML file or a string
-        containing XML. In both cases the XML is parsed into ElementTree
-        [Element]
-        structure. Possible comments and processing instructions in the source
-        XML are removed.
+        The `source` can either be a path to an XML file or a string containing
+        XML. In both cases the XML is parsed into ElementTree [Element] structure.
+        Possible comments and processing instructions in the source XML are removed.
 
         As discussed in [Handling XML namespaces] section, this keyword, by
         default, removes namespace information ElementTree has added to tag
         names and moves it into `xmlns` attributes. This typically eases
         handling XML documents with namespaces considerably. If you do not
         want that to happen, or want to avoid the small overhead of going
-        through the element structure when your XML does not have namespaces,
-        you can disable this feature by giving `keep_clark_notation` argument
-        a true value.
+        through the element structure, you can disable this feature by using
+        the `keep_clark_notation` argument.
 
         If you want to strip namespace information altogether so that it is
-        not included even if XML is saved, you can give a true value to
-        `strip_namespaces` argument.
+        not included even if XML is saved, you can use the `strip_namespaces`
+        argument.
 
         Examples:
         ```robotframework
         *** Test Cases ***
-        Parse xml
+        Parse XML
             ${root} =    Parse XML    <root><child/></root>
             ${xml} =    Parse XML    ${CURDIR}/test.xml    keep_clark_notation=True
             ${xml} =    Parse XML    ${CURDIR}/test.xml    strip_namespaces=True
-
         ```
 
         Use [Get Element] keyword if you want to get a certain element and not
         the whole structure. See [Parsing XML] section for more details and
         examples.
 
-        **NOTE:**
-            This keyword does not accept an already parsed XML element as
-        an argument. Use [Get Element] instead.
+        > [!NOTE]
+        > This keyword does not accept an already parsed XML element as a source.
+        > Use [Get Element] instead.
         """
         with ETSource(source) as source_:
             tree = self.etree.parse(source_)
@@ -712,14 +668,13 @@ class XML:
         `xpath`. Use [Get Elements] if you want all matching elements to be
         returned.
 
-        Examples using `${XML}` structure from [Example]:
+        Examples using the `${XML}` structure from the [Example] section:
 
         ```robotframework
         *** Test Cases ***
         Get element
             ${element} =    Get Element    ${XML}    second
             ${child} =    Get Element    ${element}    child
-
         ```
 
         [Parse XML] is recommended for parsing XML when the whole structure
@@ -769,7 +724,7 @@ class XML:
         match, an empty list is returned. Use [Get Element] if you want to get
         exactly one match.
 
-        Examples using `${XML}` structure from [Example]:
+        Examples using the `${XML}` structure from the [Example] section:
 
         ```robotframework
         *** Test Cases ***
@@ -778,7 +733,6 @@ class XML:
             Length Should Be    ${children}    2
             ${children} =    Get Elements    ${XML}    first/child
             Should Be Empty    ${children}
-
         ```
         """
         if isinstance(source, (str, bytes, Path)):
@@ -797,13 +751,13 @@ class XML:
             A list of direct child elements.
 
         The element whose children to return is specified using `source` and
-        `xpath`. They have exactly the same semantics as with [Get Element]
+        `xpath`. They have exactly the same semantics as with the [Get Element]
         keyword.
 
         All the direct child elements of the specified element are returned.
         If the element has no children, an empty list is returned.
 
-        Examples using `${XML}` structure from [Example]:
+        Examples using the `${XML}` structure from the [Example] section:
 
         ```robotframework
         *** Test Cases ***
@@ -812,7 +766,6 @@ class XML:
             Length Should Be    ${children}    4
             ${children} =    Get Child Elements    ${XML}    xpath=first
             Should Be Empty    ${children}
-
         ```
         """
         return list(self.get_element(source, xpath))
@@ -902,9 +855,8 @@ class XML:
         Returns:
             All text of the element, including text of child elements.
 
-        The element whose text to return is specified using `source` and
-        `xpath`. They have exactly the same semantics as with [Get Element]
-        keyword.
+        The element whose text to return is specified using `source` and `xpath`.
+        They have exactly the same semantics as with the [Get Element] keyword.
 
         This keyword returns all the text of the specified element, including
         all the text its children and grandchildren contain. If the element
@@ -917,7 +869,7 @@ class XML:
         converted to spaces, and multiple spaces collapsed into one. This is
         especially useful when dealing with HTML data.
 
-        Examples using `${XML}` structure from [Example]:
+        Examples using the `${XML}` structure from the [Example] section:
 
         ```robotframework
         *** Test Cases ***
@@ -927,9 +879,8 @@ class XML:
             ${text} =    Get Element Text    ${XML}    second/child
             Should Be Empty    ${text}
             ${paragraph} =    Get Element    ${XML}    html/p
-            ${text} =    Get Element Text    ${paragraph}    normalize_whitespace=yes
+            ${text} =    Get Element Text    ${paragraph}    normalize_whitespace=True
             Should Be Equal    ${text}    Text with bold and italics.
-
         ```
 
         See also [Get Elements Texts], [Element Text Should Be] and
@@ -968,24 +919,22 @@ class XML:
         Returns:
             A list of texts of the matched elements.
 
-        The elements whose text to return is specified using `source` and
-        `xpath`. They have exactly the same semantics as with [Get Elements]
-        keyword.
+        The elements whose text to return is specified using `source` and `xpath`.
+        They have exactly the same semantics as with the [Get Elements] keyword.
 
         The text of the matched elements is returned using the same logic
         as with [Get Element Text]. This includes optional whitespace
         normalization using the `normalize_whitespace` option.
 
-        Examples using `${XML}` structure from [Example]:
+        Examples using the `${XML}` structure from the [Example] section:
 
         ```robotframework
         *** Test Cases ***
         Get elements texts
-            @{texts} =    Get Elements Texts    ${XML}    third/child
+            @{texts} =    Get Elements Texts    ${XML}    third/child    normalize_whitespace=True
             Length Should Be    ${texts}    2
-            Should Be Equal    @{texts}[0]    more text
-            Should Be Equal    @{texts}[1]    ${EMPTY}
-
+            Should Be Equal    ${texts}[0]    more text
+            Should Be Equal    ${texts}[1]    ${EMPTY}
         ```
         """
         return [
@@ -1011,7 +960,7 @@ class XML:
             message: Optional custom error message.
 
         The element whose text is verified is specified using `source` and
-        `xpath`. They have exactly the same semantics as with [Get Element]
+        `xpath`. They have exactly the same semantics as with the [Get Element]
         keyword.
 
         The text to verify is got from the specified element using the same
@@ -1024,7 +973,7 @@ class XML:
         Should Match` to verify the text against a pattern instead of an exact
         value.
 
-        Examples using `${XML}` structure from [Example]:
+        Examples using the `${XML}` structure from the [Example] section:
 
         ```robotframework
         *** Test Cases ***
@@ -1032,8 +981,7 @@ class XML:
             Element Text Should Be    ${XML}    text    xpath=first
             Element Text Should Be    ${XML}    ${EMPTY}    xpath=second/child
             ${paragraph} =    Get Element    ${XML}    xpath=html/p
-            Element Text Should Be    ${paragraph}    Text with bold and italics.    normalize_whitespace=yes
-
+            Element Text Should Be    ${paragraph}    Text with bold and italics.    normalize_whitespace=True
         ```
         """
         text = self.get_element_text(source, xpath, normalize_whitespace)
@@ -1064,15 +1012,14 @@ class XML:
         `*`, `?` and `[chars]` acting as wildcards. See the
         [Pattern matching] section for more information.
 
-        Examples using `${XML}` structure from [Example]:
+        Examples using the `${XML}` structure from the [Example] section:
 
         ```robotframework
         *** Test Cases ***
         Element text should match
             Element Text Should Match    ${XML}    t???    xpath=first
             ${paragraph} =    Get Element    ${XML}    xpath=html/p
-            Element Text Should Match    ${paragraph}    Text with * and *.    normalize_whitespace=yes
-
+            Element Text Should Match    ${paragraph}    Text with * and *.    normalize_whitespace=True
         ```
         """
         text = self.get_element_text(source, xpath, normalize_whitespace)
@@ -1096,15 +1043,14 @@ class XML:
         Returns:
             The attribute value, or ``default`` if the attribute is missing.
 
-        The element whose attribute to return is specified using `source` and
-        `xpath`. They have exactly the same semantics as with [Get Element]
-        keyword.
+        The element whose attribute to return is specified using `source` and `xpath`.
+        They have exactly the same semantics as with the [Get Element] keyword.
 
         The value of the attribute `name` of the specified element is returned.
         If the element does not have such element, the `default` value is
         returned instead.
 
-        Examples using `${XML}` structure from [Example]:
+        Examples using the `${XML}` structure from the [Example] section:
 
         ```robotframework
         *** Test Cases ***
@@ -1113,7 +1059,6 @@ class XML:
             Should Be Equal    ${attribute}    1
             ${attribute} =    Get Element Attribute    ${XML}    xx    xpath=first    default=value
             Should Be Equal    ${attribute}    value
-
         ```
 
         See also [Get Element Attributes], [Element Attribute Should Be],
@@ -1136,22 +1081,21 @@ class XML:
             A dictionary of all attributes of the element.
 
         The element whose attributes to return is specified using `source` and
-        `xpath`. They have exactly the same semantics as with [Get Element]
+        `xpath`. They have exactly the same semantics as with the [Get Element]
         keyword.
 
         Attributes are returned as a Python dictionary. It is a copy of the
         original attributes so modifying it has no effect on the XML structure.
 
-        Examples using `${XML}` structure from [Example]:
+        Examples using the `${XML}` structure from the [Example] section:
 
         ```robotframework
         *** Test Cases ***
         Get element attributes
             ${attributes} =    Get Element Attributes    ${XML}    first
-            Dictionary Should Contain Key    ${attributes}    id
+            Should Be Equal    ${attributes}[id]    1
             ${attributes} =    Get Element Attributes    ${XML}    third
             Should Be Empty    ${attributes}
-
         ```
 
         Use [Get Element Attribute] to get the value of a single attribute.
@@ -1187,14 +1131,13 @@ class XML:
         `None` (i.e. variable `${NONE}`) can be used as the expected value.
         A cleaner alternative is using [Element Should Not Have Attribute].
 
-        Examples using `${XML}` structure from [Example]:
+        Examples using the `${XML}` structure from the [Example] section:
 
         ```robotframework
         *** Test Cases ***
         Element attribute should be
             Element Attribute Should Be    ${XML}    id    1    xpath=first
             Element Attribute Should Be    ${XML}    id    ${NONE}
-
         ```
 
         See also [Element Attribute Should Match] and [Get Element Attribute].
@@ -1227,14 +1170,13 @@ class XML:
         `*`, `?` and `[chars]` acting as wildcards. See the
         [Pattern matching] section for more information.
 
-        Examples using `${XML}` structure from [Example]:
+        Examples using the `${XML}` structure from the [Example] section:
 
         ```robotframework
         *** Test Cases ***
         Element attribute should match
             Element Attribute Should Match    ${XML}    id    ?    xpath=first
             Element Attribute Should Match    ${XML}    id    c*d    xpath=third/second
-
         ```
         """
         attr = self.get_element_attribute(source, name, xpath)
@@ -1264,14 +1206,13 @@ class XML:
         The keyword fails if the specified element has attribute `name`. The
         default error message can be overridden with the `message` argument.
 
-        Examples using `${XML}` structure from [Example]:
+        Examples using the `${XML}` structure from the [Example] section:
 
         ```robotframework
         *** Test Cases ***
         Element should not have attribute
             Element Should Not Have Attribute    ${XML}    id
             Element Should Not Have Attribute    ${XML}    xxx    xpath=first
-
         ```
 
         See also [Get Element Attribute], [Get Element Attributes],
@@ -1321,7 +1262,7 @@ class XML:
         discussion about elements' [text] and [tail] attributes in the
         [introduction].
 
-        Examples using `${XML}` structure from [Example]:
+        Examples using the `${XML}` structure from the [Example] section:
 
         ```robotframework
         *** Test Cases ***
@@ -1329,9 +1270,8 @@ class XML:
             ${first} =    Get Element    ${XML}    first
             Elements Should Be Equal    ${first}    <first id="1">text</first>
             ${p} =    Get Element    ${XML}    html/p
-            Elements Should Be Equal    ${p}    <p>Text with <b>bold</b> and <i>italics</i>.</p>    normalize_whitespace=yes
+            Elements Should Be Equal    ${p}    <p>Text with <b>bold</b> and <i>italics</i>.</p>    normalize_whitespace=True
             Elements Should Be Equal    ${p}    <p>Text with</p>    exclude    normalize
-
         ```
 
         The last example may look a bit strange because the `<p>` element
@@ -1377,14 +1317,13 @@ class XML:
         `*`, `?` and `[chars]` acting as wildcards. See the
         [Pattern matching] section for more information.
 
-        Examples using `${XML}` structure from [Example]:
+        Examples using the `${XML}` structure from the [Example] section:
 
         ```robotframework
         *** Test Cases ***
         Elements should match
             ${first} =    Get Element    ${XML}    first
             Elements Should Match    ${first}    <first id="?">*</first>
-
         ```
 
         See [Elements Should Be Equal] for more examples.
@@ -1432,21 +1371,21 @@ class XML:
             The root of the modified XML structure.
 
         The element whose tag to set is specified using `source` and
-        `xpath`. They have exactly the same semantics as with [Get Element]
+        `xpath`. They have exactly the same semantics as with the [Get Element]
         keyword. The resulting XML structure is returned, and if the `source`
         is an already parsed XML structure, it is also modified in place.
 
-        Examples using `${XML}` structure from [Example]:
+        Examples using the `${XML}` structure from the [Example] section:
 
         ```robotframework
         *** Test Cases ***
         Set element tag
-            Set Element Tag    ${XML}    newTag
-            Should Be Equal    ${XML.tag}    newTag
-            Set Element Tag    ${XML}    xxx    xpath=second/child
-            Element Should Exist    ${XML}    second/xxx
-            Element Should Not Exist    ${XML}    second/child
-
+            ${root} =    Parse XML    ${XML}
+            Set Element Tag    ${root}    new
+            Should Be Equal    ${root.tag}    new
+            Set Element Tag    ${root}    xxx    xpath=second/child
+            Element Should Exist    ${root}    second/xxx
+            Element Should Not Exist    ${root}    second/child
         ```
 
         Can only set the tag of a single element. Use [Set Elements Tag] to set
@@ -1494,7 +1433,7 @@ class XML:
             The root of the modified XML structure.
 
         The element whose text to set is specified using `source` and
-        `xpath`. They have exactly the same semantics as with [Get Element]
+        `xpath`. They have exactly the same semantics as with the [Get Element]
         keyword. The resulting XML structure is returned, and if the `source`
         is an already parsed XML structure, it is also modified in place.
 
@@ -1502,18 +1441,18 @@ class XML:
         `tail` values are given. See [Element attributes] section for more
         information about [text] and [tail] in general.
 
-        Examples using `${XML}` structure from [Example]:
+        Examples using the `${XML}` structure from the [Example] section:
 
         ```robotframework
         *** Test Cases ***
         Set element text
-            Set Element Text    ${XML}    new text    xpath=first
-            Element Text Should Be    ${XML}    new text    xpath=first
-            Set Element Text    ${XML}    tail=&    xpath=html/p/b
-            Element Text Should Be    ${XML}    Text with bold&italics.    xpath=html/p    normalize_whitespace=yes
-            Set Element Text    ${XML}    slanted    !!    xpath=html/p/i
-            Element Text Should Be    ${XML}    Text with bold&slanted!!    xpath=html/p    normalize_whitespace=yes
-
+            ${root} =    Parse XML    ${XML}
+            Set Element Text    ${root}    new text    xpath=first
+            Element Text Should Be    ${root}    new text    xpath=first
+            Set Element Text    ${root}    tail=&    xpath=html/p/b
+            Element Text Should Be    ${root}    Text with bold&italics.    xpath=html/p    normalize_whitespace=True
+            Set Element Text    ${root}    slanted    !!    xpath=html/p/i
+            Element Text Should Be    ${root}    Text with bold&slanted!!    xpath=html/p    normalize_whitespace=True
         ```
 
         Can only set the text/tail of a single element. Use [Set Elements Text]
@@ -1571,11 +1510,8 @@ class XML:
         Returns:
             The root of the modified XML structure.
 
-        Raises:
-            RuntimeError: If ``name`` is empty.
-
         The element whose attribute to set is specified using `source` and
-        `xpath`. They have exactly the same semantics as with [Get Element]
+        `xpath`. They have exactly the same semantics as with the [Get Element]
         keyword. The resulting XML structure is returned, and if the `source`
         is an already parsed XML structure, it is also modified in place.
 
@@ -1583,16 +1519,16 @@ class XML:
         Use [Remove Element Attribute] or [Remove Element Attributes] for
         removing them.
 
-        Examples using `${XML}` structure from [Example]:
+        Examples using the `${XML}` structure from the [Example] section:
 
         ```robotframework
         *** Test Cases ***
         Set element attribute
-            Set Element Attribute    ${XML}    attr    value
-            Element Attribute Should Be    ${XML}    attr    value
-            Set Element Attribute    ${XML}    id    new    xpath=first
-            Element Attribute Should Be    ${XML}    id    new    xpath=first
-
+            ${root} =    Parse XML    ${XML}
+            Set Element Attribute    ${root}    attr    value
+            Element Attribute Should Be    ${root}    attr    value
+            Set Element Attribute    ${root}    id    new    xpath=first
+            Element Attribute Should Be    ${root}    id    new    xpath=first
         ```
 
         Can only set an attribute of a single element. Use `Set Elements
@@ -1647,7 +1583,7 @@ class XML:
             The root of the modified XML structure.
 
         The element whose attribute to remove is specified using `source` and
-        `xpath`. They have exactly the same semantics as with [Get Element]
+        `xpath`. They have exactly the same semantics as with the [Get Element]
         keyword. The resulting XML structure is returned, and if the `source`
         is an already parsed XML structure, it is also modified in place.
 
@@ -1655,14 +1591,14 @@ class XML:
         Element Attributes[ to remove all attributes and ]Set Element Attribute`
         to set them.
 
-        Examples using `${XML}` structure from [Example]:
+        Examples using the `${XML}` structure from the [Example] section:
 
         ```robotframework
         *** Test Cases ***
         Remove element attribute
-            Remove Element Attribute    ${XML}    id    xpath=first
-            Element Should Not Have Attribute    ${XML}    id    xpath=first
-
+            ${root} =    Parse XML    ${XML}
+            Remove Element Attribute    ${root}    id    xpath=first
+            Element Should Not Have Attribute    ${root}    id    xpath=first
         ```
 
         Can only remove an attribute from a single element. Use `Remove Elements
@@ -1709,21 +1645,21 @@ class XML:
             The root of the modified XML structure.
 
         The element whose attributes to remove is specified using `source` and
-        `xpath`. They have exactly the same semantics as with [Get Element]
+        `xpath`. They have exactly the same semantics as with the [Get Element]
         keyword. The resulting XML structure is returned, and if the `source`
         is an already parsed XML structure, it is also modified in place.
 
         Use [Remove Element Attribute] to remove a single attribute and
         [Set Element Attribute] to set them.
 
-        Examples using `${XML}` structure from [Example]:
+        Examples using the `${XML}` structure from the [Example] section:
 
         ```robotframework
         *** Test Cases ***
         Remove element attributes
-            Remove Element Attributes    ${XML}    xpath=first
-            Element Should Not Have Attribute    ${XML}    id    xpath=first
-
+            ${root} =    Parse XML    ${XML}
+            Remove Element Attributes    ${root}    xpath=first
+            Element Should Not Have Attribute    ${root}    id    xpath=first
         ```
 
         Can only remove attributes from a single element. Use `Remove Elements
@@ -1770,7 +1706,7 @@ class XML:
             The root of the modified XML structure.
 
         The element to whom to add the new element is specified using `source`
-        and `xpath`. They have exactly the same semantics as with [Get Element]
+        and `xpath`. They have exactly the same semantics as with the [Get Element]
         keyword. The resulting XML structure is returned, and if the `source`
         is an already parsed XML structure, it is also modified in place.
 
@@ -1783,17 +1719,17 @@ class XML:
         position, 1 = second position, etc.), and negative numbers refer to
         positions at the end (-1 = second last position, -2 = third last, etc.).
 
-        Examples using `${XML}` structure from [Example]:
+        Examples using the `${XML}` structure from the [Example] section:
 
         ```robotframework
         *** Test Cases ***
         Add element
-            Add Element    ${XML}    <new id="x"><c1/></new>
-            Add Element    ${XML}    <c2/>    xpath=new
-            Add Element    ${XML}    <c3/>    index=1    xpath=new
-            ${new} =    Get Element    ${XML}    new
+            ${root} =    Parse XML    ${XML}
+            Add Element    ${root}    <new id="x"><c1/></new>
+            Add Element    ${root}    <c2/>    xpath=new
+            Add Element    ${root}    <c3/>    index=1    xpath=new
+            ${new} =    Get Element    ${root}    new
             Elements Should Be Equal    ${new}    <new id="x"><c1/><c3/><c2/></new>
-
         ```
 
         Use [Remove Element] or [Remove Elements] to remove elements.
@@ -1827,7 +1763,7 @@ class XML:
             AssertionError: If ``xpath`` does not match exactly one element.
 
         The element to remove from the `source` is specified with `xpath`
-        using the same semantics as with [Get Element] keyword. The resulting
+        using the same semantics as with the [Get Element] keyword. The resulting
         XML structure is returned, and if the `source` is an already parsed
         XML structure, it is also modified in place.
 
@@ -1838,16 +1774,16 @@ class XML:
         by giving `remove_tail` a true value. See the [Element attributes]
         section for more information about `tail` in general.
 
-        Examples using `${XML}` structure from [Example]:
+        Examples using the `${XML}` structure from the [Example] section:
 
         ```robotframework
         *** Test Cases ***
         Remove element
-            Remove Element    ${XML}    xpath=second
-            Element Should Not Exist    ${XML}    xpath=second
-            Remove Element    ${XML}    xpath=html/p/b    remove_tail=yes
-            Element Text Should Be    ${XML}    Text with italics.    xpath=html/p    normalize_whitespace=yes
-
+            ${root} =    Parse XML    ${XML}
+            Remove Element    ${root}    xpath=second
+            Element Should Not Exist    ${root}    xpath=second
+            Remove Element    ${root}    xpath=html/p/b    remove_tail=True
+            Element Text Should Be    ${root}    Text with italics.    xpath=html/p    normalize_whitespace=True
         ```
         """
         source = self.get_element(source)
@@ -1881,15 +1817,15 @@ class XML:
         Element's tail text is not removed by default, but that can be changed
         by using `remove_tail` argument similarly as with [Remove Element].
 
-        Examples using `${XML}` structure from [Example]:
+        Examples using the `${XML}` structure from the [Example] section:
 
         ```robotframework
         *** Test Cases ***
         Remove elements
-            Remove Elements    ${XML}    xpath=*/child
-            Element Should Not Exist    ${XML}    xpath=second/child
-            Element Should Not Exist    ${XML}    xpath=third/child
-
+            ${root} =    Parse XML    ${XML}
+            Remove Elements    ${root}    xpath=*/child
+            Element Should Not Exist    ${root}    xpath=second/child
+            Element Should Not Exist    ${root}    xpath=third/child
         ```
         """
         source = self.get_element(source)
@@ -1942,7 +1878,7 @@ class XML:
             The root of the modified XML structure.
 
         The element to clear is specified using `source` and `xpath`. They
-        have exactly the same semantics as with [Get Element] keyword.
+        have exactly the same semantics as with the [Get Element] keyword.
         The resulting XML structure is returned, and if the `source` is
         an already parsed XML structure, it is also modified in place.
 
@@ -1951,19 +1887,19 @@ class XML:
         by giving `clear_tail` a true value. See the [Element attributes]
         section for more information about `tail` in general.
 
-        Examples using `${XML}` structure from [Example]:
+        Examples using the `${XML}` structure from the [Example] section:
 
         ```robotframework
         *** Test Cases ***
         Clear element
-            Clear Element    ${XML}    xpath=first
-            ${first} =    Get Element    ${XML}    xpath=first
+            ${root} =    Parse XML    ${XML}
+            Clear Element    ${root}    xpath=first
+            ${first} =    Get Element    ${root}    xpath=first
             Elements Should Be Equal    ${first}    <first/>
-            Clear Element    ${XML}    xpath=html/p/b    clear_tail=yes
-            Element Text Should Be    ${XML}    Text with italics.    xpath=html/p    normalize_whitespace=yes
-            Clear Element    ${XML}
-            Elements Should Be Equal    ${XML}    <example/>
-
+            Clear Element    ${root}    xpath=html/p/b    clear_tail=True
+            Element Text Should Be    ${root}    Text with italics.    xpath=html/p    normalize_whitespace=True
+            Clear Element    ${root}
+            Elements Should Be Equal    ${root}    <example/>
         ```
 
         Use [Remove Element] to remove the whole element.
@@ -1987,25 +1923,25 @@ class XML:
             A deep copy of the element.
 
         The element to copy is specified using `source` and `xpath`. They
-        have exactly the same semantics as with [Get Element] keyword.
+        have exactly the same semantics as with the [Get Element] keyword.
 
         If the copy or the original element is modified afterward, the changes
         have no effect on the other.
 
-        Examples using `${XML}` structure from [Example]:
+        Examples using the `${XML}` structure from the [Example] section:
 
         ```robotframework
         *** Test Cases ***
         Copy element
-            ${elem} =    Get Element    ${XML}    xpath=first
+            ${root} =    Parse XML    ${XML}
+            ${elem} =    Get Element    ${root}    xpath=first
             ${copy1} =    Copy Element    ${elem}
-            ${copy2} =    Copy Element    ${XML}    xpath=first
-            Set Element Text    ${XML}    new text    xpath=first
+            ${copy2} =    Copy Element    ${root}    xpath=first
+            Set Element Text    ${root}    new text    xpath=first
             Set Element Attribute    ${copy1}    id    new
-            Elements Should Be Equal    ${elem}    <first id="1">new text</first>
+            Elements Should Be Equal    ${elem}     <first id="1">new text</first>
             Elements Should Be Equal    ${copy1}    <first id="new">text</first>
             Elements Should Be Equal    ${copy2}    <first id="1">text</first>
-
         ```
         """
         return copy.deepcopy(self.get_element(source, xpath))
@@ -2026,9 +1962,8 @@ class XML:
         Returns:
             String or bytes representation of the element.
 
-        The element to convert to a string is specified using `source` and
-        `xpath`. They have exactly the same semantics as with [Get Element]
-        keyword.
+        The element to convert to a string is specified using `source` and `xpath`.
+        They have exactly the same semantics as with the [Get Element] keyword.
 
         The string is returned as Unicode by default. If `encoding` argument
         is given any value, the string is returned as bytes in the specified
@@ -2085,7 +2020,7 @@ class XML:
             encoding: Encoding used when saving the file.
 
         The element to save is specified with `source` using the same
-        semantics as with [Get Element] keyword.
+        semantics as with the [Get Element] keyword.
 
         The file where the element is saved is denoted with `path` and the
         encoding to use with `encoding`. The resulting file always contains
@@ -2141,13 +2076,13 @@ class XML:
 
         The element in which context the expression is executed is specified
         using `source` and `context` arguments. They have exactly the same
-        semantics as `source` and `xpath` arguments have with [Get Element]
+        semantics as `source` and `xpath` arguments have with the [Get Element]
         keyword.
 
         The xpath expression to evaluate is given as `expression` argument.
         The result of the evaluation is returned as-is.
 
-        Examples using `${XML}` structure from [Example]:
+        Examples using the `${XML}` structure from the [Example] section:
 
         ```robotframework
         *** Test Cases ***
@@ -2158,7 +2093,6 @@ class XML:
             Should Be Equal    ${text}    child
             ${bold} =    Evaluate Xpath    ${XML}    boolean(preceding-sibling::*[1] = 'bold')    context=html/p/i
             Should Be Equal    ${bold}    ${True}
-
         ```
 
         This keyword works only if lxml mode is taken into use when [importing]
@@ -2170,6 +2104,7 @@ class XML:
 
 
 class NameSpaceStripper:
+
     def __init__(self, etree, lxml_etree: bool = False):
         self.etree = etree
         self.lxml_tree = lxml_etree
@@ -2211,6 +2146,7 @@ class NameSpaceStripper:
 
 
 class ElementFinder:
+
     def __init__(
         self,
         etree,
@@ -2248,6 +2184,7 @@ class ElementFinder:
 
 
 class Location:
+
     def __init__(self, path: str, is_root: bool = True):
         self.path = path
         self.is_not_root = not is_root
@@ -2263,6 +2200,7 @@ class Location:
 
 
 class ElementComparator:
+
     def __init__(
         self,
         comparator: Callable[[object, object, str], None],
