@@ -154,7 +154,16 @@ Admonitions
     ...    GFM does not support them at all.</p>
     ...    </div>
     ...    model=${MODEL}[keywords][0]
-
+    <div class="admonition note">
+    ...    <p class="admonition-title">Nesting</p>
+    ...    <p>We support nested admonitions!</p>
+    ...    <div class="admonition warning">
+    ...    <p class="admonition-title">Warning</p>
+    ...    <p>GFM does not.</p>
+    ...    </div>
+    ...    <p>Back in NOTE level.</p>
+    ...    </div>
+    ...    model=${MODEL}[keywords][0]
 
 Table of contents
     <div class="toc">
