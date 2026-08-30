@@ -1,12 +1,17 @@
 import unittest
 
-from robot.utils.markdown import LinkifyExtension, Markdown
+from robot.utils.markdown import AdmonitionExtension, LinkifyExtension, Markdown
 
 
-def assert_markdown(text, expected=None, **config):
-    extensions = config.pop("extensions", []) + [LinkifyExtension()]
-    actual = Markdown(extensions=extensions, **config).convert(text)
-    expected = Markdown().convert(text) if expected is None else f"<p>{expected}</p>"
+def assert_markdown(text, expected=None):
+    extensions = [AdmonitionExtension(), LinkifyExtension()]
+    actual = Markdown(extensions=extensions).convert(text)
+    if not expected:
+        expected = Markdown().convert(text)
+    elif not expected.strip().startswith(("<div", "<blockquote")):
+        expected = f"<p>{expected}</p>"
+    else:
+        expected = expected.strip()
     if actual != expected:
         raise AssertionError(
             f"Markdown conversion failed.\n\n"
@@ -47,6 +52,122 @@ class TestLinkifyUrls(unittest.TestCase):
                 assert_markdown("start " + text + end, "start " + expected + end)
             for start, end in [("(", ")"), ("[", "]"), ('"', '"'), ("'", "'")]:
                 assert_markdown(start + text + end, start + expected + end)
+
+
+class TestAdmonitions(unittest.TestCase):
+
+    def test_basics(self):
+        markdown = """
+> [!NOTE]
+> Body that can span multiple
+> lines and contain *formatting*.
+"""
+        expected = """
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Body that can span multiple
+lines and contain <em>formatting</em>.</p>
+</div>
+"""
+        assert_markdown(markdown, expected)
+
+    def test_kind_can_be_anything(self):
+        markdown = """
+> [!{}]
+> Body.
+"""
+        expected = """
+<div class="admonition {}">
+<p class="admonition-title">{}</p>
+<p>Body.</p>
+</div>
+"""
+        for kind in ["note", "tip", "important", "warning", "caution", "danger", "xxx"]:
+            for kind in [kind.lower(), kind.title(), kind.upper()]:
+                assert_markdown(
+                    markdown.format(kind),
+                    expected.format(kind.lower(), kind.capitalize()),
+                )
+
+    def test_optional_title(self):
+        markdown = """
+> [!tip] {}
+> Body.
+"""
+        expected = """
+<div class="admonition tip">
+<p class="admonition-title">{}</p>
+<p>Body.</p>
+</div>
+"""
+        for title in ["Title!", "Two words", "[!title]"]:
+            assert_markdown(markdown.format(title), expected.format(title))
+
+    def test_whitespace(self):
+        markdown = """
+>   [!note]  Title  here!
+>
+> First paragraph.
+>
+> Second paragraph.
+>
+
+> Outside note.
+"""
+        expected = """
+<div class="admonition note">
+<p class="admonition-title">Title  here!</p>
+<p>First paragraph.</p>
+<p>Second paragraph.
+</p>
+</div>
+<blockquote>
+<p>Outside note.</p>
+</blockquote>
+"""
+        assert_markdown(markdown, expected)
+
+    def test_broken_header(self):
+        markdown = """
+> [!broken
+> Body.
+"""
+        expected = """
+<blockquote>
+<p>[!broken
+Body.</p>
+</blockquote>
+"""
+        assert_markdown(markdown, expected)
+
+    def test_empty_body(self):
+        expected = """
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+</div>
+"""
+        for markdown in ("> [!note]", "> [!note]\n>"):
+            assert_markdown(markdown, expected)
+
+    def test_nested(self):
+        markdown = """
+> [!caution]
+> > [!note]
+> > Nesting is not supported by all tools!
+>
+> Back in caution.
+"""
+        expected = """
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Nesting is not supported by all tools!</p>
+</div>
+<p>Back in caution.</p>
+</div>
+"""
+        assert_markdown(markdown, expected)
 
 
 if __name__ == "__main__":

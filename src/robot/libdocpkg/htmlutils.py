@@ -23,7 +23,7 @@ from robot.utils import (
     attribute_escape, html_escape, html_format, NormalizedDict, validate_literal
 )
 from robot.utils.htmlformatters import HeaderFormatter
-from robot.utils.markdown import LinkifyExtension, Markdown
+from robot.utils.markdown import AdmonitionExtension, LinkifyExtension, Markdown
 
 if TYPE_CHECKING:
     from .model import KeywordDoc
@@ -183,12 +183,12 @@ class DocToHtml:
         if self._md is None:
             self._md = md = Markdown(
                 extensions=[
-                    "admonition",
                     "codehilite",
                     "fenced_code",
                     "sane_lists",
                     "tables",
                     "toc",
+                    AdmonitionExtension(),
                     LinkifyExtension(),
                 ],
                 extension_configs={

@@ -102,24 +102,31 @@ def references(a: int, b: "str | list[str]"):
 
 def admonitions():
     """
-    !!! note
-        Admonitions are provided by the `admonition` plugin.
+    > [!note]
+    > We have our own plugin that supports GFM style admonitions.
 
-        We need to make sure to add custom styles to make them render nicely.
+    > [!TIP]
+    >
+    > There are five supported admonition types:
+    >
+    > - note
+    > - tip
+    > - important
+    > - warning
+    > - caution
 
-    !!! tip
+    > [!Important]
+    > Admonitions are not standard Markdown.
 
-        There are four supported admonition types: note, tip, warning, and danger.
+    > [!warning] Interoperability risk!
+    > We support optional titles, but GFM does not.
 
-    !!! warning "Interoperability risk!"
-        Admonitions are not standard Markdown. Don't use them if you want good
-        interoperability with other Markdown tools.
+    > [!caution]
+    > Just kidding, you are safe.
 
-    !!! danger
-        Just kidding, this library is safe.
-
-    !!! unrecognized
-        Unrecognized types are treated the same as "note".
+    > [!unrecognized]
+    > We treat unrecognized types the same as `note`.
+    > GFM does not support them at all.
     """
 
 
