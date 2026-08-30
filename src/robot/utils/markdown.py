@@ -13,7 +13,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""Module containing Markdown related utilities."""
+"""Module containing Markdown related utilities.
+
+Implements custom plugins for linkifying URLs and to support GFM-style
+admonitions.
+
+Also exposes `markdown.Markdown` so that calling it raises an error if
+`markdown` is not installed.
+"""
 
 import re
 from xml.etree import ElementTree as ET
@@ -76,6 +83,21 @@ class LinkifyInlineProcessor(InlineProcessor):
 
 
 class AdmonitionExtension(Extension):
+    """Python-Markdown extension to support GFM-style admonitions.
+
+    Basic syntax is the same as with GFM, but there are two major differences:
+
+    - Admonition types are not validated.
+    - Optional titles are supported.
+
+    Examples:
+
+        > [!NOTE]
+        > Hello, admonitions!
+
+        > [!WARNING] Optional title!
+        > GFM doesn't support titles.
+    """
 
     def extendMarkdown(self, md):
         processor = AdmonitionProcessor(md.parser)

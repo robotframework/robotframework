@@ -421,8 +421,6 @@ engine. It follows the original implementation closely and is explicitly *not*
 CommonMark compliant. It supports basic Markdown features out-of-the-box, but
 the following extensions are enabled and provide some more functionality:
 
-- `Admonition <https://python-markdown.github.io/extensions/admonition/>`__
-  for adding notes, tips and warnings.
 - `Code Hilite <https://python-markdown.github.io/extensions/code_hilite/>`__
   for syntax highlighting.
 - `Fenced Code Blocks <https://python-markdown.github.io/extensions/fenced_code_blocks/>`__
@@ -433,8 +431,8 @@ the following extensions are enabled and provide some more functionality:
   for automatically generating table of contents.
 - `Tables <https://python-markdown.github.io/extensions/tables/>`__
   for table support.
-- A `custom extension <https://github.com/robotframework/robotframework/blob/master/src/robot/utils/markdown.py>`__
-  for linkifying URLs.
+- `Custom extensions <https://github.com/robotframework/robotframework/blob/master/src/robot/utils/markdown.py>`__
+  to support admonitions and auto-linking URLs.
 
 This appendix covers the most important Markdown features and also explains when
 the syntax varies between implementations. For details about the supported syntax,
@@ -552,8 +550,9 @@ URLs are recognized also without special formatting:
 
     Robot Framework website is at http://robotframework.org.
 
-.. note:: Automatic URL detection is not a standard Markdown feature, but various
-          Markdown implementations support it for convenience.
+.. note:: Automatic URL detection without the angle brackets is not a standard
+          Markdown feature, but various Markdown implementations support it for
+          convenience.
 
 Tables
 ~~~~~~
@@ -830,41 +829,42 @@ __ https://python-markdown.github.io/extensions/code_hilite/#syntax
 Admonitions
 ~~~~~~~~~~~
 
-Admonitions make it easy to create notes, tips and warnings that stand out
-from the normal text. The syntax is as follows:
+Admonitions, also known as alerts or callouts, make it easy to create notes,
+tips and warnings that stand out from the normal text. Robot Framework supports
+them using the following syntax:
 
 .. sourcecode:: markdown
 
-    !!! type "Optional title"
-        Admonition text. Can contain multiple paragraphs and normal formatting.
+    > [!TYPE] Optional title
+    > Admonition text. Can contain multiple paragraphs and normal *formatting*.
 
-Robot Framework supports certain admonition types so that they have a different
-styles:
+Admonitions are not a standard Markdown feature, but GitHub__ and various
+other implementations support them using the above syntax as well. All
+implementations, including GitHub, do not support using a custom title, though.
+The admonition syntax is based on the `Markdown blockquote syntax`__, so also
+tools that do not recognize it ought to handle it reasonably well.
 
-- note (blueish)
-- tip (greenish)
-- warning (yellowish)
-- danger (redish)
+Admonitions get different styles depending on their type. Robot Framework
+supports the same types that GitHub does:
 
-If a type is not recognized, it is treated the same way as a note. If the
-optional title is omitted, the capitalized type name is used instead.
+- `NOTE` (blueish)
+- `TIP` (greenish)
+- `IMPORTANT` (purpleish)
+- `WARNING` (yellowish)
+- `CAUTION` (reddish)
 
-Example:
+If a type is not recognized, it is treated the same way as the `NOTE` type.
+If the optional title is omitted, the capitalized type name is used instead.
+
+Examples:
 
 .. sourcecode:: markdown
 
-    Markdown is a great documentation syntax!
+    > [!NOTE]
+    > Markdown support is new in *Robot Framework 7.5*.
 
-    !!! note
-        Markdown support is new in *Robot Framework 7.5*.
+    > [!WARNING] Interoperability risk
+    > Differences between Markdown flavors can cause problems.
 
-    !!! warning "Interoperability risk"
-        Differences between Markdown flavors can cause problems.
-
-.. note:: Admonitions are implemented using Python-Markdown's
-          `Admonition <https://python-markdown.github.io/extensions/admonition/>`__
-          extension.
-
-.. note:: Admonitions are not a standard Markdown feature. Some other tools support
-          them as well, but they typically use different syntax. Use other formatting
-          for notes, tips, etc. if interoperability is important.
+__ https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax#alerts
+__ https://daringfireball.net/projects/markdown/syntax#blockquote
