@@ -39,6 +39,7 @@ if __name__ == "__main__" and "robot" not in sys.modules:
     set_pythonpath()
 
 from robot.conf import RobotSettings
+from robot.conf.arguments import RobotArgs
 from robot.errors import DataError
 from robot.model import ModelModifier
 from robot.output import librarylogger, LOGGER, pyloggingconf
@@ -453,6 +454,7 @@ class RobotFramework(Application):
             arg_limits=(1,),
             env_options="ROBOT_OPTIONS",
             logger=LOGGER,
+            config=RobotArgs,
         )
 
     def main(self, datasources, **options):

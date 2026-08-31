@@ -1,4 +1,5 @@
 # Dependencies for the acceptance test runner.
 
+confargs >= 0.8
 jsonschema >= 4.0
 xmlschema

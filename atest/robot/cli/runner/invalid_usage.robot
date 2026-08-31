@@ -11,7 +11,7 @@ No Input
     ${EMPTY}    Expected at least 1 argument, got 0.
 
 Argument File Option Without Value As Last Argument
-    --argumentfile    option --argumentfile requires argument
+    --argumentfile    option '--argumentfile' expects a value
 
 Non-Existing Input
     nonexisting.robot    Parsing '${EXECDIR}${/}nonexisting.robot' failed: File or directory to execute does not exist.
@@ -29,8 +29,8 @@ Invalid Output Directory
     [Teardown]    Remove File    %{TEMPDIR}/not-dir
 
 Invalid Options
-    --invalid option    option --invalid not recognized
-    --name valid -Q tests.robot    option -Q not recognized
+    --invalid option    unknown option '--invalid'
+    --name valid -Q tests.robot    unknown option '-Q'
 
 Invalid --SuiteStatLevel
     --suitestatlevel not_int tests.robot

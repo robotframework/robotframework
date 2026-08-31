@@ -38,6 +38,7 @@ if __name__ == "__main__" and "robot" not in sys.modules:
     set_pythonpath()
 
 from robot.conf import RebotSettings
+from robot.conf.arguments import RebotArgs
 from robot.errors import DataError
 from robot.output import LOGGER
 from robot.reporting import ResultWriter
@@ -353,6 +354,7 @@ class Rebot(RobotFramework):
             arg_limits=(1,),
             env_options="REBOT_OPTIONS",
             logger=LOGGER,
+            config=RebotArgs,
         )
 
     def main(self, datasources, **options):

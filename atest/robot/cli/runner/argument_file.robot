@@ -82,12 +82,6 @@ Option name and value joined together
     Should Be Equal    ${SUITE.name}    My name
     Should Be Equal    ${SUITE.doc}     My docu
 
-Shortening --argumentfile is not possible
-    Create Argument File    ${ARGFILE}    --name My name
-    ${result} =    Run Tests Without Processing Output    --argumentfil ${ARGFILE}    ${TESTFILE}
-    Execution Should Have Failed    ${result}
-    ...    Using '--argumentfile' option in shortened format like '--argumentf' is not supported.
-
 Expand environment variables
     Set Environment Variable    ROBOT_NAME    Robot
     Set Environment Variable    ROBOT_NONA    Räbät
