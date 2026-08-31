@@ -849,7 +849,7 @@ supports the same types that GitHub does:
 
 - `NOTE` (blueish)
 - `TIP` (greenish)
-- `IMPORTANT` (purpleish)
+- `IMPORTANT` (purplish)
 - `WARNING` (yellowish)
 - `CAUTION` (reddish)
 

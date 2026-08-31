@@ -152,7 +152,7 @@ class DocStringParser:
             else:
                 yield section
                 section = Block(body=[line])
-            can_start = section.name or not line.strip()
+            can_start = bool(section.name or not line.strip())
         yield section
 
     def _match_header(self, line: str, can_start: bool) -> "tuple[str|None, str|None]":
