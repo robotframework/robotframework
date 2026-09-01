@@ -6,7 +6,6 @@ class ExampleLibrary:
 
     def my_keyword(self):
         """Does nothing."""
-        pass
 
     def your_keyword(self, arg):
         """Takes one argument and *does nothing* with it.
@@ -15,4 +14,3 @@ class ExampleLibrary:
         | Your Keyword | xxx |
         | Your Keyword | yyy |
         """
-        pass

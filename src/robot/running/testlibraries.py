@@ -356,7 +356,7 @@ class ClassLibrary(TestLibrary):
     def lineno(self) -> int:
         try:
             lines, start_lineno = inspect.getsourcelines(self.code)
-        except (TypeError, OSError, IOError):
+        except (TypeError, OSError):
             return 1
         for increment, line in enumerate(lines):
             if line.strip().startswith("class "):

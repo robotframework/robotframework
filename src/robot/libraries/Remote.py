@@ -233,7 +233,7 @@ class XmlRpcRemoteClient:
         )
         try:
             yield server
-        except (socket.error, xmlrpc.client.Error) as err:
+        except (OSError, xmlrpc.client.Error) as err:
             raise TypeError(err)
         finally:
             server("close")()
@@ -269,7 +269,7 @@ class XmlRpcRemoteClient:
                 return server.run_keyword(*run_keyword_args)
             except xmlrpc.client.Fault as err:
                 message = err.faultString
-            except socket.error as err:
+            except OSError as err:
                 message = f"Connection to remote server broken: {err}"
             except ExpatError as err:
                 message = (
@@ -292,7 +292,7 @@ class TimeoutHTTPTransport(xmlrpc.client.Transport):
     def make_connection(self, host):
         if self._connection and host == self._connection[0]:
             return self._connection[1]
-        chost, self._extra_headers, x509 = self.get_host_info(host)
+        chost, self._extra_headers, _ = self.get_host_info(host)
         self._connection = host, self._connection_class(chost, timeout=self.timeout)
         return self._connection[1]
 

@@ -107,6 +107,5 @@ if __name__ == "__main__":
     )
     result = runner.run(suite)
     rc = len(result.failures) + len(result.errors)
-    if rc > 250:
-        rc = 250
+    rc = min(rc, 250)
     sys.exit(rc)

@@ -170,7 +170,7 @@ class ForInRunner:
                     break
             except ExecutionPassed as passed:
                 passed.set_earlier_failures(errors)
-                raise passed
+                raise
             except ExecutionFailed as failed:
                 errors.extend(failed.get_errors())
                 if not failed.can_continue(self._context, self._templated):
@@ -508,7 +508,7 @@ class WhileRunner:
                         break
                 except ExecutionPassed as passed:
                     passed.set_earlier_failures(errors)
-                    raise passed
+                    raise
                 except LimitExceeded as exceeded:
                     if exceeded.on_limit_pass:
                         self._context.info(exceeded.message)

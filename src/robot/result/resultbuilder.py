@@ -95,7 +95,7 @@ def _single_result(source, options):
 def _json_result(source, include_keywords, flattened_keywords, rpa):
     try:
         return Result.from_json(source, include_keywords, flattened_keywords, rpa)
-    except IOError as err:
+    except OSError as err:
         error = err.strerror
     except Exception:
         error = get_error_message()
@@ -108,7 +108,7 @@ def _xml_result(source, include_keywords, flattened_keywords, rpa):
     result = Result(source, rpa=rpa)
     try:
         return builder.build(result)
-    except IOError as err:
+    except OSError as err:
         error = err.strerror
     except Exception:
         error = get_error_message()
@@ -212,7 +212,7 @@ class ExecutionResultBuilder:
                 ):
                     started = 0
                 elif by_type and type_match(tag):
-                    started = 0
+                    started = 0  # noqa: SIM114
             elif started == 1 and tag == "status":
                 elem.text = create_flatten_message(elem.text)
             if started <= 0 or (started == 1 and tag in include_on_top) or tag == "msg":

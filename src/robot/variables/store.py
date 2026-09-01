@@ -35,7 +35,6 @@ class VariableStore:
                 self._resolve_delayed(name, value)
             except DataError:
                 pass
-        return None
 
     def _resolve_delayed(self, name, value):
         try:

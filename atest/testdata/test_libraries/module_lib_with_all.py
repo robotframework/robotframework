@@ -1,6 +1,6 @@
 from os.path import abspath, join
 
-__all__ = [
+__all__ = [  # noqa: PLE0604
     "join_with_execdir",
     "abspath",
     "attr_is_not_kw",
@@ -18,7 +18,7 @@ def not_in_all():
     pass
 
 
-attr_is_not_kw = "Listed in __all__ but not a fuction"
+attr_is_not_kw = "Listed in __all__ but not a function"
 
 
 def _not_kw_even_if_listed_in_all():

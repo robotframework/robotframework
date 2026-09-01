@@ -38,7 +38,7 @@ with open(INPATH) as input:
     SETTINGS = []
     parsing_tests = False
     parsing_settings = False
-    for line in input.readlines():
+    for line in input:
         line = line.rstrip()
         if not line:
             continue

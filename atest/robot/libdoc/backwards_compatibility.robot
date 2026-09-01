@@ -71,7 +71,7 @@ Validate keyword 'Arguments'
     Keyword Name Should Be             0    Arguments
     Keyword Doc Should Be              0    ${EMPTY}
     Keyword Tags Should Be             0
-    Keyword Lineno Should Be           0    39
+    Keyword Lineno Should Be           0    38
     Keyword Arguments Should Be        0    a    b=2    *c    d=4    e    **f
 
 Validate keyword 'Types'

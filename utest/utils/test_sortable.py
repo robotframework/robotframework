@@ -19,12 +19,12 @@ class TestSortable(unittest.TestCase):
 
     def test_eq(self):
         assert_true(self.a == self.a2)
-        assert_true(not self.a == self.b)
-        assert_true(not self.a == 1)
+        assert_true(not self.a == self.b)  # noqa: SIM201
+        assert_true(not self.a == 1)  # noqa: SIM201
 
     def test_ne(self):
         assert_true(self.a != self.b)
-        assert_true(not self.a != self.a2)
+        assert_true(not self.a != self.a2)  # noqa: SIM202
         assert_true(self.a != 1)
 
     def test_lt(self):

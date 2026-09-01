@@ -48,7 +48,7 @@ class Asynchronous:
                 self.event_loop.run_until_complete(
                     asyncio.gather(task, return_exceptions=True)
                 )
-            raise err
+            raise
 
     def is_loop_required(self, obj):
         return inspect.iscoroutine(obj) and not self._is_loop_running()

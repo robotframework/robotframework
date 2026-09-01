@@ -153,7 +153,7 @@ class TestParseReFlags(unittest.TestCase):
     def test_parse(self):
         for inp, exp in [
             ("DOTALL", re.DOTALL),
-            ("I", re.I),
+            ("I", re.IGNORECASE),
             ("IGNORECASE|dotall", re.IGNORECASE | re.DOTALL),
             (" MULTILINE ", re.MULTILINE),
         ]:

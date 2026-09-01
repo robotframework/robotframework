@@ -154,7 +154,7 @@ class TestRun(unittest.TestCase):
 
     def test_zero_and_negative_timeout(self):
         for tout in [0, 0.0, -0.01, -1, -1000]:
-            self.timeout.time_left = lambda: tout
+            self.timeout.time_left = lambda arg=tout: arg
             assert_raises(TimeoutExceeded, self.timeout.run, sleeping)
 
     def test_pause_runner(self):

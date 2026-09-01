@@ -163,12 +163,12 @@ def same_name_3(animal):
 
 @keyword("It is totally ${same}")
 def totally_same_1(arg):
-    raise Exception("Not executed")
+    raise RuntimeError("Not executed")
 
 
 @keyword("It is totally ${same}")
 def totally_same_2(arg):
-    raise Exception("Not executed")
+    raise RuntimeError("Not executed")
 
 
 @keyword("Number of ${animals} should be")
@@ -183,9 +183,9 @@ def conversion_with_embedded_and_normal(num1: int, /, num2: int):
 
 @keyword("Embedded ${arg: int} with type is not supported")
 def embedded_types_not_supported(arg):
-    raise Exception("Not executed")
+    raise RuntimeError("Not executed")
 
 
 @keyword("Embedded type can be ${invalid: bad}")
 def embedded_types_can_be_invalid(arg):
-    raise Exception("Not executed")
+    raise RuntimeError("Not executed")

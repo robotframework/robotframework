@@ -15,7 +15,7 @@ class Invalid:
         return {"status": "PASS", "return": "\x00"}
 
     def exception(self, message):
-        raise Exception(message)
+        raise RuntimeError(message)
 
     def shutdown(self):
         sys.exit()

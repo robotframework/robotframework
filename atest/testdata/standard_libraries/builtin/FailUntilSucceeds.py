@@ -14,5 +14,5 @@ class FailUntilSucceeds:
         self.times_to_fail -= 1
         time.sleep(sleep)
         if self.times_to_fail >= 0:
-            raise Exception(f"Still {self.times_to_fail} times to fail!")
+            raise RuntimeError(f"Still {self.times_to_fail} times to fail!")
         return message

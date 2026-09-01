@@ -70,7 +70,7 @@ class HighlightingStream:
         try:
             with self._suppress_broken_pipe_error():
                 self.stream.write(text)
-        except IOError as err:
+        except OSError as err:
             # Workaround for Windows 10 console bug:
             # https://github.com/robotframework/robotframework/issues/2709
             if WINDOWS and err.errno == 0 and retry > 0:
@@ -82,7 +82,7 @@ class HighlightingStream:
     def _suppress_broken_pipe_error(self):
         try:
             yield
-        except IOError as err:
+        except OSError as err:
             if err.errno not in (errno.EPIPE, errno.EINVAL, errno.EBADF):
                 raise
 

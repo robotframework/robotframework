@@ -101,7 +101,6 @@ class DataTypesLibrary:
 
         It links to `Set Location` keyword and to `GeoLocation` data type.
         """
-        pass
 
     def set_location(self, location: GeoLocation) -> bool:
         return True
@@ -116,13 +115,12 @@ class DataTypesLibrary:
 
         This is the next Line that links to `Set Location` .
         """
-        pass
 
     def funny_unions(
         self,
         funny: Union[
             bool,
-            Union[int, float, bool, str, AssertionOperator, Small, GeoLocation, None],
+            Union[int, float, str, AssertionOperator, Small, GeoLocation, None],
         ] = AssertionOperator.equal,
     ) -> Union[int, List[int]]:
         pass

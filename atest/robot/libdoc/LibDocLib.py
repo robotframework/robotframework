@@ -51,6 +51,7 @@ class LibDocLib:
             encoding=encoding,
             timeout=120,
             text=True,
+            check=False,
         )
         logger.info(result.stdout)
         return result.stdout

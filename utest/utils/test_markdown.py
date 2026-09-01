@@ -83,11 +83,10 @@ lines and contain <em>formatting</em>.</p>
 </div>
 """
         for kind in ["note", "tip", "important", "warning", "caution", "danger", "xxx"]:
-            for kind in [kind.lower(), kind.title(), kind.upper()]:
-                assert_markdown(
-                    markdown.format(kind),
-                    expected.format(kind.lower(), kind.capitalize()),
-                )
+            exp = expected.format(kind.lower(), kind.capitalize())
+            assert_markdown(markdown.format(kind.lower()), exp)
+            assert_markdown(markdown.format(kind.upper()), exp)
+            assert_markdown(markdown.format(kind.title()), exp)
 
     def test_optional_title(self):
         markdown = """

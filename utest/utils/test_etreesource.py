@@ -44,7 +44,7 @@ class TestETSource(unittest.TestCase):
 
     def test_byte_string(self):
         self._test_string(b"\n<tag>content</tag>")
-        self._test_string("<tag>hyvä</tag>".encode("utf8"))
+        self._test_string("<tag>hyvä</tag>".encode())
         self._test_string(
             '<?xml version="1.0" encoding="Latin1"?>\n'
             "<tag>hyvä</tag>".encode("latin-1"),

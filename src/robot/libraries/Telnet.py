@@ -342,7 +342,7 @@ class Telnet:
         telnetlib_log_level="TRACE",
         connection_timeout=None,
     ):
-        """Telnet library can be imported with optional configuration parameters.
+        r"""Telnet library can be imported with optional configuration parameters.
 
         Configuration parameters are used as default values when new
         connections are opened with [Open Connection] keyword. They can also be

@@ -16,10 +16,10 @@ class MyLibrary1:
         print("Keyword from library 1")
 
     def keyword_in_tc_file_overrides_others(self):
-        raise Exception("This keyword should not be called")
+        raise RuntimeError("This keyword should not be called")
 
     def keyword_in_resource_overrides_libraries(self):
-        raise Exception("This keyword should not be called")
+        raise RuntimeError("This keyword should not be called")
 
     def comment(self):
         print("Overrides keyword from BuiltIn library")

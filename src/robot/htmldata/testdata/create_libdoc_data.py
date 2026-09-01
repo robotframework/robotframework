@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# ruff: noqa: E402
 
 import sys
 from os.path import abspath, dirname, join, normpath

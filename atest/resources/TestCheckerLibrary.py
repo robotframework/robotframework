@@ -35,7 +35,7 @@ class WithBodyTraversing:
             for i in index:
                 item = item.body[int(i)]
             return item
-        raise TypeError(f"Invalid index {repr(index)}.")
+        raise TypeError(f"Invalid index {index!r}.")
 
     @property
     def keywords(self):
@@ -169,7 +169,7 @@ class TestCheckerLibrary:
             logger.info("Not processing output.")
             return
         if validate is None:
-            validate = is_truthy(os.getenv("ATEST_VALIDATE_OUTPUT", False))
+            validate = is_truthy(os.getenv("ATEST_VALIDATE_OUTPUT", ""))
         if validate:
             if path.suffix.lower() == ".json":
                 self.validate_json_output(path)

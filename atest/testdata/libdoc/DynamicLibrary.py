@@ -21,7 +21,7 @@ class DynamicLibrary:
             "KWO w/ varargs",
             "Embedded ${args} 1",
             "Em${bed}ed ${args} 2",
-            "nön-äscii ÜTF-8".encode("UTF-8"),
+            "nön-äscii ÜTF-8".encode(),
             "nön-äscii Ünicöde",
             "Tags",
             "Types",

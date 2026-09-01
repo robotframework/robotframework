@@ -3,7 +3,6 @@ class DocStringParsing:
 
     def __init__(self, arg=None):
         """Args: arg: Documentation for `__init__` argument `arg`."""
-        pass
 
     def arg_docs(self, own_line, multiline, *next_line, empty_doc, no_doc) -> str:
         """Example with *everything*!

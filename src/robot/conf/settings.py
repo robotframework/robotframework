@@ -153,7 +153,7 @@ class _BaseSettings:
             try:
                 with open(value, encoding="UTF-8") as f:
                     value = f.read()
-            except (OSError, IOError) as err:
+            except OSError as err:
                 self._raise_invalid(
                     "Doc", f"Reading documentation from '{value}' failed: {err}"
                 )
@@ -243,11 +243,15 @@ class _BaseSettings:
     def _process_output_name(self, option, name):
         base, ext = os.path.splitext(name)
         if self["TimestampOutputs"]:
-            base += (
-                "-{s.year}{s.month:02}{s.day:02}-{s.hour:02}{s.minute:02}{s.second:02}"
-            ).format(s=self.start_time)
+            base += self._get_timestamp(self.start_time)
         ext = self._get_output_extension(ext, option)
         return base + ext
+
+    def _get_timestamp(self, dt):
+        return (
+            f"-{dt.year}{dt.month:02}{dt.day:02}"
+            f"-{dt.hour:02}{dt.minute:02}{dt.second:02}"
+        )
 
     def _get_output_extension(self, extension, file_type):
         if extension:

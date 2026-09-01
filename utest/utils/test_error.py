@@ -58,7 +58,7 @@ class TestGetErrorDetails(unittest.TestCase):
 
     def test_chaining(self):
         try:
-            1 / 0
+            1 / 0  # noqa
         except Exception:
             try:
                 raise ValueError
@@ -96,13 +96,13 @@ class TestRemoveRobotEntriesFromTraceback(unittest.TestCase):
 
     def test_both_robot_and_non_robot_entries(self):
         def raises():
-            raise Exception
+            raise ValueError
 
         self._verify_traceback(
             r"""
 Traceback \(most recent call last\):
   File ".*", line \d+, in raises
-    raise Exception
+    raise ValueError
 """.strip(),
             assert_raises,
             AssertionError,
@@ -111,7 +111,7 @@ Traceback \(most recent call last\):
 
     def test_remove_entries_with_lambda_and_multiple_entries(self):
         def raises():
-            1 / 0
+            1 / 0  # noqa
 
         raising_lambda = lambda: raises()
         self._verify_traceback(

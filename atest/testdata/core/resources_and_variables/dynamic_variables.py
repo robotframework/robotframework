@@ -18,4 +18,4 @@ def get_variables(a, b=None, c=None, d=None):
         }
     if d is None:
         return None
-    raise Exception("Ooops!")
+    raise RuntimeError("Ooops!")

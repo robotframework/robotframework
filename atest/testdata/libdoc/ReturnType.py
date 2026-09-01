@@ -7,7 +7,7 @@ else:
     from typing_extensions import Never
 
 if sys.version_info >= (3, 12):
-    exec("type TypeAlias = int")
+    exec("type TypeAlias = int")  # noqa: S102
 else:
     TypeAlias = int
 

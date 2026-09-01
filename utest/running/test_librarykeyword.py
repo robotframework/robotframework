@@ -476,8 +476,8 @@ class TestSourceAndLineno(unittest.TestCase):
         lib = TestLibrary.from_name("classes.Decorated")
         self._verify(lib, "no_wrapper", classes_source, 340)
         self._verify(lib, "wrapper", classes_source, 347)
-        self._verify(lib, "external", classes_source, 353)
-        self._verify(lib, "no_def", classes_source, 356)
+        self._verify(lib, "external", classes_source, 351)
+        self._verify(lib, "no_def", classes_source, 354)
 
     def test_dynamic_without_source(self):
         lib = TestLibrary.from_name("classes.ArgDocDynamicLibrary")

@@ -19,7 +19,7 @@ def assert_created_statement(tokens, base_class, **params):
     assert_statements(statement, base_class(tokens))
     assert_statements(statement, base_class.from_tokens(tokens))
     assert_statements(statement, Statement.from_tokens(tokens))
-    if len(set(id(t) for t in statement.tokens)) != len(tokens):
+    if len({id(t) for t in statement.tokens}) != len(tokens):
         lines = "\n".join(
             f"{i:18}{t}"
             for i, t in [("ID", "TOKEN")]

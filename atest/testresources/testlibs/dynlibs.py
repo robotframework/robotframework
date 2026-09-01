@@ -10,7 +10,7 @@ class _BaseDynamicLibrary:
 class StaticDocsLib(_BaseDynamicLibrary):
     """This is lib intro."""
 
-    def __init__(self, some=None, args=[]):
+    def __init__(self, some=None, args=True):
         """Init doc."""
 
 

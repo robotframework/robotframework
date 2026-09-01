@@ -69,9 +69,9 @@ class TestTypeInfo(unittest.TestCase):
             ("frozenset", frozenset),
             ("union", Union),
         ]:
-            for name in name, name.upper():
-                nested = () if expected is Union else None
-                assert_info(TypeInfo(name), name, expected, nested)
+            nested = () if expected is Union else None
+            assert_info(TypeInfo(name), name, expected, nested)
+            assert_info(TypeInfo(name.upper()), name.upper(), expected, nested)
 
     def test_union(self):
         for union in [

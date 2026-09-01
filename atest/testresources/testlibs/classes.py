@@ -262,11 +262,11 @@ class ArgDocDynamicLibraryWithKwargsSupport(ArgDocDynamicLibrary):
         ]:
             self._keywords[name] = _KeywordInfo(name, argspec)
 
-    def run_keyword(self, name, args, kwargs={}):
-        argstr = " ".join(
-            [str(a) for a in args] + [f"{k}:{kwargs[k]}" for k in sorted(kwargs)]
+    def run_keyword(self, name, args, kws=None):
+        arg_str = " ".join(
+            [str(a) for a in args] + [f"{k}:{kws[k]}" for k in sorted(kws or {})]
         )
-        print(f"*INFO* Executed keyword {name} with arguments {argstr}")
+        print(f"*INFO* Executed keyword {name} with arguments {arg_str}")
 
 
 class DynamicWithSource:
@@ -311,7 +311,7 @@ class InvalidGetDocDynamicLibrary(ArgDocDynamicLibrary):
 class InvalidGetArgsDynamicLibrary(ArgDocDynamicLibrary):
 
     def get_keyword_arguments(self, name):
-        1 / 0
+        1 / 0  # noqa
 
 
 class InvalidAttributeDynamicLibrary(ArgDocDynamicLibrary):
@@ -347,11 +347,9 @@ class Decorated:
     def wrapper(self):
         pass
 
-    if hasattr(functools, "lru_cache"):
-
-        @functools.lru_cache()
-        def external(self):
-            pass
+    @functools.lru_cache  # noqa: B019
+    def external(self):
+        pass
 
     no_def = lambda self: None
 

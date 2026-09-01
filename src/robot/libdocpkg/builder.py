@@ -93,7 +93,7 @@ class DocumentationBuilder:
         return LibraryDocBuilder()
 
     def _get_extension(self, source):
-        path, *args = source.split("::")
+        path, *_ = source.split("::")
         return os.path.splitext(path)[1][1:].lower()
 
     def _build(self, builder, source):

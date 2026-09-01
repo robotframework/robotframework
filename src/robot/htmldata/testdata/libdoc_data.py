@@ -65,10 +65,9 @@ def type_hints(
     c: Point,
     d: date,
     e: bool = True,
-    f: Union[int, date] = None,
+    f: Union[int, date, None] = None,
 ):
     """We use `integer`, `date`, `Direction`, and many other types."""
-    pass
 
 
 def type_aliases(a: date, b: date2):

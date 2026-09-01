@@ -57,25 +57,29 @@ class TestAbspathNormpath(unittest.TestCase):
 
     def test_normpath(self):
         for inp, exp in self._get_inputs():
-            for inp in inp, Path(inp):
-                path = normpath(inp)
-                assert_equal(path, exp, inp)
-                assert_true(isinstance(path, str), inp)
-                path = normpath(inp, case_normalize=True)
-                assert_equal(path, casenorm(exp), inp)
-                assert_true(isinstance(path, str), inp)
+            path = normpath(inp)
+            assert_equal(path, exp, inp)
+            assert_true(isinstance(path, str), inp)
+            path = normpath(inp, case_normalize=True)
+            assert_equal(path, casenorm(exp), inp)
+            assert_true(isinstance(path, str), inp)
 
     def _get_inputs(self):
+        for inp, exp in self._get_str_inputs():
+            yield inp, exp
+            yield Path(inp), exp
+
+    def _get_str_inputs(self):
         inputs = self._windows_inputs if WINDOWS else self._posix_inputs
         for inp, exp in inputs():
             yield inp, exp
             if inp not in ["", os.sep]:
-                for ext in [os.sep, os.sep + ".", os.sep + "." + os.sep]:
+                for ext in [os.sep, f"{os.sep}.", f"{os.sep}.{os.sep}"]:
                     yield inp + ext, exp
             if inp.endswith(os.sep):
-                for ext in [".", "." + os.sep, "." + os.sep + "."]:
+                for ext in [".", f".{os.sep}", f".{os.sep}."]:
                     yield inp + ext, exp
-                yield inp + "foo" + os.sep + "..", exp
+                yield f"{inp}foo{os.sep}..", exp
 
     def _posix_inputs(self):
         return [

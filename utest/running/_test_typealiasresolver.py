@@ -22,7 +22,7 @@ type ParamToScalar[T] = T
 type ParamArg[T] = ParamReuse[tuple[T]]
 type UnionArg[T] = ParamReuse[T | None]
 if sys.version_info >= (3, 13):
-    exec("type ParamDefaults[X, Y=bool, Z=int] = X | Y | list[Z | None]")
+    exec("type ParamDefaults[X, Y=bool, Z=int] = X | Y | list[Z | None]")  # noqa
 else:
     type ParamDefaults[X, Y, Z] = X | Y | list[Z | None]
 type Recursive = int | list[Recursive]

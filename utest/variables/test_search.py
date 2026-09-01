@@ -213,7 +213,7 @@ class TestSearchVariable(unittest.TestCase):
     def test_identifier_as_variable_name(self):
         for identifier in self.identifiers:
             for count in 1, 2, 3, 42:
-                var = "%s{%s}" % (identifier, identifier * count)
+                var = "%s{%s}" % (identifier, identifier * count)  # noqa: UP031
                 self._test(var, var)
                 self._test(f"{var}spam", var)
                 self._test(f"eggs{var}spam", var, start=4)
@@ -222,10 +222,10 @@ class TestSearchVariable(unittest.TestCase):
     def test_identifier_as_variable_name_with_internal_vars(self):
         for i in self.identifiers:
             for count in 1, 2, 3, 42:
-                var = "%s{%s{%s}}" % (i, i * count, i)
+                var = "%s{%s{%s}}" % (i, i * count, i)  # noqa: UP031
                 self._test(var, var)
                 self._test(f"eggs{var}spam", var, start=4)
-                var = "%s{%s{%s}}" % (i, i * count, i * count)
+                var = "%s{%s{%s}}" % (i, i * count, i * count)  # noqa: UP031
                 self._test(var, var)
                 self._test(f"eggs{var}spam", var, start=4)
 
@@ -418,8 +418,8 @@ class TestVariableMatches(unittest.TestCase):
         assert_equal(bool(matches), True)
         assert_equal(len(matches), 1)
         assert_equal(len(matches), 1)
-        self._assert_match(list(matches)[0], "one ", "${var}", " here")
-        self._assert_match(list(matches)[0], "one ", "${var}", " here")
+        self._assert_match(next(iter(matches)), "one ", "${var}", " here")
+        self._assert_match(next(iter(matches)), "one ", "${var}", " here")
 
     def test_parse_type(self):
         x, y = VariableMatches("${x: int} and ${y: float}", parse_type=True)

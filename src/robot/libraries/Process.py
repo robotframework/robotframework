@@ -132,7 +132,7 @@ class ProcessResult:
             return ""
         try:
             content = stream.read()
-        except IOError:
+        except OSError:
             content = ""
         finally:
             if stream_path:

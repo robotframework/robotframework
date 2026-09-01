@@ -1142,7 +1142,7 @@ class TestToFromDictAndJson(unittest.TestCase):
 
     def _verify(self, obj, **expected):
         data = obj.to_dict()
-        self.assertListEqual(sorted(list(data)), sorted(list(expected)))
+        self.assertListEqual(sorted(data), sorted(expected))
         self.assertDictEqual(data, expected)
         roundtrip = type(obj).from_dict(data).to_dict()
         self.assertDictEqual(roundtrip, expected)

@@ -27,7 +27,7 @@ type GenericSimple[T] = T
 type GenericParams[T] = list[T]
 type GenericUnion[X, Y] = X | Y
 if sys.version_info >= (3, 13):
-    exec("type GenericDefaults[X, Y=None] = X | Y")
+    exec("type GenericDefaults[X, Y=None] = X | Y")  # noqa: S102
 else:
     type GenericDefaults[X, Y] = X | Y
 type Invalid = NonExisting  # noqa: F821

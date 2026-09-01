@@ -1,5 +1,5 @@
 def in_exception():
-    raise Exception(b"hyv\xe4")
+    raise RuntimeError(b"hyv\xe4")
 
 
 def in_return_value():

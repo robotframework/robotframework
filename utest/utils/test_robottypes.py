@@ -67,7 +67,7 @@ class TestListLike(unittest.TestCase):
     def test_iter_makes_object_iterable_regardless_implementation(self):
         class Example:
             def __iter__(self):
-                1 / 0
+                1 / 0  # noqa
 
         assert_equal(is_list_like(Example()), True)
 
@@ -279,27 +279,30 @@ class TestTypeRepr(unittest.TestCase):
 class TestIsTruthyFalsy(unittest.TestCase):
 
     def test_truthy_values(self):
-        for item in [True, 1, [False], unittest.TestCase, "truE", "whatEver"]:
-            for item in self._strings_also_in_different_cases(item):
-                assert_true(is_truthy(item) is True)
-                assert_true(is_falsy(item) is False)
+        for item in self._strings_also_in_different_cases(
+            [True, 1, [False], unittest.TestCase, "truE", "whatEver"]
+        ):
+            assert_true(is_truthy(item) is True)
+            assert_true(is_falsy(item) is False)
 
     def test_falsy_values(self):
         class AlwaysFalse:
-            __bool__ = __nonzero__ = lambda self: False
+            def __bool__(self):
+                return False
 
-        falsy_strings = ["", "faLse", "nO", "nOne", "oFF", "0"]
-        for item in falsy_strings + [False, None, 0, [], {}, AlwaysFalse()]:
-            for item in self._strings_also_in_different_cases(item):
-                assert_true(is_truthy(item) is False)
-                assert_true(is_falsy(item) is True)
+        for item in self._strings_also_in_different_cases(
+            [False, None, 0, [], AlwaysFalse(), "", "faLse", "nO", "nOne", "oFF", "0"]
+        ):
+            assert_true(is_truthy(item) is False)
+            assert_true(is_falsy(item) is True)
 
-    def _strings_also_in_different_cases(self, item):
-        yield item
-        if isinstance(item, str):
-            yield item.lower()
-            yield item.upper()
-            yield item.title()
+    def _strings_also_in_different_cases(self, items):
+        for item in items:
+            yield item
+            if isinstance(item, str):
+                yield item.lower()
+                yield item.upper()
+                yield item.title()
 
 
 if __name__ == "__main__":

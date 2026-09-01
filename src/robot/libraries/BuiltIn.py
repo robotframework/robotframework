@@ -715,7 +715,7 @@ class _Converter(_BuiltInBase):
     def _split_dict_items(self, items):
         separate = []
         for item in items:
-            name, value = split_from_equals(item)
+            _, value = split_from_equals(item)
             if value is not None or is_dict_variable(item):
                 break
             separate.append(item)
@@ -2836,7 +2836,7 @@ class _RunKeyword(_BuiltInBase):
                 self.run_keyword(kw, *args)
             except ExecutionPassed as err:
                 err.set_earlier_failures(errors)
-                raise err
+                raise
             except ExecutionFailed as err:
                 errors.extend(err.get_errors())
                 if not err.can_continue(self._context):
@@ -3127,7 +3127,7 @@ class _RunKeyword(_BuiltInBase):
         except ExecutionFailed as err:
             if not err.dont_continue:
                 err.continue_on_failure = True
-            raise err
+            raise
 
     @run_keyword_variant(resolve=1, dry_run=True)
     def run_keyword_and_expect_error(
@@ -3269,10 +3269,10 @@ class _RunKeyword(_BuiltInBase):
         """
         try:
             count = self._get_repeat_count(repeat)
-        except ValueError as err:
+        except ValueError:
             timeout = self._get_repeat_timeout(repeat)
             if timeout is None:
-                raise err
+                raise
             keywords = self._keywords_repeated_by_timeout(timeout, name, args)
         else:
             keywords = self._keywords_repeated_by_count(count, name, args)
@@ -3918,8 +3918,7 @@ class _Misc(_BuiltInBase):
         """
         seconds = timestr_to_secs(time_)
         # Python hangs with negative values
-        if seconds < 0:
-            seconds = 0
+        seconds = max(seconds, 0)
         self._sleep_in_parts(seconds)
         logger.info(f"Slept {secs_to_timestr(seconds)}.")
         if reason:
@@ -4109,8 +4108,8 @@ class _Misc(_BuiltInBase):
             if match.is_list_variable():
                 yield from value
             elif match.is_dict_variable():
-                for name, value in value.items():
-                    yield f"{name}={value}"
+                for name in value:
+                    yield f"{name}={value[name]}"
             else:
                 yield value
 
@@ -4180,7 +4179,6 @@ class _Misc(_BuiltInBase):
         A difference between this keyword and using the normal `# comment`
         syntax is that normal comments are not shown in the log file at all.
         """
-        pass
 
     def set_log_level(self, level: SettableLevel) -> SettableLevel:
         """Sets the log threshold to the specified level.

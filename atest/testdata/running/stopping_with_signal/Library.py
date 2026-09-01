@@ -10,7 +10,7 @@ def busy_sleep(seconds):
 def swallow_exception(timeout=3):
     try:
         busy_sleep(timeout)
-    except Exception:
+    except Exception:  # noqa: S110
         pass
     else:
         raise AssertionError("Expected exception did not occur!")

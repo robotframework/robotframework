@@ -10,7 +10,6 @@ def keyword(a1="d", *a2):
 
     See `get hello` for details.
     """
-    pass
 
 
 def get_hello():
@@ -63,25 +62,21 @@ def name_set_in_method_signature(a, b, *args, **kwargs):
     """
     This makes sure that @deco.keyword decorated kws don't lose their signatures
     """
-    pass
 
 
 @deco.keyword("Takes ${embedded} ${args}")
 def takes_embedded_args(a=1, b=2):
     """A keyword which uses embedded args."""
-    pass
 
 
 @deco.keyword("Takes ${embedded} and normal args")
 def takes_embedded_and_normal(embedded, mandatory, optional=None):
     """A keyword which uses embedded and normal args."""
-    pass
 
 
 @deco.keyword("Takes ${embedded} and positional-only args")
 def takes_embedded_and_pos_only(embedded, mandatory, /, optional=None):
     """A keyword which uses embedded, positional-only and normal args."""
-    pass
 
 
 @deco.keyword(tags=["1", 1, "one", "yksi"])

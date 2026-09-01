@@ -163,19 +163,19 @@ class TypeConverter:
         for converter in nested:
             converter.validate()
 
-    def _handles_value(self, value):
+    def _handles_value(self, value) -> bool:
         try:
             return isinstance(value, self.value_types)
         except AttributeError:
             return False
 
-    def _non_string_convert(self, value):
+    def _non_string_convert(self, value) -> object:
         return self._convert(value)
 
-    def _string_convert(self, value):
+    def _string_convert(self, value) -> object:
         return self._convert(value)
 
-    def _convert(self, value):
+    def _convert(self, value) -> object:
         raise NotImplementedError
 
     def _handle_error(self, value, name, kind, error=None):
@@ -190,7 +190,7 @@ class TypeConverter:
             f"{kind} '{name}' got value '{value}'{typ} that {cannot_be_converted}"
         )
 
-    def _literal_eval(self, value, expected, name=None):
+    def _literal_eval(self, value, expected, name=None) -> object:
         try:
             value = literal_eval(value)
         except (ValueError, SyntaxError):
@@ -502,7 +502,7 @@ class NoneConverter(TypeConverter):
     def handles(cls, type_info: "TypeInfo") -> bool:
         return type_info.type in (NoneType, None)
 
-    def _string_convert(self, value):
+    def _string_convert(self, value) -> None:
         if value.upper() in ("NONE", ""):
             return None
         raise ValueError

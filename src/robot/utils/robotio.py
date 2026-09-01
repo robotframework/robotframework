@@ -30,7 +30,7 @@ def file_writer(path=None, encoding="UTF-8", newline=None, usage=None):
     create_destination_directory(path, usage)
     try:
         return open(path, "w", encoding=encoding, newline=newline)
-    except EnvironmentError:
+    except OSError:
         usage = f"{usage} file" if usage else "file"
         raise DataError(f"Opening {usage} '{path}' failed: {get_error_message()}")
 
@@ -52,7 +52,7 @@ def create_destination_directory(path: "Path | str", usage=None):
     if not path.parent.exists():
         try:
             os.makedirs(path.parent, exist_ok=True)
-        except EnvironmentError:
+        except OSError:
             usage = f"{usage} directory" if usage else "directory"
             raise DataError(
                 f"Creating {usage} '{path.parent}' failed: {get_error_message()}"

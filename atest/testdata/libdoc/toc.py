@@ -58,4 +58,3 @@ def keyword():
 
     We also have links to `First level`, `Second level` and `Third level`.
     """
-    pass

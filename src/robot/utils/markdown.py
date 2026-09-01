@@ -26,7 +26,7 @@ import re
 from xml.etree import ElementTree as ET
 
 try:
-    from markdown import Markdown as Markdown
+    from markdown import Markdown
     from markdown.blockprocessors import BlockProcessor
     from markdown.extensions import Extension
     from markdown.inlinepatterns import InlineProcessor

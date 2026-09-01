@@ -120,8 +120,7 @@ class TestListeners(unittest.TestCase):
 
     def setUp(self):
         listeners = Listeners([self.listener_name])
-        assert_equal(len(listeners), 1)
-        self.listener = list(listeners)[0]
+        (self.listener,) = listeners
         self.capturer = OutputCapturer()
         self.capturer.start()
 

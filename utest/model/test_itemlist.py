@@ -51,7 +51,7 @@ class TestItemLists(unittest.TestCase):
 
     def test_extend_with_generator(self):
         items = ItemList(str)
-        items.extend((c for c in "Hello, world!"))
+        items.extend(c for c in "Hello, world!")
         assert_equal(list(items), list("Hello, world!"))
 
     def test_insert(self):
@@ -350,8 +350,8 @@ class TestItemLists(unittest.TestCase):
         assert_true(n124 >= n123)
         assert_false(n124 < n123)
         assert_false(n124 <= n123)
-        assert_true(n123 >= n123)
-        assert_true(n123 <= n123)
+        assert_true(n123 >= n123)  # noqa: PLR0124
+        assert_true(n123 <= n123)  # noqa: PLR0124
 
     def test_compare_incompatible(self):
         assert_false(ItemList(int) == ItemList(str))

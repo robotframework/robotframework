@@ -198,7 +198,7 @@ class TestTagStatistics(unittest.TestCase):
             # 2) Actual values
             names = [stat.name for stat in builder.stats]
             # 3) Expected values
-            exp_names = sorted(comb_tags) + sorted(list(set(all_tags)))
+            exp_names = sorted(comb_tags) + sorted(set(all_tags))
             # 4) Verify names (match counts were already verified)
             assert_equal(names, exp_names)
 

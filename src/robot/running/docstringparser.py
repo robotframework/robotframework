@@ -20,7 +20,7 @@ from inspect import cleandoc
 
 from robot.output import LOGGER
 
-__all__ = ["parse_docstring", "DocInfo"]
+__all__ = ["DocInfo", "parse_docstring"]
 
 
 @dataclass

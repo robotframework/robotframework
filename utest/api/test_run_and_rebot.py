@@ -147,9 +147,9 @@ class TestRun(RunningTestCase):
         assert_equal(rc, 1)
         self._assert_outputs(
             stdout=[
-                ("[output {0}]".format(OUTPUT_PATH), 1),
-                ("[report {0}]".format(REPORT_PATH), 1),
-                ("[log {0}]".format(LOG_PATH), 1),
+                (f"[output {OUTPUT_PATH}]", 1),
+                (f"[report {REPORT_PATH}]", 1),
+                (f"[log {LOG_PATH}]", 1),
                 ("[listener close]", 1),
             ]
         )
@@ -373,12 +373,12 @@ class TestTimestampOutputs(RunningTestCase):
         (log1,) = self.find_results(self.log, 1)
         self.wait_until_next_second()
         self.run_tests()
-        output21, output22 = self.find_results(self.output, 2)
-        report21, report22 = self.find_results(self.report, 2)
-        log21, log22 = self.find_results(self.log, 2)
-        assert_equal(output1, output21)
-        assert_equal(report1, report21)
-        assert_equal(log1, log21)
+        output2, _ = self.find_results(self.output, 2)
+        report2, _ = self.find_results(self.report, 2)
+        log2, _ = self.find_results(self.log, 2)
+        assert_equal(output1, output2)
+        assert_equal(report1, report2)
+        assert_equal(log1, log2)
 
     def run_tests(self):
         data = join(ROOT, "atest", "testdata", "misc", "pass_and_fail.robot")
