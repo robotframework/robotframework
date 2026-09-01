@@ -12,8 +12,18 @@ target-version = "py38"
 "utest/running/_test_typealiasresolver.py" = "py312"
 
 [tool.ruff.lint]
-extend-select = ["I"]  # imports
-ignore = ["E731"]  # lambda assignment
+ignore = [
+    "BLE001", "C408", "DTZ", "E402", "E731", "FA100", "FA102", "G010", "I001",
+    "ISC004", "LOG015", "N999", "PLC0105", "PLC0206", "PLC0414", "PLR1704",
+    "PYI019", "PYI025", "PYI041", "PYI061", "RET501", "RUF012", "RUF023",
+    "RUF100", "SIM115", "SIM905", "TRY004"
+]
+[tool.ruff.lint.per-file-ignores]
+"atest/testdata/keywords/type_conversion/DefaultValues.py" = ["B006", "B008"]
+"atest/testdata/keywords/type_conversion/unions.py" = ["B008"]
+"atest/testdata/keywords/type_conversion/unionsugar.py" = ["B008"]
+"utest/parsing/test_statements_in_invalid_position.py" = ["RUF028"]
+"utest/running/_test_typealiasresolver.py" = ["UP007"]
 
 [tool.ruff.lint.pyflakes]
 # Needed due to https://github.com/astral-sh/ruff/issues/9298
