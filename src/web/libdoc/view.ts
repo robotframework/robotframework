@@ -22,6 +22,67 @@ const ARG_KIND_KEYS: Record<string, string> = {
   VAR_NAMED: "argKindVarNamed",
 };
 
+/**
+ * Renders a type for a signature. A type alias stands for the type it resolves
+ * to: the signature `repr` names the alias rather than the underlying type, so
+ * the type column follows suit and the alias links to a modal of its own.
+ * `resolveAlias` renders what the alias resolves to instead, for that modal.
+ */
+function renderTypeInfo(
+  argType: ArgType,
+  translate: Translations,
+  resolveAlias: boolean = false,
+): string {
+  const title = htmlEscape(translate.translate("typeInfoDialog"));
+  if (argType.alias && !resolveAlias) {
+    const alias = htmlEscape(argType.alias);
+    return `<a class="type" data-type-alias="${alias}" title="${title}">${alias}</a>`;
+  }
+  // Only the outermost type is resolved: a nested alias stands for itself.
+  const renderNested = (nested: ArgType) => renderTypeInfo(nested, translate);
+  if (argType.union) {
+    return argType.nested.map(renderNested).join(" | ");
+  }
+  let html = "";
+  const name = htmlEscape(argType.name);
+  if (argType.typedoc) {
+    html += `<a class="type" data-typedoc="${htmlEscape(argType.typedoc)}" title="${title}">${name}</a>`;
+  } else {
+    html += `<span class="type">${name}</span>`;
+  }
+  if (argType.nested.length) {
+    // Non-breaking, so that a type never wraps just inside its brackets.
+    const nested = argType.nested.map(renderNested).join(",&nbsp;");
+    html += `[&nbsp;${nested}&nbsp;]`;
+  }
+  return html;
+}
+
+/**
+ * A type name reaches the hash percent-encoded to a varying degree, so it is
+ * decoded before the modal is looked up. `decodeURIComponent` rather than
+ * `decodeURI`, which leaves alone the brackets and commas of a parameterized
+ * alias such as `GenericDefaults[int, float]`. Nothing generates a hash naming
+ * an alias, though: the documentation formatter links documented types only,
+ * and opening a modal does not touch the hash, so an alias is reached this way
+ * only from a URL written by hand. A hash that is not valid encoding at all is
+ * used as it is rather than throwing.
+ */
+function decodeHash(hash: string): string {
+  try {
+    return decodeURIComponent(hash);
+  } catch {
+    return hash;
+  }
+}
+
+/** A type alias modal, which has no counterpart in the Libdoc spec. */
+interface TypeAlias {
+  name: string;
+  aliasFor: string;
+  usages: Array<string>;
+}
+
 interface MatchInclude {
   args?: boolean;
   doc?: boolean;
@@ -44,6 +105,8 @@ class View {
   resizing = false;
   lastWidth = 0;
   titleScrolled = false;
+  /** Types opened from within the modal, so that they can be stepped back. */
+  modalHistory: Array<Element> = [];
 
   constructor(
     libdoc: RuntimeLibdoc,
@@ -86,7 +149,11 @@ class View {
         return (
           returnType !== null &&
           returnType !== undefined &&
-          returnType.name !== "None"
+          // `None` is what a keyword returns when it returns nothing, and
+          // showing that on every such keyword is noise. An alias of it is
+          // another matter: nothing declares one by accident, and the
+          // signature names the alias rather than `None`.
+          (!!returnType.alias || returnType.name !== "None")
         );
       },
     );
@@ -143,57 +210,14 @@ class View {
         return 1 + (showDefault ? 1 : 0) + (showType ? 1 : 0);
       },
     );
-    Handlebars.registerHelper(
-      "renderTypeInfo",
-      function (argType: ArgType, isReturnType: boolean) {
-        const renderTypeDocs = (argType: ArgType) => {
-          if (argType.union) {
-            let html = "";
-            argType.nested.forEach((nested, index) => {
-              if (index > 0) {
-                html += " ";
-              }
-              html += renderTypeDocs(nested);
-              if (index < argType.nested.length - 1) {
-                html += " |";
-              }
-            });
-            return html;
-          } else {
-            let html = "";
-            const name = htmlEscape(argType.name);
-            const renderTypeDocLink =
-              argType.typedoc &&
-              !(
-                isReturnType &&
-                libdoc.typedocs.find((td) => td.name === argType.typedoc)
-                  ?.type === "Standard"
-              );
-            if (renderTypeDocLink) {
-              html += `<a style="cursor: pointer;" class="type" data-typedoc=${argType.typedoc} title=${translate.translate("typeInfoDialog")}>${name}</a>`;
-            } else {
-              html += `<span class="type">${name}</span>`;
-            }
-            if (argType.nested.length) {
-              html += "[";
-              argType.nested.forEach((nested, idx) => {
-                html += renderTypeDocs(nested);
-                if (idx < argType.nested.length - 1) {
-                  html += ",&nbsp;";
-                }
-              });
-              html += "]";
-            }
-            return html;
-          }
-        };
-        return renderTypeDocs(argType);
-      },
-    );
+    Handlebars.registerHelper("renderTypeInfo", function (argType: ArgType) {
+      return renderTypeInfo(argType, translate);
+    });
     this.registerPartial("arg", "argument-template");
     this.registerPartial("argsSection", "arguments-section-template");
     this.registerPartial("keyword", "keyword-template");
     this.registerPartial("dataType", "data-type-template");
+    this.registerPartial("typeAlias", "type-alias-template");
   }
 
   private registerPartial(name: string, id: string) {
@@ -296,7 +320,10 @@ class View {
     }
     this.renderShortcuts();
     this.renderKeywords();
-    this.renderLibdocTemplate("data-types");
+    this.renderTemplate("data-types", {
+      ...this.libdoc,
+      typeAliases: this.collectTypeAliases(),
+    });
     this.renderLibdocTemplate("footer");
   }
 
@@ -316,11 +343,9 @@ class View {
       "hashchange",
       () => {
         if (window.location.hash.indexOf("#type-") == 0) {
-          const hash =
-            "#type-modal-" + decodeURI(window.location.hash.slice(6));
-          const typeDoc = document
-            .querySelector(".data-types")!
-            .querySelector(hash);
+          const typeDoc = this.findTypeModal(
+            decodeHash(window.location.hash.slice(6)),
+          );
           if (typeDoc) {
             this.openModal(typeDoc);
           }
@@ -557,6 +582,11 @@ class View {
     if (!content) {
       return;
     }
+    this.modalHistory = [];
+    this.showModalContent(content);
+  }
+
+  private showModalContent(content: Element) {
     showModal(content);
     const modalContent = document.getElementById("modal-content");
     if (modalContent) {
@@ -564,7 +594,40 @@ class View {
         .querySelectorAll(".code-copy-btn")
         .forEach((button) => button.remove());
       this.addCopyButtons(modalContent);
+      this.addModalBackLink(modalContent);
+      // An alias for a union names the types it consists of without
+      // documenting them, so those types have to be reachable from within the
+      // dialog. The click is kept from reaching the dialog itself, which
+      // otherwise closes on any link.
+      modalContent.querySelectorAll("a.type").forEach((link) =>
+        link.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const type = this.findTypeModal(this.typeModalName(event));
+          if (type) {
+            this.modalHistory.push(content);
+            this.showModalContent(type);
+          }
+        }),
+      );
     }
+  }
+
+  /** Back to the type the dialog was opened from, without closing it. */
+  private addModalBackLink(modalContent: HTMLElement) {
+    const previous = this.modalHistory[this.modalHistory.length - 1];
+    if (!previous) {
+      return;
+    }
+    const back = document.createElement("button");
+    back.type = "button";
+    back.classList.add("modal-back-link");
+    back.textContent = `← ${previous.querySelector("h2")?.textContent ?? ""}`;
+    back.addEventListener("click", (event) => {
+      event.stopPropagation();
+      this.modalHistory.pop();
+      this.showModalContent(previous);
+    });
+    modalContent.prepend(back);
   }
 
   private showArgDocModal(wrap: HTMLElement) {
@@ -648,11 +711,40 @@ class View {
   }
 
   private registerTypeDocHandlers(container: string) {
-    document.querySelectorAll(`${container} a.type`).forEach((elem) =>
-      elem.addEventListener("click", (e) => {
-        const typeDoc = (e.target as HTMLElement).dataset.typedoc;
-        this.openModal(document.querySelector(`#type-modal-${typeDoc}`));
-      }),
+    document
+      .querySelectorAll(`${container} a.type`)
+      .forEach((elem) =>
+        elem.addEventListener("click", (e) => this.openTypeModal(e)),
+      );
+  }
+
+  private openTypeModal(event: Event) {
+    this.openModal(this.findTypeModal(this.typeModalName(event)));
+  }
+
+  private typeModalName(event: Event) {
+    const { typedoc, typeAlias } = (event.currentTarget as HTMLElement).dataset;
+    return typedoc ?? typeAlias;
+  }
+
+  /**
+   * A documented type is found by its id, but a parameterized type alias is
+   * named `GenericParams[int]` or even `GenericDefaults[int, float]`, which is
+   * no legal id and no legal id selector either, so aliases carry their name in
+   * an attribute instead.
+   */
+  private findTypeModal(name: string | undefined) {
+    const types = document.querySelector(".data-types");
+    if (!name || !types) {
+      return null;
+    }
+    // `CSS.escape` escapes for an identifier, which is what the id selector
+    // needs. Inside the quotes of an attribute selector only a backslash and
+    // the quote itself have a meaning, and escaping more than that relies on
+    // the two syntaxes happening to agree.
+    return types.querySelector(
+      `#type-modal-${CSS.escape(name)}, ` +
+        `[data-type-alias="${name.replace(/["\\]/g, "\\$&")}"]`,
     );
   }
 
@@ -986,6 +1078,51 @@ class View {
       (tagsSelect as HTMLSelectElement).selectedIndex = 0;
     }
     this.resetKeywords();
+  }
+
+  /**
+   * Type aliases have no `typedocs` entry of their own, so the modals for them
+   * are collected from the types the keywords use. The same alias can appear on
+   * any number of arguments but needs only one modal, listing every keyword it
+   * is used by.
+   */
+  private collectTypeAliases() {
+    const aliases = new Map<string, TypeAlias>();
+    const walk = (argType: ArgType | null | undefined, usage: string) => {
+      if (!argType) {
+        return;
+      }
+      if (argType.alias) {
+        let alias = aliases.get(argType.alias);
+        if (!alias) {
+          alias = this.createTypeAlias(argType);
+          aliases.set(argType.alias, alias);
+        }
+        if (!alias.usages.includes(usage)) {
+          alias.usages.push(usage);
+        }
+      }
+      argType.nested.forEach((nested) => walk(nested, usage));
+    };
+    [...this.libdoc.inits, ...this.libdoc.keywords].forEach((keyword) => {
+      keyword.args.forEach((arg) => walk(arg.type, keyword.name));
+      walk(keyword.returnType, keyword.name);
+    });
+    return [...aliases.values()];
+  }
+
+  /**
+   * The modal names the type the alias resolves to and links to it: what that
+   * type means is documented in its own modal, one click and a back link away.
+   */
+  private createTypeAlias(argType: ArgType): TypeAlias {
+    const alias = `<span class="type">${htmlEscape(argType.alias!)}</span>`;
+    const type = renderTypeInfo(argType, this.translations, true);
+    return {
+      name: argType.alias!,
+      usages: [],
+      aliasFor: this.translations.interpolate("typeAliasFor", { alias, type }),
+    };
   }
 
   private renderLibdocTemplate(
