@@ -262,7 +262,7 @@
                             header is the same either way. }}
                         <td class="arg-cell-type">{{#if (hasVisibleReturnType
                             returnType
-                          )}}{{{renderTypeInfo returnType true}}}{{/if}}</td>
+                          )}}{{{renderTypeInfo returnType}}}{{/if}}</td>
                         {{#if returnDoc}}
                           <td class="arg-cell-doc">
                             <div class="arg-doc-wrap">
@@ -346,7 +346,6 @@
             {{#if showType}}
               <td class="arg-cell-type">{{#if type}}{{{renderTypeInfo
                   type
-                  false
                 }}}{{/if}}</td>
             {{/if}}
             {{#if showDefault}}
@@ -384,12 +383,41 @@
     <script type="text/x-handlebars-template" id="data-types-template">
       {{#if typedocs.length}}
         <h2 id="Data types">{{t "dataTypes"}}</h2>
-        <div class="data-types">
-          {{#each typedocs}}
-            {{> dataType this}}
-          {{/each}}
-        </div>
       {{/if}}
+      {{! The section is hidden and only holds the content of the type modals,
+          so type aliases live here next to the documented types even though
+          they have no entry of their own in the spec. }}
+      <div class="data-types">
+        {{#each typedocs}}
+          {{> dataType this}}
+        {{/each}}
+        {{#each typeAliases}}
+          {{> typeAlias this}}
+        {{/each}}
+      </div>
+    </script>
+    <script type="text/x-handlebars-template" id="type-alias-template">
+      <div class="data-type-container match" data-type-alias="{{name}}">
+        <div class="data-type-name">
+          <h2>{{name}} ({{t "typeAlias"}})</h2>
+        </div>
+        <div class="data-type-content">
+          <div class="dt-docs">
+            <h3>{{t "doc"}}</h3>
+            <div class="dtdoc doc"><p>{{{aliasFor}}}</p></div>
+          </div>
+          {{#if usages.length}}
+            <div class="dt-usages">
+              <h3>{{t "usages"}}</h3>
+              <ul class="dt-usages-list">
+                {{#each usages}}
+                  <li><a href="#{{encodeURIComponent this}}">{{this}}</a></li>
+                {{/each}}
+              </ul>
+            </div>
+          {{/if}}
+        </div>
+      </div>
     </script>
     <script type="text/x-handlebars-template" id="data-type-template">
       <div class="data-type-container {{#if hidden}}no-{{/if}}match" id="type-modal-{{name}}">
@@ -411,7 +439,7 @@
                   <li>
                     <span class="enum-member">{{this.name}}</span>
                     {{#ifContains ../accepts "integer"}}
-                      &nbsp; (<span class="enum-member">{{value.value}}</span>)
+                      &nbsp; (<span class="enum-member">{{this.value}}</span>)
                     {{/ifContains}}
                   </li>
                   {{/each}}

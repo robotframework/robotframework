@@ -1199,8 +1199,12 @@ a.type {
   padding: 0 0;
 }
 
+/* A type that has documentation opens a dialog rather than navigating, so it
+   carries no `href` and needs the cursor of its own. A `span.type` has nothing
+   to open and must not look as if it had. */
 a.type {
   text-decoration: underline;
+  cursor: pointer;
 }
 
 .typed-dict-item .td-type::after {
@@ -1380,6 +1384,10 @@ mark {
   display: flex;
   flex-direction: column;
   width: fit-content;
+  /* Alias modals hold a single sentence, which `fit-content` alone renders as
+     a narrow sliver in the full-height dialog. Every documented type is wider
+     than the floor, so only the short ones are affected. */
+  min-width: min(30rem, calc(100vw - 2rem));
   max-width: min(1000px, calc(100vw - 2rem));
   margin: 0 auto;
 }
@@ -1388,9 +1396,12 @@ mark {
   display: flex;
   flex-wrap: nowrap;
   flex-direction: column;
-  /* The width comes from the frame; the height is fixed so that the dialog
-     does not jump around between one entry and the next. */
-  height: calc(100vh - 6rem);
+  /* The width comes from the frame. The height follows the content between
+     bounds: the viewport is the ceiling, and the floor keeps stepping from a
+     short entry to the next from resizing the dialog wildly. Content stays at
+     the top either way, this being a column. */
+  min-height: min(18rem, calc(100vh - 6rem));
+  max-height: calc(100vh - 6rem);
   overflow: auto;
   background-color: var(--background-color);
   border: 1px solid var(--border-color);
@@ -1403,6 +1414,21 @@ mark {
 }
 .modal > .modal-content > .data-type-container {
   border-top: none;
+}
+
+.modal-back-link {
+  display: block;
+  margin: 0.5rem 0 0 1rem;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--link-color);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.modal-back-link:hover {
+  text-decoration: underline;
 }
 .modal-close-button-wrapper {
   display: flex;

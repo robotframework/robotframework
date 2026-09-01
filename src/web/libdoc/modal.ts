@@ -47,12 +47,21 @@ function createModal(closeLabel: string = "Close") {
     if (key === "Escape") hideModal();
   });
 }
+/** Emptying of the dialog scheduled by `hideModal`, if any. */
+let pendingClear: ReturnType<typeof setTimeout> | undefined;
+
 function showModal(content) {
   const modalBackground = document.getElementById("modal-background")!;
   const modal = document.getElementById("modal")!;
   const modalContent = document.getElementById("modal-content")!;
   modalBackground.classList.add("visible");
   modal.classList.add("visible");
+  // Opening a dialog while the previous one is still fading out must neither
+  // stack the two nor let the emptying that fade scheduled wipe the dialog
+  // being opened now. Stepping from one type to the next comes through here as
+  // well, and replaces the content the same way.
+  clearTimeout(pendingClear);
+  modalContent.innerHTML = "";
   modalContent.appendChild(content.cloneNode(true));
   document.body.style.overflow = "hidden";
 }
@@ -68,7 +77,7 @@ function hideModal() {
   if (window.location.hash.indexOf("#type-") == 0)
     history.pushState("", document.title, window.location.pathname);
   // modal is hidden with a fading transition, timeout prevents premature emptying of modal
-  setTimeout(() => {
+  pendingClear = setTimeout(() => {
     modalContent.innerHTML = "";
   }, 200);
 }

@@ -13,8 +13,8 @@ type Libdoc = {
   inits: Array<Keyword>;
   keywords: Array<Keyword>;
   typedocs: Array<TypeDoc>;
-  theme: string | null;
-  lang: string | null;
+  theme?: string | null;
+  lang?: string | null;
 };
 
 type Keyword = {
@@ -27,6 +27,7 @@ type Keyword = {
   tags: Array<string>;
   source: string;
   lineno: number;
+  raises: Record<string, string>;
   deprecated?: boolean;
 };
 
@@ -52,6 +53,7 @@ type ArgType = {
   typedoc: string | null;
   nested: Array<ArgType>;
   union: boolean;
+  alias?: string | null;
 };
 
 type TypeDoc = {

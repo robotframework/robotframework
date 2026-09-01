@@ -10,6 +10,7 @@ target-version = "py38"
 "atest/testdata/keywords/type_conversion/TypeStatement.py" = "py312"
 "src/robot/running/arguments/typealiasresolver.py" = "py312"
 "utest/running/_test_typealiasresolver.py" = "py312"
+"src/web/libdoc/DevLibrary.py" = "py312"
 
 [tool.ruff.lint]
 ignore = [

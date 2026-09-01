@@ -2,10 +2,12 @@
   "name": "libdoc",
   "source": "libdoc/libdoc.html",
   "scripts": {
-    "start": "parcel",
+    "start": "node dev.mjs",
     "build": "rm -rf .parcel-cache && parcel build --config .parcelrc && cp dist/libdoc.html ../robot/htmldata/libdoc",
     "pretty": "prettier . --write",
-    "test": "jest"
+    "test": "jest",
+    "parcel": "parcel",
+    "testdata": "node generate-testdata.mjs"
   },
   "devDependencies": {
     "@parcel/plugin": "^2.16.0",
