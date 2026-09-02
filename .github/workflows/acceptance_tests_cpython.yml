@@ -25,7 +25,9 @@ jobs:
             set_display: export DISPLAY=:99; Xvfb :99 -screen 0 1024x768x24 -ac -noreset & sleep 3
         exclude:
           - os: windows-latest
-            python-version: [ '3.8', 'pypy-3.11' ]
+            python-version: '3.8'
+          - os: windows-latest
+            python-version: 'pypy-3.11'
 
     runs-on: ${{ matrix.os }}
 
