@@ -1,5 +1,6 @@
 # Dependencies needed by unit and acceptance tests.
 
+confargs >= 0.8
 docutils >= 0.10
 jsonschema
 typing_extensions >= 4.13

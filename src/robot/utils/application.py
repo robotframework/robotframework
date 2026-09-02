@@ -16,10 +16,15 @@
 import sys
 
 from robot.errors import (
-    DATA_ERROR, DataError, FRAMEWORK_ERROR, Information, STOPPED_BY_USER
+    DATA_ERROR,
+    DataError,
+    FRAMEWORK_ERROR,
+    Information,
+    STOPPED_BY_USER,
 )
 
 from .argumentparser import ArgumentParser
+from .confargsparser import ConfargsParser
 from .encoding import console_encode
 from .error import get_error_details
 
@@ -34,17 +39,29 @@ class Application:
         arg_limits=None,
         env_options=None,
         logger=None,
+        config=None,
         **auto_options,
     ):
-        self._ap = ArgumentParser(
-            usage,
-            name,
-            version,
-            arg_limits,
-            self.validate,
-            env_options,
-            **auto_options,
-        )
+        if config is not None:
+            self._ap = ConfargsParser(
+                config,
+                usage,
+                name,
+                version,
+                arg_limits,
+                self.validate,
+                env_options,
+            )
+        else:
+            self._ap = ArgumentParser(
+                usage,
+                name,
+                version,
+                arg_limits,
+                self.validate,
+                env_options,
+                **auto_options,
+            )
         self._logger = logger or DefaultLogger()
 
     def main(self, arguments, **options):
