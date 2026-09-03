@@ -43,7 +43,7 @@ Standard
     ...    Any value is accepted. No conversion is done.
     Type Doc Standard Should Be    1
     ...    boolean
-    ...    Strings `TRUE`, `YES`, `ON`, `1` and
+    ...    Strings ``TRUE``, ``YES``, ``ON``, ``1`` and
     Type Doc Standard Should Be    6
     ...    Literal
     ...    Only specified values are accepted.
@@ -51,10 +51,10 @@ Standard
 Standard with generics
     Type Doc Standard Should Be    2
     ...    dictionary
-    ...    Strings must be Python [[]dictionary] literals.
+    ...    Strings must be Python [[]https://docs.python.org/library/stdtypes.html#dict|dictionary]
     Type Doc Standard Should Be    5
     ...    list
-    ...    Strings must be Python [[]list] or [[]tuple] literals.
+    ...    Strings must be Python [[]https://docs.python.org/library/stdtypes.html#list|list]
 
 Accepted types
     Accepted Types Should Be    0     Standard     Any
@@ -104,3 +104,21 @@ Typedoc links in arguments
     Typedoc links should be    4    2    Any
     Typedoc links should be    4    3    List:list
     ...    object
+
+Standard type doc format depends on library doc format
+    Run Libdoc And Parse Output    --doc-format MARKDOWN ${TESTDATADIR}/DataTypesLibrary.py
+    Type Doc Standard Should Be    0
+    ...    Any
+    ...    Any value is accepted. No conversion is done.
+    Type Doc Standard Should Be    1
+    ...    boolean
+    ...    Strings `TRUE`, `YES`, `ON`, `1` and
+    Type Doc Standard Should Be    6
+    ...    Literal
+    ...    Only specified values are accepted.
+    Type Doc Standard Should Be    2
+    ...    dictionary
+    ...    Strings must be Python [[]dictionary] literals.
+    Type Doc Standard Should Be    5
+    ...    list
+    ...    Strings must be Python [[]list] or [[]tuple] literals.

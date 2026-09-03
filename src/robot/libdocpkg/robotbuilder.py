@@ -31,6 +31,9 @@ from .model import KeywordDoc, LibraryDoc
 class LibraryDocBuilder:
     _argument_separator = "::"
 
+    def __init__(self, doc_format):
+        self.doc_format = doc_format
+
     def build(self, library):
         name, args = self._split_library_name_and_args(library)
         lib = TestLibrary.from_name(name, args=args)
@@ -40,15 +43,14 @@ class LibraryDocBuilder:
             doc=self._get_doc(lib),
             version=lib.version,
             scope=lib.scope.name,
-            doc_format=lib.doc_format,
+            doc_format=self.doc_format or lib.doc_format or "ROBOT",
             source=lib.source,
             lineno=lib.lineno,
         )
         libdoc.inits = self._get_initializers(lib)
         libdoc.keywords = KeywordDocBuilder().build_keywords(lib)
         libdoc.type_docs = TypeDocBuilder().build(
-            libdoc.inits + libdoc.keywords,
-            lib.converters,
+            libdoc.inits + libdoc.keywords, lib.converters, libdoc.doc_format
         )
         return libdoc
 
@@ -74,12 +76,12 @@ class LibraryDocBuilder:
 
 class TypeDocBuilder:
 
-    def build(self, keywords, custom_converters=None):
+    def build(self, keywords, custom_converters=None, doc_format="ROBOT"):
         all_type_docs: dict[TypeDoc, set[str]] = {}
         for kw in keywords:
             for name, type_info in self._yield_names_and_infos(kw.args):
                 type_docs = kw.type_docs.setdefault(name, {})
-                type_doc = TypeDoc.for_type(type_info, custom_converters)
+                type_doc = TypeDoc.for_type(type_info, custom_converters, doc_format)
                 if type_doc:
                     type_docs[type_info.name] = type_doc.name
                     all_type_docs.setdefault(type_doc, set()).add(kw.name)
@@ -107,6 +109,9 @@ class TypeDocBuilder:
 class ResourceDocBuilder:
     type = "RESOURCE"
 
+    def __init__(self, doc_format):
+        self.doc_format = doc_format
+
     def build(self, path):
         path = self._find_resource_file(path)
         resource, name = self._import_resource(path)
@@ -116,11 +121,14 @@ class ResourceDocBuilder:
             doc=self._get_doc(resource, name),
             type=self.type,
             scope="GLOBAL",
+            doc_format=self.doc_format or "ROBOT",
             source=resource.source,
             lineno=1,
         )
         libdoc.keywords = KeywordDocBuilder(resource=True).build_keywords(resource)
-        libdoc.type_docs = TypeDocBuilder().build(libdoc.keywords)
+        libdoc.type_docs = TypeDocBuilder().build(
+            libdoc.keywords, doc_format=libdoc.doc_format
+        )
         return libdoc
 
     def _import_resource(self, path):

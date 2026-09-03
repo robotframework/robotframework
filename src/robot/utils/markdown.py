@@ -36,7 +36,7 @@ except ImportError:
     def Markdown(*args, **kwargs):
         raise DataError("Markdown format requires 'markdown' module to be installed.")
 
-    Extension = InlineProcessor = object
+    BlockProcessor = Extension = InlineProcessor = object
 
 
 __all__ = ["AdmonitionExtension", "LinkifyExtension", "Markdown"]

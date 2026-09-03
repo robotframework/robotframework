@@ -71,14 +71,6 @@ Embedded Arguments
 Argument Types
     Keyword Arguments Should Be     9    a: int    b: Literal['R', 'F']    c: int | None = None
 
-Type Docs
-    Type Doc Standard Should Be     0    integer     Conversion is done using
-    Usages Should Be                0    Standard    integer    Different argument types    kw 6
-    Type Doc Standard Should Be     1    Literal     Only specified values are accepted.
-    Usages Should Be                1    Standard    Literal    kw 6
-    Type Doc Standard Should Be     2    None        String `NONE` (case-insensitive) and
-    Usages Should Be                2    Standard    None    kw 6
-
 Keyword Documentation
     Keyword Doc Should Be           0    $\{CURDIR}
     Keyword Doc Should Be           4    foo bar `kw` & some "stuff" to <escape> .\n\nbaa `\${a1}`
@@ -133,15 +125,33 @@ Keyword Source Info
     Keyword Should Not Have Source    0
     Keyword Lineno Should Be          0    82
 
+Type Docs
+    Type Doc Standard Should Be     0    integer     Conversion is done using Python's [[]https://docs.python.org/library/functions.html#int|int]
+    Usages Should Be                0    Standard    integer    Different argument types    kw 6
+    Type Doc Standard Should Be     1    Literal     Only specified values are accepted.
+    Usages Should Be                1    Standard    Literal    kw 6
+    Type Doc Standard Should Be     2    None        String ``NONE`` (case-insensitive) and
+    Usages Should Be                2    Standard    None    kw 6
+
+Standard type doc format depends on library doc format
+    Run Libdoc And Parse Output    --doc-format markdown ${TESTDATADIR}/resource.robot
+    Type Doc Standard Should Be     0    integer     Conversion is done using Python's [[]int]
+    Usages Should Be                0    Standard    integer    Different argument types    kw 6
+    Type Doc Standard Should Be     1    Literal     Only specified values are accepted.
+    Usages Should Be                1    Standard    Literal    kw 6
+    Type Doc Standard Should Be     2    None        String `NONE` (case-insensitive) and
+    Usages Should Be                2    Standard    None    kw 6
+
 '*.resource' extension is accepted
     Run Libdoc And Parse Output       ${TESTDATADIR}/resource.resource
     Source Should Be                  ${TESTDATADIR}/resource.resource
     Lineno Should Be                  1
     Keyword Name Should Be            2    Yay, I got new extension!
-    Keyword Arguments Should Be       2    Awesome!!
+    Keyword Arguments Should Be       2    arg: int
     Keyword Doc Should Be             2    Yeah!!!
     Keyword Should Not Have Source    2
     Keyword Lineno Should Be          2    5
+    Type Doc Standard Should Be       0    integer    Conversion is done using Python's [[]https://docs.python.org/library/functions.html#int|int]
 
 Keyword Tags setting
     Keyword Tags Should Be            0    keyword    own    tags

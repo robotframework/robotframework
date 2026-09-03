@@ -53,13 +53,11 @@ def LibraryDocumentation(library_or_resource, name=None, version=None, doc_forma
         for kw in lib.keywords:
             print(kw.name)
     """
-    libdoc = DocumentationBuilder().build(library_or_resource)
+    libdoc = DocumentationBuilder().build(library_or_resource, doc_format)
     if name:
         libdoc.name = name
     if version:
         libdoc.version = version
-    if doc_format:
-        libdoc.doc_format = doc_format
     return libdoc
 
 
@@ -70,27 +68,27 @@ class DocumentationBuilder:
     instead.
     """
 
-    def build(self, source):
+    def build(self, source, doc_format=None):
         # Source can contain arguments separated with `::` so we cannot convert
         # it to Path and instead need to make sure it's a string. It would be
         # better to separate arguments earlier, or latest here, and use Path.
         if isinstance(source, Path):
             source = str(source)
-        builder = self._get_builder(source)
+        builder = self._get_builder(source, doc_format)
         return self._build(builder, source)
 
-    def _get_builder(self, source):
+    def _get_builder(self, source, doc_format):
         if os.path.exists(source):
             extension = self._get_extension(source)
             if extension == "resource":
-                return ResourceDocBuilder()
+                return ResourceDocBuilder(doc_format)
             if extension in RESOURCE_EXTENSIONS:
-                return SuiteDocBuilder()
+                return SuiteDocBuilder(doc_format)
             if extension in XML_EXTENSIONS:
                 return XmlDocBuilder()
             if extension == "json":
                 return JsonDocBuilder()
-        return LibraryDocBuilder()
+        return LibraryDocBuilder(doc_format)
 
     def _get_extension(self, source):
         path, *_ = source.split("::")
@@ -108,10 +106,10 @@ class DocumentationBuilder:
                 and not os.path.exists(source)
                 and self._get_extension(source) in RESOURCE_EXTENSIONS
             ):
-                return self._build(ResourceDocBuilder(), source)
+                return self._build(ResourceDocBuilder(builder.doc_format), source)
             # Resource file with other extension than '.resource' parsed as a suite file.
             if isinstance(builder, SuiteDocBuilder):
-                return self._build(ResourceDocBuilder(), source)
+                return self._build(ResourceDocBuilder(builder.doc_format), source)
             raise
         except Exception:
             raise DataError(

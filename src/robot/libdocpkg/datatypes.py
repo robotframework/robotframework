@@ -19,7 +19,7 @@ from inspect import isclass
 from robot.running import TypeConverter
 from robot.utils import getdoc, Sortable, type_name, typeddict_types
 
-from .standardtypes import STANDARD_TYPE_DOCS
+from .standardtypes import get_standard_type_doc
 
 EnumType = type(Enum)
 
@@ -54,7 +54,7 @@ class TypeDoc(Sortable):
         return self.name.lower()
 
     @classmethod
-    def for_type(cls, type_info, converters):
+    def for_type(cls, type_info, converters, doc_format="ROBOT"):
         if isinstance(type_info.type, EnumType):
             return cls.for_enum(type_info.type)
         if isinstance(type_info.type, typeddict_types):
@@ -76,7 +76,7 @@ class TypeDoc(Sortable):
         return cls(
             cls.STANDARD,
             type(converter).type_name,
-            STANDARD_TYPE_DOCS[converter.type],
+            get_standard_type_doc(converter.type, doc_format),
             converter.value_types,
         )
 

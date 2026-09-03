@@ -23,7 +23,7 @@ from robot.model import Tags
 from robot.running import ArgInfo, ArgumentSpec, TypeInfo
 from robot.utils import getshortdoc, setter, Sortable
 
-from .htmlutils import DocFormatter, DocToHtml, HtmlToText
+from .htmlutils import DocFormatter, HtmlToText
 from .output import get_generation_time, LibdocOutput
 from .writer import LibdocWriter
 
@@ -110,13 +110,7 @@ class LibraryDoc:
             for name, doc in item.args.raises.items():
                 item.args.raises[name] = formatter.html(doc)
         for type_doc in self.type_docs:
-            # Standard docs are always in MARKDOWN format ...
-            if type_doc.type == type_doc.STANDARD:
-                # ... unless they have been converted to HTML already.
-                if not type_doc.doc.startswith("<p>"):
-                    type_doc.doc = DocToHtml("MARKDOWN")(type_doc.doc)
-            else:
-                type_doc.doc = formatter.html(type_doc.doc)
+            type_doc.doc = formatter.html(type_doc.doc)
         self.doc_format = "HTML"
 
     def to_dictionary(self, include_private=False, theme=None, lang=None):

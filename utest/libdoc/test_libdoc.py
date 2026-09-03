@@ -246,7 +246,8 @@ class TestJson(unittest.TestCase):
         self._test("DynamicLibrary.json")
 
     def test_roundtrip_from_python(self):
-        # If this fails, DynamicLibrary.json typically needs to be regenerated.
+        # If this test fails, DynamicLibrary.json typically needs to be regenerated:
+        # src/robot/libdoc.py atest/testdata/libdoc/DynamicLibrary.{py::dummy,json}
         self._test("DynamicLibrary.py::required")
 
     def test_roundtrip_with_datatypes(self):

@@ -1,5 +1,8 @@
+import sys
 import unittest
 
+from robot.errors import DataError
+from robot.utils.asserts import assert_raises_with_msg
 from robot.utils.markdown import AdmonitionExtension, LinkifyExtension, Markdown
 
 
@@ -167,6 +170,28 @@ Body.</p>
 </div>
 """
         assert_markdown(markdown, expected)
+
+
+class TestMarkdownNotInstalled(unittest.TestCase):
+
+    def setUp(self):
+        # Invalidate cache entry to ensure importing 'markdown' fails.
+        sys.modules["markdown"] = None
+        sys.modules.pop("robot.utils.markdown")
+
+    def test_markdown_not_installed(self):
+        from robot.utils.markdown import Markdown
+
+        assert_raises_with_msg(
+            DataError,
+            "Markdown format requires 'markdown' module to be installed.",
+            Markdown,
+        )
+
+    def tearDown(self):
+        # Cleanup invalid modules. If they are needed later, they are reimported.
+        sys.modules.pop("markdown")
+        sys.modules.pop("robot.utils.markdown")
 
 
 if __name__ == "__main__":

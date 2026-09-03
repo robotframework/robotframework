@@ -3,7 +3,7 @@ Keyword Tags        keyword    tags
 
 *** Keywords ***
 Yay, I got new extension!
-    [Arguments]    ${Awesome!!}
+    [Arguments]    ${arg: int}
     [Documentation]    Yeah!!!
     No operation
 
