@@ -157,7 +157,7 @@ class TestBuildTestSuite(unittest.TestCase):
             '<a href="http://doc">http://doc</a>',
             "arg1    arg2",
             "${v1}    ${v2}",
-            "tag1, tag2",
+            ("tag1", "tag2"),
             "1 second",
             0,
             0,
@@ -290,11 +290,11 @@ class TestBuildTestSuite(unittest.TestCase):
         test.body[0].body.create_branch(BodyItem.ELSE_IF, "$x < 0", status="PASS")
         test.body[0].body.create_branch(BodyItem.ELSE, status="NOT RUN")
         test.body[0].body[-1].body.create_keyword("z")
-        exp_if = (5, "$x &gt; 0", "", "", "", "", "", "", (3, None, 0), ())
-        exp_else_if = (6, "$x &lt; 0", "", "", "", "", "", "", (1, None, 0), ())
+        exp_if = (5, "$x &gt; 0", "", "", "", "", "", (), (3, None, 0), ())
+        exp_else_if = (6, "$x &lt; 0", "", "", "", "", "", (), (1, None, 0), ())
         exp_else = (
-            7, '', '', '', '', '', '', '', (3, None, 0),
-            ((0, 'z', '', '', '', '', '', '', (0, None, 0), ()),)
+            7, '', '', '', '', '', '', (), (3, None, 0),
+            ((0, 'z', '', '', '', '', '', (), (0, None, 0), ()),)
         )  # fmt: skip
         self._verify_test(test, body=(exp_if, exp_else_if, exp_else))
 
@@ -342,7 +342,7 @@ class TestBuildTestSuite(unittest.TestCase):
         test.body.create_message("Hi from test again", "WARN")
         exp_m1 = (None, 2, "Hi from test")
         exp_kw = (
-            0, '', '', '', '', '', '', '', (0, None, 0),
+            0, '', '', '', '', '', '', (), (0, None, 0),
             ((None, 2, 'Hi from keyword'),)
         )  # fmt: skip
         exp_m3 = (None, 3, "Hi from test again")
@@ -421,7 +421,7 @@ class TestBuildTestSuite(unittest.TestCase):
         doc="",
         args="",
         assign="",
-        tags="",
+        tags=(),
         timeout="",
         status=0,
         start=None,

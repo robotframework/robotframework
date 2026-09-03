@@ -208,6 +208,15 @@
 .metadata td {
     vertical-align: top;
 }
+.metadata .tags {
+    display: flex;
+    flex-wrap: wrap;
+}
+.metadata .tags .label {
+    margin: 0 0.3em 0.3em 0;
+    font-size: 1em;
+    letter-spacing: normal;
+}
 .keyword-metadata {
     font-size: 0.9em;
 }

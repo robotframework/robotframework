@@ -214,7 +214,7 @@ class BodyItemBuilder(Builder):
             kw.doc,
             "    ".join(kw.args),
             "    ".join(kw.assign),
-            ", ".join(kw.tags),
+            kw.tags,
             body,
             split=split,
         )
@@ -228,7 +228,7 @@ class BodyItemBuilder(Builder):
         doc="",
         args="",
         assign="",
-        tags="",
+        tags=(),
         body=None,
         split=False,
     ):
@@ -242,7 +242,7 @@ class BodyItemBuilder(Builder):
             self._html(doc),
             self._string(args),
             self._string(assign),
-            self._string(tags),
+            tuple(self._string(t) for t in tags),
             self._get_status(item, note_only=True),
             self._build_body(body, split),
         )
