@@ -181,6 +181,28 @@ input[type='submit']:hover, input[type='button']:hover {
 #test-details th, #test-details td {
     padding: 0.2em;
 }
+#test-details .metadata {
+    table-layout: auto;
+    width: 100%;
+    border-spacing: 0;
+}
+#test-details .metadata th, #test-details .metadata td {
+    padding: 0 0 0.2em 0;
+    vertical-align: top;
+    text-align: left;
+    background: transparent;
+}
+#test-details .metadata th {
+    width: 1%;
+    padding-right: 0.6em;
+    font-weight: bold;
+}
+#test-details .metadata td {
+    overflow-wrap: anywhere;
+}
+#test-details .details-col-metadata .details-limited {
+    overflow-x: hidden;
+}
 .details-limited {
     max-height: 20em;
     overflow: auto;

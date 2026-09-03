@@ -840,7 +840,7 @@ function hideHiddenDetailsColumns(elem) {
     </td>
   {{/if}}
     <td class="details-col-doc"><div class="doc details-limited">{{html doc()}}</div></td>
-    <td class="details-col-metadata"><div class="doc details-limited">{{each metadata}}<div>{{html $value[0]}}: {{html $value[1]}}</div>{{/each}}</div></td>
+    <td class="details-col-metadata"><div class="details-limited">{{if metadata.length}}<table class="metadata">{{each metadata}}<tr><th>{{html $value[0]}}:</th><td class="doc">{{html $value[1]}}</td></tr>{{/each}}</table>{{/if}}</div></td>
     <td class="details-col-tags"><div>{{html tags.join(', ')}}</div></td>
     <td class="details-col-status"><div><span class="label ${status.toLowerCase()}">${status}</span></div></td>
     <td class="details-col-msg"><div class="message details-limited">{{html message()}}</div></td>
