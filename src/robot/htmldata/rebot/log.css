@@ -213,9 +213,16 @@
     flex-wrap: wrap;
 }
 .metadata .tags .label {
-    margin: 0 0.3em 0.3em 0;
     font-size: 1em;
+    margin: 0 7px 2px 0;
+    padding: 1px 5px;
     letter-spacing: normal;
+}
+/* https://stackoverflow.com/questions/75238633 */
+@supports (-moz-appearance: none) {
+    .metadata .tags .label {
+        padding-top: 3px;
+    }
 }
 .keyword-metadata {
     font-size: 0.9em;
