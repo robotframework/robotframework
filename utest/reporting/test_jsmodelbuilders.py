@@ -293,8 +293,8 @@ class TestBuildTestSuite(unittest.TestCase):
         exp_if = (5, "$x &gt; 0", "", "", "", "", "", (), (3, None, 0), ())
         exp_else_if = (6, "$x &lt; 0", "", "", "", "", "", (), (1, None, 0), ())
         exp_else = (
-            7, '', '', '', '', '', '', (), (3, None, 0),
-            ((0, 'z', '', '', '', '', '', (), (0, None, 0), ()),)
+            7, "", "", "", "", "", "", (), (3, None, 0),
+            ((0, 'z', "", "", "", "", "", (), (0, None, 0), ()),)
         )  # fmt: skip
         self._verify_test(test, body=(exp_if, exp_else_if, exp_else))
 
@@ -342,7 +342,7 @@ class TestBuildTestSuite(unittest.TestCase):
         test.body.create_message("Hi from test again", "WARN")
         exp_m1 = (None, 2, "Hi from test")
         exp_kw = (
-            0, '', '', '', '', '', '', (), (0, None, 0),
+            0, "", "", "", "", "", "", (), (0, None, 0),
             ((None, 2, 'Hi from keyword'),)
         )  # fmt: skip
         exp_m3 = (None, 3, "Hi from test again")
