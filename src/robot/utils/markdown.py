@@ -85,10 +85,13 @@ class LinkifyInlineProcessor(InlineProcessor):
 class AdmonitionExtension(Extension):
     """Python-Markdown extension to support GFM-style admonitions.
 
-    Basic syntax is the same as with GFM, but there are two major differences:
+    Basic syntax is the same as with GitHub Flavored Markdown, but there are
+    some differences:
 
-    - Admonition types are not validated.
+    - Admonition types are not validated. Only types that GFM supports have
+      separate styles, though, all others are considered the same as NOTE.
     - Optional titles are supported.
+    - Admonitions can be nested.
 
     Examples:
 
@@ -115,7 +118,7 @@ class AdmonitionProcessor(BlockProcessor):
         except ValueError:
             header, body = blocks[0], ""
         # Header format is: [!kind] Optional title
-        match = re.fullmatch(r"\s*\[!(.*?)]\s*(.*?)?\s*", header)
+        match = re.fullmatch(r"\s*\[!(.*?)]\s*(.*?)\s*", header)
         if not match:
             return False
         kind, optional_title = match.groups()
