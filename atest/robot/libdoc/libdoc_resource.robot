@@ -349,7 +349,7 @@ List of Dict Should Be Equal
         Dictionaries Should Be Equal    ${dict1}    ${dict2}
     END
 
-DataType Enum Should Be
+Type Doc Enum Should Be
     [Arguments]    ${index}    ${name}    ${doc}    @{exp_members}
     ${enums}=   Get Elements    ${LIBDOC}   xpath=typedocs/type[@type='Enum']
     Element Attribute Should Be    ${enums}[${index}]     name   ${name}
@@ -361,7 +361,7 @@ DataType Enum Should Be
         Element Attribute Should Be    ${member}    value    ${{${exp_member}}}[value]
     END
 
-DataType TypedDict Should Be
+Type Doc TypedDict Should Be
     [Arguments]    ${index}    ${name}    ${doc}    @{exp_items}
     ${dicts}=   Get Elements    ${LIBDOC}   xpath=typedocs/type[@type='TypedDict']
     Element Attribute Should Be    ${dicts}[${index}]     name   ${name}
@@ -382,13 +382,13 @@ DataType TypedDict Should Be
         END
     END
 
-DataType Custom Should Be
+Type Doc Custom Should Be
     [Arguments]    ${index}    ${name}    ${doc}
     ${types}=   Get Elements    ${LIBDOC}   xpath=typedocs/type[@type='Custom']
     Element Attribute Should Be    ${types}[${index}]     name      ${name}
     Element Text Should Be         ${types}[${index}]     ${doc}    xpath=doc
 
-DataType Standard Should Be
+Type Doc Standard Should Be
     [Arguments]    ${index}    ${name}    ${doc}
     ${types}=   Get Elements    ${LIBDOC}   xpath=typedocs/type[@type='Standard']
     Element Attribute Should Be    ${types}[${index}]     name       ${name}

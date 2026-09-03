@@ -72,11 +72,11 @@ Argument Types
     Keyword Arguments Should Be     9    a: int    b: Literal['R', 'F']    c: int | None = None
 
 Type Docs
-    DataType Standard Should Be     0    integer     Conversion is done using
+    Type Doc Standard Should Be     0    integer     Conversion is done using
     Usages Should Be                0    Standard    integer    Different argument types    kw 6
-    DataType Standard Should Be     1    Literal     Only specified values are accepted.
+    Type Doc Standard Should Be     1    Literal     Only specified values are accepted.
     Usages Should Be                1    Standard    Literal    kw 6
-    DataType Standard Should Be     2    None        String `NONE` (case-insensitive) and
+    Type Doc Standard Should Be     2    None        String `NONE` (case-insensitive) and
     Usages Should Be                2    Standard    None    kw 6
 
 Keyword Documentation
