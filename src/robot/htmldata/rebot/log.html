@@ -102,10 +102,6 @@ function popFromIterator(iterator, upTo) {
     return result;
 }
 
-function tagList(tags) {
-    return typeof tags === 'string' ? tags.split(', ') : tags;
-}
-
 function makeElementVisible(id) {
     window.testdata.ensureLoaded(id, function (ids) {
         util.map(ids, expandElementWithId);
@@ -346,10 +342,10 @@ function addExecutionLog(main) {
           <td class="doc">{{html doc()}}</td>
         </tr>
         {{/if}}
-        {{if tags}}
+        {{if tags.length}}
         <tr>
           <th>Tags:</th>
-          <td><div class="tags">{{each tagList(tags)}}<span class="label">{{html $value}}</span>{{/each}}</div></td>
+          <td><div class="tags">{{each tags}}<span class="label">{{html $value}}</span>{{/each}}</div></td>
         </tr>
         {{/if}}
         {{if timeout}}

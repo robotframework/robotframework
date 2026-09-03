@@ -68,7 +68,7 @@ window.testdata = function () {
             timeout: strings.get(element[3]),
             args: strings.get(element[5]),
             assign: strings.get(element[6]),
-            tags: strings.get(element[7]),
+            tags: tags(element[7], strings),
             doc: function () {
                 var doc = strings.get(element[4]);
                 this.doc = function () { return doc; };
