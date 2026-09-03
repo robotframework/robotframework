@@ -1789,6 +1789,61 @@ syntax like `'list[int]'`.
 
 __ https://peps.python.org/pep-0585/
 
+Type aliases
+''''''''''''
+
+Type aliases can be used for giving custom names to types and type expressions.
+This makes it possible to use domain specific names like `ID` instead of
+generic names like `int`. It also allows using simple names like `Locator`
+instead of complex type expressions like `WebElement | str | list[WebElement | str]`.
+
+Python has two ways to create `type aliases`__. The old approach is simply assigning
+types or type expressions to variables:
+
+.. sourcecode:: python
+
+    ID = int
+    Locator = WebElement | str | list[WebElement | str]
+
+
+    def find_user(id: ID):
+        ...
+
+    def find_element(locator: Locator):
+        ...
+
+The above has a problem that it is not clear are these type alias declarations
+or just normal variable assignments. Another problems is that when type information
+is inspected after the library has been imported, the type alias has already
+been resolved and Robot Framework only sees its value. This is fine during
+execution, but library documentation generated with Libdoc_ also shows
+the underlying types like `int` instead of the type alias name like `ID`.
+
+Both of the above problems can be resolved by using `type` statements introduced
+in Python 3.12:
+
+.. sourcecode:: python
+
+    type ID = int
+    type Locator = WebElement | str | list[WebElement | str]
+
+
+    def find_user(id: ID):
+        ...
+
+    def find_element(locator: Locator):
+        ...
+
+Now it is explicit that `ID` and `Locator` are type aliases. Robot Framework
+also sees the type alias names and Libdoc can show them in generated library
+documentation. Argument conversion works the same way with both approaches.
+
+.. note:: Support for `type` statements is new in Robot Framework 7.5. With
+          earlier versions these types are not recognized, which means that
+          there is not argument conversion based on them.
+
+__ https://typing.python.org/en/latest/spec/aliases.html
+
 Secret type
 '''''''''''
 
@@ -3345,10 +3400,7 @@ versions.
 Available APIs
 ~~~~~~~~~~~~~~
 
-`API documentation`_ is hosted separately
-at the excellent `Read the Docs`_ service. If you are unsure how to use
-certain API or is using them forward compatible, please send a question
-to `mailing list`_.
+`API documentation`_ is hosted separately at `Read the Docs`_.
 
 Using BuiltIn library
 ~~~~~~~~~~~~~~~~~~~~~
