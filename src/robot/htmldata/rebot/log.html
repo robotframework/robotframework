@@ -289,7 +289,7 @@ function addExecutionLog(main) {
         {{if tags.length}}
         <tr>
           <th>Tags:</th>
-          <td>{{html tags.join(', ')}}</td>
+          <td><div class="tags">{{each tags}}<span class="label">{{html $value}}</span>{{/each}}</div></td>
         </tr>
         {{/if}}
         {{if timeout}}
@@ -345,7 +345,7 @@ function addExecutionLog(main) {
         {{if tags}}
         <tr>
           <th>Tags:</th>
-          <td>{{html tags}}</td>
+          <td><div class="tags">{{each tags}}<span class="label">{{html $value}}</span>{{/each}}</div></td>
         </tr>
         {{/if}}
         {{if timeout}}
