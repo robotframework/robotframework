@@ -380,6 +380,9 @@ function toggleDetailsColumn(name) {
     var column = $('.details-col-' + name);
     column.toggleClass('hidden');
     var hidden = column.hasClass('hidden');
+    if (name === 'tags') {
+      column.find('.tags').toggle();
+    }
     storage.set(name, hidden ? 'hidden' : 'visible');
     column.find('.details-col-toggle').html(hidden ? '&hellip;' : '&times;');
 }
@@ -388,10 +391,13 @@ function hideHiddenDetailsColumns(elem) {
     var names = ['doc', 'metadata', 'tags', 'msg', 'elapsed', 'times'];
     for (var i = 0; i < names.length; i++) {
         var name = names[i];
-        if (storage.get(name, 'visible') == 'hidden') {
+        if (storage.get(name, 'visible') === 'hidden') {
             var column = elem.find('.details-col-' + name);
             column.addClass('hidden');
             column.find('.details-col-toggle').html('&hellip;');
+            if (name === 'tags') {
+                column.find('.tags').hide();
+            }
         }
     }
 }
