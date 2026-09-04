@@ -33,6 +33,9 @@ from PyPI_ and install it manually. For more details and other installation
 approaches, see the `installation instructions`_.
 
 Robot Framework 7.5 rc 1 was released on Friday September 4, 2026.
+The final release is targeted for Monday, September 14, 2026. We hope that
+users could test the release candidate in their environments. That helps
+ensuring that we have not broken anything important for you!
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
@@ -275,7 +278,7 @@ with the `*.md` extension by default, but that can be changed with `--parse-incl
 and  `--extension` options. Files with the special `*.robot.md` extension are
 automatically parsed and executed, though.
 
-Python 3.13 compatibility
+Python 3.15 compatibility
 -------------------------
 
 Robot Framework 7.5 is officially compatible with the forthcoming `Python 3.15`__
@@ -653,7 +656,7 @@ Full list of fixes and enhancements
       - Log/report: Better styles for tags
       - rc 1
     * - `#5726`_
-      - ---
+      - feature
       - medium
       - Change Finnish translation of "Tags" from "Tagit" to "Tunnisteet"
       - rc 1
