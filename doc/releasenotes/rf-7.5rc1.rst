@@ -1,13 +1,13 @@
-==========================
-Robot Framework 7.5 beta 1
-==========================
+=======================================
+Robot Framework 7.5 release candidate 1
+=======================================
 
 .. default-role:: code
 
 `Robot Framework`_ 7.5 is a new feature release with major enhancements
-to the library documentation tool Libdoc, enhanced console logging
-configuration and several other enhancements. There are also various
-bigger and smaller bug fixes.
+to the library documentation tool Libdoc, support for test/task metadata,
+enhanced console logging configuration and several other enhancements and
+bug fixes. This release candidate contains all planned features and fixes.
 
 All issues targeted for Robot Framework 7.5 can be found from the
 `issue tracker milestone`_.
@@ -26,13 +26,13 @@ to install the latest available release or use
 
 ::
 
-   pip install robotframework==7.5b1
+   pip install robotframework==7.5rc1
 
 to install exactly this version. Alternatively you can download the package
 from PyPI_ and install it manually. For more details and other installation
 approaches, see the `installation instructions`_.
 
-Robot Framework 7.5 beta 1 was released on Friday July 17, 2026.
+Robot Framework 7.5 rc 1 was released on Friday September 4, 2026.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
@@ -44,8 +44,6 @@ Robot Framework 7.5 beta 1 was released on Friday July 17, 2026.
 .. _Slack: http://slack.robotframework.org
 .. _Robot Framework Slack: Slack_
 .. _installation instructions: ../../INSTALL.rst
-.. _Markdown: https://en.wikipedia.org/wiki/Markdown
-.. _Google Style: https://google.github.io/styleguide/pyguide.html#s3.8.3-functions-and-methods
 
 .. contents::
    :depth: 2
@@ -54,16 +52,17 @@ Robot Framework 7.5 beta 1 was released on Friday July 17, 2026.
 Most important enhancements
 ===========================
 
-Libdoc enhancements
--------------------
+Enhancements to library documentation syntax
+--------------------------------------------
 
-The Libdoc tool got two major enhancements:
+The Libdoc tool got two major enhancements related to the library documentation
+syntax:
 
-- Documentation can be written using Markdown_ (`#5304`_).
+- Documentation can be written using Markdown__ (`#5304`_).
 - Arguments, return values and exceptions can be documented using
-  the `Google Style`_ documentation conventions (`#5604`_).
+  the `Google Style`__ documentation conventions (`#5604`_).
 
-In practice this means that you can document keywords like the example below
+In practice this means that you can document libraries like the example below
 demonstrates. Libdoc formats Markdown content as HTML and shows argument,
 return value and exception documentation along with automatically collected
 information such as argument names and types.
@@ -80,13 +79,13 @@ information such as argument names and types.
 
         This keywords uses:
 
-        - [Markdown](https://en.wikipedia.org/wiki/Markdown) *formatting*
-        - [Google Style] argument, return value and exception documentation
+        - [Markdown](https://en.wikipedia.org/wiki/Markdown) *formatting*.
+        - [Google Style] argument, return value and exception documentation.
 
         Args:
-            first: Doc for the first argument.
-            second: Doc for the second argument.
-                This time on multiple lines with *formatting*.
+            first: Documentation of the first argument.
+            second: Documentation of the second argument.
+              This time on multiple lines with *formatting*.
 
         Returns:
             Zero.
@@ -94,8 +93,8 @@ information such as argument names and types.
         Raises:
             ValueError: When `second` is False.
 
-        Documentation can continue here after the [Google Style] documentation sections. Well,
-        actually documentation is accepted *also* between the section.
+        Documentation can continue here after the [Google Style] documentation sections.
+        Well, actually documentation is accepted *also* between the section.
 
         [Google Style]: https://google.github.io/styleguide/pyguide.html#383-functions-and-methods
         """
@@ -128,24 +127,90 @@ pretty well on GitHub.
 
 A nice extra feature that Libdoc adds is that internal linking to the introduction
 section, to custom sections created in the introduction, to keywords and to types
-used in arguments works using the standard Markdown reference link syntax like
+used in arguments, works using the standard Markdown reference link syntax like
 `[introduction]`. This is documented more thoroughly under the Libdoc documentation.
 Also in this case you need to look at the `documentation source`__ until the final
 release.
 
-We have not yet converted standard libraries to use Markdown or new argument
-documentation features, but we plan to do that at least with some libraries
-still in Robot Framework 7.5 (`#5709`__). This is something where external
-help would be appreciated and the task is especially suitable for new
-contributors!
+Standard library documentation will also be converted to use Markdown and new
+argument documentation features (`#5709`__) still before the final release.
 
 .. note:: We may make Markdown the default documentation format in the future.
           If you plan to keep using the Robot Framework format, explicitly
           specifying that documentation format is `ROBOT` is a good idea.
 
+__ https://en.wikipedia.org/wiki/Markdown
+__ https://google.github.io/styleguide/pyguide.html#s3.8.3-functions-and-methods
 __ https://github.com/robotframework/robotframework/blob/master/doc/userguide/src/Appendices/DocumentationFormatting.rst#markdown-format
 __ https://github.com/robotframework/robotframework/blob/master/doc/userguide/src/SupportingTools/Libdoc.rst#markdown-documentation-syntax
 __ https://github.com/robotframework/robotframework/issues/5709
+
+Markdown as Libdoc output format
+--------------------------------
+
+Libdoc can nowadays generate documentation in Markdown format (`#5749`_) in
+addition to HTML and machine readable spec files. Creating Markdown output is
+as easy as this::
+
+    libdoc Dialogs Dialogs.md
+
+The generated Markdown file has similar structure as HTML files Libdoc can
+generate. Actual documentation is got directly from the library without any
+conversion, so the result is valid Markdown only if the library uses Markdown
+as its documentation format.
+
+Related to this change, also the console output that Libdoc can produce has
+been changed to Markdown (`#5755`_). Try running, for example, these commands::
+
+    libdoc Dialogs show
+    libdoc Dialogs show "Pause Execution"
+
+`type` statement support
+------------------------
+
+Python 3.12 added `type` statement syntax for explicitly creating `type aliases`__:
+
+.. sourcecode:: python
+
+    type ID = int
+    type Locator = WebElement | str | list[WebElement | str]
+
+
+    def find_user(id: ID):
+        ...
+
+    def find_element(locator: Locator):
+        ...
+
+Earlier Robot Framework versions did not understand this syntax and no
+argument conversion was done based on these types. Now these types are
+recognized (`#5760`_) and argument conversion works the same way as if
+the underlying types were used directly as type hints.
+
+In library documentation generated by Libdoc, the type alias name is shown
+as the argument type. Possibly complex underlying types are not shown directly,
+but clicking the type alias name shows them.
+
+__ https://typing.python.org/en/latest/spec/aliases.html
+
+Test/task metadata
+------------------
+
+Tests and tasks can now have metadata as name value pairs similarly as suites
+(`#4409`_):
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Test metadata example
+        [Metadata]    Issue     4409
+        [Metadata]    Author    febb0e
+        Log    Hello, world!
+
+The main benefit of using metadata instead of tags like `issue: 4409` is that
+in the log file each metadata item is snow separately similarly as, for example,
+Documentation and Start Time. All tags are shown as a s single list, but also
+their styles have been enhanced (`#5780`_),
 
 Console logging enhancements
 ----------------------------
@@ -158,7 +223,7 @@ to use custom console loggers (`#5618`_).
 Custom console loggers have the same API as listeners__. Their main difference
 is that console loggers are registered with the `--console` option that then
 automatically disables normal console logging. The built-in console loggers
-can be used as a base when implementing custom loggers. That makes it easy
+can be used as a base when implementing custom loggers. This makes it easy
 to make simple changes to normal logging.
 
 A related major change is that nowadays also the Rebot tool supports the `--console`
@@ -166,8 +231,8 @@ option (`#5674`_). It supports the same built-in loggers that can be used during
 execution as well as custom loggers.
 
 For details about the console logging API and everything else, see the documentation__.
-Due to the User Guide not being generated with preview releases, the documentation
-link points to documentation source.
+Due to the User Guide not being generated with preview releases, the link currently
+points to the documentation source.
 
 __ https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-interface
 __ https://github.com/robotframework/robotframework/blob/master/doc/userguide/src/ExecutingTestCases/ConfiguringExecution.rst#custom-console-loggers
@@ -206,9 +271,23 @@ and executed.
     ```
 
 When executing a directory, Robot Framework does not parse normal Markdown files
-with the `*.md` extension by default, but that can be changed with `--parseinclude`
+with the `*.md` extension by default, but that can be changed with `--parse-include`
 and  `--extension` options. Files with the special `*.robot.md` extension are
 automatically parsed and executed, though.
+
+Python 3.13 compatibility
+-------------------------
+
+Robot Framework 7.5 is officially compatible with the forthcoming `Python 3.15`__
+release (`#5708`_).
+
+Some changes were needed due `UTF-8 now being the default encoding also on Windows`__,
+but for most parts also older Robot Framework versions ought to work with Python 3.15
+as well. The default encoding change is something that Windows users probably need
+to take into account when upgrading in general.
+
+__ https://docs.python.org/3.15/whatsnew/3.15.html
+__ https://docs.python.org/3.15/whatsnew/3.15.html#whatsnew315-utf8-default
 
 Backwards incompatible changes
 ==============================
@@ -225,11 +304,12 @@ unlikely to affect normal users:
 - Libdoc has a feature that types used as type hints automatically create link
   targets that can be used with the internal linking syntax. With some types
   the link target was a less technical name like `integer` or `string` instead
-  of the actual used type name like `int` or `str`. This has been changed
-  so that nowadays the link target is always the used type name. This should not
-  affect many users, because it is unlikely that there has been needs to link
-  to types like `integer`. In addition to that, this particular feature was
-  earlier not documented at all, so most users have probably been unaware of it.
+  of the actual used type name like `int` or `str`. This has been changed so
+  that nowadays the link target is always the used type name (`#5691`_). This
+  should not affect many users, because it is unlikely that there has been needs
+  to link to generic types like `integer`. In addition to that, this particular
+  feature was earlier not documented at all, so most users have probably been
+  unaware of it.
 
 - Libdoc's automatic table of contents generation was changed in various ways
   (`#5696`_, `#5697`_):
@@ -243,6 +323,8 @@ unlikely to affect normal users:
       not in Libdoc's normal models and in spec files.
 
     - Links to `Importing` and `Keywords` sections are not added automatically.
+
+- Libdoc console output format has changed from a custom format to Markdown (`#5755`_).
 
 Deprecated features
 ===================
@@ -261,15 +343,25 @@ Various features have been deprecated:
   should be used instead (`#5661`_).
 
 - French "Test Cases" translation "Unités de test" has been deprecated in favor
-  of "Cas de test" (`#5510`_). Both terms work with Robot Framework 7.5 without
-  warnings.
+  of "Cas de test" (`#5510`_).
+
+- Finnish "Tags" translation "Tagit" has been deprecated and "Tunnisteet"
+  should be used instead (`#5726`_).
+
+- Collections: Regular expression matching only requiring prefix match, not
+  full match, is deprecated (`#5765`_)
 
 - When specifying tags as part of documentation, omitting an empty row before
   the `Tags:` header is deprecated (`#5707`_).
 
-- `robot.utils.read_rest_data` (`#5639`_) and `robot.utils.split_tags_from_doc`
-  (`#5707`_) utility functions became unnecessary for Robot Framework itself and
-  are deprecated.
+- `list_` argument used in Collections and `time_` argument used in Builtin have
+  been deprecated (`#5763`_). They will be renamed to `list` and `time`, respectively,
+  in Robot Framework 8.0. This only affects usages like `time_=1 second`, not
+  usages where values are passed positionally like `1 second`.
+
+- `robot.utils.read_rest_data`, `robot.utils.split_tags_from_doc` and
+  `robot.utils.is_union` utility functions became unnecessary for Robot Framework
+  itself and were deprecated (`#5707`_).
 
 Acknowledgements
 ================
@@ -280,22 +372,33 @@ and its 80+ member organizations. Join the journey — support the project by
 
 Robot Framework 7.5 team funded by the foundation consisted of `Pekka Klärck`_ and
 `Janne Härkönen <https://github.com/yanne>`_. Janne worked only part-time and was
-mainly responsible for Libdoc related fixes. In addition to work done by them, the
-community has provided some great contributions:
+only responsible for some Libdoc related fixes. In addition to work done by them,
+the community has provided some awesome contributions:
 
 - `Tatu Aalto <https://github.com/aaltat>`__ worked with Pekka to implement
   support to document keyword arguments, return values and exceptions (`#5604`_),
-  which is one of the biggest enhancements in this release. Huge thanks to Tatu
-  and to his employer `OP <https://www.op.fi/>`__, a member of the
-  `Robot Framework Foundation`_, for dedicating work time to make this happen!
+  added Markdown output support to Libdoc (`#5749`_) and helped with several
+  other Libdoc enhancements as well (`#5728`_, `#5733`_, `#5754`_, `#5755`_,
+  `#5760`_). Huge thanks to Tatu and to his employer `OP <https://www.op.fi/>`__,
+  a member of the `Robot Framework Foundation`_, for dedicating work time to make
+  this happen!
+
+- `Oliver Boehmer <https://github.com/oboehmer>`_ added custom console logger
+  support (`#5618`_), made console loggers configurable also with Rebot (`#5674`_)
+  and fixed a problem with `Run Keyword` executing keywords with embedded
+  arguments containing newlines (`#5746`_).
+
+- `Fabian Tsirogiannis <https://github.com/febb0e>`__ implemented test/task
+  metadata support (`#4409`_).
+
+- `René <https://github.com/Snooz82>`__ helped with Libdoc styles related to
+  argument, return value and exception documentation (`#5604`_) and enhanced
+  tag styles in log and report (`#5780`_).
 
 - `Sudheer Reddy Patlolla <https://github.com/sudheerr937-ai>`__ fixed
   `Get Index From List` keyword that did not handle negative start indices
   correctly (`#5649`_) and enhanced handling invalid stringified type hints
   (`#5650`_).
-
-- `Oliver Boehmer <https://github.com/oboehmer>`_ added custom console logger
-  support (`#5618`_) and made console loggers configurable also with Rebot (`#5674`_).
 
 - `Roberto Matarazzo <https://github.com/seto>`__ implemented support to embed
   tests/tasks to Markdown files (`#5603`_).
@@ -306,6 +409,9 @@ community has provided some great contributions:
 - `J. Foederer <https://github.com/JFoederer>`__ enhanced `TimeoutExceeded` exception
   used for signaling test and keyword timeouts so that it is not caught by Python code
   using `except Exception:` (`#5610`_).
+
+- `Aleksi Simell <https://github.com/asimell>`__ changed Finnish translation
+  of "Tags" from "Tagit" to "Tunnisteet" (`#5726`_).
 
 Big thanks to Robot Framework Foundation, to community members listed above, and
 to everyone else who has tested preview releases, submitted bug reports, proposed
@@ -326,6 +432,11 @@ Full list of fixes and enhancements
       - Priority
       - Summary
       - Added
+    * - `#4409`_
+      - feature
+      - critical
+      - Test metadata
+      - rc 1
     * - `#5304`_
       - feature
       - critical
@@ -336,6 +447,11 @@ Full list of fixes and enhancements
       - critical
       - Libdoc: Argument and return value documentation syntax
       - beta 1
+    * - `#5708`_
+      - feature
+      - critical
+      - Python 3.15 compatibility
+      - rc 1
     * - `#5644`_
       - bug
       - high
@@ -386,6 +502,21 @@ Full list of fixes and enhancements
       - high
       - Support configuring console logger with Rebot
       - beta 1
+    * - `#5749`_
+      - feature
+      - high
+      - Libdoc: Support Markdown as output format
+      - rc 1
+    * - `#5755`_
+      - feature
+      - high
+      - Libdoc: Change console output syntax to Markdown
+      - rc 1
+    * - `#5760`_
+      - feature
+      - high
+      - `type` statement support to argument conversion and Libdoc
+      - rc 1
     * - `#5650`_
       - bug
       - medium
@@ -411,6 +542,36 @@ Full list of fixes and enhancements
       - medium
       - Automatic type conversion throws AttributeError on arguments that have no `__class__` attribute
       - beta 1
+    * - `#5722`_
+      - bug
+      - medium
+      - `Var.from_params` ignores empty `value_separator`
+      - rc 1
+    * - `#5728`_
+      - bug
+      - medium
+      - Libdoc: Long library names are not shown correctly on mobile
+      - rc 1
+    * - `#5746`_
+      - bug
+      - medium
+      - `Run Keyword ...` cannot resolve keywords with embedded argument when argument value contains newlines
+      - rc 1
+    * - `#5754`_
+      - bug
+      - medium
+      - Libdoc: Keyword tags are not shown in console output
+      - rc 1
+    * - `#5759`_
+      - bug
+      - medium
+      - Process: `Wait For Process` can emit error to console when used as part of pipeline on Windows
+      - rc 1
+    * - `#5776`_
+      - bug
+      - medium
+      - User Guide: "Getting more information" section is badly outdated
+      - rc 1
     * - `#5510`_
       - feature
       - medium
@@ -461,6 +622,41 @@ Full list of fixes and enhancements
       - medium
       - Enhance parsing tags from keyword documentation
       - beta 1
+    * - `#5731`_
+      - feature
+      - medium
+      - DateTime: Support `datetime.date` as a result format with date related keywords
+      - rc 1
+    * - `#5732`_
+      - feature
+      - medium
+      - DateTime: Support `TODAY` and `NOW` as timestamps yielding the current date
+      - rc 1
+    * - `#5733`_
+      - feature
+      - medium
+      - Libdoc: Add copy button to Markdown code blocks
+      - rc 1
+    * - `#5737`_
+      - feature
+      - medium
+      - Libdoc: Ignore `typing.NoReturn` and `typing.Never` return types
+      - rc 1
+    * - `#5765`_
+      - feature
+      - medium
+      - Collections: Deprecate regexp matching only requiring prefix match, not full match
+      - rc 1
+    * - `#5780`_
+      - feature
+      - medium
+      - Log/report: Better styles for tags
+      - rc 1
+    * - `#5726`_
+      - ---
+      - medium
+      - Change Finnish translation of "Tags" from "Tagit" to "Tunnisteet"
+      - rc 1
     * - `#5628`_
       - bug
       - low
@@ -476,21 +672,38 @@ Full list of fixes and enhancements
       - low
       - String: `Convert To Title Case` fails with bad error message if `exclude` contains invalid regexp
       - beta 1
+    * - `#5723`_
+      - bug
+      - low
+      - `SectionHeader.from_params(Token.INVALID_HEADER)` raises `KeyError` when header name is not given
+      - rc 1
+    * - `#5756`_
+      - bug
+      - low
+      - Type info parser does not support strings like `"Union[int, float]"`
+      - rc 1
     * - `#5639`_
       - feature
       - low
-      - Deprecate `robot.utils.read_rest_data`
+      - `robot.utils`: Deprecate `read_rest_data`, `split_tags_from_doc` and `is_union`
       - beta 1
     * - `#5653`_
       - feature
       - low
       - Docs: Clarify that tests are marked failed in the end if there are continuable failures
       - beta 1
+    * - `#5763`_
+      - feature
+      - low
+      - Collections and Builtin: Softly deprecate argument names `list_` and `time_`
+      - rc 1
 
-Altogether 32 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av7.5>`__.
+Altogether 53 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av7.5>`__.
 
+.. _#4409: https://github.com/robotframework/robotframework/issues/4409
 .. _#5304: https://github.com/robotframework/robotframework/issues/5304
 .. _#5604: https://github.com/robotframework/robotframework/issues/5604
+.. _#5708: https://github.com/robotframework/robotframework/issues/5708
 .. _#5644: https://github.com/robotframework/robotframework/issues/5644
 .. _#5645: https://github.com/robotframework/robotframework/issues/5645
 .. _#5649: https://github.com/robotframework/robotframework/issues/5649
@@ -501,11 +714,20 @@ Altogether 32 issues. View on the `issue tracker <https://github.com/robotframew
 .. _#5657: https://github.com/robotframework/robotframework/issues/5657
 .. _#5668: https://github.com/robotframework/robotframework/issues/5668
 .. _#5674: https://github.com/robotframework/robotframework/issues/5674
+.. _#5749: https://github.com/robotframework/robotframework/issues/5749
+.. _#5755: https://github.com/robotframework/robotframework/issues/5755
+.. _#5760: https://github.com/robotframework/robotframework/issues/5760
 .. _#5650: https://github.com/robotframework/robotframework/issues/5650
 .. _#5655: https://github.com/robotframework/robotframework/issues/5655
 .. _#5691: https://github.com/robotframework/robotframework/issues/5691
 .. _#5695: https://github.com/robotframework/robotframework/issues/5695
 .. _#5699: https://github.com/robotframework/robotframework/issues/5699
+.. _#5722: https://github.com/robotframework/robotframework/issues/5722
+.. _#5728: https://github.com/robotframework/robotframework/issues/5728
+.. _#5746: https://github.com/robotframework/robotframework/issues/5746
+.. _#5754: https://github.com/robotframework/robotframework/issues/5754
+.. _#5759: https://github.com/robotframework/robotframework/issues/5759
+.. _#5776: https://github.com/robotframework/robotframework/issues/5776
 .. _#5510: https://github.com/robotframework/robotframework/issues/5510
 .. _#5610: https://github.com/robotframework/robotframework/issues/5610
 .. _#5634: https://github.com/robotframework/robotframework/issues/5634
@@ -516,8 +738,18 @@ Altogether 32 issues. View on the `issue tracker <https://github.com/robotframew
 .. _#5697: https://github.com/robotframework/robotframework/issues/5697
 .. _#5703: https://github.com/robotframework/robotframework/issues/5703
 .. _#5707: https://github.com/robotframework/robotframework/issues/5707
+.. _#5731: https://github.com/robotframework/robotframework/issues/5731
+.. _#5732: https://github.com/robotframework/robotframework/issues/5732
+.. _#5733: https://github.com/robotframework/robotframework/issues/5733
+.. _#5737: https://github.com/robotframework/robotframework/issues/5737
+.. _#5765: https://github.com/robotframework/robotframework/issues/5765
+.. _#5780: https://github.com/robotframework/robotframework/issues/5780
+.. _#5726: https://github.com/robotframework/robotframework/issues/5726
 .. _#5628: https://github.com/robotframework/robotframework/issues/5628
 .. _#5636: https://github.com/robotframework/robotframework/issues/5636
 .. _#5648: https://github.com/robotframework/robotframework/issues/5648
+.. _#5723: https://github.com/robotframework/robotframework/issues/5723
+.. _#5756: https://github.com/robotframework/robotframework/issues/5756
 .. _#5639: https://github.com/robotframework/robotframework/issues/5639
 .. _#5653: https://github.com/robotframework/robotframework/issues/5653
+.. _#5763: https://github.com/robotframework/robotframework/issues/5763
