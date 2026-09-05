@@ -124,11 +124,6 @@ Deprecated operator usage
     --exclude    e*ORBAD      OR
     --include    i*NOTBAD     NOT
 
-Deprecated & operator
-    [Template]    Validate deprecated operator warning
-    --include    INCL1&*    &
-    --exclude    e*&*       &
-
 *** Keywords ***
 Run And Check Include And Exclude
     [Arguments]    ${params}    @{expected}    ${sources}=${DATA SOURCES}    ${warnings}=False
@@ -139,14 +134,9 @@ Run And Check Include And Exclude
 Validate deprecated operator warning
     [Arguments]    ${option}    ${pattern}    ${operator}
     Run And Check Include And Exclude    ${option} ${pattern}    @{INCL_ALL}    warnings=True
-    IF    $operator == '&'
-        VAR    ${explanation}
-        ...    Boolean operator '&' is deprecated, use 'AND' instead.
-    ELSE
-        VAR    ${explanation}
-        ...    '${operator}' is currently considered to be a Boolean operator, but in the future
-        ...    operators must be surrounded with spaces or tag names must be lower case.
-    END
+    VAR    ${explanation}
+    ...    '${operator}' is currently considered to be a Boolean operator, but in the future
+    ...    operators must be surrounded with spaces or tag names must be lower case.
     VAR    ${expected}
     ...    Problems when ${{"including" if $option == "--include" else "excluding"}} tests by tags:
     ...    The behavior of tag pattern '${pattern}' will change in Robot Framework 8.0: ${explanation}

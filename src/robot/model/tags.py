@@ -167,14 +167,7 @@ class TagPattern(ABC):
             must_match, *must_not_match = cls._split(pattern, "NOT", usage)
             return NotTagPattern(must_match, must_not_match)
         if "OR" in pattern:
-            return OrTagPattern(cls._split(pattern, "OR", usage))
-        if "&" in pattern:
-            cls._deprecated(
-                pattern,
-                "Boolean operator '&' is deprecated, use 'AND' instead.",
-                usage,
-            )
-            pattern = pattern.replace("&", " AND ")
+            return OrTagPattern(cls._split(pattern, "OR", usage))  
         if "AND" in pattern:
             return AndTagPattern(cls._split(pattern, "AND", usage))
         return SingleTagPattern(pattern)
