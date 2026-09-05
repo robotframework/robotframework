@@ -8,3 +8,6 @@ Time addition to date should succeed
 
 Time addition to date over DST boundary
     Check Test Case    ${TESTNAME}
+
+Calendar time addition to date should succeed
+    Check Test Case    ${TESTNAME}

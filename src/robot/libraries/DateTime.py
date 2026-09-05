@@ -237,6 +237,14 @@ times. The available time specifiers are:
 - `microseconds`, `microsecond`, `us`, `μs` (new in RF 6.0)
 - `nanoseconds`, `nanosecond`, `ns` (new in RF 6.0)
 
+Starting from Robot Framework 7.6, [Add Time To Date] and
+[Subtract Time From Date] also accept integer calendar units `years`, `year`,
+`yrs`, `yr`, `months` and `month`. These units can be combined with the fixed
+units above, such as `1 year 2 months 3 days`. Because their exact duration
+depends on the starting date, they are not supported by other keywords. If the
+original day does not exist in the target month, it is limited to the last day
+of that month.
+
 When returning a time string, it is possible to select between `verbose`
 and `compact` representations using `result_format` argument. The verbose
 format uses long specifiers like `week` and `day`, and adds `s` at the end
@@ -581,6 +589,8 @@ def add_time_to_date(
     Args:
         date: Date to add time to in one of the supported [date formats].
         time: Time that is added in one of the supported [time formats].
+            Starting from Robot Framework 7.6, this can also contain integer
+            calendar years and months.
         result_format: Format of the returned date.
         exclude_millis: When set to a true value, rounds and drops
             milliseconds as explained in the [Millisecond handling] section.
@@ -596,11 +606,15 @@ def add_time_to_date(
     Add time to date
         ${date} =    Add Time To Date    2014-05-28 12:05:03.111    7 days
         Should Be Equal    ${date}    2014-06-04 12:05:03.111
+        ${date} =    Add Time To Date    2024-01-31    1 month 1 day
+        Should Be Equal    ${date}    2024-03-01 00:00:00.000
         ${date} =    Add Time To Date    2014-05-28 12:05:03.111    01:02:03:004
         Should Be Equal    ${date}    2014-05-28 13:07:06.115
     ```
     """
-    date = Date(date, date_format) + Time(time)
+    date = Date(date, date_format)
+    seconds = timestr_to_secs(time, round_to=None, start_date=date.datetime)
+    date += Time(seconds)
     return date.convert(result_format, millis=not exclude_millis)
 
 
@@ -616,6 +630,8 @@ def subtract_time_from_date(
     Args:
         date: Date to subtract time from in one of the supported [date formats].
         time: Time that is subtracted in one of the supported [time formats].
+            Starting from Robot Framework 7.6, this can also contain integer
+            calendar years and months.
         result_format: Format of the returned date.
         exclude_millis: When set to any true value, rounds and drops
             milliseconds as explained in the [Millisecond handling] section.
@@ -631,12 +647,33 @@ def subtract_time_from_date(
     Subtract time from date
         ${date} =    Subtract Time From Date    2014-06-04 12:05:03.111    7 days
         Should Be Equal    ${date}    2014-05-28 12:05:03.111
+        ${date} =    Subtract Time From Date    2025-03-31    1 month
+        Should Be Equal    ${date}    2025-02-28 00:00:00.000
         ${date} =    Subtract Time From Date    2014-05-28 13:07:06.115    01:02:03:004
         Should Be Equal    ${date}    2014-05-28 12:05:03.111
     ```
     """
-    date = Date(date, date_format) - Time(time)
+    date = Date(date, date_format)
+    if isinstance(time, str):
+        original = time
+        time = _negate_time_string(time)
+        try:
+            seconds = timestr_to_secs(time, round_to=None, start_date=date.datetime)
+        except ValueError:
+            raise ValueError(f"Invalid time string '{original}'.")
+        date += Time(seconds)
+    else:
+        date -= Time(time)
     return date.convert(result_format, millis=not exclude_millis)
+
+
+def _negate_time_string(time: str) -> str:
+    time = time.strip()
+    if time.startswith("-"):
+        return time[1:].lstrip()
+    if time.startswith("+"):
+        return "-" + time[1:].lstrip()
+    return "-" + time
 
 
 def add_time_to_time(

@@ -16,7 +16,8 @@
 import re
 import time
 import warnings
-from datetime import datetime, timedelta
+from calendar import monthrange
+from datetime import date, datetime, timedelta
 
 from .misc import plural_or_not as s
 from .normalizing import normalize
@@ -41,6 +42,7 @@ def _float_secs_to_secs_and_millis(secs):
 def timestr_to_secs(
     timestr: "timedelta | int | float | str",
     round_to: "int | None" = 3,
+    start_date: "date | datetime | None" = None,
 ) -> float:
     """Parses time strings like '1h 10s', '01:00:10' and '42' and returns seconds.
 
@@ -49,13 +51,20 @@ def timestr_to_secs(
 
     The result is rounded according to the `round_to` argument.
     Use `round_to=None` to disable rounding altogether.
+
+    Starting from RF 7.6, time strings can contain integer years and months if
+    `start_date` is given. Their duration is calculated from that date using
+    calendar arithmetic.
     """
     if isinstance(timestr, (str, int, float)):
-        converters = [_number_to_secs, _timer_to_secs, _time_string_to_secs]
+        converters = [_number_to_secs, _timer_to_secs]
         for converter in converters:
             secs = converter(timestr)
             if secs is not None:
                 return secs if round_to is None else round(secs, round_to)
+        secs = _time_string_to_secs(timestr, start_date)
+        if secs is not None:
+            return secs if round_to is None else round(secs, round_to)
     if isinstance(timestr, timedelta):
         return timestr.total_seconds()
     raise ValueError(f"Invalid time string '{timestr}'.")
@@ -83,12 +92,13 @@ def _timer_to_secs(number):
     return seconds
 
 
-def _time_string_to_secs(timestr):
+def _time_string_to_secs(timestr, start_date=None):
     try:
         timestr = _normalize_timestr(timestr)
     except ValueError:
         return None
-    nanos = micros = millis = secs = mins = hours = days = weeks = 0
+    years = months = weeks = days = hours = mins = secs = millis = micros = nanos = 0
+    has_calendar_units = False
     if timestr[0] == "-":
         sign = -1
         timestr = timestr[1:]
@@ -96,12 +106,20 @@ def _time_string_to_secs(timestr):
         sign = 1
     temp = []
     for c in timestr:
-        if c in ("n", "u", "M", "s", "m", "h", "d", "w"):
+        if c in ("n", "u", "M", "s", "m", "h", "d", "w", "O", "Y"):
             try:
                 value = float("".join(temp))
             except ValueError:
                 return None
-            if c == "n":
+            if c in ("O", "Y") and not value.is_integer():
+                return None
+            if c == "Y":
+                years = int(value)
+                has_calendar_units = True
+            elif c == "O":
+                months = int(value)
+                has_calendar_units = True
+            elif c == "n":
                 nanos = value
             elif c == "u":
                 micros = value
@@ -122,7 +140,7 @@ def _time_string_to_secs(timestr):
             temp.append(c)
     if temp:
         return None
-    return sign * (
+    fixed_seconds = sign * (
         nanos / 1e9
         + micros / 1e6
         + millis / 1e3
@@ -132,6 +150,31 @@ def _time_string_to_secs(timestr):
         + days * 60 * 60 * 24
         + weeks * 60 * 60 * 24 * 7
     )
+    if not has_calendar_units:
+        return fixed_seconds
+    calendar_seconds = _calendar_time_to_secs(
+        start_date,
+        sign * (years * 12 + months),
+    )
+    if calendar_seconds is None:
+        return None
+    return calendar_seconds + fixed_seconds
+
+
+def _calendar_time_to_secs(start_date, months):
+    if not isinstance(start_date, date):
+        return None
+    year, month = divmod(
+        start_date.year * 12 + start_date.month - 1 + months,
+        12,
+    )
+    month += 1
+    try:
+        day = min(start_date.day, monthrange(year, month)[1])
+        end_date = start_date.replace(year=year, month=month, day=day)
+    except (OverflowError, ValueError):
+        return None
+    return (end_date - start_date).total_seconds()
 
 
 def _normalize_timestr(timestr):
@@ -140,6 +183,8 @@ def _normalize_timestr(timestr):
         raise ValueError
     seen = []
     for specifier, aliases in [
+        ("Y", ["year", "yr"]),
+        ("O", ["month"]),
         ("n", ["nanosecond", "ns"]),
         ("u", ["microsecond", "us", "μs"]),
         ("M", ["millisecond", "millisec", "millis", "msec", "ms"]),
