@@ -75,14 +75,14 @@ class OperatingSystem:
     Some keywords, for example [List Directory], support so called
     [glob patterns](http://en.wikipedia.org/wiki/Glob_(programming)) where:
 
-    | Pattern | Matches |
-    | ------- | ------- |
-    | `*` | Any string, even an empty string |
-    | `?` | Any single character |
-    | `[chars]` | One character in the bracket |
-    | `[!chars]` | One character not in the bracket |
-    | `[a-z]` | One character from the range in the bracket |
-    | `[!a-z]` | One character not from the range in the bracket |
+    | Pattern   | Matches                                 |
+    | --------- | --------------------------------------- |
+    | `*`       | Any string, even an empty string        |
+    | `?`       | Any single character                    |
+    | `[chars]` | One character in the bracket            |
+    | `[!chars]` | One character not in the bracket       |
+    | `[a-z]`   | One character from the range in bracket |
+    | `[!a-z]`  | One character not from range in bracket |
 
     Unless otherwise noted, matching is case-insensitive on case-insensitive
     operating systems such as Windows.
@@ -100,8 +100,8 @@ class OperatingSystem:
     Robot Framework data, possible backslash characters in regular
     expressions need to be escaped with another backslash like `\\d\\w+`.
     Strings that may contain special characters but should be handled
-    as literal strings, can be escaped with the
-    [Regexp Escape] keyword from the BuiltIn library.
+    as literal strings, can be escaped with the `Regexp Escape`
+    keyword from the [BuiltIn] library.
 
     # Tilde expansion
 
@@ -123,22 +123,20 @@ class OperatingSystem:
 
     ```robotframework
     *** Settings ***
-    Library             OperatingSystem
+    Library    OperatingSystem
 
     *** Variables ***
-    ${PATH}             ${CURDIR}/example.txt
+    ${PATH}    ${CURDIR}/example.txt
 
     *** Test Cases ***
     Example
-        Create File          ${PATH}    Some text
+        Create File    ${PATH}    Some text
         File Should Exist    ${PATH}
-        Copy File            ${PATH}    ~/file.txt
+        Copy File    ${PATH}    ~/file.txt
     ```
 
     [Process]: https://robotframework.org/robotframework/latest/libraries/Process.html "Process library"
-    [Regexp Escape]: https://robotframework.org/robotframework/latest/libraries/BuiltIn.html#Regexp%20Escape "BuiltIn.Regexp Escape"
-    [Should Be Equal]: https://robotframework.org/robotframework/latest/libraries/BuiltIn.html#Should%20Be%20Equal "BuiltIn.Should Be Equal"
-    [Should Be Equal As Integers]: https://robotframework.org/robotframework/latest/libraries/BuiltIn.html#Should%20Be%20Equal%20As%20Integers "BuiltIn.Should Be Equal As Integers"
+    [BuiltIn]: https://robotframework.org/robotframework/latest/libraries/BuiltIn.html "BuiltIn library"
     [Log]: https://robotframework.org/robotframework/latest/libraries/BuiltIn.html#Log "BuiltIn.Log"
     """
 
@@ -147,10 +145,7 @@ class OperatingSystem:
     ROBOT_LIBRARY_VERSION = __version__
 
     def run(self, command: str) -> str:
-        """_This keyword is considered deprecated. Use the
-        [Process] library instead._
-
-        Runs the given command in the system and returns the output.
+        """Runs the given command in the system and returns the output.
 
         Args:
             command: Command to execute.
@@ -182,22 +177,23 @@ class OperatingSystem:
         ```robotframework
         *** Test Cases ***
         Run
-            ${output} =            Run       ls -lhF /tmp
-            Log                    ${output}
-            ${result} =            Run       ${CURDIR}${/}tester.py arg1 arg2
-            Should Not Contain     ${result}    FAIL
-            ${stdout} =            Run       /opt/script.sh 2>/tmp/stderr.txt
-            Should Be Equal        ${stdout}    TEST PASSED
-            File Should Be Empty   /tmp/stderr.txt
+            ${output} =    Run    ls -lhF /tmp
+            Log    ${output}
+            ${result} =    Run    ${CURDIR}${/}tester.py arg1 arg2
+            Should Not Contain    ${result}    FAIL
+            ${stdout} =    Run    /opt/script.sh 2>/tmp/stderr.txt
+            Should Be Equal    ${stdout}    TEST PASSED
+            File Should Be Empty    /tmp/stderr.txt
         ```
+
+        > [!WARNING]
+        > This keyword is considered deprecated.
+        > Use the [Process] library instead.
         """
         return self._run(command)[1]
 
     def run_and_return_rc(self, command: str) -> int:
-        """_This keyword is considered deprecated. Use the
-        [Process] library instead._
-
-        Runs the given command in the system and returns the return code (RC).
+        """Runs the given command in the system and returns the return code (RC).
 
         Args:
             command: Command to execute.
@@ -209,32 +205,32 @@ class OperatingSystem:
         range from 0 to 255 as returned by the executed command. On
         some operating systems (notable Windows) original return codes
         can be something else, but this keyword always maps them to
-        the 0-255 range. Since the return code is an integer, it must be
-        checked e.g. with the keyword
-        [Should Be Equal As Integers] instead of [Should Be Equal]
-        (both are built-in keywords).
+        the 0-255 range. Since the return code is an integer, it should be
+        checked e.g. with [BuiltIn] keyword `Should Be Equal` using
+        `type=int`.
 
         Examples:
 
         ```robotframework
         *** Test Cases ***
         Run And Return RC
-            ${rc} =                       Run and Return RC    ${CURDIR}${/}script.py arg
-            Should Be Equal As Integers    ${rc}    0
-            ${rc} =                       Run and Return RC    /path/to/example.rb arg1 arg2
-            Should Be True                0 < ${rc} < 42
+            ${rc} =    Run and Return RC    ${CURDIR}${/}script.py arg
+            Should Be Equal    ${rc}    0    type=int
+            ${rc} =    Run and Return RC    /path/to/example.rb arg1 arg2
+            Should Be True    0 < ${rc} < 42
         ```
 
         See [Run] and [Run And Return RC And Output] if you need to get the
         output of the executed command.
+
+        > [!WARNING]
+        > This keyword is considered deprecated.
+        > Use the [Process] library instead.
         """
         return self._run(command)[0]
 
     def run_and_return_rc_and_output(self, command: str) -> "tuple[int, str]":
-        """_This keyword is considered deprecated. Use the
-        [Process] library instead._
-
-        Runs the given command in the system and returns the return code (RC)
+        """Runs the given command in the system and returns the return code (RC)
         and output. The return code is returned similarly as with
         [Run And Return RC] and the output similarly as with [Run].
 
@@ -249,14 +245,18 @@ class OperatingSystem:
         ```robotframework
         *** Test Cases ***
         Run And Return RC And Output
-            ${rc}    ${output} =             Run and Return RC and Output    ${CURDIR}${/}mytool
-            Should Be Equal As Integers      ${rc}    0
-            Should Not Contain               ${output}    FAIL
-            ${rc}    ${stdout} =             Run and Return RC and Output    /opt/script.sh 2>/tmp/stderr.txt
-            Should Be True                   ${rc} > 42
-            Should Be Equal                  ${stdout}    TEST PASSED
-            File Should Be Empty             /tmp/stderr.txt
+            ${rc}    ${output} =    Run and Return RC and Output    ${CURDIR}${/}mytool
+            Should Be Equal    ${rc}    0    type=int
+            Should Not Contain    ${output}    FAIL
+            ${rc}    ${stdout} =    Run and Return RC and Output    /opt/script.sh 2>/tmp/stderr.txt
+            Should Be True    ${rc} > 42
+            Should Be Equal    ${stdout}    TEST PASSED
+            File Should Be Empty    /tmp/stderr.txt
         ```
+
+        > [!WARNING]
+        > This keyword is considered deprecated.
+        > Use the [Process] library instead.
         """
         return self._run(command)
 
@@ -393,8 +393,8 @@ class OperatingSystem:
         *** Test Cases ***
         Grep File
             ${errors} =    Grep File    /var/log/myapp.log    ERROR
-            ${ret} =       Grep File    ${CURDIR}/file.txt    [Ww]ildc??d ex*ple
-            ${ret} =       Grep File    ${CURDIR}/file.txt    [Ww]ildc\\w+d ex.*ple    regexp=True
+            ${ret} =    Grep File    ${CURDIR}/file.txt    [Ww]ildc??d ex*ple
+            ${ret} =    Grep File    ${CURDIR}/file.txt    [Ww]ildc\\w+d ex.*ple    regexp=True
         ```
 
         Special encoding values `SYSTEM` and `CONSOLE` that [Get File] supports
@@ -436,8 +436,8 @@ class OperatingSystem:
             The logged file contents.
 
         The file is logged with the INFO level. If you want something else,
-        just use [Get File] and the built-in keyword
-        [Log] with the desired level.
+        just use [Get File] and the [BuiltIn] keyword
+        `Log` with the desired level.
 
         See [Get File] for more information about `encoding` and
         `encoding_errors` arguments.
@@ -747,8 +747,8 @@ class OperatingSystem:
         *** Test Cases ***
         Create File
             Create File    ${dir}/example.txt    Hello, world!
-            Create File    ${path}               Hyv\\xe4 esimerkki     Latin-1
-            Create File    /tmp/foo.txt          3\\nlines\\nhere\\n    SYSTEM
+            Create File    ${path}    Hyv\\xe4 esimerkki    Latin-1
+            Create File    /tmp/foo.txt    3\\nlines\\nhere\\n    SYSTEM
         ```
 
         Use [Append To File] if you want to append to an existing file
@@ -801,7 +801,7 @@ class OperatingSystem:
         *** Test Cases ***
         Create Binary File
             Create Binary File    ${dir}/example.png    ${image content}
-            Create Binary File    ${path}               \x01\x00\xe4\x00
+            Create Binary File    ${path}    \x01\x00\xe4\x00
         ```
 
         Use [Create File] if you want to create a text file using a certain
@@ -1255,14 +1255,14 @@ class OperatingSystem:
         ```robotframework
         *** Test Cases ***
         Append To Environment Variable
-            Append To Environment Variable    NAME     first
-            Should Be Equal                   %{NAME}  first
-            Append To Environment Variable    NAME     second    third
-            Should Be Equal                   %{NAME}  first${:}second${:}third
-            Append To Environment Variable    NAME2    first     separator=-
-            Should Be Equal                   %{NAME2}    first
+            Append To Environment Variable    NAME    first
+            Should Be Equal    %{NAME}    first
+            Append To Environment Variable    NAME    second    third
+            Should Be Equal    %{NAME}    first${:}second${:}third
+            Append To Environment Variable    NAME2    first    separator=-
+            Should Be Equal    %{NAME2}    first
             Append To Environment Variable    NAME2    second    separator=-
-            Should Be Equal                   %{NAME2}    first-second
+            Should Be Equal    %{NAME2}    first-second
         ```
         """
         initial = get_env_var(name)
@@ -1383,16 +1383,16 @@ class OperatingSystem:
         ```robotframework
         *** Test Cases ***
         Join Path
-            ${path} =    Join Path    my           path
-            ${p2} =      Join Path    my/          path/
-            ${p3} =      Join Path    my           path     my       file.txt
-            ${p4} =      Join Path    my           /path
-            ${p5} =      Join Path    /my/path/     ..       path2
+            ${path} =    Join Path    my    path
+            ${p2} =    Join Path    my/    path/
+            ${p3} =    Join Path    my    path    my    file.txt
+            ${p4} =    Join Path    my    /path
+            ${p5} =    Join Path    /my/path/    ..    path2
             Should Be Equal    ${path}    my/path
-            Should Be Equal    ${p2}      my/path
-            Should Be Equal    ${p3}      my/path/my/file.txt
-            Should Be Equal    ${p4}      /path
-            Should Be Equal    ${p5}      /my/path2
+            Should Be Equal    ${p2}    my/path
+            Should Be Equal    ${p3}    my/path/my/file.txt
+            Should Be Equal    ${p4}    /path
+            Should Be Equal    ${p5}    /my/path2
         ```
 
         On Windows results would use `\\` instead of `/`.
@@ -1416,12 +1416,12 @@ class OperatingSystem:
         ```robotframework
         *** Test Cases ***
         Join Paths
-            @{p1} =    Join Paths    base       example         other
-            @{p2} =    Join Paths    /my/base   /example        other
-            @{p3} =    Join Paths    my/base    example/path/   other    one/more
-            Should Be Equal    ${p1}    ${{['base/example', 'base/other']}}
-            Should Be Equal    ${p2}    ${{['/example', '/my/base/other']}}
-            Should Be Equal    ${p3}    ${{['my/base/example/path', 'my/base/other', 'my/base/one/more']}}
+            @{p1} =    Join Paths    base    example    other
+            @{p2} =    Join Paths    /my/base    /example    other
+            @{p3} =    Join Paths    my/base    example/path/    other    one/more
+            Should Be Equal    ${p1}    ['base/example', 'base/other']    type=list
+            Should Be Equal    ${p2}    ['/example', '/my/base/other']    type=list
+            Should Be Equal    ${p3}    ['my/base/example/path', 'my/base/other', 'my/base/one/more']    type=list
         ```
 
         On Windows results would use `\\` instead of `/`.
@@ -1491,15 +1491,15 @@ class OperatingSystem:
         ```robotframework
         *** Test Cases ***
         Split Path
-            ${path1}    ${dir} =     Split Path    abc/def
+            ${path1}    ${dir} =    Split Path    abc/def
             ${path2}    ${file} =    Split Path    abc/def/ghi.txt
-            ${path3}    ${d2} =      Split Path    abc/../def/ghi/
+            ${path3}    ${d2} =    Split Path    abc/../def/ghi/
             Should Be Equal    ${path1}    abc
-            Should Be Equal    ${dir}      def
+            Should Be Equal    ${dir}    def
             Should Be Equal    ${path2}    abc/def
-            Should Be Equal    ${file}     ghi.txt
+            Should Be Equal    ${file}    ghi.txt
             Should Be Equal    ${path3}    def
-            Should Be Equal    ${d2}       ghi
+            Should Be Equal    ${d2}    ghi
         ```
         """
         return os.path.split(self.normalize_path(path))
@@ -1528,22 +1528,22 @@ class OperatingSystem:
         *** Test Cases ***
         Split Extension
             ${path}    ${ext} =    Split Extension    file.extension
-            ${p2}      ${e2} =     Split Extension    path/file.ext
-            ${p3}      ${e3} =     Split Extension    path/file
-            ${p4}      ${e4} =     Split Extension    p1/../p2/file.ext
-            ${p5}      ${e5} =     Split Extension    path/.file.ext
-            ${p6}      ${e6} =     Split Extension    path/.file
+            ${p2}    ${e2} =    Split Extension    path/file.ext
+            ${p3}    ${e3} =    Split Extension    path/file
+            ${p4}    ${e4} =    Split Extension    p1/../p2/file.ext
+            ${p5}    ${e5} =    Split Extension    path/.file.ext
+            ${p6}    ${e6} =    Split Extension    path/.file
             Should Be Equal    ${path}    file
-            Should Be Equal    ${ext}     extension
-            Should Be Equal    ${p2}      path/file
-            Should Be Equal    ${e2}      ext
-            Should Be Equal    ${p3}      path/file
+            Should Be Equal    ${ext}    extension
+            Should Be Equal    ${p2}    path/file
+            Should Be Equal    ${e2}    ext
+            Should Be Equal    ${p3}    path/file
             Should Be Empty    ${e3}
-            Should Be Equal    ${p4}      p2/file
-            Should Be Equal    ${e4}      ext
-            Should Be Equal    ${p5}      path/.file
-            Should Be Equal    ${e5}      ext
-            Should Be Equal    ${p6}      path/.file
+            Should Be Equal    ${p4}    p2/file
+            Should Be Equal    ${e4}    ext
+            Should Be Equal    ${p5}    path/.file
+            Should Be Equal    ${e5}    ext
+            Should Be Equal    ${p6}    path/.file
             Should Be Empty    ${e6}
         ```
         """
@@ -1612,7 +1612,7 @@ class OperatingSystem:
             ${y}    ${d} =    Get Modified Time    ${CURDIR}    year,day
             @{time} =    Get Modified Time    ${CURDIR}    year,month,day,hour,min,sec
             Should Be Equal    ${time}    2006-03-29 15:06:21
-            Should Be Equal As Integers    ${secs}    1143637581
+            Should Be Equal    ${secs}    1143637581    type=int
             Should Be Equal    ${year}    2006
             Should Be Equal    ${y}    2006
             Should Be Equal    ${d}    29
@@ -1664,10 +1664,10 @@ class OperatingSystem:
         ```robotframework
         *** Test Cases ***
         Set Modified Time
-            Set Modified Time    /path/file    1177654467          # Time given as epoch seconds
-            Set Modified Time    /path/file    2007-04-27 9:14:27  # Time given as a timestamp
-            Set Modified Time    /path/file    NOW                 # The local time of execution
-            Set Modified Time    /path/file    NOW - 1 day         # 1 day subtracted from the local time
+            Set Modified Time    /path/file    1177654467    # Time given as epoch seconds
+            Set Modified Time    /path/file    2007-04-27 9:14:27    # Time given as a timestamp
+            Set Modified Time    /path/file    NOW    # The local time of execution
+            Set Modified Time    /path/file    NOW - 1 day    # 1 day subtracted from the local time
             Set Modified Time    /path/file    UTC + 1h 2min 3s    # 1h 2min 3s added to the UTC time
         ```
         """
@@ -1734,9 +1734,9 @@ class OperatingSystem:
         ```robotframework
         *** Test Cases ***
         List Directory
-            @{items} =    List Directory             ${TEMPDIR}
-            @{files} =    List Files In Directory    /tmp         *.txt    absolute
-            ${count} =    Count Files In Directory   ${CURDIR}     ???
+            @{items} =    List Directory    ${TEMPDIR}
+            @{files} =    List Files In Directory    /tmp    *.txt    absolute
+            ${count} =    Count Files In Directory    ${CURDIR}    ???
         ```
         """
         items = self._list_dir(path, pattern, absolute)
@@ -1795,9 +1795,8 @@ class OperatingSystem:
             The number of matching items.
 
         The argument `pattern` has the same semantics as with [List Directory]
-        keyword. The count is returned as an integer, so it must be checked e.g.
-        with the built-in keyword
-        [Should Be Equal As Integers].
+        keyword. The count is returned as an integer, so it should be checked e.g.
+        with [BuiltIn] keyword `Should Be Equal` using `type=int`.
         """
         count = len(self._list_dir(path, pattern))
         self._info(f"{count} item{s(count)}.")
