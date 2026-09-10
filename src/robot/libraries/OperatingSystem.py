@@ -137,7 +137,6 @@ class OperatingSystem:
 
     [Process]: https://robotframework.org/robotframework/latest/libraries/Process.html "Process library"
     [BuiltIn]: https://robotframework.org/robotframework/latest/libraries/BuiltIn.html "BuiltIn library"
-    [Log]: https://robotframework.org/robotframework/latest/libraries/BuiltIn.html#Log "BuiltIn.Log"
     """
 
     ROBOT_LIBRARY_DOC_FORMAT = "Markdown"
