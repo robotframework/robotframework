@@ -144,7 +144,10 @@ class OperatingSystem:
     ROBOT_LIBRARY_VERSION = __version__
 
     def run(self, command: str) -> str:
-        """Runs the given command in the system and returns the output.
+        """_This keyword is considered deprecated. Use the
+        [Process] library instead._
+
+        Runs the given command in the system and returns the output.
 
         Args:
             command: Command to execute.
@@ -185,14 +188,14 @@ class OperatingSystem:
             File Should Be Empty    /tmp/stderr.txt
         ```
 
-        > [!WARNING]
-        > This keyword is considered deprecated.
-        > Use the [Process] library instead.
         """
         return self._run(command)[1]
 
     def run_and_return_rc(self, command: str) -> int:
-        """Runs the given command in the system and returns the return code (RC).
+        """_This keyword is considered deprecated. Use the
+        [Process] library instead._
+
+        Runs the given command in the system and returns the return code (RC).
 
         Args:
             command: Command to execute.
@@ -222,14 +225,14 @@ class OperatingSystem:
         See [Run] and [Run And Return RC And Output] if you need to get the
         output of the executed command.
 
-        > [!WARNING]
-        > This keyword is considered deprecated.
-        > Use the [Process] library instead.
         """
         return self._run(command)[0]
 
     def run_and_return_rc_and_output(self, command: str) -> "tuple[int, str]":
-        """Runs the given command in the system and returns the return code (RC)
+        """_This keyword is considered deprecated. Use the
+        [Process] library instead._
+
+        Runs the given command in the system and returns the return code (RC)
         and output. The return code is returned similarly as with
         [Run And Return RC] and the output similarly as with [Run].
 
@@ -253,9 +256,6 @@ class OperatingSystem:
             File Should Be Empty    /tmp/stderr.txt
         ```
 
-        > [!WARNING]
-        > This keyword is considered deprecated.
-        > Use the [Process] library instead.
         """
         return self._run(command)
 
