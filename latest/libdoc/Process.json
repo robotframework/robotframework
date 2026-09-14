@@ -1,22 +1,25 @@
 {
-  "specversion": 3,
+  "specversion": 4,
   "name": "Process",
-  "doc": "Robot Framework library for running processes.\n\nThe library has following main usages:\n\n- Running processes in system and waiting for their completion using\n  the `Run Process` keyword.\n- Starting processes on background using the `Start Process` keyword.\n- Waiting started process to complete using `Wait For Process` or\n  stopping them with `Terminate Process` or `Terminate All Processes`.\n\nThis library provides various benefits over using ``Run`` and other similar\nkeywords in the\n[http://robotframework.org/robotframework/latest/libraries/OperatingSystem.html|\nOperatingSystem] library:\n\n- Better `process configuration`.\n- Convenient `result object` with all result information (rc, stdout, stderr).\n- Support for background processes, process termination, sending signals\n  and so on.\n\nThis library utilizes Python's\n[http://docs.python.org/library/subprocess.html|subprocess]\nmodule and its\n[http://docs.python.org/library/subprocess.html#popen-constructor|Popen]\nclass.\n\n== Table of contents ==\n\n- `Specifying command and arguments`\n- `Process configuration`\n- `Active process`\n- `Result object`\n- `Example`\n- `Keywords`\n\n= Specifying command and arguments =\n\nBoth `Run Process` and `Start Process` accept the command to execute and\nall arguments passed to the command as separate arguments. This makes usage\nconvenient and also allows these keywords to automatically escape possible\nspaces and other special characters in commands and arguments. Notice that\nif a command accepts options that themselves accept values, these options\nand their values must be given as separate arguments.\n\nWhen `running processes in shell`, it is also possible to give the whole\ncommand to execute as a single string. The command can then contain\nmultiple commands to be run together. When using this approach, the caller\nis responsible on escaping.\n\nExamples:\n| `Run Process` | ${tools}${/}prog.py | argument | second arg with spaces |\n| `Run Process` | java | -jar | ${jars}${/}example.jar | --option | value |\n| `Run Process` | prog.py \"one arg\" && tool.sh | shell=yes | cwd=${tools} |\n\nPossible non-string arguments are converted to strings automatically.\n\n= Process configuration =\n\n`Run Process` and `Start Process` keywords can be configured using\noptional configuration arguments. These arguments must be given\nafter other arguments passed to these keywords and must use the\n``name=value`` syntax. Available configuration arguments are\nlisted below and discussed further in the subsequent sections.\n\n|  = Name =   |                  = Explanation =                      |\n| shell       | Specify whether to run the command in a shell or not. |\n| cwd         | Specify the working directory.                        |\n| env         | Specify environment variables given to the process.   |\n| **env_extra | Override named environment variables using ``env:<name>=<value>`` syntax. |\n| stdout      | Path to a file where to write standard output.        |\n| stderr      | Path to a file where to write standard error.         |\n| stdin       | Configure process standard input. New in RF 4.1.2.    |\n| output_encoding | Encoding to use when reading command outputs.     |\n| alias       | A custom name given to the process.                   |\n\nNote that possible equal signs in other arguments passed to `Run Process`\nand `Start Process` must be escaped with a backslash like ``name\\=value``.\nSee `Run Process` for an example.\n\n== Running processes in shell ==\n\nThe ``shell`` argument specifies whether to run the process in a shell or\nnot. By default, shell is not used, which means that shell specific commands,\nlike ``copy`` and ``dir`` on Windows, are not available. You can, however,\nrun shell scripts and batch files without using a shell.\n\nGiving the ``shell`` argument any non-false value, such as ``shell=True``,\nchanges the program to be executed in a shell. It allows using the shell\ncapabilities, but can also make the process invocation operating system\ndependent. Having a shell between the actually started process and this\nlibrary can also interfere communication with the process such as stopping\nit and reading its outputs. Because of these problems, it is recommended\nto use the shell only when absolutely necessary.\n\nWhen using a shell it is possible to give the whole command to execute\nas a single string. See `Specifying command and arguments` section for\nexamples and more details in general.\n\n== Current working directory ==\n\nBy default, the child process will be executed in the same directory\nas the parent process, the process running Robot Framework, is executed. This\ncan be changed by giving an alternative location using the ``cwd`` argument.\nForward slashes in the given path are automatically converted to\nbackslashes on Windows.\n\n`Standard output and error streams`, when redirected to files,\nare also relative to the current working directory possibly set using\nthe ``cwd`` argument.\n\nExample:\n| `Run Process` | prog.exe | cwd=${ROOT}/directory | stdout=stdout.txt |\n\n== Environment variables ==\n\nThe child process will get a copy of the parent process's environment\nvariables by default. The ``env`` argument can be used to give the\nchild a custom environment as a Python dictionary. If there is a need\nto specify only certain environment variable, it is possible to use the\n``env:<name>=<value>`` format to set or override only that named variables.\nIt is also possible to use these two approaches together.\n\nExamples:\n| `Run Process` | program | env=${environ} |\n| `Run Process` | program | env:http_proxy=10.144.1.10:8080 | env:PATH=%{PATH}${:}${PROGDIR} |\n| `Run Process` | program | env=${environ} | env:EXTRA=value |\n\n== Standard output and error streams ==\n\nBy default, processes are run so that their standard output and standard\nerror streams are kept in the memory. This typically works fine, but there\ncan be problems if the amount of output is large or unlimited. Prior to\nRobot Framework 7.3 the limit was smaller than nowadays and reaching it\ncaused a deadlock.\n\nTo avoid the above-mentioned problems, it is possible to use ``stdout``\nand ``stderr`` arguments to specify files on the file system where to\nredirect the output. This can also be useful if other processes or\nother keywords need to read or manipulate the output somehow.\n\nGiven ``stdout`` and ``stderr`` paths are relative to the `current working\ndirectory`. Forward slashes in the given paths are automatically converted\nto backslashes on Windows.\n\nRegardless are outputs redirected to files or not, they are accessible\nthrough the `result object` returned when the process ends. Commands are\nexpected to write outputs using the console encoding, but `output encoding`\ncan be configured using the ``output_encoding`` argument if needed.\n\nAs a special feature, it is possible to redirect the standard error to\nthe standard output by using ``stderr=STDOUT``.\n\nIf you are not interested in output at all, you can explicitly ignore it by\nusing a special value ``DEVNULL`` both with ``stdout`` and ``stderr``. For\nexample, ``stdout=DEVNULL`` is the same as redirecting output on console\nwith ``> /dev/null`` on UNIX-like operating systems or ``> NUL`` on Windows.\nThis way even a huge amount of output cannot cause problems, but naturally\nthe output is not available after execution either.\n\nExamples:\n| ${result} = | `Run Process` | program | stdout=${TEMPDIR}/stdout.txt | stderr=${TEMPDIR}/stderr.txt |\n| `Log Many`  | stdout: ${result.stdout} | stderr: ${result.stderr} |\n| ${result} = | `Run Process` | program | stderr=STDOUT |\n| `Log`       | all output: ${result.stdout} |\n| ${result} = | `Run Process` | program | stdout=DEVNULL | stderr=DEVNULL |\n\nNote that the created output files are not automatically removed after\nexecution. The user is responsible to remove them if needed.\n\n== Standard input stream ==\n\nThe ``stdin`` argument makes it possible to pass information to the standard\ninput stream of the started process. How its value is interpreted is\nexplained in the table below.\n\n| = Value =        | = Explanation = |\n| String ``NONE``  | Inherit stdin from the parent process. This is the default. |\n| String ``PIPE``  | Make stdin a pipe that can be written to. |\n| Path to a file   | Open the specified file and use it as the stdin. |\n| Any other string | Create a temporary file with the text as its content and use it as the stdin. |\n| Any non-string value | Used as-is. Could be a file descriptor, stdout of another process, etc. |\n\nValues ``PIPE`` and ``NONE`` are case-insensitive and internally mapped to\n``subprocess.PIPE`` and ``None``, respectively, when calling\n[https://docs.python.org/3/library/subprocess.html#subprocess.Popen|subprocess.Popen].\n\nExamples:\n| `Run Process` | command | stdin=PIPE |\n| `Run Process` | command | stdin=${CURDIR}/stdin.txt |\n| `Run Process` | command | stdin=Stdin as text. |\n\nThe support to configure ``stdin`` is new in Robot Framework 4.1.2. Its default\nvalue used to be ``PIPE`` until Robot Framework 7.0.\n\n== Output encoding ==\n\nExecuted commands are, by default, expected to write outputs to the\n`standard output and error streams` using the encoding used by the\nsystem console. If the command uses some other encoding, that can be\nconfigured using the ``output_encoding`` argument. This is especially\nuseful on Windows where the console uses a different encoding than rest\nof the system, and many commands use the general system encoding instead\nof the console encoding.\n\nThe value used with the ``output_encoding`` argument must be a valid\nencoding and must match the encoding actually used by the command. As a\nconvenience, it is possible to use strings ``CONSOLE`` and ``SYSTEM``\nto specify that the console or system encoding is used, respectively.\nIf produced outputs use different encoding then configured, values got\nthrough the `result object` will be invalid.\n\nExamples:\n| `Start Process` | program | output_encoding=UTF-8 |\n| `Run Process`   | program | stdout=${path} | output_encoding=SYSTEM |\n\n== Alias ==\n\nA custom name given to the process that can be used when selecting the\n`active process`.\n\nExamples:\n| `Start Process` | program | alias=example |\n| `Run Process`   | python  | -c | print('hello') | alias=hello |\n\n= Active process =\n\nThe library keeps record which of the started processes is currently active.\nBy default, it is the latest process started with `Start Process`,\nbut `Switch Process` can be used to activate a different process. Using\n`Run Process` does not affect the active process.\n\nThe keywords that operate on started processes will use the active process\nby default, but it is possible to explicitly select a different process\nusing the ``handle`` argument. The handle can be an ``alias`` explicitly\ngiven to `Start Process` or the process object returned by it.\n\n= Result object =\n\n`Run Process`, `Wait For Process` and `Terminate Process` keywords return a\nresult object that contains information about the process execution as its\nattributes. The same result object, or some of its attributes, can also\nbe get using `Get Process Result` keyword. Attributes available in the\nobject are documented in the table below.\n\n| = Attribute = |             = Explanation =               |\n| rc            | Return code of the process as an integer. |\n| stdout        | Contents of the standard output stream.   |\n| stderr        | Contents of the standard error stream.    |\n| stdout_path   | Path where stdout was redirected or ``None`` if not redirected. |\n| stderr_path   | Path where stderr was redirected or ``None`` if not redirected. |\n\nExample:\n| ${result} =            | `Run Process`         | program               |\n| `Should Be Equal     ` | ${result.rc}          | 0 | type=int          |\n| `Should Match`         | ${result.stdout}      | Some t?xt*            |\n| `Should Be Empty`      | ${result.stderr}      |                       |\n| ${stdout} =            | `Get File`            | ${result.stdout_path} |\n| `Should Be Equal`      | ${stdout}             | ${result.stdout}      |\n| `File Should Be Empty` | ${result.stderr_path} |                       |\n\nNotice that in ``stdout`` and ``stderr`` content possible trailing newline\nis removed and ``\\r\\n`` converted to ``\\n`` automatically. If you\nneed to see the original process output, redirect it to a file using\n`process configuration` and read it from there.\n\n= Example =\n\n| ***** Settings *****\n| Library           Process\n| Suite Teardown    `Terminate All Processes`    kill=True\n|\n| ***** Test Cases *****\n| Example\n|     `Start Process`    program    arg1    arg2    alias=First\n|     ${handle} =    `Start Process`    command.sh arg | command2.sh    shell=True    cwd=/path\n|     ${result} =    `Run Process`    ${CURDIR}/script.py\n|     `Should Not Contain`    ${result.stdout}    FAIL\n|     `Terminate Process`    ${handle}\n|     ${result} =    `Wait For Process`    First\n|     `Should Be Equal As Integers`    ${result.rc}    0",
-  "version": "7.4.2",
-  "generated": "2026-03-03T16:39:18+00:00",
+  "doc": "Robot Framework library for running processes.\n\nThe library has following main usages:\n\n- Running processes in the system and waiting for their completion using\n  the [Run Process] keyword.\n- Starting processes on background using the [Start Process] keyword.\n- Waiting started process to complete using [Wait For Process] or\n  stopping them with [Terminate Process] or [Terminate All Processes].\n\nThis library provides various benefits over using `Run` and other similar\nkeywords in the [OperatingSystem] library:\n\n- Better [process configuration].\n- Convenient [result object] with all result information (`rc`, `stdout`,\n  `stderr`).\n- Support for background processes, process termination, sending signals\n  and so on.\n\nThis library uses Python's standard [subprocess] module internally.\n\n### Table of contents\n\n%TOC%\n\n# Specifying command and arguments\n\nBoth [Run Process] and [Start Process] accept the command to execute and\nall arguments passed to the command as separate arguments. This makes usage\nconvenient and also allows these keywords to automatically escape possible\nspaces and other special characters in commands and arguments. Notice that\nif a command accepts options that themselves accept values, these options\nand their values must be given as separate arguments.\n\nWhen [running processes in shell], it is also possible to give the whole\ncommand to execute as a single string. The command can then contain\nmultiple commands to be run together. When using this approach, the caller\nis responsible on escaping.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nCommand and arguments separately\n    Run Process    python    -c    print(\"Hello!\")\n    Run Process    ${tools}/prog.py    argument    second arg with spaces\n\nCommand and arguments as single string\n    Run Process    prog.py \"one arg\" && tool.sh    shell=True    cwd=${tools}\n```\n\nPossible non-string arguments are converted to strings automatically.\n\n# Process configuration\n\n[Run Process] and [Start Process] keywords can be configured using\noptional configuration arguments. These arguments must be given\nafter other arguments passed to these keywords and must use the\n`name=value` syntax. Available configuration arguments are\nlisted below and discussed further in the subsequent sections.\n\n|       Name      |                    Explanation                           |\n|-----------------|----------------------------------------------------------|\n| shell           | Whether to run the command in a shell or not.            |\n| cwd             | Directory where to run the command.                      |\n| env             | Environment variables as a dictionary.                   |\n| **env_extra     | Environment variables using `env:<name>=<value>` syntax. |\n| stdout          | Path to a file where to write standard output.           |\n| stderr          | Path to a file where to write standard error.            |\n| stdin           | Configure process standard input. New in RF 4.1.2.       |\n| output_encoding | Encoding to use when reading command outputs.            |\n| alias           | A custom name given to the process.                      |\n\nNote that possible equal signs in other arguments passed to the [Run Process]\nand [Start Process] keywords must be escaped with a backslash like `name\\=value`.\nSee the [Run Process] keyword for an example.\n\n## Running processes in shell\n\nThe `shell` argument specifies whether to run the process in a shell or\nnot. By default, shell is not used, which means that shell specific commands,\nlike `copy` and `dir` on Windows, are not available. You can, however,\nrun shell scripts and batch files without using a shell.\n\nUsing `shell=True` changes the program to be executed in a shell. It allows\nusing the shell capabilities, but can also make the process invocation\noperating system dependent. Having a shell between the actually started\nprocess and this library can also interfere communication with the process\nsuch as stopping it and reading its outputs. Because of these problems,\nit is recommended to use the shell only when absolutely necessary.\n\nWhen using a shell it is possible to give the whole command to execute\nas a single string. See the [Specifying command and arguments] section for\nexamples and more details in general.\n\n## Current working directory\n\nBy default, the child process will be executed in the same directory\nas the parent process, the process running Robot Framework, is executed. This\ncan be changed by giving an alternative location using the `cwd` argument.\nForward slashes in the given path are automatically converted to\nbackslashes on Windows.\n\nWhen [standard output and error streams] are redirected to files,\nfile paths are relative to the current working directory as well.\n\nExample:\n\n```robotframework\n*** Test Cases ***\nCurrent working directory\n    Run Process    prog.exe    cwd=${ROOT}/directory    stdout=stdout.txt\n```\n\n## Environment variables\n\nThe child process will get a copy of the parent process's environment\nvariables by default. The `env` argument can be used to give the\nchild a custom environment as a Python dictionary. If there is a need\nto specify only certain environment variable, it is possible to use the\n`env:<name>=<value>` format to set or override only that named variables.\nIt is also possible to use these two approaches together.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nEnvironment variables\n    Run Process    program    env=${environ}\n    Run Process    program    env:http_proxy=10.144.1.10:8080    env:PATH=%{PATH}${:}${PROGDIR}\n    Run Process    program    env=${environ}    env:EXTRA=value\n```\n\n## Standard output and error streams\n\nBy default, processes are run so that their standard output and standard\nerror streams are kept in the memory. This typically works fine, but there\ncan be problems if the amount of output is large or unlimited. Prior to\nRobot Framework 7.3, the limit was smaller than nowadays and reaching it\ncaused a deadlock.\n\nTo avoid the above-mentioned problems, it is possible to use `stdout`\nand `stderr` arguments to specify files on the file system where to\nredirect the output. This can also be useful if other processes or\nother keywords need to read or manipulate the output somehow.\n\nGiven `stdout` and `stderr` paths are relative to the [current working directory].\nForward slashes in the given paths are automatically converted to backslashes\non Windows.\n\nRegardless are outputs redirected to files or not, they are accessible\nthrough the [result object] returned when the process ends. Commands are\nexpected to write outputs using the console encoding, but [output encoding]\ncan be configured using the `output_encoding` argument if needed.\n\nAs a special feature, it is possible to redirect the standard error to\nthe standard output by using `stderr=STDOUT`.\n\nIf you are not interested in outputs at all, you can explicitly ignore it by\nusing a special value `DEVNULL` both with `stdout` and `stderr`. For\nexample, `stdout=DEVNULL` is the same as redirecting output on console\nwith `> /dev/null` on UNIX-like operating systems or `> NUL` on Windows.\nThis way even a huge amount of output cannot cause problems, but naturally\nthe output is not available after execution either.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nRedirect stdout and stderr\n    ${result} =    Run Process    program    stdout=${TMP}/stdout.txt    stderr=${TMP}/stderr.txt\n\nMerge stderr to stdout\n    ${result} =    Run Process    program    stderr=STDOUT\n\nDiscard output\n    ${result} =    Run Process    program    stdout=DEVNULL    stderr=DEVNULL\n```\n\nNote that the created output files are not automatically removed after\nexecution. The user is responsible to remove them if needed.\n\n## Standard input stream\n\nThe `stdin` argument makes it possible to pass information to the standard\ninput stream of the started process. How its value is interpreted is\nexplained in the table below.\n\n|       Value      |                     Explanation                             |\n|------------------|-------------------------------------------------------------|\n| String `NONE`    | Inherit stdin from the parent process. This is the default. |\n| String `PIPE`    | Make stdin a pipe that can be written to.                   |\n| Path to a file   | Open the specified file and use it as the stdin.            |\n| Any other string | Write the text to a temporary file and use it as the stdin. |\n| Any other value  | Used as-is. Could be a file descriptor, stdout of another process, etc. |\n\nValues `PIPE` and `NONE` are case-insensitive and internally mapped to\n`subprocess.PIPE` and `None`, respectively.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nStdin as file\n    Run Process    command    stdin=${CURDIR}/stdin.txt\n\nStdin as text\n    Run Process    command    stdin=Stdin as text.\n\nStdin from other process\n    ${process} =    Start Process    command1\n    Run Process    command2    stdin=${process.stdout}\n```\n\nThe [Examples] section has an executable example where output of a process\nis passed to another using `stdin`.\n\nThe support to configure `stdin` is new in Robot Framework 4.1.2. Its default\nvalue used to be `PIPE` until Robot Framework 7.0.\n\n## Output encoding\n\nExecuted commands are, by default, expected to write outputs to the\n[standard output and error streams] using the encoding used by the\nsystem console. If the command uses some other encoding, that can be\nconfigured using the `output_encoding` argument. This is especially\nuseful on Windows where the console can use a different encoding than rest\nof the system, and many commands use the general system encoding instead\nof the console encoding.\n\nThe value used with the `output_encoding` argument must be a valid\nencoding and must match the encoding actually used by the command. As a\nconvenience, it is possible to use strings `CONSOLE` and `SYSTEM`\nto specify that the console or system encoding is used, respectively.\nIf produced outputs use different encoding then configured, values got\nthrough the [result object] will be invalid.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nOutput encoding\n    Start Process    program    output_encoding=UTF-8\n    Run Process      program    stdout=${path}    output_encoding=SYSTEM\n```\n\n## Alias\n\nA custom name given to the process that can be used when selecting the\n[active process].\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nAlias\n    Start Process    program    alias=MyProgram\n    # Later\n    Wait For Process    MyProgram\n```\n\n# Active process\n\nThe library keeps record which of the started processes is currently active.\nBy default, it is the latest process started with [Start Process],\nbut [Switch Process] can be used to activate a different process. Using\n[Run Process] does not affect the active process.\n\nThe keywords that operate on started processes will use the active process\nby default, but it is possible to explicitly select a different process\nusing the `handle` argument. The handle can be an [alias] explicitly\ngiven to [Start Process] or the process object returned by it.\n\n# Result object\n\n[Run Process], [Wait For Process] and [Terminate Process] keywords return a\nresult object that contains information about the process execution as its\nattributes. The same result object, or some of its attributes, can also\nbe get using [Get Process Result] keyword. Attributes available in the\nobject are documented in the table below.\n\n|  Attribute  |                       Explanation                             |\n|-------------|---------------------------------------------------------------|\n| rc          | Return code of the process as an integer.                     |\n| stdout      | Contents of the standard output stream.                       |\n| stderr      | Contents of the standard error stream.                        |\n| stdout_path | Path where stdout was redirected or `None` if not redirected. |\n| stderr_path | Path where stderr was redirected or `None` if not redirected. |\n\nExample:\n\n```robotframework\n*** Test Cases ***\nResult object\n    ${result} =    Run Process    python    -c    print(\"Hello!\")\n    Should Be Equal    ${result.rc}    0    type=int\n    Should Be Equal    ${result.stdout}    Hello!\n    Should Be Empty    ${result.stderr}\n```\n\nNotice that in `stdout` and `stderr` content possible trailing newline\nis removed and `\\r\\n` converted to `\\n` automatically. If you need to see\nthe original process output, redirect it to a file using\n[process configuration] and read it from there.\n\n# Examples\n\nThese examples can be executed locally.\n\n```robotframework\n*** Settings ***\nLibrary           Process\nSuite Teardown    Terminate All Processes    kill=True\n\n*** Test Cases ***\nSimple execution\n    ${result} =    Run Process    python    -c    print(\"Hello, world!\")\n    Should Be Equal    ${result.stdout}    Hello, world!\n\nBackground processes and process configuration\n    ${process} =    Start Process    python    -c    print(\"Hello!\")\n    Start Process\n    ...    python -c \"import time; time.sleep(3)\" && python -c \"print('Hi!')\"\n    ...    stdout=${CURDIR}/stdout.txt\n    ...    stderr=STDOUT\n    ...    shell=True\n    ...    alias=Slow\n    ${result1} =    Run Process    python    -c    print(\"Moi!\")\n    Should Be Equal    ${result1.stdout}    Moi!\n    ${result2} =    Wait For Process    ${process}\n    Should Be Equal    ${result2.stdout}    Hello!\n    ${result3} =    Wait For Process    Slow\n    Should Be Equal    ${result3.stdout}    Hi!\n\nPipeline\n    ${process} =    Start Process    python    -c    print(\"Hello, world!\")\n    ${result} =    Run Process\n    ...    python    -c    import sys; print(sys.stdin.read().upper().strip())\n    ...    stdin=${process.stdout}\n    Wait For Process    ${process}\n    Should Be Equal    ${result.stdout}    HELLO, WORLD!\n```\n\n[OperatingSystem]: https://robotframework.org/robotframework/latest/libraries/OperatingSystem.html\n[subprocess]: https://docs.python.org/library/subprocess.html\n[subprocess.Popen]: https://docs.python.org/3/library/subprocess.html#popen-objects",
+  "version": "7.5",
+  "generated": "2026-09-14T13:26:10+00:00",
   "type": "LIBRARY",
   "scope": "GLOBAL",
-  "docFormat": "ROBOT",
+  "docFormat": "MARKDOWN",
   "source": "/home/peke/Devel/robotframework/src/robot/libraries/Process.py",
-  "lineno": 349,
+  "lineno": 363,
   "tags": [],
   "inits": [],
   "keywords": [
     {
       "name": "Get Process Id",
+      "doc": "Returns the process ID (pid) of the process as an integer.\n\nStarting from Robot Framework 5.0, it is also possible to directly access\nthe `pid` attribute of the [subprocess.Popen] object returned by the\n[Start Process] keyword like `${process.pid}`.",
+      "shortdoc": "Returns the process ID (pid) of the process as an integer.",
       "args": [
         {
           "name": "handle",
+          "doc": "Process handle or alias. Uses the current [active process]\nby default.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -25,22 +28,26 @@
                 "name": "Popen",
                 "typedoc": "Popen",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -52,19 +59,23 @@
         "name": "int",
         "typedoc": "integer",
         "nested": [],
-        "union": false
+        "union": false,
+        "alias": null
       },
-      "doc": "Returns the process ID (pid) of the process as an integer.\n\nIf ``handle`` is not given, uses the current `active process`.\n\nStarting from Robot Framework 5.0, it is also possible to directly access\nthe ``pid`` attribute of the ``subprocess.Popen`` object returned by\n`Start Process` like ``${process.pid}``.",
-      "shortdoc": "Returns the process ID (pid) of the process as an integer.",
+      "returnDoc": "Process ID as an integer.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Process.py",
-      "lineno": 1071
+      "lineno": 1226
     },
     {
       "name": "Get Process Object",
+      "doc": "Return the underlying `subprocess.Popen` object.\n\nStarting from Robot Framework 5.0, the [Start Process] keyword returns\nthe created [subprocess.Popen] object directly. That makes this keyword\nmostly redundant.",
+      "shortdoc": "Return the underlying `subprocess.Popen` object.",
       "args": [
         {
           "name": "handle",
+          "doc": "Process handle or alias. Uses the current [active process]\nby default.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -73,22 +84,26 @@
                 "name": "Popen",
                 "typedoc": "Popen",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -100,19 +115,23 @@
         "name": "Popen",
         "typedoc": "Popen",
         "nested": [],
-        "union": false
+        "union": false,
+        "alias": null
       },
-      "doc": "Return the underlying ``subprocess.Popen`` object.\n\nIf ``handle`` is not given, uses the current `active process`.\n\nStarting from Robot Framework 5.0, `Start Process` returns the created\n``subprocess.Popen`` object, not a generic handle, making this keyword\nmostly redundant.",
-      "shortdoc": "Return the underlying ``subprocess.Popen`` object.",
+      "returnDoc": "The underlying [subprocess.Popen] object.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Process.py",
-      "lineno": 1082
+      "lineno": 1242
     },
     {
       "name": "Get Process Result",
+      "doc": "Returns the specified [result object] or some of its attributes.\n\nThe given `handle` specifies the process whose results should be\nreturned. If no `handle` is given, results of the current [active process]\nare returned. In either case, the process must have been finishes before\nthis keyword can be used. In practice this means that processes started\nwith [Start Process] must be finished either with [Wait For Process] or\n[Terminate Process] before using this keyword.\n\nIf no other arguments than the optional `handle` are given, a whole\n[result object] is returned. If one or more of the other arguments\nare given any true value, only the specified attributes of the\n[result object] are returned. These attributes are always returned\nin the same order as arguments are specified in the keyword signature.\n\nAlthough getting results of a previously executed process can be handy\nin general, the main use case for this keyword is returning results\nover the remote library interface. The remote interface does not\nsupport returning the whole result object, but individual attributes\ncan be returned without problems.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nGet process result\n    Run Process    python    -c    print('Hello, world!')    alias=myproc\n    # Get result object\n    ${result} =    Get Process Result    myproc\n    Should Be Equal    ${result.rc}       0    type=int\n    Should Be Equal    ${result.stdout}   Hello, world!\n    # Get one attribute\n    ${stdout} =    Get Process Result    myproc    stdout=Trye\n    Should Be Equal    ${stdout}    Hello, world!\n    # Get multiple attributes\n    ${stdout}    ${stderr} =    Get Process Result    myproc    rc=True    stderr=True\n    Should Be Equal    ${rc}        0    type=int\n    Should Be Equal    ${stdout}    Hello, world!\n```",
+      "shortdoc": "Returns the specified [result object] or some of its attributes.",
       "args": [
         {
           "name": "handle",
+          "doc": "Process handle or alias. Uses the current [active process]\nby default.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -121,22 +140,26 @@
                 "name": "Popen",
                 "typedoc": "Popen",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -145,11 +168,13 @@
         },
         {
           "name": "rc",
+          "doc": "If true, return the return code.",
           "type": {
             "name": "bool",
             "typedoc": "boolean",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
@@ -158,11 +183,13 @@
         },
         {
           "name": "stdout",
+          "doc": "If true, return the standard output.",
           "type": {
             "name": "bool",
             "typedoc": "boolean",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
@@ -171,11 +198,13 @@
         },
         {
           "name": "stderr",
+          "doc": "If true, return the standard error.",
           "type": {
             "name": "bool",
             "typedoc": "boolean",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
@@ -184,11 +213,13 @@
         },
         {
           "name": "stdout_path",
+          "doc": "If true, return the stdout path.",
           "type": {
             "name": "bool",
             "typedoc": "boolean",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
@@ -197,11 +228,13 @@
         },
         {
           "name": "stderr_path",
+          "doc": "If true, return the stderr path.",
           "type": {
             "name": "bool",
             "typedoc": "boolean",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
@@ -210,17 +243,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Returns the specified `result object` or some of its attributes.\n\nThe given ``handle`` specifies the process whose results should be\nreturned. If no ``handle`` is given, results of the current `active\nprocess` are returned. In either case, the process must have been\nfinishes before this keyword can be used. In practice this means\nthat processes started with `Start Process` must be finished either\nwith `Wait For Process` or `Terminate Process` before using this\nkeyword.\n\nIf no other arguments than the optional ``handle`` are given, a whole\n`result object` is returned. If one or more of the other arguments\nare given any true value, only the specified attributes of the\n`result object` are returned. These attributes are always returned\nin the same order as arguments are specified in the keyword signature.\n\nExamples:\n| Run Process           | python             | -c            | print('Hello, world!') | alias=myproc |\n| # Get result object   |                    |               |\n| ${result} =           | Get Process Result | myproc        |\n| Should Be Equal       | ${result.rc}       | ${0}          |\n| Should Be Equal       | ${result.stdout}   | Hello, world! |\n| Should Be Empty       | ${result.stderr}   |               |\n| # Get one attribute   |                    |               |\n| ${stdout} =           | Get Process Result | myproc        | stdout=true |\n| Should Be Equal       | ${stdout}          | Hello, world! |\n| # Multiple attributes |                    |               |\n| ${stdout}             | ${stderr} =        | Get Process Result |  myproc | stdout=yes | stderr=yes |\n| Should Be Equal       | ${stdout}          | Hello, world! |\n| Should Be Empty       | ${stderr}          |               |\n\nAlthough getting results of a previously executed process can be handy\nin general, the main use case for this keyword is returning results\nover the remote library interface. The remote interface does not\nsupport returning the whole result object, but individual attributes\ncan be returned without problems.",
-      "shortdoc": "Returns the specified `result object` or some of its attributes.",
+      "returnDoc": "A result object, a single attribute, or a tuple of attributes\ndepending on which arguments are given.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Process.py",
-      "lineno": 1093
+      "lineno": 1258
     },
     {
       "name": "Is Process Running",
+      "doc": "Checks is the process running or not.",
+      "shortdoc": "Checks is the process running or not.",
       "args": [
         {
           "name": "handle",
+          "doc": "Process handle or alias. Uses the current [active process]\nby default.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -229,22 +265,26 @@
                 "name": "Popen",
                 "typedoc": "Popen",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -256,19 +296,23 @@
         "name": "bool",
         "typedoc": "boolean",
         "nested": [],
-        "union": false
+        "union": false,
+        "alias": null
       },
-      "doc": "Checks is the process running or not.\n\nIf ``handle`` is not given, uses the current `active process`.\n\nReturns ``True`` if the process is still running and ``False`` otherwise.",
-      "shortdoc": "Checks is the process running or not.",
+      "returnDoc": "`True` if the process is still running and `False` otherwise.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Process.py",
-      "lineno": 790
+      "lineno": 909
     },
     {
       "name": "Join Command Line",
+      "doc": "Joins arguments into one command line string.\n\nIn resulting command line string arguments are delimited with a space,\narguments containing spaces are surrounded with quotes, and possible\nquotes are escaped with a backslash.\n\nCommand to join can be given as individual arguments or as a list.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nCommand as individual arguments\n    ${cmd} =    Join Command Line    --option    value with spaces\n    Should Be Equal    ${cmd}    --option \"value with spaces\"\n\nCommand as list\n    VAR    @{arguments}    --option    value with spaces\n    ${cmd} =    Join Command Line    ${arguments}\n    Should Be Equal    ${cmd}    --option \"value with spaces\"\n```",
+      "shortdoc": "Joins arguments into one command line string.",
       "args": [
         {
           "name": "command",
+          "doc": "Arguments to join, either as individual strings or as a list.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -281,19 +325,23 @@
                     "name": "str",
                     "typedoc": "string",
                     "nested": [],
-                    "union": false
+                    "union": false,
+                    "alias": null
                   }
                 ],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
@@ -302,17 +350,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Joins arguments into one command line string.\n\nIn resulting command line string arguments are delimited with a space,\narguments containing spaces are surrounded with quotes, and possible\nquotes are escaped with a backslash.\n\nCommand to join can be given as individual arguments or as a list.\n\nGiving command as individual arguments:\n| ${cmd} =        | Join Command Line | --option | value with spaces |\n| Should Be Equal | ${cmd}            | --option \"value with spaces\" |\n\nGiving command as a list:\n| VAR             | @{arguments}      | --option | value with spaces |\n| ${cmd} =        | Join Command Line | ${arguments}                 |\n| Should Be Equal | ${cmd}            | --option \"value with spaces\" |",
-      "shortdoc": "Joins arguments into one command line string.",
+      "returnDoc": "Joined command line string.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Process.py",
-      "lineno": 1202
+      "lineno": 1403
     },
     {
       "name": "Process Should Be Running",
+      "doc": "Verifies that the process is running.",
+      "shortdoc": "Verifies that the process is running.",
       "args": [
         {
           "name": "handle",
+          "doc": "Process handle or alias. Uses the current [active process]\nby default.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -321,22 +372,26 @@
                 "name": "Popen",
                 "typedoc": "Popen",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -345,11 +400,13 @@
         },
         {
           "name": "error_message",
+          "doc": "Message used if verification fails.",
           "type": {
             "name": "str",
             "typedoc": "string",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "Process is not running.",
           "kind": "POSITIONAL_OR_NAMED",
@@ -358,17 +415,22 @@
         }
       ],
       "returnType": null,
-      "doc": "Verifies that the process is running.\n\nIf ``handle`` is not given, uses the current `active process`.\n\nFails if the process has stopped.",
-      "shortdoc": "Verifies that the process is running.",
+      "returnDoc": "",
+      "raises": {
+        "AssertionError": "If the process has stopped."
+      },
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Process.py",
-      "lineno": 799
+      "lineno": 921
     },
     {
       "name": "Process Should Be Stopped",
+      "doc": "Verifies that the process is not running.",
+      "shortdoc": "Verifies that the process is not running.",
       "args": [
         {
           "name": "handle",
+          "doc": "Process handle or alias. Uses the current [active process]\nby default.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -377,22 +439,26 @@
                 "name": "Popen",
                 "typedoc": "Popen",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -401,11 +467,13 @@
         },
         {
           "name": "error_message",
+          "doc": "Message used if verification fails.",
           "type": {
             "name": "str",
             "typedoc": "string",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "Process is running.",
           "kind": "POSITIONAL_OR_NAMED",
@@ -414,22 +482,28 @@
         }
       ],
       "returnType": null,
-      "doc": "Verifies that the process is not running.\n\nIf ``handle`` is not given, uses the current `active process`.\n\nFails if the process is still running.",
-      "shortdoc": "Verifies that the process is not running.",
+      "returnDoc": "",
+      "raises": {
+        "AssertionError": "If the process is still running."
+      },
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Process.py",
-      "lineno": 813
+      "lineno": 939
     },
     {
       "name": "Run Process",
+      "doc": "Runs a process and waits for it to complete.\n\n`command` and `arguments` specify the command to execute and arguments\npassed to it. See the [Specifying command and arguments] section for\nmore details.\n\nThe started process can be configured using the `cwd`, `shell`, `stdout`,\n`stderr`, `stdin`, `output_encoding`, `env`, `env_extra` and `alias`\nparameters that are documented in the [Process configuration] section.\n\nConfiguration related to waiting for processes consists of `timeout`\nand `on_timeout` parameters that have same semantics than with the\n[Wait For Process] keyword.\n\nProcess outputs are, by default, written into in-memory buffers.\nThis typically works fine, but there can be problems if the amount of\noutput is large or unlimited. To avoid such problems, outputs can be\nredirected to files using the `stdout` and `stderr` configuration\nparameters. See the [Standard output and error streams] section for\nmore information.\n\nNote that possible equal signs in `command` and `arguments` must\nbe escaped with a backslash (e.g. `name\\=value`).\n\nThis keyword does not change the [active process].\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nRun process\n    ${result} =    Run Process    python    -c    print(\"Hello, world!\")\n    Should Be Equal    ${result.stdout}    Hello, world!\n    ${result} =    Run Process    ${command}    stdout=${CURDIR}/stdout.txt    stderr=STDOUT\n    ${result} =    Run Process    ${command}    timeout=1 minute    on_timeout=continue\n    ${result} =    Run Process    java -Dname\\=value Example    shell=True    cwd=${EXAMPLE}\n```",
+      "shortdoc": "Runs a process and waits for it to complete.",
       "args": [
         {
           "name": "command",
+          "doc": "Command to execute.",
           "type": {
             "name": "str",
             "typedoc": "string",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -438,6 +512,7 @@
         },
         {
           "name": "arguments",
+          "doc": "Arguments passed to the command.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -446,16 +521,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "Secret",
                 "typedoc": "Secret",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
@@ -464,6 +542,7 @@
         },
         {
           "name": "cwd",
+          "doc": "Working directory of the process.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -472,16 +551,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "NAMED_ONLY",
@@ -490,11 +572,13 @@
         },
         {
           "name": "shell",
+          "doc": "Whether to run the command in a shell.",
           "type": {
             "name": "bool",
             "typedoc": "boolean",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "False",
           "kind": "NAMED_ONLY",
@@ -503,6 +587,7 @@
         },
         {
           "name": "stdout",
+          "doc": "Path to file for standard output.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -511,16 +596,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "NAMED_ONLY",
@@ -529,6 +617,7 @@
         },
         {
           "name": "stderr",
+          "doc": "Path to file for standard error.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -537,16 +626,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "NAMED_ONLY",
@@ -555,6 +647,7 @@
         },
         {
           "name": "stdin",
+          "doc": "Process standard input configuration.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -563,40 +656,47 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "Secret",
                 "typedoc": "Secret",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "Path",
                 "typedoc": "Path",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "IOBase",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "NAMED_ONLY",
@@ -605,11 +705,13 @@
         },
         {
           "name": "output_encoding",
+          "doc": "Encoding for reading command outputs.",
           "type": {
             "name": "str",
             "typedoc": "string",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "CONSOLE",
           "kind": "NAMED_ONLY",
@@ -618,6 +720,7 @@
         },
         {
           "name": "alias",
+          "doc": "Custom name for the process.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -626,16 +729,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "NAMED_ONLY",
@@ -644,6 +750,7 @@
         },
         {
           "name": "timeout",
+          "doc": "Maximum time to wait for the process.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -652,16 +759,19 @@
                 "name": "timedelta",
                 "typedoc": "timedelta",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "NAMED_ONLY",
@@ -670,6 +780,7 @@
         },
         {
           "name": "on_timeout",
+          "doc": "Action when timeout occurs.",
           "type": {
             "name": "Literal",
             "typedoc": "Literal",
@@ -678,22 +789,26 @@
                 "name": "'continue'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "'terminate'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "'kill'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "terminate",
           "kind": "NAMED_ONLY",
@@ -702,6 +817,7 @@
         },
         {
           "name": "env",
+          "doc": "Environment variables as a Python dictionary.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -714,7 +830,8 @@
                     "name": "str",
                     "typedoc": "string",
                     "nested": [],
-                    "union": false
+                    "union": false,
+                    "alias": null
                   },
                   {
                     "name": "Union",
@@ -724,28 +841,34 @@
                         "name": "str",
                         "typedoc": "string",
                         "nested": [],
-                        "union": false
+                        "union": false,
+                        "alias": null
                       },
                       {
                         "name": "Secret",
                         "typedoc": "Secret",
                         "nested": [],
-                        "union": false
+                        "union": false,
+                        "alias": null
                       }
                     ],
-                    "union": true
+                    "union": true,
+                    "alias": null
                   }
                 ],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "NAMED_ONLY",
@@ -754,6 +877,7 @@
         },
         {
           "name": "env_extra",
+          "doc": "Override named environment variables using\n`env:<name>=<value>` syntax.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -762,16 +886,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "Secret",
                 "typedoc": "Secret",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "VAR_NAMED",
@@ -780,17 +907,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Runs a process and waits for it to complete.\n\n``command`` and ``arguments`` specify the command to execute and\narguments passed to it. See `Specifying command and arguments` for\nmore details.\n\nThe started process can be configured using ``cwd``, ``shell``, ``stdout``,\n``stderr``, ``stdin``, ``output_encoding``, ``alias``, ``env`` and\n``env_extra`` parameters that are documented in the `Process configuration`\nsection.\n\nConfiguration related to waiting for processes consists of ``timeout``\nand ``on_timeout`` parameters that have same semantics than with the\n`Wait For Process` keyword.\n\nProcess outputs are, by default, written into in-memory buffers.\nThis typically works fine, but there can be problems if the amount of\noutput is large or unlimited. To avoid such problems, outputs can be\nredirected to files using the ``stdout`` and ``stderr`` configuration\nparameters. For more information see the `Standard output and error streams`\nsection.\n\nReturns a `result object` containing information about the execution.\n\nNote that possible equal signs in ``command`` and ``arguments`` must\nbe escaped with a backslash (e.g. ``name\\=value``).\n\nExamples:\n| ${result} = | Run Process | python | -c | print('Hello, world!') |\n| Should Be Equal | ${result.stdout} | Hello, world! |\n| ${result} = | Run Process | ${command} | stdout=${CURDIR}/stdout.txt | stderr=STDOUT |\n| ${result} = | Run Process | ${command} | timeout=1min | on_timeout=continue |\n| ${result} = | Run Process | java -Dname\\=value Example | shell=True | cwd=${EXAMPLE} |\n\nThis keyword does not change the `active process`.",
-      "shortdoc": "Runs a process and waits for it to complete.",
+      "returnDoc": "Result object containing execution results.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Process.py",
-      "lineno": 636
+      "lineno": 719
     },
     {
       "name": "Send Signal To Process",
+      "doc": "Sends the given `signal` to the specified process.\n\nSignal can be specified either as an integer as a signal name. In the\nlatter case it is possible to give the name both with or without `SIG`\nprefix, but names are case-sensitive. For example, all the examples\nbelow send signal `INT (2)`.\n\n```robotframework\n*** Test Cases ***\nSend signal\n    Send Signal To Process    2\n    Send Signal To Process    INT\n    Send Signal To Process    SIGINT    myproc\n```\n\nThis keyword is only supported on Unix-like machines, not on Windows.\nWhat signals are supported depends on the system. For a list of\nexisting signals on your system, see the Unix man pages related to\nsignal handling (typically `man signal` or `man 7 signal`).\n\nBy default, sends the signal only to the parent process, not to possible\nchild processes started by it. Notice that when [running processes in shell],\nthe shell is the parent process, and it depends on the system\ndoes the shell propagate the signal to the actual started process.",
+      "shortdoc": "Sends the given `signal` to the specified process.",
       "args": [
         {
           "name": "signal",
+          "doc": "The signal to send, either as an integer or signal name.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -799,16 +929,19 @@
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -817,6 +950,7 @@
         },
         {
           "name": "handle",
+          "doc": "Process handle or alias. Uses the current [active process]\nby default.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -825,22 +959,26 @@
                 "name": "Popen",
                 "typedoc": "Popen",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -849,11 +987,13 @@
         },
         {
           "name": "group",
+          "doc": "Whether to send the signal to the whole process group.",
           "type": {
             "name": "bool",
             "typedoc": "boolean",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
@@ -862,22 +1002,26 @@
         }
       ],
       "returnType": null,
-      "doc": "Sends the given ``signal`` to the specified process.\n\nIf ``handle`` is not given, uses the current `active process`.\n\nSignal can be specified either as an integer as a signal name. In the\nlatter case it is possible to give the name both with or without ``SIG``\nprefix, but names are case-sensitive. For example, all the examples\nbelow send signal ``INT (2)``:\n\n| Send Signal To Process | 2      |        | # Send to active process |\n| Send Signal To Process | INT    |        |                          |\n| Send Signal To Process | SIGINT | myproc | # Send to named process  |\n\nThis keyword is only supported on Unix-like machines, not on Windows.\nWhat signals are supported depends on the system. For a list of\nexisting signals on your system, see the Unix man pages related to\nsignal handling (typically ``man signal`` or ``man 7 signal``).\n\nBy default, sends the signal only to the parent process, not to possible\nchild processes started by it. Notice that when `running processes in\nshell`, the shell is the parent process, and it depends on the system\ndoes the shell propagate the signal to the actual started process.\n\nTo send the signal to the whole process group, give the ``group``\nargument a true value.",
-      "shortdoc": "Sends the given ``signal`` to the specified process.",
+      "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Process.py",
-      "lineno": 1011
+      "lineno": 1161
     },
     {
       "name": "Split Command Line",
+      "doc": "Splits command line string into a list of arguments.\n\nString is split from spaces, but argument surrounded in quotes may\ncontain spaces in them.\n\nIf `escaping` is given a true value, then backslash is treated as\nan escape character. It can escape unquoted spaces, quotes inside\nquotes, and so on, but it also requires doubling backslashes\nin Windows paths and elsewhere.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nParse Command Line\n    @{cmd} =    Split Command Line    --option \"value with spaces\"\n    Should Be Equal    ${cmd}    ['--option', 'value with spaces']    type=list\n```",
+      "shortdoc": "Splits command line string into a list of arguments.",
       "args": [
         {
           "name": "command",
+          "doc": "Command line string to split.",
           "type": {
             "name": "str",
             "typedoc": "string",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -886,11 +1030,13 @@
         },
         {
           "name": "escaping",
+          "doc": "Whether to treat backslash as an escape character.",
           "type": {
             "name": "bool",
             "typedoc": "boolean",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
@@ -899,22 +1045,26 @@
         }
       ],
       "returnType": null,
-      "doc": "Splits command line string into a list of arguments.\n\nString is split from spaces, but argument surrounded in quotes may\ncontain spaces in them.\n\nIf ``escaping`` is given a true value, then backslash is treated as\nan escape character. It can escape unquoted spaces, quotes inside\nquotes, and so on, but it also requires doubling backslashes\nin Windows paths and elsewhere.\n\nExamples:\n| @{cmd} = | Split Command Line | --option \"value with spaces\" |\n| Should Be True | $cmd == ['--option', 'value with spaces'] |",
-      "shortdoc": "Splits command line string into a list of arguments.",
+      "returnDoc": "List of command line arguments.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Process.py",
-      "lineno": 1185
+      "lineno": 1374
     },
     {
       "name": "Start Process",
+      "doc": "Starts a new process on background.\n\nSee the [Specifying command and arguments] and [Process configuration]\nsections for more information about the arguments, and the [Run Process]\nkeyword for related examples. This includes information about redirecting\nprocess outputs to avoid process handing due to output buffers getting\nfull.\n\nProcesses are started so that they create a new process group. This\nallows terminating and sending signals to possible child processes.\n\nMakes the started process new [active process].\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nStart process and wait using alias\n    Start Process    ${command}    alias=example\n    # Later\n    ${result} =    Wait For Process    example\n\nStart process and terminate using process object\n    ${process} =    Start Process    ${command}\n    Log    PID: ${process.pid}\n    # Later\n    Terminate Process    ${process}\n```\n\nSee the [Examples] section for examples starting multiple processes\nand creating process pipelines.\n\nReturning a [subprocess.Popen] object is new in Robot Framework 5.0.\nEarlier versions returned a generic handle and getting the process object\nrequired using the [Get Process Object] keyword separately.",
+      "shortdoc": "Starts a new process on background.",
       "args": [
         {
           "name": "command",
+          "doc": "Command to execute.",
           "type": {
             "name": "str",
             "typedoc": "string",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -923,6 +1073,7 @@
         },
         {
           "name": "arguments",
+          "doc": "Arguments passed to the command.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -931,16 +1082,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "Secret",
                 "typedoc": "Secret",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
@@ -949,6 +1103,7 @@
         },
         {
           "name": "cwd",
+          "doc": "Working directory for the process.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -957,16 +1112,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "NAMED_ONLY",
@@ -975,11 +1133,13 @@
         },
         {
           "name": "shell",
+          "doc": "Whether to run the command in a shell.",
           "type": {
             "name": "bool",
             "typedoc": "boolean",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "False",
           "kind": "NAMED_ONLY",
@@ -988,6 +1148,7 @@
         },
         {
           "name": "stdout",
+          "doc": "Path to file for standard output.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -996,16 +1157,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "NAMED_ONLY",
@@ -1014,6 +1178,7 @@
         },
         {
           "name": "stderr",
+          "doc": "Path to file for standard error.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1022,16 +1187,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "NAMED_ONLY",
@@ -1040,6 +1208,7 @@
         },
         {
           "name": "stdin",
+          "doc": "Process standard input configuration.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1048,40 +1217,47 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "Secret",
                 "typedoc": "Secret",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "Path",
                 "typedoc": "Path",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "IOBase",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "NAMED_ONLY",
@@ -1090,11 +1266,13 @@
         },
         {
           "name": "output_encoding",
+          "doc": "Encoding for reading command outputs.",
           "type": {
             "name": "str",
             "typedoc": "string",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "CONSOLE",
           "kind": "NAMED_ONLY",
@@ -1103,6 +1281,7 @@
         },
         {
           "name": "alias",
+          "doc": "Custom name for the process.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1111,16 +1290,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "NAMED_ONLY",
@@ -1129,6 +1311,7 @@
         },
         {
           "name": "env",
+          "doc": "Environment variables as a Python dictionary.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1141,7 +1324,8 @@
                     "name": "str",
                     "typedoc": "string",
                     "nested": [],
-                    "union": false
+                    "union": false,
+                    "alias": null
                   },
                   {
                     "name": "Union",
@@ -1151,28 +1335,34 @@
                         "name": "str",
                         "typedoc": "string",
                         "nested": [],
-                        "union": false
+                        "union": false,
+                        "alias": null
                       },
                       {
                         "name": "Secret",
                         "typedoc": "Secret",
                         "nested": [],
-                        "union": false
+                        "union": false,
+                        "alias": null
                       }
                     ],
-                    "union": true
+                    "union": true,
+                    "alias": null
                   }
                 ],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "NAMED_ONLY",
@@ -1181,6 +1371,7 @@
         },
         {
           "name": "env_extra",
+          "doc": "Override named environment variables using\n`env:<name>=<value>` syntax.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1189,16 +1380,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "Secret",
                 "typedoc": "Secret",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "VAR_NAMED",
@@ -1207,17 +1401,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Starts a new process on background.\n\nSee `Specifying command and arguments` and `Process configuration` sections\nfor more information about the arguments, and `Run Process` keyword\nfor related examples. This includes information about redirecting\nprocess outputs to avoid process handing due to output buffers getting\nfull.\n\nMakes the started process new `active process`. Returns the created\n[https://docs.python.org/3/library/subprocess.html#popen-objects |\nsubprocess.Popen] object which can be used later to activate this\nprocess. ``Popen`` attributes like ``pid`` can also be accessed directly.\n\nProcesses are started so that they create a new process group. This\nallows terminating and sending signals to possible child processes.\n\nExamples:\n\nStart process and wait for it to end later using an alias:\n| `Start Process` | ${command} | alias=example |\n| # Other keywords |\n| ${result} = | `Wait For Process` | example |\n\nUse returned ``Popen`` object:\n| ${process} = | `Start Process` | ${command} |\n| `Log` | PID: ${process.pid} |\n| # Other keywords |\n| ${result} = | `Terminate Process` | ${process} |\n\nUse started process in a pipeline with another process:\n| ${process} = | `Start Process` | python | -c | print('Hello, world!') |\n| ${result} = | `Run Process` | python | -c | import sys; print(sys.stdin.read().upper().strip()) | stdin=${process.stdout} |\n| `Wait For Process` | ${process} |\n| `Should Be Equal` | ${result.stdout} | HELLO, WORLD! |\n\nReturning a ``subprocess.Popen`` object is new in Robot Framework 5.0.\nEarlier versions returned a generic handle and getting the process object\nrequired using `Get Process Object` separately.",
-      "shortdoc": "Starts a new process on background.",
+      "returnDoc": "Created [subprocess.Popen] object which can be used later to activate\nthis process. `Popen` attributes like `pid` can also be accessed directly.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Process.py",
-      "lineno": 707
+      "lineno": 811
     },
     {
       "name": "Switch Process",
+      "doc": "Makes the specified process the current [active process].\n\nThe handle can be the process object returned by the [Start Process]\nkeyword or the `alias` given to it explicitly.\n\nExample:\n\n```robotframework\n*** Test Cases ***\nSwitch Active Process\n    Start Process    prog1    alias=process1\n    Start Process    prog2    alias=process2\n    # The active process is 'process2' at this point.\n    Switch Process    process1\n    # Now active process is 'process1'.\n```",
+      "shortdoc": "Makes the specified process the current [active process].",
       "args": [
         {
           "name": "handle",
+          "doc": "Process handle or alias to activate.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1226,22 +1423,26 @@
                 "name": "Popen",
                 "typedoc": "Popen",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -1250,22 +1451,26 @@
         }
       ],
       "returnType": null,
-      "doc": "Makes the specified process the current `active process`.\n\nThe handle can be an identifier returned by `Start Process` or\nthe ``alias`` given to it explicitly.\n\nExample:\n| Start Process  | prog1    | alias=process1 |\n| Start Process  | prog2    | alias=process2 |\n| # currently active process is process2 |\n| Switch Process | process1 |\n| # now active process is process1 |",
-      "shortdoc": "Makes the specified process the current `active process`.",
+      "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Process.py",
-      "lineno": 1163
+      "lineno": 1344
     },
     {
       "name": "Terminate All Processes",
+      "doc": "Terminates all still running processes started by this library.\n\nThis keyword can be used in suite teardown or elsewhere to make\nsure that all processes are stopped.\n\nTries to terminate processes gracefully by default, but can be\nconfigured to forcefully kill them immediately. See the\n[Terminate Process] keyword that this keyword uses internally for\nmore details.",
+      "shortdoc": "Terminates all still running processes started by this library.",
       "args": [
         {
           "name": "kill",
+          "doc": "Whether to forcefully kill processes.",
           "type": {
             "name": "bool",
             "typedoc": "boolean",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
@@ -1274,17 +1479,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Terminates all still running processes started by this library.\n\nThis keyword can be used in suite teardown or elsewhere to make\nsure that all processes are stopped,\n\nTries to terminate processes gracefully by default, but can be\nconfigured to forcefully kill them immediately. See `Terminate Process`\nthat this keyword uses internally for more details.",
-      "shortdoc": "Terminates all still running processes started by this library.",
+      "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Process.py",
-      "lineno": 996
+      "lineno": 1142
     },
     {
       "name": "Terminate Process",
+      "doc": "Stops the process gracefully or forcefully.\n\nBy default, first tries to stop the process gracefully. If the process\ndoes not stop in 30 seconds, or the `kill` argument is given a true\nvalue, kills the process forcefully. Stops also all the child processes\nof the originally started process.\n\nWaits for the process to stop after terminating it. Returns a\n[result object] containing information about the execution similarly\nas [Wait For Process].\n\nOn Unix-like machines graceful termination is done using the `TERM (15)`\nsignal and forceful kill using `KILL (9)`. Use [Send Signal To Process]\ninstead if you just want to send either of these signals without\nwaiting for the process to stop.\n\nOn Windows graceful termination is done using the `CTRL_BREAK_EVENT`\nevent and forceful kill using Win32 API function `TerminateProcess()`.\nIn this case forceful kill only stops the main process, not possible\nchild processes.",
+      "shortdoc": "Stops the process gracefully or forcefully.",
       "args": [
         {
           "name": "handle",
+          "doc": "Process handle or alias. Uses the current [active process]\nby default.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1293,22 +1501,26 @@
                 "name": "Popen",
                 "typedoc": "Popen",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -1317,11 +1529,13 @@
         },
         {
           "name": "kill",
+          "doc": "Whether to forcefully kill the process.",
           "type": {
             "name": "bool",
             "typedoc": "boolean",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
@@ -1333,19 +1547,25 @@
         "name": "ProcessResult",
         "typedoc": "ProcessResult",
         "nested": [],
-        "union": false
+        "union": false,
+        "alias": null
       },
-      "doc": "Stops the process gracefully or forcefully.\n\nIf ``handle`` is not given, uses the current `active process`.\n\nBy default, first tries to stop the process gracefully. If the process\ndoes not stop in 30 seconds, or the ``kill`` argument is given a true\nvalue, kills the process forcefully. Stops also all the child processes\nof the originally started process.\n\nWaits for the process to stop after terminating it. Returns a `result\nobject` containing information about the execution similarly as `Wait\nFor Process`.\n\nOn Unix-like machines graceful termination is done using ``TERM (15)``\nsignal and forceful kill using ``KILL (9)``. Use `Send Signal To Process`\ninstead if you just want to send either of these signals without\nwaiting for the process to stop.\n\nOn Windows graceful termination is done using ``CTRL_BREAK_EVENT``\nevent and forceful kill using Win32 API function ``TerminateProcess()``.\nIn this case forceful kill only stops the main process, not possible\nchild processes.\n\nExamples:\n| ${result} =                 | Terminate Process |     |\n| Should Be Equal As Integers | ${result.rc}      | -15 | # On Unixes |\n| Terminate Process           | myproc            | kill=true |",
-      "shortdoc": "Stops the process gracefully or forcefully.",
+      "returnDoc": "Result object containing information about the execution.",
+      "raises": {
+        "RuntimeError": "If terminating processes is not supported by the\nused Python version, or if forceful kill fails."
+      },
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Process.py",
-      "lineno": 926
+      "lineno": 1067
     },
     {
       "name": "Wait For Process",
+      "doc": "Waits for the process to complete or to reach the given timeout.\n\nThe process to wait for must have been started earlier using the\n[Start Process] keyword.\n\n`timeout` defines the maximum time to wait for the process. It can be\ngiven in formats like `42`, `42 s`, or `1 minute 30 seconds`. The timeout\nis ignored if it is `None` (default), zero or negative.\n\n`on_timeout` defines what to do if the timeout occurs. Possible values\nand corresponding actions are explained in the table below. Notice\nthat reaching the timeout never fails the test.\n\n|   Value   |                Action                  |\n|-----------|----------------------------------------|\n| continue  | The process is left running (default). |\n| terminate | The process is gracefully terminated.  |\n| kill      | The process is forcefully stopped.     |\n\nSee the [Terminate Process] keyword for more details how processes are\nterminated and killed.\n\nIf the process ends before the timeout, or it is terminated or killed,\nthis keyword returns a [result object] containing information about\nthe execution. If the process is left running, Python `None` is\nreturned instead.\n\nNote: If Robot Framework's test or keyword timeout is exceeded while\nthis keyword is waiting for the process to end, the process is killed\nto avoid leaving it running on the background. This is new in Robot\nFramework 7.3.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nProcess ends cleanly\n    ${result} =    Wait For Process    example\n    Process Should Be Stopped   example\n    Should Be Equal    ${result.rc}     0    type=int\n\nProcess does not end\n    ${result} =    Wait For Process    timeout=42 secods\n    Process Should Be Running\n    Should Be Equal    ${result}    None    type=None\n\nKill non-ending process\n    ${result} =    Wait For Process    timeout=1min 30s    on_timeout=kill\n    Should Be Equal    ${result.rc}    -9    type=int\n```",
+      "shortdoc": "Waits for the process to complete or to reach the given timeout.",
       "args": [
         {
           "name": "handle",
+          "doc": "Process handle or alias. Uses the current [active process]\nby default.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1354,22 +1574,26 @@
                 "name": "Popen",
                 "typedoc": "Popen",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -1378,6 +1602,7 @@
         },
         {
           "name": "timeout",
+          "doc": "Maximum time to wait for the process.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1386,16 +1611,19 @@
                 "name": "timedelta",
                 "typedoc": "timedelta",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -1404,6 +1632,7 @@
         },
         {
           "name": "on_timeout",
+          "doc": "What to do if the process does not end within the `timeout`.",
           "type": {
             "name": "Literal",
             "typedoc": "Literal",
@@ -1412,22 +1641,26 @@
                 "name": "'continue'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "'terminate'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "'kill'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "continue",
           "kind": "POSITIONAL_OR_NAMED",
@@ -1436,18 +1669,18 @@
         }
       ],
       "returnType": null,
-      "doc": "Waits for the process to complete or to reach the given timeout.\n\nThe process to wait for must have been started earlier with\n`Start Process`. If ``handle`` is not given, uses the current\n`active process`.\n\n``timeout`` defines the maximum time to wait for the process. It can be\ngiven in\n[http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#time-format|\nvarious time formats] supported by Robot Framework, for example, ``42``,\n``42 s``, or ``1 minute 30 seconds``. The timeout is ignored if it is\n``None`` (default), zero or negative.\n\n``on_timeout`` defines what to do if the timeout occurs. Possible values\nand corresponding actions are explained in the table below. Notice\nthat reaching the timeout never fails the test.\n\n| = Value = |               = Action =               |\n| continue  | The process is left running (default). |\n| terminate | The process is gracefully terminated.  |\n| kill      | The process is forcefully stopped.     |\n\nSee `Terminate Process` keyword for more details how processes are\nterminated and killed.\n\nIf the process ends before the timeout, or it is terminated or killed,\nthis keyword returns a `result object` containing information about\nthe execution. If the process is left running, Python ``None`` is\nreturned instead.\n\nExamples:\n| # Process ends cleanly      |                  |                  |\n| ${result} =                 | Wait For Process | example          |\n| Process Should Be Stopped   | example          |                  |\n| Should Be Equal As Integers | ${result.rc}     | 0                |\n| # Process does not end      |                  |                  |\n| ${result} =                 | Wait For Process | timeout=42 secs  |\n| Process Should Be Running   |                  |                  |\n| Should Be Equal             | ${result}        | ${NONE}          |\n| # Kill non-ending process   |                  |                  |\n| ${result} =                 | Wait For Process | timeout=1min 30s | on_timeout=kill |\n| Process Should Be Stopped   |                  |                  |\n| Should Be Equal As Integers | ${result.rc}     | -9               |\n\nNote: If Robot Framework's test or keyword timeout is exceeded while\nthis keyword is waiting for the process to end, the process is killed\nto avoid leaving it running on the background. This is new in Robot\nFramework 7.3.",
-      "shortdoc": "Waits for the process to complete or to reach the given timeout.",
+      "returnDoc": "Result object if the process ends, `None` if it is left running.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Process.py",
-      "lineno": 827
+      "lineno": 957
     }
   ],
   "typedocs": [
     {
       "type": "Standard",
       "name": "boolean",
-      "doc": "Strings ``TRUE``, ``YES``, ``ON``, ``1`` and possible localization specific \"true\nstrings\" are converted to Boolean ``True``, the empty string, strings ``FALSE``,\n``NO``, ``OFF`` and ``0`` and possibly localization specific \"false strings\"\nare converted to Boolean ``False``, and the string ``NONE`` is converted to\nthe Python ``None`` object. Other strings and all other values are passed as-is,\nallowing keywords to handle them specially if needed. All string comparisons are\ncase-insensitive.\n\nExamples: ``TRUE`` (converted to ``True``), ``off`` (converted to ``False``),\n``example`` (used as-is)\n",
+      "doc": "Strings `TRUE`, `YES`, `ON`, `1` and possible localization specific \"true strings\"\nare converted to Boolean `True`, the empty string, strings `FALSE`, `NO`, `OFF`\nand `0` and possibly localization specific \"false strings\" are converted to\nBoolean `False`, and the string `NONE` is converted to the Python `None` object.\nOther strings and all other values are passed as-is, allowing keywords to handle\nthem specially if needed.\n\nAll string comparisons are case-insensitive.\n\nExamples: `TRUE` (converted to `True`), `off` (converted to `False`), `example`\n(used as-is)\n",
       "usages": [
         "Get Process Result",
         "Is Process Running",
@@ -1468,7 +1701,7 @@
     {
       "type": "Standard",
       "name": "dictionary",
-      "doc": "Strings must be Python [https://docs.python.org/library/stdtypes.html#dict|dictionary]\nliterals. They are converted to actual dictionaries using the\n[https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]\nfunction. They can contain any values ``ast.literal_eval`` supports, including\ndictionaries and other collections.\n\nAny mapping is accepted and converted to a ``dict``.\n\nIf the type has nested types like ``dict[str, int]``, items are converted\nto those types automatically. This in new in Robot Framework 6.0.\n\nExamples: ``{'a': 1, 'b': 2}``, ``{'key': 1, 'nested': {'key': 2}}``\n",
+      "doc": "Strings must be Python [dictionary] literals. They are converted to actual\ndictionaries using the [ast.literal_eval] function. They can contain any values\n`ast.literal_eval` supports, including dictionaries and other collections.\n\nAny mapping is accepted and converted to a `dict`.\n\nIf the type has nested types like `dict[str, int]`, items are converted to those\ntypes automatically. This in new in Robot Framework 6.0.\n\nExamples: `{'a': 1, 'b': 2}`, `{'key': 1, 'nested': {'key': 2}}`\n\n[dictionary]: https://docs.python.org/library/stdtypes.html#dict\n[ast.literal_eval]: https://docs.python.org/library/stdtypes.html#ast.literal_eval\n",
       "usages": [
         "Run Process",
         "Start Process"
@@ -1481,7 +1714,7 @@
     {
       "type": "Standard",
       "name": "integer",
-      "doc": "Conversion is done using Python's [https://docs.python.org/library/functions.html#int|int]\nbuilt-in function. Floating point\nnumbers are accepted only if they can be represented as integers exactly.\nFor example, ``1.0`` is accepted and ``1.1`` is not.\n\nIt is possible to use hexadecimal, octal and binary numbers by prefixing values\nwith ``0x``, ``0o`` and ``0b``, respectively. Spaces and underscores can be used\nas visual separators for digit grouping purposes.\n\nExamples: ``42``, ``-1``, ``0b1010``, ``10 000 000``, ``0xBAD_C0FFEE``\n",
+      "doc": "Conversion is done using Python's [int] built-in function. Floating point numbers\nare accepted only if they can be represented as integers exactly. For example,\n`1.0` is accepted but `1.1` is not.\n\nIt is possible to use hexadecimal, octal and binary numbers by prefixing values\nwith `0x`, `0o` and `0b`, respectively.\n\nSpaces and underscores can be used as visual separators for digit grouping purposes.\n\nExamples: `42`, `-1`, `0b1010`, `10 000 000`, `0xBAD_C0FFEE`\n\n[int]: https://docs.python.org/library/functions.html#int\n",
       "usages": [
         "Get Process Id",
         "Run Process",
@@ -1496,7 +1729,7 @@
     {
       "type": "Standard",
       "name": "Literal",
-      "doc": "Only specified values are accepted. Values can be strings,\nintegers, bytes, Booleans, enums and None, and used arguments\nare converted using the value type specific conversion logic.\n\nStrings are case, space, underscore and hyphen insensitive,\nbut exact matches have precedence over normalized matches.\n",
+      "doc": "Only specified values are accepted. Values can be strings, integers, bytes,\nBooleans, enums and None, and used arguments are converted using the value type\nspecific conversion logic.\n\nString matching is case, space, underscore and hyphen insensitive, but exact\nmatches have precedence over normalized matches.\n",
       "usages": [
         "Run Process",
         "Wait For Process"
@@ -1508,7 +1741,7 @@
     {
       "type": "Standard",
       "name": "None",
-      "doc": "String ``NONE`` (case-insensitive) and the empty string are converted to\nthe Python ``None`` object. Other values cause an error.\n\nConverting the empty string is new in Robot Framework 7.4.\n",
+      "doc": "String `NONE` (case-insensitive) and the empty string are converted to the Python\n`None` object. Other values cause an error.\n\nConverting the empty string is new in Robot Framework 7.4.\n",
       "usages": [
         "Get Process Id",
         "Get Process Object",
@@ -1530,7 +1763,7 @@
     {
       "type": "Standard",
       "name": "Path",
-      "doc": "Strings are converted [https://docs.python.org/library/pathlib.html|Path] objects.\nOn Windows ``/`` is converted to ``\\`` automatically.\n\nExamples: ``/tmp/absolute/path``, ``relative/path/to/file.ext``, ``name.txt``\n",
+      "doc": "Strings are converted [Path] objects. On Windows `/` is converted to `\\`\nautomatically.\n\nExamples: `/tmp/absolute/path`, `relative/path/to/file.ext`, `name.txt`\n\n[Path]: https://docs.python.org/library/pathlib.html\n",
       "usages": [
         "Run Process",
         "Start Process"
@@ -1543,7 +1776,7 @@
     {
       "type": "Custom",
       "name": "Popen",
-      "doc": "[https://docs.python.org/library/subprocess.html#popen-objects|subprocess.Popen] object.\n\nReturned by `Start Process`. Can be used as a ``handle`` with keywords\nlike `Wait For Process` when working with multiple concurrent processes.\nAttributes like ``pid`` and ``stdin`` can also be accessed directly.\n\nExamples:\n| ${process} = | `Start Process` | ${command} |\n| `Log` | PID: ${process.pid} |\n| # Oher keywords |\n| ${result} = | `Terminate Process` | ${process} |",
+      "doc": "[subprocess.Popen] object.\n\nReturned by [Start Process]. Can be used as a `handle` with keywords\nlike [Wait For Process] when working with multiple concurrent processes.\nAttributes like `pid` and `stdin` can also be accessed directly.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nPopen Object\n    ${process} =    Start Process    ${command}\n    Log    PID: ${process.pid}\n    # Later\n    ${result} =    Terminate Process    ${process}\n```",
       "usages": [
         "Get Process Id",
         "Get Process Object",
@@ -1561,7 +1794,7 @@
     {
       "type": "Custom",
       "name": "ProcessResult",
-      "doc": "An object containing process execution results in its attributes.\n\n| = Attribute = |             = Explanation =               |\n| rc            | Return code of the process as an integer. |\n| stdout        | Contents of the standard output stream.   |\n| stderr        | Contents of the standard error stream.    |\n| stdout_path   | Path where stdout was redirected or ``None`` if not redirected. |\n| stderr_path   | Path where stderr was redirected or ``None`` if not redirected. |\n\nExample:\n| ${result} =            | `Run Process`         | program               |\n| `Should Be Equal     ` | ${result.rc}          | 0 | type=int          |\n| `Should Match`         | ${result.stdout}      | Some t?xt*            |\n| `Should Be Empty`      | ${result.stderr}      |                       |\n| ${stdout} =            | `Get File`            | ${result.stdout_path} |\n| `Should Be Equal`      | ${stdout}             | ${result.stdout}      |\n| `File Should Be Empty` | ${result.stderr_path} |                       |\n\nNotice that in ``stdout`` and ``stderr`` content possible trailing newline\nis removed and ``\\r\\n`` converted to ``\\n`` automatically. If you\nneed to see the original process output, redirect it to a file using\n`process configuration` and read it from there.",
+      "doc": "An object containing process execution results in its attributes.\n\n|  Attribute  |                       Explanation                             |\n|-------------|---------------------------------------------------------------|\n| rc          | Return code of the process as an integer.                     |\n| stdout      | Contents of the standard output stream.                       |\n| stderr      | Contents of the standard error stream.                        |\n| stdout_path | Path where stdout was redirected or `None` if not redirected. |\n| stderr_path | Path where stderr was redirected or `None` if not redirected. |\n\nExample:\n\n```robotframework\n*** Test Cases ***\nRun process\n    ${result} =    Run Process    python    -c    print(\"Hello!\")\n    Should Be Equal    ${result.rc}    0    type=int\n    Should Be Equal    ${result.stdout}    Hello!\n    Should Be Empty    ${result.stderr}\n```\n\nNotice that in `stdout` and `stderr` content possible trailing newline\nis removed and `\\r\\n` converted to `\\n` automatically. If you need to see\nthe original process output, redirect it to a file using\n[process configuration] and read it from there.",
       "usages": [
         "Terminate Process"
       ],
@@ -1570,7 +1803,7 @@
     {
       "type": "Standard",
       "name": "Secret",
-      "doc": "Encapsulates secret values to avoid them being shown in Robot Framework logs.\n\nThe value is required to be\n[https://robot-framework.readthedocs.io/en/master/autodoc/robot.utils.html#robot.utils.secret.Secret|robot.api.types.Secret]\nobject. These objects encapsulate confidential values so that they are not\nexposed in log files. How to create them is explained in the\n[https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#secret-variables|User Guide].\n\nNew in Robot Framework 7.4.\n",
+      "doc": "Encapsulates secret values to avoid them being shown in Robot Framework logs.\n\nThe value is required to be a [robot.api.types.Secret] object. These objects\nencapsulate confidential values so that they are not exposed in log files.\nHow to create them is explained in the [User Guide].\n\nNew in Robot Framework 7.4.\n\n[robot.api.types.Secret]: https://robot-framework.readthedocs.io/en/master/autodoc/robot.utils.html#robot.utils.secret.Secret\n[User Guide]: https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#secret-variables\n",
       "usages": [
         "Run Process",
         "Start Process"
@@ -1582,7 +1815,7 @@
     {
       "type": "Standard",
       "name": "Sequence",
-      "doc": "Strings must be Python [https://docs.python.org/library/stdtypes.html#list|list]\nor [https://docs.python.org/library/stdtypes.html#tuple|tuple] literals.\nThey are converted to actual lists or tuples using the\n[https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]\nfunction. They can contain any values ``ast.literal_eval`` supports, including\nlists and other collections.\n\nAny sequence is accepted without conversion. An exception is that if the used\ntype is ``MutableSequence``, immutable values are converted to lists.\n\nIf the type has nested types like ``Sequence[int]``, items are converted\nto those types automatically.\n\nExamples: ``['one', 'two']``, ``(1, 2, 3)``\n\nSupport to convert nested types is new in Robot Framework 6.0.\nSupport for tuple literals is new in Robot Framework 7.4.\n",
+      "doc": "Strings must be Python [list] or [tuple] literals. They are converted to actual\nlists or tuples using the [ast.literal_eval] function. They can contain any\nvalues `ast.literal_eval` supports, including lists and other collections.\n\nAny sequence is accepted without conversion. An exception is that if the used\ntype is `MutableSequence`, immutable values are converted to lists.\n\nIf the type has nested types like `Sequence[int]`, items are converted to those\ntypes automatically.\n\nExamples: `['one', 'two']`, `(1, 2, 3)`\n\nSupport to convert nested types is new in Robot Framework 6.0. Support for tuple\nliterals is new in Robot Framework 7.4.\n\n[list]: https://docs.python.org/library/stdtypes.html#list\n[tuple]: https://docs.python.org/library/stdtypes.html#tuple\n[ast.literal_eval]: https://docs.python.org/library/stdtypes.html#ast.literal_eval\n",
       "usages": [
         "Join Command Line"
       ],
@@ -1594,7 +1827,7 @@
     {
       "type": "Standard",
       "name": "string",
-      "doc": "All arguments are converted to Unicode strings.\n\nMost values are converted simply by using ``str(value)``. An exception is that\nbytes are mapped directly to Unicode code points with same ordinals. This means\nthat, for example, ``b\"hyv\\xe4\"`` becomes ``\"hyv\u00e4\"``.\n\nConverting bytes specially is new Robot Framework 7.4.\n",
+      "doc": "All arguments are converted to Unicode strings.\n\nMost values are converted simply by using `str(value)`. An exception is that\nbytes are mapped directly to Unicode code points with same ordinals. This means\nthat, for example, `b\"hyv\\xe4\"` becomes `\"hyv\u00e4\"`.\n\nConverting bytes specially is new Robot Framework 7.4.\n",
       "usages": [
         "Get Process Id",
         "Get Process Object",
@@ -1618,7 +1851,7 @@
     {
       "type": "Standard",
       "name": "timedelta",
-      "doc": "Strings are expected to represent a time interval in one of\nthe time formats Robot Framework supports:\n- a number representing seconds like ``42`` or ``10.5``\n- a time string like ``1 hour 2 seconds`` or ``1h 2s``\n- a \"timer\" string like ``01:02`` (1 minute 2 seconds) or ``01:00:03`` (1 hour 3 seconds)\n\nIntegers and floats are considered to be seconds.\n\nSee the [https://robotframework.org/robotframework/|Robot Framework User Guide]\nfor more details about the supported time formats.\n",
+      "doc": "Strings are expected to represent a time interval in one of the time formats\nRobot Framework supports:\n\n- a number representing seconds like `42` or `10.5`\n- a \"time string\" like `1 hour 2 seconds` or `1h 2s`\n- a \"timer string\" like `01:02` (1 minute 2 seconds) or `01:00:03` (1 hour 3 seconds)\n\nIntegers and floats are considered to be seconds.\n\nSee the [User Guide] for more details about the supported time formats.\n\n[User Guide]: https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#time-format\n",
       "usages": [
         "Run Process",
         "Wait For Process"

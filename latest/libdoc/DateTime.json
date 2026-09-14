@@ -1,12 +1,12 @@
 {
-  "specversion": 3,
+  "specversion": 4,
   "name": "DateTime",
-  "doc": "A library for handling date and time values.\n\n``DateTime`` is a Robot Framework standard library that supports creating and\nconverting date and time values (e.g. `Get Current Date`, `Convert Time`),\nas well as doing simple calculations with them (e.g. `Subtract Time From Date`,\n`Add Time To Time`). It supports dates and times in various formats, and can\nalso be used by other libraries programmatically.\n\n== Table of contents ==\n\n- `Terminology`\n- `Date formats`\n- `Time formats`\n- `Millisecond handling`\n- `Programmatic usage`\n- `Keywords`\n\n= Terminology =\n\nIn the context of this library, ``date`` and ``time`` generally have the following\nmeanings:\n\n- ``date``: An entity with both date and time components but without any\n   time zone information. For example, ``2014-06-11 10:07:42``.\n- ``time``: A time interval. For example, ``1 hour 20 minutes`` or ``01:20:00``.\n\nThis terminology differs from what Python's standard\n[http://docs.python.org/library/datetime.html|datetime] module uses.\nBasically its\n[http://docs.python.org/library/datetime.html#datetime-objects|datetime] and\n[http://docs.python.org/library/datetime.html#timedelta-objects|timedelta]\nobjects match ``date`` and ``time`` as defined by this library.\n\n= Date formats =\n\nDates can be given to and received from keywords in `timestamp`, `custom\ntimestamp`, `Python datetime` and `epoch time` formats. These formats are\ndiscussed thoroughly in subsequent sections.\n\nInput format is determined automatically based on the given date except when\nusing custom timestamps, in which case it needs to be given using\n``date_format`` argument. Default result format is timestamp, but it can\nbe overridden using ``result_format`` argument.\n\n== Timestamp ==\n\nIf a date is given as a string, it is always considered to be a timestamp.\nIf no custom formatting is given using ``date_format`` argument, the timestamp\nis expected to be in [http://en.wikipedia.org/wiki/ISO_8601|ISO 8601] like\nformat ``YYYY-MM-DD hh:mm:ss.mil``, where any non-digit character can be used\nas a separator or separators can be omitted altogether. Additionally,\nonly the date part is mandatory, all possibly missing time components are\nconsidered to be zeros.\n\nDates can also be returned in the same ``YYYY-MM-DD hh:mm:ss.mil`` format by\nusing ``timestamp`` value with ``result_format`` argument. This is also the\ndefault format that keywords returning dates use. Milliseconds can be excluded\nusing ``exclude_millis`` as explained in `Millisecond handling` section.\n\nExamples:\n| ${date1} =      | Convert Date | 2014-06-11 10:07:42.000 |\n| ${date2} =      | Convert Date | 20140611 100742         | result_format=timestamp |\n| Should Be Equal | ${date1}     | ${date2}                |\n| ${date} =       | Convert Date | 20140612 12:57          | exclude_millis=yes |\n| Should Be Equal | ${date}      | 2014-06-12 12:57:00     |\n\n== Custom timestamp ==\n\nIt is possible to use custom timestamps in both input and output.\nThe custom format is same as accepted by Python's\n[http://docs.python.org/library/datetime.html#strftime-strptime-behavior|\ndatetime.strptime] function. For example, the default timestamp discussed\nin the previous section would match ``%Y-%m-%d %H:%M:%S.%f``.\n\nWhen using a custom timestamp in input, it must be specified using\n``date_format`` argument. The actual input value must be a string that matches\nthe specified format exactly. When using a custom timestamp in output, it must\nbe given using ``result_format`` argument.\n\nExamples:\n| ${date} =       | Convert Date | 28.05.2014 12:05        | date_format=%d.%m.%Y %H:%M |\n| Should Be Equal | ${date}      | 2014-05-28 12:05:00.000 |\n| ${date} =       | Convert Date | ${date}                 | result_format=%d.%m.%Y |\n| Should Be Equal | ${date}      | 28.05.2014              |\n\n== Python datetime ==\n\nPython's standard\n[https://docs.python.org/library/datetime.html#datetime.datetime|datetime]\nobjects can be used both in input and output. In input, they are recognized\nautomatically, and in output it is possible to get them by using the ``datetime``\nvalue with the ``result_format`` argument.\n\nOne nice benefit with datetime objects is that they have different time\ncomponents available as attributes that can be easily accessed using the\nextended variable syntax.\n\nExamples:\n| ${datetime} = | Convert Date | 2014-06-11 10:07:42.123 | datetime |\n| Should Be Equal As Integers | ${datetime.year}        | 2014   |\n| Should Be Equal As Integers | ${datetime.month}       | 6      |\n| Should Be Equal As Integers | ${datetime.day}         | 11     |\n| Should Be Equal As Integers | ${datetime.hour}        | 10     |\n| Should Be Equal As Integers | ${datetime.minute}      | 7      |\n| Should Be Equal As Integers | ${datetime.second}      | 42     |\n| Should Be Equal As Integers | ${datetime.microsecond} | 123000 |\n\n== Python date ==\n\nPython's standard [https://docs.python.org/library/datetime.html#datetime.date|date]\nobjects are automatically recognized in input starting from Robot Framework 7.0.\nThey are not supported in output, but ``datetime`` objects can be converted\nto ``date`` objects if needed:\n\n| ${datetime} = | Convert Date | 2023-12-18 11:10:42 | datetime |\n| Log | ${datetime.date()} | # The time part is ignored. |\n\n== Epoch time ==\n\nEpoch time is the time in seconds since the\n[http://en.wikipedia.org/wiki/Unix_time|UNIX epoch] i.e. 00:00:00.000 (UTC)\nJanuary 1, 1970. To give a date as an epoch time, it must be given as a number\n(integer or float), not as a string. To return a date as an epoch time,\nit is possible to use ``epoch`` value with ``result_format`` argument.\nEpoch times are returned as floating point numbers.\n\nNotice that epoch times are independent on time zones and thus same\naround the world at a certain time. For example, epoch times returned\nby `Get Current Date` are not affected by the ``time_zone`` argument.\nWhat local time a certain epoch time matches then depends on the time zone.\n\nFollowing examples demonstrate using epoch times. They are tested in Finland,\nand due to the reasons explained above they would fail on other time zones.\n\n| ${date} =       | Convert Date | ${1000000000}           |\n| Should Be Equal | ${date}      | 2001-09-09 04:46:40.000 |\n| ${date} =       | Convert Date | 2014-06-12 13:27:59.279 | epoch |\n| Should Be Equal | ${date}      | ${1402568879.279}       |\n\n== Earliest supported date ==\n\nThe earliest date that is supported depends on the date format and to some\nextent on the platform:\n\n- Timestamps support year 1900 and above.\n- Python datetime objects support year 1 and above.\n- Epoch time supports 1970 and above on Windows.\n- On other platforms epoch time supports 1900 and above or even earlier.\n\n= Time formats =\n\nSimilarly as dates, times can be given to and received from keywords in\nvarious different formats. Supported formats are `number`, `time string`\n(verbose and compact), `timer string` and `Python timedelta`.\n\nInput format for time is always determined automatically based on the input.\nResult format is number by default, but it can be customised using\n``result_format`` argument.\n\n== Number ==\n\nTime given as a number is interpreted to be seconds. It can be given\neither as an integer or a float, or it can be a string that can be converted\nto a number.\n\nTo return a time as a number, ``result_format`` argument must have value\n``number``, which is also the default. Returned number is always a float.\n\nExamples:\n| ${time} =       | Convert Time | 3.14    |\n| Should Be Equal | ${time}      | ${3.14} |\n| ${time} =       | Convert Time | ${time} | result_format=number |\n| Should Be Equal | ${time}      | ${3.14} |\n\n== Time string ==\n\nTime strings are strings in format like ``1 minute 42 seconds`` or ``1min 42s``.\nThe basic idea of this format is having first a number and then a text\nspecifying what time that number represents. Numbers can be either\nintegers or floating point numbers, the whole format is case and space\ninsensitive, and it is possible to add a minus prefix to specify negative\ntimes. The available time specifiers are:\n\n- ``weeks``, ``week``, ``w`` (new in RF 7.1)\n- ``days``, ``day``, ``d``\n- ``hours``, ``hour``, ``h``\n- ``minutes``, ``minute``, ``mins``, ``min``, ``m``\n- ``seconds``, ``second``, ``secs``, ``sec``, ``s``\n- ``milliseconds``, ``millisecond``, ``millis``, ``ms``\n- ``microseconds``, ``microsecond``, ``us``, ``\u03bcs`` (new in RF 6.0)\n- ``nanoseconds``, ``nanosecond``, ``ns`` (new in RF 6.0)\n\nWhen returning a time string, it is possible to select between ``verbose``\nand ``compact`` representations using ``result_format`` argument. The verbose\nformat uses long specifiers ``week``, ``day``, ``hour``, ``minute``, ``second`` and\n``millisecond``, and adds ``s`` at the end when needed. The compact format uses\nshorter specifiers ``w``, ``d``, ``h``, ``min``, ``s`` and ``ms``, and even drops\nthe space between the number and the specifier.\n\nExamples:\n| ${time} =       | Convert Time | 1 minute 42 seconds |\n| Should Be Equal | ${time}      | ${102}              |\n| ${time} =       | Convert Time | 4200                | verbose |\n| Should Be Equal | ${time}      | 1 hour 10 minutes   |\n| ${time} =       | Convert Time | - 1.5 hours         | compact |\n| Should Be Equal | ${time}      | - 1h 30min          |\n\n== Timer string ==\n\nTimer string is a string given in timer like format ``hh:mm:ss.mil``. In this\nformat both hour and millisecond parts are optional, leading and trailing\nzeros can be left out when they are not meaningful, and negative times can\nbe represented by adding a minus prefix.\n\nTo return a time as timer string, ``result_format`` argument must be given\nvalue ``timer``. Timer strings are by default returned in full ``hh:mm:ss.mil``\nformat, but milliseconds can be excluded using ``exclude_millis`` as explained\nin `Millisecond handling` section.\n\nExamples:\n| ${time} =       | Convert Time | 01:42        |\n| Should Be Equal | ${time}      | ${102}       |\n| ${time} =       | Convert Time | 01:10:00.123 |\n| Should Be Equal | ${time}      | ${4200.123}  |\n| ${time} =       | Convert Time | 102          | timer |\n| Should Be Equal | ${time}      | 00:01:42.000 |\n| ${time} =       | Convert Time | -101.567     | timer | exclude_millis=yes |\n| Should Be Equal | ${time}      | -00:01:42    |\n\n== Python timedelta ==\n\nPython's standard\n[http://docs.python.org/library/datetime.html#datetime.timedelta|timedelta]\nobjects are also supported both in input and in output. In input they are\nrecognized automatically, and in output it is possible to receive them by\ngiving ``timedelta`` value to ``result_format`` argument.\n\nExamples:\n| ${timedelta} =  | Convert Time                 | 01:10:02.123 | timedelta |\n| Should Be Equal | ${timedelta.total_seconds()} | ${4202.123}  |\n\n= Millisecond handling =\n\nThis library handles dates and times internally using the precision of the\ngiven input. With `timestamp`, `time string`, and `timer string` result\nformats seconds are, however, rounded to millisecond accuracy. Milliseconds\nmay also be included even if there would be none.\n\nAll keywords returning dates or times have an option to leave milliseconds out\nby giving a true value to ``exclude_millis`` argument. If the argument is given\nas a string, it is considered true unless it is empty or case-insensitively\nequal to ``false``, ``none`` or ``no``. Other argument types are tested using\nsame [http://docs.python.org/library/stdtypes.html#truth|rules as in\nPython].\n\nWhen milliseconds are excluded, seconds in returned dates and times are\nrounded to the nearest full second. With `timestamp` and `timer string`\nresult formats, milliseconds will also be removed from the returned string\naltogether.\n\nExamples:\n| ${date} =       | Convert Date | 2014-06-11 10:07:42     |\n| Should Be Equal | ${date}      | 2014-06-11 10:07:42.000 |\n| ${date} =       | Convert Date | 2014-06-11 10:07:42.500 | exclude_millis=yes |\n| Should Be Equal | ${date}      | 2014-06-11 10:07:43     |\n| ${dt} =         | Convert Date | 2014-06-11 10:07:42.500 | datetime | exclude_millis=yes |\n| Should Be Equal | ${dt.second} | ${43}        |\n| Should Be Equal | ${dt.microsecond} | ${0}    |\n| ${time} =       | Convert Time | 102          | timer | exclude_millis=false |\n| Should Be Equal | ${time}      | 00:01:42.000 |       |\n| ${time} =       | Convert Time | 102.567      | timer | exclude_millis=true |\n| Should Be Equal | ${time}      | 00:01:43     |       |\n\n= Programmatic usage =\n\nIn addition to be used as normal library, this library is intended to\nprovide a stable API for other libraries to use if they want to support\nsame date and time formats as this library. All the provided keywords\nare available as functions that can be easily imported:\n\n| from robot.libraries.DateTime import convert_time\n|\n| def example_keyword(timeout):\n|     seconds = convert_time(timeout)\n|     # ...\n\nAdditionally, helper classes ``Date`` and ``Time`` can be used directly:\n\n| from robot.libraries.DateTime import Date, Time\n|\n| def example_keyword(date, interval):\n|     date = Date(date).convert('datetime')\n|     interval = Time(interval).convert('number')\n|     # ...",
-  "version": "7.4.2",
-  "generated": "2026-03-03T16:39:18+00:00",
+  "doc": "A library for handling date and time values.\n\n`DateTime` is a Robot Framework standard library that supports creating and\nconverting date and time values (e.g. [Get Current Date], [Convert Time]),\nas well as doing simple calculations with them (e.g. [Subtract Time From Date],\n[Add Time To Time]). It supports dates and times in various formats, and can\nalso be used by other libraries programmatically.\n\n### Table of contents\n\n%TOC%\n\n# Terminology\n\nIn the context of this library, `date` and `time` generally have the following\nmeanings:\n\n- `date`: An entity with both date and time components but without any\n  time zone information. For example, `2014-06-11 10:07:42`.\n- `time`: A time interval. For example, `1 hour 20 minutes` or `01:20:00`.\n\nThis terminology differs from what Python's standard [datetime module] uses.\nBasically its [datetime] and [timedelta] objects match `date` and `time` as\ndefined by this library.\n\n# Date formats\n\nDates can be given to and received from keywords in different formats:\n\n- [Timestamp]\n- [Custom timestamp]\n- [TODAY and NOW]\n- [datetime object]\n- [date object]\n- [Epoch time]\n\nInput format is in most cases determined automatically. An exception is that\nwhen using a [custom timestamp], the format must be specified using the\n`date_format` argument. The default result format is [timestamp], but it can\nbe overridden using the `result_format` argument like `result_format=datetime`.\n\n## Timestamp\n\nIf a date is given as a string, it is always considered to be a timestamp.\nIf a custom format is not given using the `date_format` argument, the timestamp\nis expected to be in [ISO 8601] like format `YYYY-MM-DD hh:mm:ss.mmmmmm`,\nwhere any non-digit character can be used as a separator or separators can be\nomitted altogether. Additionally, only the date part is mandatory, all missing\ntime components are considered to be zeros.\n\nDates can also be returned in the `YYYY-MM-DD hh:mm:ss.mmm` format by using\nthe `timestamp` value with the `result_format` argument. This is also the default\nformat that keywords returning dates use. Milliseconds can be excluded\nusing `exclude_millis` as explained in the [Millisecond handling] section.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nTimestamps\n    ${date1} =    Convert Date    2014-06-11 10:07:42.000\n    ${date2} =    Convert Date    20140611 100742    result_format=timestamp\n    Should Be Equal    ${date1}    ${date2}\n    ${date} =     Convert Date    20140612 12:57    exclude_millis=True\n    Should Be Equal    ${date}    2014-06-12 12:57:00\n```\n\n## Custom timestamp\n\nIt is possible to use custom timestamps in both input and output. This format\nuses the same [format codes] as the [datetime module]. For example, the default\ntimestamp discussed in the previous section would match `%Y-%m-%d %H:%M:%S.%f`.\n\nWhen using a custom timestamp in input, it must be specified using the\n`date_format` argument. The actual input value must be a string that matches\nthe specified format exactly. When using a custom timestamp in output, it must\nbe given using `result_format` argument.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nCustom timestamps\n    ${date} =    Convert Date    28.05.2014 12:05    date_format=%d.%m.%Y %H:%M\n    Should Be Equal    ${date}    2014-05-28 12:05:00.000\n    ${date} =    Convert Date    ${date}    result_format=%d.%m.%Y\n    Should Be Equal    ${date}    28.05.2014\n```\n\n## `TODAY` and `NOW`\n\nStrings `TODAY` and `NOW` (case-insensitive) can be used to get the current\ndate automatically without using the [Get Current Date] keyword.\n\n```robotframework\n*** Variables ***\n${ROBOCON 2027}    2027-03-08\n\n*** Test Cases ***\nDays to RoboCon 2027\n    ${delta} =    Subtract Date From Date    ${ROBOCON 2027}    TODAY    result_format=timedelta\n    Log    It is ${delta.days} days to RoboCon 2027!\n```\n\nSupport for `TODAY` and `NOW` is new in Robot Framework 7.5.\n\n## `datetime` object\n\nPython's standard [datetime] objects can be used both in input and output.\nIn input, they are recognized automatically, and in output it is possible\nto get them by using the `datetime` value with the `result_format` argument.\n\nOne nice benefit with datetime objects is that they have different time\ncomponents available as attributes that can be easily accessed using the\nextended variable syntax.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nDatetine\n    ${datetime} =    Convert Date    2014-06-11 10:07:42.123    datetime\n    Should Be Equal    ${datetime.year}           2014      type=int\n    Should Be Equal    ${datetime.month}          6         type=int\n    Should Be Equal    ${datetime.day}            11        type=int\n    Should Be Equal    ${datetime.hour}           10        type=int\n    Should Be Equal    ${datetime.minute}         7         type=int\n    Should Be Equal    ${datetime.second}         42        type=int\n    Should Be Equal    ${datetime.microsecond}    123000    type=int\n```\n\n## `date` object\n\nPython's standard [date] objects are automatically recognized in input\nthe same way as [datetime] objects are. In output, it is possible to get\n[date] objects by using `result_format=date`. Possible non-zero time\ncomponents are simply discarded.\n\nSupport for [date] objects in input and output is new Robot Framework 7.0\nand Robot Framework 7.5, respectively.\n\n## Epoch time\n\nEpoch time is the time in seconds since the [UNIX epoch] i.e. 00:00:00.000 (UTC)\nJanuary 1, 1970. To give a date as an epoch time, it must be given as a number\n(integer or float), not as a string. To return a date as an epoch time,\nit is possible to use the `epoch` value with the `result_format` argument.\nEpoch times are returned as floating point numbers.\n\nNotice that epoch times are independent on time zones and thus same\naround the world at a certain time. For example, epoch times returned\nby [Get Current Date] are not affected by the `time_zone` argument.\nWhat local time a certain epoch time matches then depends on the time zone.\n\nFollowing examples demonstrate using epoch times. They are tested in Finland,\nand due to the reasons explained above they would fail on other time zones.\n\n```robotframework\n*** Test Cases ***\nEpoch\n    ${date} =    Convert Date    ${1000000000}\n    Should Be Equal    ${date}    2001-09-09 04:46:40.000\n    ${date} =    Convert Date    2014-06-12 13:27:59.279    epoch\n    Should Be Equal    ${date}    ${1402568879.279}\n```\n\n## Earliest supported date\n\nThe earliest date that is supported depends on the date format and to some\nextent on the platform:\n\n- Timestamps support year 1900 and above.\n- Python datetime objects support year 1 and above.\n- Epoch time supports 1970 and above on Windows.\n- On other platforms epoch time supports 1900 and above or even earlier.\n\n# Time formats\n\nSimilarly as dates, times can be given to and received from keywords in\nvarious different formats. Supported formats are [Number], [Time string]\n(verbose and compact), [Timer string] and [Python timedelta].\n\nInput format for time is always determined automatically based on the input.\nResult format is number by default, but it can be customized using\nthe `result_format` argument.\n\n## Number\n\nTime given as a number is interpreted to be seconds. It can be given\neither as an integer or a float, or it can be a string that can be converted\nto a number.\n\nTo return a time as a number, `result_format` argument must have value\n`number`, which is also the default. Returned number is always a float.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nNumber\n    ${time} =    Convert Time    3.14\n    Should Be Equal    ${time}    3.14    type=float\n    ${time} =    Convert Time    ${time}    result_format=number\n    Should Be Equal    ${time}    3.14    type=float\n```\n\n## Time string\n\nTime strings are strings in format like `1 minute 42 seconds` or `1min 42s`.\nThe basic idea of this format is having first a number and then a text\nspecifying what time that number represents. Numbers can be either\nintegers or floating point numbers, the whole format is case and space\ninsensitive, and it is possible to add a minus prefix to specify negative\ntimes. The available time specifiers are:\n\n- `weeks`, `week`, `w` (new in RF 7.1)\n- `days`, `day`, `d`\n- `hours`, `hour`, `h`\n- `minutes`, `minute`, `mins`, `min`, `m`\n- `seconds`, `second`, `secs`, `sec`, `s`\n- `milliseconds`, `millisecond`, `millis`, `ms`\n- `microseconds`, `microsecond`, `us`, `\u03bcs` (new in RF 6.0)\n- `nanoseconds`, `nanosecond`, `ns` (new in RF 6.0)\n\nWhen returning a time string, it is possible to select between `verbose`\nand `compact` representations using `result_format` argument. The verbose\nformat uses long specifiers like `week` and `day`, and adds `s` at the end\nwhen needed. The compact format uses shorter specifiers like `w` and `d`, and\neven drops the space between the number and the specifier.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nTime string\n    ${time} =    Convert Time    1 minute 42 seconds\n    Should Be Equal    ${time}    ${102}\n    ${time} =    Convert Time    4200    verbose\n    Should Be Equal    ${time}    1 hour 10 minutes\n    ${time} =    Convert Time    - 1.5 hours    compact\n    Should Be Equal    ${time}    - 1h 30min\n```\n\n## Timer string\n\nTimer string is a string given in timer like format `hh:mm:ss.mil`. In this\nformat both hour and millisecond parts are optional, leading and trailing\nzeros can be left out when they are not meaningful, and negative times can\nbe represented by adding a minus prefix.\n\nTo return a time as timer string, the `result_format` argument must be given\nthe value `timer`. Timer strings are by default returned in full `hh:mm:ss.mil`\nformat, but milliseconds can be excluded using `exclude_millis` as explained\nin the [Millisecond handling] section.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nTimer string\n    ${time} =    Convert Time    01:42\n    Should Be Equal    ${time}    102    type=float\n    ${time} =    Convert Time    01:10:00.123\n    Should Be Equal    ${time}    4200.123    type=float\n    ${time} =    Convert Time    102    timer\n    Should Be Equal    ${time}    00:01:42.000\n    ${time} =    Convert Time    -101.567    timer    exclude_millis=True\n    Should Be Equal    ${time}    -00:01:42\n```\n\n## Python timedelta\n\nPython's standard [timedelta] objects are also supported both in input and\nin output. In input, they are recognized automatically, and in output it is\npossible to receive them by giving the `timedelta` value to the `result_format`\nargument.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nTimedelta\n    ${timedelta} =    Convert Time    01:10:02.123    timedelta\n    Should Be Equal    ${timedelta.total_seconds()}    ${4202.123}\n```\n\n# Millisecond handling\n\nThis library handles dates and times internally using the precision of the\ngiven input. With [Timestamp], [Time string], and [Timer string] result\nformats seconds are, however, rounded to millisecond accuracy. Milliseconds\nmay also be included even if there would be none.\n\nAll keywords returning dates or times have an option to leave milliseconds out\nby giving a true value to `exclude_millis` argument. When milliseconds are\nexcluded, seconds in returned dates and times are rounded to the nearest full\nsecond. With [Timestamp] and [Timer string] result formats, milliseconds will\nalso be removed from the returned string altogether.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nMilliseconds\n    ${date} =    Convert Date    2014-06-11 10:07:42\n    Should Be Equal    ${date}    2014-06-11 10:07:42.000\n    ${date} =    Convert Date    2014-06-11 10:07:42.500    exclude_millis=True\n    Should Be Equal    ${date}    2014-06-11 10:07:43\n    ${dt} =      Convert Date    2014-06-11 10:07:42.500    datetime    exclude_millis=True\n    Should Be Equal    ${dt.second}    ${43}\n    Should Be Equal    ${dt.microsecond}    ${0}\n    ${time} =    Convert Time    102    timer    exclude_millis=False\n    Should Be Equal    ${time}    00:01:42.000\n    ${time} =    Convert Time    102.567    timer    exclude_millis=True\n    Should Be Equal    ${time}    00:01:43\n```\n\n# Programmatic usage\n\nIn addition to be used as normal library, this library is intended to\nprovide a stable API for other libraries to use if they want to support\nsame date and time formats as this library. All the provided keywords\nare available as functions that can be easily imported:\n\n```python\nfrom robot.libraries.DateTime import convert_time\n\n\ndef example_keyword(timeout):\n    seconds = convert_time(timeout)\n    ...\n```\n\nAdditionally, helper classes `Date` and `Time` can be used directly:\n\n```python\nfrom robot.libraries.DateTime import Date, Time\n\n\ndef example_keyword(day, interval):\n    date = Date(day).convert('datetime')\n    interval = Time(interval).convert('number')\n    ...\n```\n\nIn common cases it is more convenient to just use [datetime], [date] and\n[timedelta] as type hints and let Robot Framework handle argument conversion\nautomatically:\n\n```python\nfrom datetime import datetime, timedelta\n\n\ndef example_keyword(day: datetime, interval: timedelta):\n    ...\n```\n\n[ISO 8601]: http://en.wikipedia.org/wiki/ISO_8601\n[UNIX epoch]: http://en.wikipedia.org/wiki/Unix_time\n[datetime module]: http://docs.python.org/library/datetime.html\n[datetime]: http://docs.python.org/library/datetime.html#datetime-objects\n[date]: https://docs.python.org/3/library/datetime.html#date-objects\n[timedelta]: http://docs.python.org/library/datetime.html#timedelta-objects\n[format codes]: https://docs.python.org/3/library/datetime.html#format-codes",
+  "version": "7.5",
+  "generated": "2026-09-14T13:26:10+00:00",
   "type": "LIBRARY",
   "scope": "GLOBAL",
-  "docFormat": "ROBOT",
+  "docFormat": "MARKDOWN",
   "source": "/home/peke/Devel/robotframework/src/robot/libraries/DateTime.py",
   "lineno": 1,
   "tags": [],
@@ -14,9 +14,12 @@
   "keywords": [
     {
       "name": "Add Time To Date",
+      "doc": "Adds time to date and returns the resulting date.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nAdd time to date\n    ${date} =    Add Time To Date    2014-05-28 12:05:03.111    7 days\n    Should Be Equal    ${date}    2014-06-04 12:05:03.111\n    ${date} =    Add Time To Date    2014-05-28 12:05:03.111    01:02:03:004\n    Should Be Equal    ${date}    2014-05-28 13:07:06.115\n```",
+      "shortdoc": "Adds time to date and returns the resulting date.",
       "args": [
         {
           "name": "date",
+          "doc": "Date to add time to in one of the supported [date formats].",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -25,34 +28,40 @@
                 "name": "datetime",
                 "typedoc": "datetime",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "date",
                 "typedoc": "date",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "float",
                 "typedoc": "float",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -61,6 +70,7 @@
         },
         {
           "name": "time",
+          "doc": "Time that is added in one of the supported [time formats].",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -69,28 +79,33 @@
                 "name": "timedelta",
                 "typedoc": "timedelta",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "float",
                 "typedoc": "float",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -99,6 +114,7 @@
         },
         {
           "name": "result_format",
+          "doc": "Format of the returned date.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -111,31 +127,37 @@
                     "name": "'timestamp'",
                     "typedoc": null,
                     "nested": [],
-                    "union": false
+                    "union": false,
+                    "alias": null
                   },
                   {
                     "name": "'datetime'",
                     "typedoc": null,
                     "nested": [],
-                    "union": false
+                    "union": false,
+                    "alias": null
                   },
                   {
                     "name": "'epoch'",
                     "typedoc": null,
                     "nested": [],
-                    "union": false
+                    "union": false,
+                    "alias": null
                   }
                 ],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "timestamp",
           "kind": "POSITIONAL_OR_NAMED",
@@ -144,11 +166,13 @@
         },
         {
           "name": "exclude_millis",
+          "doc": "When set to a true value, rounds and drops\nmilliseconds as explained in the [Millisecond handling] section.",
           "type": {
             "name": "bool",
             "typedoc": "boolean",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
@@ -157,6 +181,7 @@
         },
         {
           "name": "date_format",
+          "doc": "Possible [custom timestamp] format of `date`.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -165,16 +190,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -183,17 +211,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Adds time to date and returns the resulting date.\n\nArguments:\n- ``date:``           Date to add time to in one of the supported\n                      `date formats`.\n- ``time:``           Time that is added in one of the supported\n                      `time formats`.\n- ``result_format:``  Format of the returned date.\n- ``exclude_millis:`` When set to any true value, rounds and drops\n                      milliseconds as explained in `millisecond handling`.\n- ``date_format:``    Possible `custom timestamp` format of ``date``.\n\nExamples:\n| ${date} =       | Add Time To Date | 2014-05-28 12:05:03.111 | 7 days       |\n| Should Be Equal | ${date}          | 2014-06-04 12:05:03.111 |              |\n| ${date} =       | Add Time To Date | 2014-05-28 12:05:03.111 | 01:02:03:004 |\n| Should Be Equal | ${date}          | 2014-05-28 13:07:06.115 |",
-      "shortdoc": "Adds time to date and returns the resulting date.",
+      "returnDoc": "The resulting date in the requested format.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/DateTime.py",
-      "lineno": 464
+      "lineno": 572
     },
     {
       "name": "Add Time To Time",
+      "doc": "Adds time to another time and returns the resulting time.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nAdd time to time\n    ${time} =    Add Time To Time    1 minute    42\n    Should Be Equal    ${time}    ${102}\n    ${time} =    Add Time To Time    3h 5min    01:02:03    timer    exclude_millis=True\n    Should Be Equal    ${time}    04:07:03\n```",
+      "shortdoc": "Adds time to another time and returns the resulting time.",
       "args": [
         {
           "name": "time1",
+          "doc": "First time in one of the supported [time formats].",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -202,28 +233,33 @@
                 "name": "timedelta",
                 "typedoc": "timedelta",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "float",
                 "typedoc": "float",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -232,6 +268,7 @@
         },
         {
           "name": "time2",
+          "doc": "Second time in one of the supported [time formats].",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -240,28 +277,33 @@
                 "name": "timedelta",
                 "typedoc": "timedelta",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "float",
                 "typedoc": "float",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -270,6 +312,7 @@
         },
         {
           "name": "result_format",
+          "doc": "Format of the returned time.",
           "type": {
             "name": "Literal",
             "typedoc": "Literal",
@@ -278,34 +321,40 @@
                 "name": "'number'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "'verbose'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "'compact'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "'timer'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "'timedelta'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "number",
           "kind": "POSITIONAL_OR_NAMED",
@@ -314,11 +363,13 @@
         },
         {
           "name": "exclude_millis",
+          "doc": "When set to any true value, rounds and drops\nmilliseconds as explained in the [Millisecond handling] section.",
           "type": {
             "name": "bool",
             "typedoc": "boolean",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
@@ -334,34 +385,41 @@
             "name": "timedelta",
             "typedoc": "timedelta",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           {
             "name": "float",
             "typedoc": "float",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           {
             "name": "str",
             "typedoc": "string",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           }
         ],
-        "union": true
+        "union": true,
+        "alias": null
       },
-      "doc": "Adds time to another time and returns the resulting time.\n\nArguments:\n- ``time1:``          First time in one of the supported `time formats`.\n- ``time2:``          Second time in one of the supported `time formats`.\n- ``result_format:``  Format of the returned time.\n- ``exclude_millis:`` When set to any true value, rounds and drops\n                      milliseconds as explained in `millisecond handling`.\n\nExamples:\n| ${time} =       | Add Time To Time | 1 minute          | 42       |\n| Should Be Equal | ${time}          | ${102}            |\n| ${time} =       | Add Time To Time | 3 hours 5 minutes | 01:02:03 | timer | exclude_millis=yes |\n| Should Be Equal | ${time}          | 04:07:03          |",
-      "shortdoc": "Adds time to another time and returns the resulting time.",
+      "returnDoc": "The sum of the given times in the requested format.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/DateTime.py",
-      "lineno": 522
+      "lineno": 642
     },
     {
       "name": "Convert Date",
+      "doc": "Converts between supported [date formats].\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nConvert date\n    ${date} =   Convert Date    20140528 12:05:03.111\n    Should Be Equal    ${date}    2014-05-28 12:05:03.111\n    ${date} =   Convert Date    ${date}    epoch\n    Should Be Equal    ${date}    ${1401267903.111}\n    ${date} =   Convert Date    5.28.2014 12:05    exclude_millis=yes    date_format=%m.%d.%Y %H:%M\n    Should Be Equal    ${date}    2014-05-28 12:05:00\n```",
+      "shortdoc": "Converts between supported [date formats].",
       "args": [
         {
           "name": "date",
+          "doc": "Date in one of the supported [date formats].",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -370,34 +428,40 @@
                 "name": "datetime",
                 "typedoc": "datetime",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "date",
                 "typedoc": "date",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "float",
                 "typedoc": "float",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -406,6 +470,7 @@
         },
         {
           "name": "result_format",
+          "doc": "Format of the returned date.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -418,31 +483,37 @@
                     "name": "'timestamp'",
                     "typedoc": null,
                     "nested": [],
-                    "union": false
+                    "union": false,
+                    "alias": null
                   },
                   {
                     "name": "'datetime'",
                     "typedoc": null,
                     "nested": [],
-                    "union": false
+                    "union": false,
+                    "alias": null
                   },
                   {
                     "name": "'epoch'",
                     "typedoc": null,
                     "nested": [],
-                    "union": false
+                    "union": false,
+                    "alias": null
                   }
                 ],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "timestamp",
           "kind": "POSITIONAL_OR_NAMED",
@@ -451,11 +522,13 @@
         },
         {
           "name": "exclude_millis",
+          "doc": "When set to any true value, rounds and drops\nmilliseconds as explained in the [Millisecond handling] section.",
           "type": {
             "name": "bool",
             "typedoc": "boolean",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
@@ -464,6 +537,7 @@
         },
         {
           "name": "date_format",
+          "doc": "Specifies possible [custom timestamp] format.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -472,16 +546,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -490,17 +567,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Converts between supported `date formats`.\n\nArguments:\n- ``date:``           Date in one of the supported `date formats`.\n- ``result_format:``  Format of the returned date.\n- ``exclude_millis:`` When set to any true value, rounds and drops\n                      milliseconds as explained in `millisecond handling`.\n- ``date_format:``    Specifies possible `custom timestamp` format.\n\nExamples:\n| ${date} =       | Convert Date | 20140528 12:05:03.111   |\n| Should Be Equal | ${date}      | 2014-05-28 12:05:03.111 |\n| ${date} =       | Convert Date | ${date}                 | epoch |\n| Should Be Equal | ${date}      | ${1401267903.111}       |\n| ${date} =       | Convert Date | 5.28.2014 12:05         | exclude_millis=yes | date_format=%m.%d.%Y %H:%M |\n| Should Be Equal | ${date}      | 2014-05-28 12:05:00     |",
-      "shortdoc": "Converts between supported `date formats`.",
+      "returnDoc": "The converted date in the requested format.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/DateTime.py",
-      "lineno": 383
+      "lineno": 467
     },
     {
       "name": "Convert Time",
+      "doc": "Converts between supported [time formats].\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nConvert time\n    ${time} =    Convert Time    10 seconds\n    Should Be Equal    ${time}    ${10}\n    ${time} =    Convert Time    1:00:01    verbose\n    Should Be Equal    ${time}    1 hour 1 second\n    ${time} =    Convert Time    ${3661.5}    timer    exclude_milles=yes\n    Should Be Equal    ${time}    01:01:02\n```",
+      "shortdoc": "Converts between supported [time formats].",
       "args": [
         {
           "name": "time",
+          "doc": "Time in one of the supported [time formats].",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -509,28 +589,33 @@
                 "name": "timedelta",
                 "typedoc": "timedelta",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "float",
                 "typedoc": "float",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -539,6 +624,7 @@
         },
         {
           "name": "result_format",
+          "doc": "Format of the returned time.",
           "type": {
             "name": "Literal",
             "typedoc": "Literal",
@@ -547,34 +633,40 @@
                 "name": "'number'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "'verbose'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "'compact'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "'timer'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "'timedelta'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "number",
           "kind": "POSITIONAL_OR_NAMED",
@@ -583,11 +675,13 @@
         },
         {
           "name": "exclude_millis",
+          "doc": "When set to any true value, rounds and drops\nmilliseconds as explained in the [Millisecond handling] section.",
           "type": {
             "name": "bool",
             "typedoc": "boolean",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
@@ -603,34 +697,41 @@
             "name": "timedelta",
             "typedoc": "timedelta",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           {
             "name": "float",
             "typedoc": "float",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           {
             "name": "str",
             "typedoc": "string",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           }
         ],
-        "union": true
+        "union": true,
+        "alias": null
       },
-      "doc": "Converts between supported `time formats`.\n\nArguments:\n- ``time:``           Time in one of the supported `time formats`.\n- ``result_format:``  Format of the returned time.\n- ``exclude_millis:`` When set to any true value, rounds and drops\n                      milliseconds as explained in `millisecond handling`.\n\nExamples:\n| ${time} =       | Convert Time  | 10 seconds        |\n| Should Be Equal | ${time}       | ${10}             |\n| ${time} =       | Convert Time  | 1:00:01           | verbose |\n| Should Be Equal | ${time}       | 1 hour 1 second   |\n| ${time} =       | Convert Time  | ${3661.5} | timer | exclude_milles=yes |\n| Should Be Equal | ${time}       | 01:01:02          |",
-      "shortdoc": "Converts between supported `time formats`.",
+      "returnDoc": "The converted time in the requested format.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/DateTime.py",
-      "lineno": 409
+      "lineno": 501
     },
     {
       "name": "Get Current Date",
+      "doc": "Returns current local or UTC time with an optional increment.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nGet current date\n    ${date} =    Get Current Date\n    Should Be Equal    ${date}    2014-06-12 20:00:58.946\n    ${date} =    Get Current Date    UTC\n    Should Be Equal    ${date}    2014-06-12 17:00:58.946\n    ${date} =    Get Current Date    increment=02:30:00\n    Should Be Equal    ${date}    2014-06-12 22:30:58.946\n    ${date} =    Get Current Date    UTC    - 5 hours\n    Should Be Equal    ${date}    2014-06-12 12:00:58.946\n    ${date} =    Get Current Date    result_format=datetime\n    Should Be Equal    ${date.year}    ${2014}\n    Should Be Equal    ${date.month}    ${6}\n```",
+      "shortdoc": "Returns current local or UTC time with an optional increment.",
       "args": [
         {
           "name": "time_zone",
+          "doc": "Get the current time on this time zone. Currently only\n`local` (default) and `UTC` are supported. This argument has\nno effect if date is returned as an [Epoch time].",
           "type": {
             "name": "Literal",
             "typedoc": "Literal",
@@ -639,16 +740,19 @@
                 "name": "'local'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "'UTC'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "local",
           "kind": "POSITIONAL_OR_NAMED",
@@ -657,6 +761,7 @@
         },
         {
           "name": "increment",
+          "doc": "Optional time increment to add to the returned date in\none of the supported [time formats]. Can be negative.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -665,28 +770,33 @@
                 "name": "timedelta",
                 "typedoc": "timedelta",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "float",
                 "typedoc": "float",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "0",
           "kind": "POSITIONAL_OR_NAMED",
@@ -695,6 +805,7 @@
         },
         {
           "name": "result_format",
+          "doc": "Format of the returned date (see [Date formats]).",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -707,31 +818,37 @@
                     "name": "'timestamp'",
                     "typedoc": null,
                     "nested": [],
-                    "union": false
+                    "union": false,
+                    "alias": null
                   },
                   {
                     "name": "'datetime'",
                     "typedoc": null,
                     "nested": [],
-                    "union": false
+                    "union": false,
+                    "alias": null
                   },
                   {
                     "name": "'epoch'",
                     "typedoc": null,
                     "nested": [],
-                    "union": false
+                    "union": false,
+                    "alias": null
                   }
                 ],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "timestamp",
           "kind": "POSITIONAL_OR_NAMED",
@@ -740,11 +857,13 @@
         },
         {
           "name": "exclude_millis",
+          "doc": "When set to any true value, rounds and drops\nmilliseconds as explained in the [Millisecond handling] section.",
           "type": {
             "name": "bool",
             "typedoc": "boolean",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
@@ -760,34 +879,48 @@
             "name": "datetime",
             "typedoc": "datetime",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "date",
+            "typedoc": "date",
+            "nested": [],
+            "union": false,
+            "alias": null
           },
           {
             "name": "float",
             "typedoc": "float",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           {
             "name": "str",
             "typedoc": "string",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           }
         ],
-        "union": true
+        "union": true,
+        "alias": null
       },
-      "doc": "Returns current local or UTC time with an optional increment.\n\nArguments:\n- ``time_zone:``      Get the current time on this time zone. Currently only\n                      ``local`` (default) and ``UTC`` are supported.\n                      Has no effect if date is returned as an `epoch time`.\n- ``increment:``      Optional time increment to add to the returned date in\n                      one of the supported `time formats`. Can be negative.\n- ``result_format:``  Format of the returned date (see `date formats`).\n- ``exclude_millis:`` When set to any true value, rounds and drops\n                      milliseconds as explained in `millisecond handling`.\n\nExamples:\n| ${date} =       | Get Current Date |\n| Should Be Equal | ${date}          | 2014-06-12 20:00:58.946 |\n| ${date} =       | Get Current Date | UTC                     |\n| Should Be Equal | ${date}          | 2014-06-12 17:00:58.946 |\n| ${date} =       | Get Current Date | increment=02:30:00      |\n| Should Be Equal | ${date}          | 2014-06-12 22:30:58.946 |\n| ${date} =       | Get Current Date | UTC                     | - 5 hours |\n| Should Be Equal | ${date}          | 2014-06-12 12:00:58.946 |\n| ${date} =       | Get Current Date | result_format=datetime  |\n| Should Be Equal | ${date.year}     | ${2014}                 |\n| Should Be Equal | ${date.month}    | ${6}                    |",
-      "shortdoc": "Returns current local or UTC time with an optional increment.",
+      "returnDoc": "The current date in the requested format.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/DateTime.py",
-      "lineno": 337
+      "lineno": 413
     },
     {
       "name": "Subtract Date From Date",
+      "doc": "Subtracts date from another date and returns time between.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nSubtract date from date\n    ${time} =    Subtract Date From Date    2014-05-28 12:05:52    2014-05-28 12:05:10\n    Should Be Equal    ${time}    ${42}\n    ${time} =    Subtract Date From Date    2014-05-28 12:05:52    2014-05-27 12:05:10    verbose\n    Should Be Equal    ${time}    1 day 42 seconds\n```",
+      "shortdoc": "Subtracts date from another date and returns time between.",
       "args": [
         {
           "name": "date1",
+          "doc": "Date to subtract another date from in one of the\nsupported [date formats].",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -796,34 +929,40 @@
                 "name": "datetime",
                 "typedoc": "datetime",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "date",
                 "typedoc": "date",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "float",
                 "typedoc": "float",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -832,6 +971,7 @@
         },
         {
           "name": "date2",
+          "doc": "Date that is subtracted in one of the supported\n[date formats].",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -840,34 +980,40 @@
                 "name": "datetime",
                 "typedoc": "datetime",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "date",
                 "typedoc": "date",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "float",
                 "typedoc": "float",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -876,6 +1022,7 @@
         },
         {
           "name": "result_format",
+          "doc": "Format of the returned time (see [Time formats]).",
           "type": {
             "name": "Literal",
             "typedoc": "Literal",
@@ -884,34 +1031,40 @@
                 "name": "'number'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "'verbose'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "'compact'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "'timer'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "'timedelta'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "number",
           "kind": "POSITIONAL_OR_NAMED",
@@ -920,11 +1073,13 @@
         },
         {
           "name": "exclude_millis",
+          "doc": "When set to a true value, rounds and drops\nmilliseconds as explained in the [Millisecond handling] section.",
           "type": {
             "name": "bool",
             "typedoc": "boolean",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
@@ -933,6 +1088,7 @@
         },
         {
           "name": "date1_format",
+          "doc": "Possible [custom timestamp] format of `date1`.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -941,16 +1097,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -959,6 +1118,7 @@
         },
         {
           "name": "date2_format",
+          "doc": "Possible [custom timestamp] format of `date2`.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -967,16 +1127,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -985,17 +1148,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Subtracts date from another date and returns time between.\n\nArguments:\n- ``date1:``          Date to subtract another date from in one of the\n                      supported `date formats`.\n- ``date2:``          Date that is subtracted in one of the supported\n                      `date formats`.\n- ``result_format:``  Format of the returned time (see `time formats`).\n- ``exclude_millis:`` When set to any true value, rounds and drops\n                      milliseconds as explained in `millisecond handling`.\n- ``date1_format:``   Possible `custom timestamp` format of ``date1``.\n- ``date2_format:``   Possible `custom timestamp` format of ``date2``.\n\n Examples:\n| ${time} =       | Subtract Date From Date | 2014-05-28 12:05:52     | 2014-05-28 12:05:10 |\n| Should Be Equal | ${time}                 | ${42}                   |\n| ${time} =       | Subtract Date From Date | 2014-05-28 12:05:52     | 2014-05-27 12:05:10 | verbose |\n| Should Be Equal | ${time}                 | 1 day 42 seconds        |",
-      "shortdoc": "Subtracts date from another date and returns time between.",
+      "returnDoc": "The time between the given dates in the requested format.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/DateTime.py",
-      "lineno": 433
+      "lineno": 533
     },
     {
       "name": "Subtract Time From Date",
+      "doc": "Subtracts time from date and returns the resulting date.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nSubtract time from date\n    ${date} =    Subtract Time From Date    2014-06-04 12:05:03.111    7 days\n    Should Be Equal    ${date}    2014-05-28 12:05:03.111\n    ${date} =    Subtract Time From Date    2014-05-28 13:07:06.115    01:02:03:004\n    Should Be Equal    ${date}    2014-05-28 12:05:03.111\n```",
+      "shortdoc": "Subtracts time from date and returns the resulting date.",
       "args": [
         {
           "name": "date",
+          "doc": "Date to subtract time from in one of the supported [date formats].",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1004,34 +1170,40 @@
                 "name": "datetime",
                 "typedoc": "datetime",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "date",
                 "typedoc": "date",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "float",
                 "typedoc": "float",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -1040,6 +1212,7 @@
         },
         {
           "name": "time",
+          "doc": "Time that is subtracted in one of the supported [time formats].",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1048,28 +1221,33 @@
                 "name": "timedelta",
                 "typedoc": "timedelta",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "float",
                 "typedoc": "float",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -1078,6 +1256,7 @@
         },
         {
           "name": "result_format",
+          "doc": "Format of the returned date.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1090,31 +1269,37 @@
                     "name": "'timestamp'",
                     "typedoc": null,
                     "nested": [],
-                    "union": false
+                    "union": false,
+                    "alias": null
                   },
                   {
                     "name": "'datetime'",
                     "typedoc": null,
                     "nested": [],
-                    "union": false
+                    "union": false,
+                    "alias": null
                   },
                   {
                     "name": "'epoch'",
                     "typedoc": null,
                     "nested": [],
-                    "union": false
+                    "union": false,
+                    "alias": null
                   }
                 ],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "timestamp",
           "kind": "POSITIONAL_OR_NAMED",
@@ -1123,11 +1308,13 @@
         },
         {
           "name": "exclude_millis",
+          "doc": "When set to any true value, rounds and drops\nmilliseconds as explained in the [Millisecond handling] section.",
           "type": {
             "name": "bool",
             "typedoc": "boolean",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
@@ -1136,6 +1323,7 @@
         },
         {
           "name": "date_format",
+          "doc": "Possible [custom timestamp] format of `date`.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1144,16 +1332,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -1162,17 +1353,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Subtracts time from date and returns the resulting date.\n\nArguments:\n- ``date:``           Date to subtract time from in one of the supported\n                      `date formats`.\n- ``time:``           Time that is subtracted in one of the supported\n                     `time formats`.\n- ``result_format:``  Format of the returned date.\n- ``exclude_millis:`` When set to any true value, rounds and drops\n                      milliseconds as explained in `millisecond handling`.\n- ``date_format:``    Possible `custom timestamp` format of ``date``.\n\nExamples:\n| ${date} =       | Subtract Time From Date | 2014-06-04 12:05:03.111 | 7 days |\n| Should Be Equal | ${date}                 | 2014-05-28 12:05:03.111 |\n| ${date} =       | Subtract Time From Date | 2014-05-28 13:07:06.115 | 01:02:03:004 |\n| Should Be Equal | ${date}                 | 2014-05-28 12:05:03.111 |",
-      "shortdoc": "Subtracts time from date and returns the resulting date.",
+      "returnDoc": "The resulting date in the requested format.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/DateTime.py",
-      "lineno": 493
+      "lineno": 607
     },
     {
       "name": "Subtract Time From Time",
+      "doc": "Subtracts time from another time and returns the resulting time.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nSubtract time from time\n    ${time} =    Subtract Time From Time    00:02:30    100\n    Should Be Equal    ${time}    ${50}\n    ${time} =    Subtract Time From Time    ${time}    1 minute    compact\n    Should Be Equal    ${time}    - 10s\n```",
+      "shortdoc": "Subtracts time from another time and returns the resulting time.",
       "args": [
         {
           "name": "time1",
+          "doc": "Time to subtract another time from in one of\nthe supported [time formats].",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1181,28 +1375,33 @@
                 "name": "timedelta",
                 "typedoc": "timedelta",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "float",
                 "typedoc": "float",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -1211,6 +1410,7 @@
         },
         {
           "name": "time2",
+          "doc": "Time to subtract in one of the supported [time formats].",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1219,28 +1419,33 @@
                 "name": "timedelta",
                 "typedoc": "timedelta",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "float",
                 "typedoc": "float",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -1249,6 +1454,7 @@
         },
         {
           "name": "result_format",
+          "doc": "Format of the returned time.",
           "type": {
             "name": "Literal",
             "typedoc": "Literal",
@@ -1257,34 +1463,40 @@
                 "name": "'number'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "'verbose'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "'compact'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "'timer'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "'timedelta'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "number",
           "kind": "POSITIONAL_OR_NAMED",
@@ -1293,11 +1505,13 @@
         },
         {
           "name": "exclude_millis",
+          "doc": "When set to any true value, rounds and drops\nmilliseconds as explained in the [Millisecond handling] section.",
           "type": {
             "name": "bool",
             "typedoc": "boolean",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
@@ -1313,35 +1527,39 @@
             "name": "timedelta",
             "typedoc": "timedelta",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           {
             "name": "float",
             "typedoc": "float",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           {
             "name": "str",
             "typedoc": "string",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           }
         ],
-        "union": true
+        "union": true,
+        "alias": null
       },
-      "doc": "Subtracts time from another time and returns the resulting time.\n\nArguments:\n- ``time1:``          Time to subtract another time from in one of\n                      the supported `time formats`.\n- ``time2:``          Time to subtract in one of the supported `time formats`.\n- ``result_format:``  Format of the returned time.\n- ``exclude_millis:`` When set to any true value, rounds and drops\n                      milliseconds as explained in `millisecond handling`.\n\nExamples:\n| ${time} =       | Subtract Time From Time | 00:02:30 | 100      |\n| Should Be Equal | ${time}                 | ${50}    |\n| ${time} =       | Subtract Time From Time | ${time}  | 1 minute | compact |\n| Should Be Equal | ${time}                 | - 10s    |",
-      "shortdoc": "Subtracts time from another time and returns the resulting time.",
+      "returnDoc": "The difference between the given times in the requested format.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/DateTime.py",
-      "lineno": 547
+      "lineno": 675
     }
   ],
   "typedocs": [
     {
       "type": "Standard",
       "name": "boolean",
-      "doc": "Strings ``TRUE``, ``YES``, ``ON``, ``1`` and possible localization specific \"true\nstrings\" are converted to Boolean ``True``, the empty string, strings ``FALSE``,\n``NO``, ``OFF`` and ``0`` and possibly localization specific \"false strings\"\nare converted to Boolean ``False``, and the string ``NONE`` is converted to\nthe Python ``None`` object. Other strings and all other values are passed as-is,\nallowing keywords to handle them specially if needed. All string comparisons are\ncase-insensitive.\n\nExamples: ``TRUE`` (converted to ``True``), ``off`` (converted to ``False``),\n``example`` (used as-is)\n",
+      "doc": "Strings `TRUE`, `YES`, `ON`, `1` and possible localization specific \"true strings\"\nare converted to Boolean `True`, the empty string, strings `FALSE`, `NO`, `OFF`\nand `0` and possibly localization specific \"false strings\" are converted to\nBoolean `False`, and the string `NONE` is converted to the Python `None` object.\nOther strings and all other values are passed as-is, allowing keywords to handle\nthem specially if needed.\n\nAll string comparisons are case-insensitive.\n\nExamples: `TRUE` (converted to `True`), `off` (converted to `False`), `example`\n(used as-is)\n",
       "usages": [
         "Add Time To Date",
         "Add Time To Time",
@@ -1362,10 +1580,11 @@
     {
       "type": "Standard",
       "name": "date",
-      "doc": "String timestamps are expected to be in\n[https://en.wikipedia.org/wiki/ISO_8601|ISO 8601] like date format\n``YYYY-MM-DD``, where any non-digit character can be used as a separator\nor separators can be omitted altogether. Possible time components are\nonly allowed if they are zeros.\n\nA special value ``NOW`` and ``TODAY`` (case-insensitive) can be used to get\nthe current local ``date``. This is new in Robot Framework 7.3.\n\nExamples: ``2022-02-09``, ``2022-02-09 00:00``, ``today``\n",
+      "doc": "Timestamps are expected to be in [ISO 8601] like date format `YYYY-MM-DD`. Any\nnon-digit character can be used as a separator or separators can be omitted\naltogether. Possible time components are only allowed if they are zeros.\n\nA special value `NOW` and `TODAY` (case-insensitive) can be used to get\nthe current local `date`. This is new in Robot Framework 7.3.\n\nExamples: `2022-02-09`, `2022-02-09 00:00`, `today`\n\n[ISO 8601]: https://en.wikipedia.org/wiki/ISO_8601\n",
       "usages": [
         "Add Time To Date",
         "Convert Date",
+        "Get Current Date",
         "Subtract Date From Date",
         "Subtract Time From Date"
       ],
@@ -1376,7 +1595,7 @@
     {
       "type": "Standard",
       "name": "datetime",
-      "doc": "String timestamps are expected to be in\n[https://en.wikipedia.org/wiki/ISO_8601|ISO 8601] like\nformat ``YYYY-MM-DD hh:mm:ss.mmmmmm``, where any non-digit\ncharacter can be used as a separator or separators can be\nomitted altogether. Additionally, only the date part is\nmandatory, all possibly missing time components are considered\nto be zeros.\n\nA special values ``NOW`` and ``TODAY`` (case-insensitive) can be used to get\nthe current local ``datetime``. This is new in Robot Framework 7.3.\n\nIntegers and floats are considered to represent seconds since\nthe [https://en.wikipedia.org/wiki/Unix_time|Unix epoch].\n\nExamples: ``2022-02-09T16:39:43.632269``, ``20220209 16:39``,\n``now``, ``${1644417583.632269}`` (Epoch time)\n",
+      "doc": "Timestamps are expected to be in [ISO 8601] like format `YYYY-MM-DD hh:mm:ss.mmmmmm`.\nAny non-digit character can be used as a separator or separators can be omitted\naltogether. Additionally, only the date part is mandatory, all possibly missing\ntime components are considered to be zeros.\n\nA special values `NOW` and `TODAY` (case-insensitive) can be used to get\nthe current local `datetime`. This is new in Robot Framework 7.3.\n\nIntegers and floats are considered to represent seconds since the [Unix epoch].\n\nExamples: `2022-02-09T16:39:43.632269`, `20220209 16:39`, `now`,\n`${1644417583.632269}` (Epoch time)\n\n[ISO 8601]: https://en.wikipedia.org/wiki/ISO_8601\n[Unix epoch]: https://en.wikipedia.org/wiki/Unix_time\n",
       "usages": [
         "Add Time To Date",
         "Convert Date",
@@ -1393,7 +1612,7 @@
     {
       "type": "Standard",
       "name": "float",
-      "doc": "Conversion is done using Python's\n[https://docs.python.org/library/functions.html#float|float] built-in function.\n\nSpaces and underscores can be used as visual separators for digit grouping purposes.\n\nExamples: ``3.14``, ``2.9979e8``, ``10 000.000 01``\n",
+      "doc": "Conversion is done using Python's [float] built-in function.\n\nSpaces and underscores can be used as visual separators for digit grouping purposes.\n\nExamples: `3.14`, `2.9979e8`, `10 000.000 01`\n\n[float]: https://docs.python.org/library/functions.html#float\n",
       "usages": [
         "Add Time To Date",
         "Add Time To Time",
@@ -1412,7 +1631,7 @@
     {
       "type": "Standard",
       "name": "integer",
-      "doc": "Conversion is done using Python's [https://docs.python.org/library/functions.html#int|int]\nbuilt-in function. Floating point\nnumbers are accepted only if they can be represented as integers exactly.\nFor example, ``1.0`` is accepted and ``1.1`` is not.\n\nIt is possible to use hexadecimal, octal and binary numbers by prefixing values\nwith ``0x``, ``0o`` and ``0b``, respectively. Spaces and underscores can be used\nas visual separators for digit grouping purposes.\n\nExamples: ``42``, ``-1``, ``0b1010``, ``10 000 000``, ``0xBAD_C0FFEE``\n",
+      "doc": "Conversion is done using Python's [int] built-in function. Floating point numbers\nare accepted only if they can be represented as integers exactly. For example,\n`1.0` is accepted but `1.1` is not.\n\nIt is possible to use hexadecimal, octal and binary numbers by prefixing values\nwith `0x`, `0o` and `0b`, respectively.\n\nSpaces and underscores can be used as visual separators for digit grouping purposes.\n\nExamples: `42`, `-1`, `0b1010`, `10 000 000`, `0xBAD_C0FFEE`\n\n[int]: https://docs.python.org/library/functions.html#int\n",
       "usages": [
         "Add Time To Date",
         "Add Time To Time",
@@ -1431,7 +1650,7 @@
     {
       "type": "Standard",
       "name": "Literal",
-      "doc": "Only specified values are accepted. Values can be strings,\nintegers, bytes, Booleans, enums and None, and used arguments\nare converted using the value type specific conversion logic.\n\nStrings are case, space, underscore and hyphen insensitive,\nbut exact matches have precedence over normalized matches.\n",
+      "doc": "Only specified values are accepted. Values can be strings, integers, bytes,\nBooleans, enums and None, and used arguments are converted using the value type\nspecific conversion logic.\n\nString matching is case, space, underscore and hyphen insensitive, but exact\nmatches have precedence over normalized matches.\n",
       "usages": [
         "Add Time To Date",
         "Add Time To Time",
@@ -1449,7 +1668,7 @@
     {
       "type": "Standard",
       "name": "None",
-      "doc": "String ``NONE`` (case-insensitive) and the empty string are converted to\nthe Python ``None`` object. Other values cause an error.\n\nConverting the empty string is new in Robot Framework 7.4.\n",
+      "doc": "String `NONE` (case-insensitive) and the empty string are converted to the Python\n`None` object. Other values cause an error.\n\nConverting the empty string is new in Robot Framework 7.4.\n",
       "usages": [
         "Add Time To Date",
         "Convert Date",
@@ -1463,7 +1682,7 @@
     {
       "type": "Standard",
       "name": "string",
-      "doc": "All arguments are converted to Unicode strings.\n\nMost values are converted simply by using ``str(value)``. An exception is that\nbytes are mapped directly to Unicode code points with same ordinals. This means\nthat, for example, ``b\"hyv\\xe4\"`` becomes ``\"hyv\u00e4\"``.\n\nConverting bytes specially is new Robot Framework 7.4.\n",
+      "doc": "All arguments are converted to Unicode strings.\n\nMost values are converted simply by using `str(value)`. An exception is that\nbytes are mapped directly to Unicode code points with same ordinals. This means\nthat, for example, `b\"hyv\\xe4\"` becomes `\"hyv\u00e4\"`.\n\nConverting bytes specially is new Robot Framework 7.4.\n",
       "usages": [
         "Add Time To Date",
         "Add Time To Time",
@@ -1481,7 +1700,7 @@
     {
       "type": "Standard",
       "name": "timedelta",
-      "doc": "Strings are expected to represent a time interval in one of\nthe time formats Robot Framework supports:\n- a number representing seconds like ``42`` or ``10.5``\n- a time string like ``1 hour 2 seconds`` or ``1h 2s``\n- a \"timer\" string like ``01:02`` (1 minute 2 seconds) or ``01:00:03`` (1 hour 3 seconds)\n\nIntegers and floats are considered to be seconds.\n\nSee the [https://robotframework.org/robotframework/|Robot Framework User Guide]\nfor more details about the supported time formats.\n",
+      "doc": "Strings are expected to represent a time interval in one of the time formats\nRobot Framework supports:\n\n- a number representing seconds like `42` or `10.5`\n- a \"time string\" like `1 hour 2 seconds` or `1h 2s`\n- a \"timer string\" like `01:02` (1 minute 2 seconds) or `01:00:03` (1 hour 3 seconds)\n\nIntegers and floats are considered to be seconds.\n\nSee the [User Guide] for more details about the supported time formats.\n\n[User Guide]: https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#time-format\n",
       "usages": [
         "Add Time To Date",
         "Add Time To Time",

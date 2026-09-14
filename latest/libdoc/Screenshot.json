@@ -1,21 +1,24 @@
 {
-  "specversion": 3,
+  "specversion": 4,
   "name": "Screenshot",
-  "doc": "Library for taking screenshots on the machine where tests are executed.\n\nTaking the actual screenshot requires a suitable tool or module that may\nneed to be installed separately. Taking screenshots also requires tests\nto be run with a physical or virtual display.\n\n== Table of contents ==\n\n- `Supported screenshot taking tools and modules`\n- `Where screenshots are saved`\n- `ScreenCapLibrary`\n- `Importing`\n- `Keywords`\n\n= Supported screenshot taking tools and modules =\n\nHow screenshots are taken depends on the operating system. On OSX\nscreenshots are taken using the built-in ``screencapture`` utility. On\nother operating systems you need to have one of the following tools or\nPython modules installed. You can specify the tool/module to use when\n`importing` the library. If no tool or module is specified, the first\none found will be used.\n\n- wxPython :: http://wxpython.org :: Generic Python GUI toolkit.\n- PyGTK :: http://pygtk.org :: This module is available by default on most\n  Linux distributions.\n- Pillow :: http://python-pillow.github.io ::\n  Only works on Windows. Also the original PIL package is supported.\n- Scrot :: http://en.wikipedia.org/wiki/Scrot :: Not used on Windows.\n  Install with ``apt-get install scrot`` or similar.\n\n= Where screenshots are saved =\n\nBy default screenshots are saved into the same directory where the Robot\nFramework log file is written. If no log is created, screenshots are saved\ninto the directory where the XML output file is written.\n\nIt is possible to specify a custom location for screenshots using\n``screenshot_directory`` argument when `importing` the library and\nusing `Set Screenshot Directory` keyword during execution. It is also\npossible to save screenshots using an absolute path.\n\n= ScreenCapLibrary =\n\n[https://github.com/mihaiparvu/ScreenCapLibrary|ScreenCapLibrary] is an\nexternal Robot Framework library that can be used as an alternative,\nwhich additionally provides support for multiple formats, adjusting the\nquality, using GIFs and video capturing.",
-  "version": "7.4.2",
-  "generated": "2026-03-03T16:39:18+00:00",
+  "doc": "Library for taking screenshots on the machine where tests are executed.\n\nTaking the actual screenshot requires a suitable tool or module that may\nneed to be installed separately. Taking screenshots also requires tests\nto be run with a physical or virtual display.\n\n### Table of contents\n\n%TOC%\n\n# Supported screenshot taking tools and modules\n\nHow screenshots are taken depends on the operating system. On OSX\nscreenshots are taken using the built-in `screencapture` utility. On\nother operating systems you need to have one of the following tools or\nPython modules installed. You can specify the tool/module to use when\n[importing] the library. If no tool or module is specified, the first\none found will be used.\n\n- [wxPython](http://wxpython.org) - Generic Python GUI toolkit.\n- [PyGTK](http://pygtk.org) - This module is available by default on many\n  Linux distributions.\n- [Pillow](http://python-pillow.github.io) -\n  Only used on Windows. Also the original PIL package is supported.\n- [Scrot](http://en.wikipedia.org/wiki/Scrot) - Not used on Windows.\n  Install with `apt-get install scrot` or similar.\n\n# Where screenshots are saved\n\nScreenshots are saved into the same directory where the Robot Framework log\nfile is written by default. If no log is created, screenshots are saved\ninto the directory where the output file is written.\n\nIt is possible to specify a custom location for screenshots using\n`screenshot_directory` argument when [importing] the library and\nusing [Set Screenshot Directory] keyword during execution. It is also\npossible to save screenshots using an absolute path.\n\n# ScreenCapLibrary\n\n[ScreenCapLibrary](https://github.com/mihaiparvu/ScreenCapLibrary) is an\nexternal Robot Framework library that can be used as an alternative,\nwhich additionally provides support for multiple formats, adjusting the\nquality, using GIFs and video capturing.",
+  "version": "7.5",
+  "generated": "2026-09-14T13:26:10+00:00",
   "type": "LIBRARY",
   "scope": "SUITE",
-  "docFormat": "ROBOT",
+  "docFormat": "MARKDOWN",
   "source": "/home/peke/Devel/robotframework/src/robot/libraries/Screenshot.py",
   "lineno": 40,
   "tags": [],
   "inits": [
     {
       "name": "__init__",
+      "doc": "Configure where screenshots are saved.\n\nExamples:\n\n```robotframework\n*** Settings ***\nLibrary    Screenshot\nLibrary    Screenshot    ${TEMPDIR}\nLibrary    Screenshot    screenshot_module=PyGTK\n```",
+      "shortdoc": "Configure where screenshots are saved.",
       "args": [
         {
           "name": "screenshot_directory",
+          "doc": "If not given, screenshots are saved into\nsame directory as the log file. The directory can also be set\nusing [Set Screenshot Directory] keyword.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -24,16 +27,19 @@
                 "name": "Path",
                 "typedoc": "Path",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -42,6 +48,7 @@
         },
         {
           "name": "screenshot_module",
+          "doc": "Specifies the module or tool to use when using\nthis library outside OSX. Possible values are `wxPython`,\n`PyGTK`, `PIL` and `scrot`, case-insensitively. If no value is\ngiven, the first module/tool found is used in that order.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -50,16 +57,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -68,24 +78,28 @@
         }
       ],
       "returnType": null,
-      "doc": "Configure where screenshots are saved.\n\nIf ``screenshot_directory`` is not given, screenshots are saved into\nsame directory as the log file. The directory can also be set using\n`Set Screenshot Directory` keyword.\n\n``screenshot_module`` specifies the module or tool to use when using\nthis library outside OSX. Possible values are ``wxPython``,\n``PyGTK``, ``PIL`` and ``scrot``, case-insensitively. If no value is\ngiven, the first module/tool found is used in that order.\n\nExamples:\n| =Setting= |  =Value=   |  =Value=   |\n| Library   | Screenshot |            |\n| Library   | Screenshot | ${TEMPDIR} |\n| Library   | Screenshot | screenshot_module=PyGTK |",
-      "shortdoc": "Configure where screenshots are saved.",
+      "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Screenshot.py",
-      "lineno": 90
+      "lineno": 91
     }
   ],
   "keywords": [
     {
       "name": "Set Screenshot Directory",
+      "doc": "Sets the directory where screenshots are saved.\n\nIt is possible to use `/` as a path separator in all operating\nsystems. Path to the old directory is returned.\n\nThe directory can also be set in [importing].",
+      "shortdoc": "Sets the directory where screenshots are saved.",
       "args": [
         {
           "name": "path",
+          "doc": "Directory where to save screenshots. Must already exist.",
           "type": {
             "name": "Path",
             "typedoc": "Path",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -97,24 +111,31 @@
         "name": "str",
         "typedoc": "string",
         "nested": [],
-        "union": false
+        "union": false,
+        "alias": null
       },
-      "doc": "Sets the directory where screenshots are saved.\n\nIt is possible to use ``/`` as a path separator in all operating\nsystems. Path to the old directory is returned.\n\nThe directory can also be set in `importing`.",
-      "shortdoc": "Sets the directory where screenshots are saved.",
+      "returnDoc": "Path to the previous screenshot directory.",
+      "raises": {
+        "RuntimeError": "If `path` does not exist or is not a directory."
+      },
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Screenshot.py",
-      "lineno": 130
+      "lineno": 134
     },
     {
       "name": "Take Screenshot",
+      "doc": "Takes a screenshot in JPEG format and embeds it into the log file.\n\nName of the file where the screenshot is stored is derived from the\ngiven `name`. If the `name` ends with extension `.jpg` or\n`.jpeg`, the screenshot will be stored with that exact name.\nOtherwise a unique name is created by adding an underscore, a running\nindex and an extension to the `name`.\n\nThe name will be interpreted to be relative to the directory where\nthe log file is written. It is also possible to use absolute paths.\nUsing `/` as a path separator works in all operating systems.\n\n`width` specifies the size of the screenshot in the log file.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nTake Screenshots\n    Take Screenshot                        # LOGDIR/screenshot_1.jpg\n    Take Screenshot                        # LOGDIR/screenshot_2.jpg\n    Take Screenshot    mypic               # LOGDIR/mypic_1.jpg\n    Take Screenshot    mypic               # LOGDIR/mypic_2.jpg\n    Take Screenshot    pic.jpg             # LOGDIR/pic.jpg\n    Take Screenshot    pic.jpg             # LOGDIR/pic.jpg\n    Take Screenshot    ${TEMPDIR}/mypic    # /tmp/mypic_1.jpg\n    Take Screenshot    images/login.jpg    80%\n    Take Screenshot    width=550px\n```",
+      "shortdoc": "Takes a screenshot in JPEG format and embeds it into the log file.",
       "args": [
         {
           "name": "name",
+          "doc": "Base name or path for the screenshot file.",
           "type": {
             "name": "str",
             "typedoc": "string",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "screenshot",
           "kind": "POSITIONAL_OR_NAMED",
@@ -123,11 +144,13 @@
         },
         {
           "name": "width",
+          "doc": "Width of the embedded image in the log file.",
           "type": {
             "name": "str",
             "typedoc": "string",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "800px",
           "kind": "POSITIONAL_OR_NAMED",
@@ -139,24 +162,29 @@
         "name": "str",
         "typedoc": "string",
         "nested": [],
-        "union": false
+        "union": false,
+        "alias": null
       },
-      "doc": "Takes a screenshot in JPEG format and embeds it into the log file.\n\nName of the file where the screenshot is stored is derived from the\ngiven ``name``. If the ``name`` ends with extension ``.jpg`` or\n``.jpeg``, the screenshot will be stored with that exact name.\nOtherwise a unique name is created by adding an underscore, a running\nindex and an extension to the ``name``.\n\nThe name will be interpreted to be relative to the directory where\nthe log file is written. It is also possible to use absolute paths.\nUsing ``/`` as a path separator works in all operating systems.\n\n``width`` specifies the size of the screenshot in the log file.\n\nExamples: (LOGDIR is determined automatically by the library)\n| Take Screenshot |                  |     | # LOGDIR/screenshot_1.jpg (index automatically incremented) |\n| Take Screenshot | mypic            |     | # LOGDIR/mypic_1.jpg (index automatically incremented) |\n| Take Screenshot | ${TEMPDIR}/mypic |     | # /tmp/mypic_1.jpg (index automatically incremented) |\n| Take Screenshot | pic.jpg          |     | # LOGDIR/pic.jpg (always uses this file) |\n| Take Screenshot | images/login.jpg | 80% | # Specify both name and width. |\n| Take Screenshot | width=550px      |     | # Specify only width. |\n\nThe path where the screenshot is saved is returned.",
-      "shortdoc": "Takes a screenshot in JPEG format and embeds it into the log file.",
+      "returnDoc": "Path where the screenshot was saved.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Screenshot.py",
-      "lineno": 145
+      "lineno": 158
     },
     {
       "name": "Take Screenshot Without Embedding",
+      "doc": "Takes a screenshot and links it from the log file.\n\nThis keyword is otherwise identical to [Take Screenshot] but the saved\nscreenshot is not embedded into the log file. The screenshot is linked\nso it is nevertheless easily available.",
+      "shortdoc": "Takes a screenshot and links it from the log file.",
       "args": [
         {
           "name": "name",
+          "doc": "Base name or path for the screenshot file.",
           "type": {
             "name": "str",
             "typedoc": "string",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "screenshot",
           "kind": "POSITIONAL_OR_NAMED",
@@ -168,20 +196,21 @@
         "name": "str",
         "typedoc": "string",
         "nested": [],
-        "union": false
+        "union": false,
+        "alias": null
       },
-      "doc": "Takes a screenshot and links it from the log file.\n\nThis keyword is otherwise identical to `Take Screenshot` but the saved\nscreenshot is not embedded into the log file. The screenshot is linked\nso it is nevertheless easily available.",
-      "shortdoc": "Takes a screenshot and links it from the log file.",
+      "returnDoc": "Path where the screenshot was saved.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Screenshot.py",
-      "lineno": 174
+      "lineno": 200
     }
   ],
   "typedocs": [
     {
       "type": "Standard",
       "name": "None",
-      "doc": "String ``NONE`` (case-insensitive) and the empty string are converted to\nthe Python ``None`` object. Other values cause an error.\n\nConverting the empty string is new in Robot Framework 7.4.\n",
+      "doc": "String `NONE` (case-insensitive) and the empty string are converted to the Python\n`None` object. Other values cause an error.\n\nConverting the empty string is new in Robot Framework 7.4.\n",
       "usages": [
         "__init__"
       ],
@@ -192,7 +221,7 @@
     {
       "type": "Standard",
       "name": "Path",
-      "doc": "Strings are converted [https://docs.python.org/library/pathlib.html|Path] objects.\nOn Windows ``/`` is converted to ``\\`` automatically.\n\nExamples: ``/tmp/absolute/path``, ``relative/path/to/file.ext``, ``name.txt``\n",
+      "doc": "Strings are converted [Path] objects. On Windows `/` is converted to `\\`\nautomatically.\n\nExamples: `/tmp/absolute/path`, `relative/path/to/file.ext`, `name.txt`\n\n[Path]: https://docs.python.org/library/pathlib.html\n",
       "usages": [
         "__init__",
         "Set Screenshot Directory"
@@ -205,7 +234,7 @@
     {
       "type": "Standard",
       "name": "string",
-      "doc": "All arguments are converted to Unicode strings.\n\nMost values are converted simply by using ``str(value)``. An exception is that\nbytes are mapped directly to Unicode code points with same ordinals. This means\nthat, for example, ``b\"hyv\\xe4\"`` becomes ``\"hyv\u00e4\"``.\n\nConverting bytes specially is new Robot Framework 7.4.\n",
+      "doc": "All arguments are converted to Unicode strings.\n\nMost values are converted simply by using `str(value)`. An exception is that\nbytes are mapped directly to Unicode code points with same ordinals. This means\nthat, for example, `b\"hyv\\xe4\"` becomes `\"hyv\u00e4\"`.\n\nConverting bytes specially is new Robot Framework 7.4.\n",
       "usages": [
         "__init__",
         "Set Screenshot Directory",

@@ -1,22 +1,25 @@
 {
-  "specversion": 3,
+  "specversion": 4,
   "name": "String",
-  "doc": "A library for string manipulation and verification.\n\n``String`` is Robot Framework's standard library for manipulating\nstrings (e.g. `Replace String Using Regexp`, `Split To Lines`) and\nverifying their contents (e.g. `Should Be String`).\n\nIn addition to strings, most of the keywords work also with bytes.\nBytes support was heavily enhanced in Robot Framework 7.4.\n\nFollowing keywords from ``BuiltIn`` library can also be used with strings\nand bytes:\n\n- `Get Length`\n- `Length Should Be`\n- `Should (Not) Be Empty`\n- `Should (Not) Be Equal (As Strings/Integers/Numbers)`\n- `Should (Not) Match (Regexp)`\n- `Should (Not) Contain`\n- `Should (Not) Start With`\n- `Should (Not) End With`\n- `Convert To String`\n- `Convert To Bytes`",
-  "version": "7.4.2",
-  "generated": "2026-03-03T16:39:18+00:00",
+  "doc": "A library for string manipulation and verification.\n\n`String` is Robot Framework's standard library for manipulating\nstrings (e.g. [Replace String Using Regexp], [Split To Lines]) and\nverifying their contents (e.g. [Should Be String]).\n\nIn addition to strings, most of the keywords work also with bytes.\nBytes support was heavily enhanced in Robot Framework 7.4.\n\nFollowing keywords from the [BuiltIn] library can also be used with strings\nand bytes:\n\n- `Get Length`\n- `Length Should Be`\n- `Should (Not) Be Empty`\n- `Should (Not) Be Equal (As Strings/Integers/Numbers)`\n- `Should (Not) Match (Regexp)`\n- `Should (Not) Contain`\n- `Should (Not) Start With`\n- `Should (Not) End With`\n- `Convert To String`\n- `Convert To Bytes`\n\n[BuiltIn]: https://robotframework.org/robotframework/latest/libraries/BuiltIn.html",
+  "version": "7.5",
+  "generated": "2026-09-14T13:26:10+00:00",
   "type": "LIBRARY",
   "scope": "GLOBAL",
-  "docFormat": "ROBOT",
+  "docFormat": "MARKDOWN",
   "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-  "lineno": 39,
+  "lineno": 46,
   "tags": [],
   "inits": [],
   "keywords": [
     {
       "name": "Convert To Lower Case",
+      "doc": "Converts string to lower case.\n\nUses Python's standard\n[str.lower()](https://docs.python.org/library/stdtypes.html#str.lower) or\n[bytes.lower()](https://docs.python.org/library/stdtypes.html#bytes.lower)\nmethod, depending on the input value type.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nConvert to lower case\n    ${str1} =    Convert To Lower Case    ABC\n    ${str2} =    Convert To Lower Case    1A2c3D\n    Should Be Equal    ${str1}    abc\n    Should Be Equal    ${str2}    1a2c3d\n```\n\nIf this keyword is used with bytes, only ASCII characters are lowercased.",
+      "shortdoc": "Converts string to lower case.",
       "args": [
         {
           "name": "string",
+          "doc": "The string or bytes to convert.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -25,16 +28,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -43,17 +49,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Converts string to lower case.\n\nUses Python's standard\n[https://docs.python.org/library/stdtypes.html#str.lower|lower()]\nmethod.\n\nExamples:\n| ${str1} = | Convert To Lower Case | ABC |\n| ${str2} = | Convert To Lower Case | 1A2c3D |\n| Should Be Equal | ${str1} | abc |\n| Should Be Equal | ${str2} | 1a2c3d |\n\nIf this keyword is used with bytes, only ASCII characters are lower cased.",
-      "shortdoc": "Converts string to lower case.",
+      "returnDoc": "The input converted to lower case.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 67
+      "lineno": 73
     },
     {
       "name": "Convert To Title Case",
+      "doc": "Converts string to title case.\n\nTitlecasing is done using the following algorithm:\n\n- Split the string to words from whitespace characters (spaces,\n  newlines, etc.).\n- Exclude words that are not all lower case. This preserves,\n  for example, \"OK\" and \"iPhone\".\n- Exclude also words listed in the optional `exclude` argument.\n- Title case the first alphabetical character of each word that has\n  not been excluded.\n- Join all words together so that original whitespace is preserved.\n\nExplicitly excluded words can be given as a list or as a string with\nwords separated by a comma and an optional space. Excluded words are\nactually considered to be regular expression patterns, so it is\npossible to use something like `example[.!?]?` to match the word\n`example` on its own and also if followed by `.`, `!` or `?`.\nSee the [BuiltIn] library keyword `Should Match Regexp` for more\ninformation about Python regular expression syntax in general and\nhow to use it in Robot Framework data in particular.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nConvert to title case\n    ${str1} =    Convert To Title Case    hello, world!\n    ${str2} =    Convert To Title Case    it's an OK iPhone    exclude=a, an, the\n    ${str3} =    Convert To Title Case    distance is 1 km.    exclude=is, km.?\n    Should Be Equal    ${str1}    Hello, World!\n    Should Be Equal    ${str2}    It's an OK iPhone\n    Should Be Equal    ${str3}    Distance is 1 km.\n```\n\nThe reason this keyword does not use Python's standard\n[str.title()](https://docs.python.org/library/stdtypes.html#str.title)\nmethod is that it can yield undesired results, for example, if\nstrings contain upper case letters or special characters like\napostrophes. It would, for example, convert \"it's an OK iPhone\"\nto \"It'S An Ok Iphone\".\n\nIf this keyword is used with bytes, only ASCII characters are titlecased.\nBytes support is new in Robot Framework 7.4.",
+      "shortdoc": "Converts string to title case.",
       "args": [
         {
           "name": "string",
+          "doc": "The string or bytes to convert.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -62,16 +71,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -80,6 +92,7 @@
         },
         {
           "name": "exclude",
+          "doc": "Optional words to exclude from title casing. Can be a list\nor a comma-separated string. Each word is treated as a regular\nexpression pattern.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -88,13 +101,15 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "list",
@@ -108,28 +123,34 @@
                         "name": "str",
                         "typedoc": "string",
                         "nested": [],
-                        "union": false
+                        "union": false,
+                        "alias": null
                       },
                       {
                         "name": "bytes",
                         "typedoc": "bytes",
                         "nested": [],
-                        "union": false
+                        "union": false,
+                        "alias": null
                       }
                     ],
-                    "union": true
+                    "union": true,
+                    "alias": null
                   }
                 ],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -138,17 +159,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Converts string to title case.\n\nUses the following algorithm:\n\n- Split the string to words from whitespace characters (spaces,\n  newlines, etc.).\n- Exclude words that are not all lower case. This preserves,\n  for example, \"OK\" and \"iPhone\".\n- Exclude also words listed in the optional ``exclude`` argument.\n- Title case the first alphabetical character of each word that has\n  not been excluded.\n- Join all words together so that original whitespace is preserved.\n\nExplicitly excluded words can be given as a list or as a string with\nwords separated by a comma and an optional space. Excluded words are\nactually considered to be regular expression patterns, so it is\npossible to use something like \"example[.!?]?\" to match the word\n\"example\" on it own and also if followed by \".\", \"!\" or \"?\".\nSee `BuiltIn.Should Match Regexp` for more information about Python\nregular expression syntax in general and how to use it in Robot\nFramework data in particular.\n\nExamples:\n| ${str1} = | Convert To Title Case | hello, world!     |\n| ${str2} = | Convert To Title Case | it's an OK iPhone | exclude=a, an, the |\n| ${str3} = | Convert To Title Case | distance is 1 km. | exclude=is, km.? |\n| Should Be Equal | ${str1} | Hello, World! |\n| Should Be Equal | ${str2} | It's an OK iPhone |\n| Should Be Equal | ${str3} | Distance is 1 km. |\n\nThe reason this keyword does not use Python's standard\n[https://docs.python.org/library/stdtypes.html#str.title|title()]\nmethod is that it can yield undesired results, for example, if\nstrings contain upper case letters or special characters like\napostrophes. It would, for example, convert \"it's an OK iPhone\"\nto \"It'S An Ok Iphone\".\n\nIf this keyword is used with bytes, only ASCII characters are title cased.\nBytes support is new in Robot Framework 7.4.",
-      "shortdoc": "Converts string to title case.",
+      "returnDoc": "The input converted to title case.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 101
+      "lineno": 131
     },
     {
       "name": "Convert To Upper Case",
+      "doc": "Converts string to upper case.\n\nUses Python's standard\n[str.upper()](https://docs.python.org/library/stdtypes.html#str.upper) or\n[bytes.upper()](https://docs.python.org/library/stdtypes.html#bytes.upper)\nmethod, depending on the input value type.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nConvert to upper case\n    ${str1} =    Convert To Upper Case    abc\n    ${str2} =    Convert To Upper Case    1a2C3d\n    Should Be Equal    ${str1}    ABC\n    Should Be Equal    ${str2}    1A2C3D\n```\n\nIf this keyword is used with bytes, only ASCII characters are uppercased.",
+      "shortdoc": "Converts string to upper case.",
       "args": [
         {
           "name": "string",
+          "doc": "The string or bytes to convert.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -157,16 +181,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -175,22 +202,26 @@
         }
       ],
       "returnType": null,
-      "doc": "Converts string to upper case.\n\nUses Python's standard\n[https://docs.python.org/library/stdtypes.html#str.upper|upper()]\nmethod.\n\nExamples:\n| ${str1} = | Convert To Upper Case | abc |\n| ${str2} = | Convert To Upper Case | 1a2C3d |\n| Should Be Equal | ${str1} | ABC |\n| Should Be Equal | ${str2} | 1A2C3D |\n\nIf this keyword is used with bytes, only ASCII characters are upper cased.",
-      "shortdoc": "Converts string to upper case.",
+      "returnDoc": "The input converted to upper case.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 84
+      "lineno": 102
     },
     {
       "name": "Decode Bytes To String",
+      "doc": "Decodes the given `bytes` to a string using the given `encoding`.\n\nThe `errors` argument supports all Python's standard\n[error handlers](https://docs.python.org/3/library/codecs.html#error-handlers),\nbut in practice the following values are most useful:\n\n- `strict`: fail if characters cannot be encoded (default)\n- `ignore`: ignore characters that cannot be encoded\n- `replace`: replace characters that cannot be encoded with\n  a replacement character\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nDecide bytes ti strinog\n    ${string} =    Decode Bytes To String    ${bytes}    UTF-8\n    ${string} =    Decode Bytes To String    ${bytes}    ASCII    errors=ignore\n```\n\nUse the [Encode String To Bytes] keyword if you need to convert strings\nto bytes. Use the [BuiltIn] library keyword `Convert To String` if\nyou want to convert arbitrary objects to strings.",
+      "shortdoc": "Decodes the given `bytes` to a string using the given `encoding`.",
       "args": [
         {
           "name": "bytes",
+          "doc": "The bytes to decode.",
           "type": {
             "name": "bytes",
             "typedoc": "bytes",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -199,11 +230,13 @@
         },
         {
           "name": "encoding",
+          "doc": "The encoding to use.",
           "type": {
             "name": "str",
             "typedoc": "string",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -212,11 +245,13 @@
         },
         {
           "name": "errors",
+          "doc": "How to handle encoding errors.",
           "type": {
             "name": "str",
             "typedoc": "string",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "strict",
           "kind": "POSITIONAL_OR_NAMED",
@@ -228,24 +263,29 @@
         "name": "str",
         "typedoc": "string",
         "nested": [],
-        "union": false
+        "union": false,
+        "alias": null
       },
-      "doc": "Decodes the given ``bytes`` to a string using the given ``encoding``.\n\n``errors`` argument controls what to do if decoding some bytes fails.\nAll values accepted by ``decode`` method in Python are valid, but in\npractice the following values are most useful:\n\n- ``strict``: fail if characters cannot be decoded (default)\n- ``ignore``: ignore characters that cannot be decoded\n- ``replace``: replace characters that cannot be decoded with\n  a replacement character\n\nExamples:\n| ${string} = | Decode Bytes To String | ${bytes} | UTF-8 |\n| ${string} = | Decode Bytes To String | ${bytes} | ASCII | errors=ignore |\n\nUse `Encode String To Bytes` if you need to convert strings to bytes,\nand `Convert To String` in ``BuiltIn`` if you need to\nconvert arbitrary objects to strings.",
-      "shortdoc": "Decodes the given ``bytes`` to a string using the given ``encoding``.",
+      "returnDoc": "The input bytes decoded to string,",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 203
+      "lineno": 262
     },
     {
       "name": "Encode String To Bytes",
+      "doc": "Encodes the given `string` to bytes using the given `encoding`.\n\nThe `errors` argument supports all Python's standard\n[error handlers](https://docs.python.org/3/library/codecs.html#error-handlers),\nbut in practice the following values are most useful:\n\n- `strict`: fail if characters cannot be encoded (default)\n- `ignore`: ignore characters that cannot be encoded\n- `replace`: replace characters that cannot be encoded with\n  a replacement character\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nEncode string to bytes\n    ${bytes} =    Encode String To Bytes    ${string}    UTF-8\n    ${bytes} =    Encode String To Bytes    ${string}    ASCII    errors=ignore\n```\n\nUse the [Decode Bytes To String] keyword if you need to convert bytes\nto strings. Use the [BuiltIn] library keyword `Convert To Bytes` if\nyou want to create bytes based on character or integer sequences.",
+      "shortdoc": "Encodes the given `string` to bytes using the given `encoding`.",
       "args": [
         {
           "name": "string",
+          "doc": "The string to encode.",
           "type": {
             "name": "str",
             "typedoc": "string",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -254,11 +294,13 @@
         },
         {
           "name": "encoding",
+          "doc": "The encoding to use.",
           "type": {
             "name": "str",
             "typedoc": "string",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -267,11 +309,13 @@
         },
         {
           "name": "errors",
+          "doc": "How to handle encoding errors.",
           "type": {
             "name": "str",
             "typedoc": "string",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "strict",
           "kind": "POSITIONAL_OR_NAMED",
@@ -283,19 +327,23 @@
         "name": "bytes",
         "typedoc": "bytes",
         "nested": [],
-        "union": false
+        "union": false,
+        "alias": null
       },
-      "doc": "Encodes the given ``string`` to bytes using the given ``encoding``.\n\n``errors`` argument controls what to do if encoding some characters fails.\nAll values accepted by ``encode`` method in Python are valid, but in\npractice the following values are most useful:\n\n- ``strict``: fail if characters cannot be encoded (default)\n- ``ignore``: ignore characters that cannot be encoded\n- ``replace``: replace characters that cannot be encoded with\n  a replacement character\n\nExamples:\n| ${bytes} = | Encode String To Bytes | ${string} | UTF-8 |\n| ${bytes} = | Encode String To Bytes | ${string} | ASCII | errors=ignore |\n\nUse `Convert To Bytes` in ``BuiltIn`` if you want to create bytes based\non character or integer sequences. Use `Decode Bytes To String` if you\nneed to convert bytes to strings and `Convert To String`\nin ``BuiltIn`` if you need to convert arbitrary objects to strings.",
-      "shortdoc": "Encodes the given ``string`` to bytes using the given ``encoding``.",
+      "returnDoc": "The input string encoded to bytes.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 175
+      "lineno": 222
     },
     {
       "name": "Fetch From Left",
+      "doc": "Returns contents of the `string` before the first occurrence of `marker`.\n\nIf the `marker` is not found, whole string is returned.\n\nIf the first argument is bytes, the second argument is automatically\nconverted to bytes as well. This is new in Robot Framework 7.4.\n\nSee also [Fetch From Right], [Split String] and [Split String From Right].",
+      "shortdoc": "Returns contents of the `string` before the first occurrence of `marker`.",
       "args": [
         {
           "name": "string",
+          "doc": "The string or bytes to search from.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -304,16 +352,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -322,6 +373,7 @@
         },
         {
           "name": "marker",
+          "doc": "The marker string to search for.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -330,16 +382,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -348,17 +403,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Returns contents of the ``string`` before the first occurrence of ``marker``.\n\nIf the ``marker`` is not found, whole string is returned.\n\nIf the first argument is bytes, the second argument is automatically\nconverted to bytes as well. This is new in Robot Framework 7.4.\n\nSee also `Fetch From Right`, `Split String` and `Split String From Right`.",
-      "shortdoc": "Returns contents of the ``string`` before the first occurrence of ``marker``.",
+      "returnDoc": "The part of the string before the first `marker`.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 766
+      "lineno": 1047
     },
     {
       "name": "Fetch From Right",
+      "doc": "Returns contents of the `string` after the last occurrence of `marker`.\n\nIf the `marker` is not found, whole string is returned.\n\nIf the first argument is bytes, the second argument is automatically\nconverted to bytes as well. This is new in Robot Framework 7.4.\n\nSee also [Fetch From Left], [Split String] and [Split String From Right].",
+      "shortdoc": "Returns contents of the `string` after the last occurrence of `marker`.",
       "args": [
         {
           "name": "string",
+          "doc": "The string or bytes to search from.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -367,16 +425,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -385,6 +446,7 @@
         },
         {
           "name": "marker",
+          "doc": "The marker string to search for.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -393,16 +455,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -411,17 +476,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Returns contents of the ``string`` after the last occurrence of ``marker``.\n\nIf the ``marker`` is not found, whole string is returned.\n\nIf the first argument is bytes, the second argument is automatically\nconverted to bytes as well. This is new in Robot Framework 7.4.\n\nSee also `Fetch From Left`, `Split String` and `Split String From Right`.",
-      "shortdoc": "Returns contents of the ``string`` after the last occurrence of ``marker``.",
+      "returnDoc": "The part of the string after the last `marker`.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 784
+      "lineno": 1072
     },
     {
       "name": "Format String",
+      "doc": "Formats a `template` using the given `positional` and `named` arguments.\n\nThe template can be either be a string or an absolute path to\nan existing file. In the latter case the file is read and its contents\nare used as the template. If the template file contains non-ASCII\ncharacters, it must be encoded using UTF-8.\n\nThe template is formatted using Python's [format string syntax].\nPlaceholders are marked using `{}` with possible\nfield name and format specification inside. Literal curly braces\ncan be inserted by doubling them like `{{` and `}}`.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nFormat string\n    ${to} =    Format String    To: {} <{}>                 ${user}    ${email}\n    ${to} =    Format String    To: {name} <{email}>        name=${name}    email=${email}\n    ${to} =    Format String    To: {u.name} <{u.email}>    u=${user_object}\n    ${xx} =    Format String    {:*^30}                     centered\n    ${yy} =    Format String    {0:{width}{base}}           ${42}    base=X    width=10\n    ${zz} =    Format String    ${CURDIR}/template.txt      positional    named=value\n```\n\nPrior to Robot Framework 7.1, possible equal signs in the template string\nneeded to be escaped with a backslash like `x\\={}`. Bytes support is new\nin Robot Framework 7.4.\n\n[format string syntax]: https://docs.python.org/library/string.html#format-string-syntax",
+      "shortdoc": "Formats a `template` using the given `positional` and `named` arguments.",
       "args": [
         {
           "name": "template",
+          "doc": "A template string or an absolute path to a template file.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -430,16 +498,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_ONLY",
@@ -448,6 +519,7 @@
         },
         {
           "name": "",
+          "doc": "",
           "type": null,
           "defaultValue": null,
           "kind": "POSITIONAL_ONLY_MARKER",
@@ -456,11 +528,13 @@
         },
         {
           "name": "positional",
+          "doc": "Positional arguments used to format the template.",
           "type": {
             "name": "object",
             "typedoc": "object",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
@@ -469,11 +543,13 @@
         },
         {
           "name": "named",
+          "doc": "Named arguments used to format the template.",
           "type": {
             "name": "object",
             "typedoc": "object",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "VAR_NAMED",
@@ -482,17 +558,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Formats a ``template`` using the given ``positional`` and ``named`` arguments.\n\nThe template can be either be a string or an absolute path to\nan existing file. In the latter case the file is read and its contents\nare used as the template. If the template file contains non-ASCII\ncharacters, it must be encoded using UTF-8.\n\nThe template is formatted using Python's\n[https://docs.python.org/library/string.html#format-string-syntax|format\nstring syntax]. Placeholders are marked using ``{}`` with possible\nfield name and format specification inside. Literal curly braces\ncan be inserted by doubling them like `{{` and `}}`.\n\nExamples:\n| ${to} = | Format String | To: {} <{}>                    | ${user}      | ${email} |\n| ${to} = | Format String | To: {name} <{email}>           | name=${name} | email=${email} |\n| ${to} = | Format String | To: {user.name} <{user.email}> | user=${user} |\n| ${xx} = | Format String | {:*^30}                        | centered     |\n| ${yy} = | Format String | {0:{width}{base}}              | ${42}        | base=X | width=10 |\n| ${zz} = | Format String | ${CURDIR}/template.txt         | positional   | named=value |\n\nPrior to Robot Framework 7.1, possible equal signs in the template string\nneeded to be escaped with a backslash like ``x\\={}`.\n\nSupport for bytes is new in Robot Framework 7.4.",
-      "shortdoc": "Formats a ``template`` using the given ``positional`` and ``named`` arguments.",
+      "returnDoc": "The formatted string or bytes.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 230
+      "lineno": 302
     },
     {
       "name": "Generate Random String",
+      "doc": "Generates a string with a desired `length` from the given `chars`.\n\n`length` can be given as a number, a string representation of a number,\nor as a range of numbers, such as `5-10`. When a range of values is given\nthe range will be selected by random within the range.\n\nThe population sequence `chars` contains the characters to use\nwhen generating the random string. It can contain any\ncharacters, and it is possible to use special markers\nexplained in the table below:\n\n|   Marker    |                   Explanation                        |\n| ----------- | ---------------------------------------------------- |\n| `[LOWER]`   | Lowercase ASCII characters from `a` to `z`.          |\n| `[UPPER]`   | Uppercase ASCII characters from `A` to `Z`.          |\n| `[LETTERS]` | Lowercase and uppercase ASCII characters.            |\n| `[NUMBERS]` | Numbers from 0 to 9.                                 |\n| `[ARABIC]`  | Arabic characters from U+0600 to U+06FF (inclusive). |\n| `[POLISH]`  | ASCII characters and Polish diacritical signs.       |\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nGenerate random string\n    ${ret} =    Generate Random String\n    ${low} =    Generate Random String    12    [LOWER]\n    ${bin} =    Generate Random String    8     01\n    ${hex} =    Generate Random String    4     [NUMBERS]abcdef\n    ${rnd} =    Generate Random String    5-10\n```\n\nGiving `length` as a range of values is new in Robot Framework 5.0.\nSupport for `[POLISH]` and `[ARABIC]` markers is new in Robot Framework 7.4.",
+      "shortdoc": "Generates a string with a desired `length` from the given `chars`.",
       "args": [
         {
           "name": "length",
+          "doc": "Desired length of the generated string. Can be an integer,\na string representation of an integer, or a range like `5-10`.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -501,16 +580,19 @@
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "8",
           "kind": "POSITIONAL_OR_NAMED",
@@ -519,11 +601,13 @@
         },
         {
           "name": "chars",
+          "doc": "Characters to use when generating the string.",
           "type": {
             "name": "str",
             "typedoc": "string",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "[LETTERS][NUMBERS]",
           "kind": "POSITIONAL_OR_NAMED",
@@ -532,17 +616,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Generates a string with a desired ``length`` from the given ``chars``.\n\n``length`` can be given as a number, a string representation of a number,\nor as a range of numbers, such as ``5-10``. When a range of values is given\nthe range will be selected by random within the range.\n\nThe population sequence ``chars`` contains the characters to use\nwhen generating the random string. It can contain any\ncharacters, and it is possible to use special markers\nexplained in the table below:\n\n|  = Marker =   |               = Explanation =                   |\n| ``[LOWER]``   | Lowercase ASCII characters from ``a`` to ``z``. |\n| ``[UPPER]``   | Uppercase ASCII characters from ``A`` to ``Z``. |\n| ``[LETTERS]`` | Lowercase and uppercase ASCII characters.       |\n| ``[NUMBERS]`` | Numbers from 0 to 9.                            |\n| ``[ARABIC]``  | Arabic characters from U+0600 to U+06FF (inclusive). |\n| ``[POLISH]``  | ASCII characters and Polish diacritical signs.  |\n\nExamples:\n| ${ret} = | Generate Random String |\n| ${low} = | Generate Random String | 12 | [LOWER]         |\n| ${bin} = | Generate Random String | 8  | 01              |\n| ${hex} = | Generate Random String | 4  | [NUMBERS]abcdef |\n| ${rnd} = | Generate Random String | 5-10 | # Generates a string 5 to 10 characters long |\n\nGiving ``length`` as a range of values is new in Robot Framework 5.0.\nSupport for markers ``[POLISH]`` and ``[ARABIC]`` is new in Robot Framework 7.4.",
-      "shortdoc": "Generates a string with a desired ``length`` from the given ``chars``.",
+      "returnDoc": "The generated random string.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 802
+      "lineno": 1097
     },
     {
       "name": "Get Line",
+      "doc": "Returns the specified line from the given `string`.\n\nLine numbering starts from 0, and it is possible to use\nnegative indices to refer to lines from the end. The line is\nreturned without the newline character.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nGet line\n    ${first} =    Get Line    ${string}    0\n    ${2nd last} =    Get Line    ${string}    -2\n```\n\nUse [Split To Lines] if all lines, or a subset of lines, are needed.",
+      "shortdoc": "Returns the specified line from the given `string`.",
       "args": [
         {
           "name": "string",
+          "doc": "The string or bytes to get the line from.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -551,16 +638,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -569,11 +659,13 @@
         },
         {
           "name": "line_number",
+          "doc": "Index of the line to return.",
           "type": {
             "name": "int",
             "typedoc": "integer",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -582,17 +674,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Returns the specified line from the given ``string``.\n\nLine numbering starts from 0, and it is possible to use\nnegative indices to refer to lines from the end. The line is\nreturned without the newline character.\n\nExamples:\n| ${first} =    | Get Line | ${string} | 0  |\n| ${2nd last} = | Get Line | ${string} | -2 |\n\nUse `Split To Lines` if all lines are needed.",
-      "shortdoc": "Returns the specified line from the given ``string``.",
+      "returnDoc": "The specified line without the newline character.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 329
+      "lineno": 441
     },
     {
       "name": "Get Line Count",
+      "doc": "Returns and logs the number of lines in the given string.",
+      "shortdoc": "Returns and logs the number of lines in the given string.",
       "args": [
         {
           "name": "string",
+          "doc": "The string or bytes to count lines from.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -601,16 +696,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -619,17 +717,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Returns and logs the number of lines in the given string.",
-      "shortdoc": "Returns and logs the number of lines in the given string.",
+      "returnDoc": "The number of lines.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 291
+      "lineno": 383
     },
     {
       "name": "Get Lines Containing String",
+      "doc": "Returns lines of the given `string` that contain the `pattern`.\n\nThe `pattern` is always considered to be a normal string, not a glob\nor regexp pattern. A line matches if the `pattern` is found anywhere\non it.\n\nThe match is case-sensitive by default, but that can be changed by\ngiving `ignore_case` a true value. This option is new in Robot\nFramework 7.0, but with older versions it is possible to use the\nnowadays deprecated `case_insensitive` argument.\n\nLines are returned as a single string with lines joined together with\na newline. Possible trailing newline is never returned. The number\nof matching lines is automatically logged.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nGet lines containing string\n    ${lines} =    Get Lines Containing String    ${string}    An example\n    ${lines} =    Get Lines Containing String    ${string}    FAIL    ignore_case=True\n```\n\nSee [Get Lines Matching Pattern] and [Get Lines Matching Regexp]\nif you need more complex pattern matching.\n\nIf the first argument is bytes, the second argument is automatically\nconverted to bytes as well. Bytes support is new in Robot Framework 7.4.",
+      "shortdoc": "Returns lines of the given `string` that contain the `pattern`.",
       "args": [
         {
           "name": "string",
+          "doc": "The string or bytes to search lines from.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -638,16 +739,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -656,6 +760,7 @@
         },
         {
           "name": "pattern",
+          "doc": "The string pattern to search for.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -664,16 +769,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -682,6 +790,7 @@
         },
         {
           "name": "case_insensitive",
+          "doc": "Deprecated alias for `ignore_case`.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -690,16 +799,19 @@
                 "name": "bool",
                 "typedoc": "boolean",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -708,11 +820,13 @@
         },
         {
           "name": "ignore_case",
+          "doc": "If given a true value, matching is case-insensitive.",
           "type": {
             "name": "bool",
             "typedoc": "boolean",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
@@ -721,17 +835,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Returns lines of the given ``string`` that contain the ``pattern``.\n\nThe ``pattern`` is always considered to be a normal string, not a glob\nor regexp pattern. A line matches if the ``pattern`` is found anywhere\non it.\n\nThe match is case-sensitive by default, but that can be changed by\ngiving ``ignore_case`` a true value. This option is new in Robot\nFramework 7.0, but with older versions it is possible to use the\nnowadays deprecated ``case_insensitive`` argument.\n\nLines are returned as a string with lines joined together with\na newline. Possible trailing newline is never returned. The number\nof matching lines is automatically logged.\n\nExamples:\n| ${lines} = | Get Lines Containing String | ${result} | An example |\n| ${ret} =   | Get Lines Containing String | ${ret} | FAIL | ignore_case=True |\n\nSee `Get Lines Matching Pattern` and `Get Lines Matching Regexp`\nif you need more complex pattern matching.\n\nIf the first argument is bytes, the second argument is automatically\nconverted to bytes as well.\n\nBytes support is new in Robot Framework 7.4.",
-      "shortdoc": "Returns lines of the given ``string`` that contain the ``pattern``.",
+      "returnDoc": "Matching lines joined with newlines.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 344
+      "lineno": 468
     },
     {
       "name": "Get Lines Matching Pattern",
+      "doc": "Returns lines of the given `string` that match the `pattern`.\n\nThe `pattern` is a _glob pattern_ where:\n\n|   Pattern  |                    Meaning                        |\n| ---------- | ------------------------------------------------- |\n| `*`        | Matches everything.                               |\n| `?`        | Matches any single character.                     |\n| `[chars]`  | Matches any character inside square brackets (e.g. `[abc]` matches either `a`, `b` or `c`). |\n| `[!chars]` | Matches any character not inside square brackets. |\n\nA line matches only if it matches the `pattern` fully.\n\nThe match is case-sensitive by default, but that can be changed by\ngiving `ignore_case` a true value. This option is new in Robot\nFramework 7.0, but with older versions it is possible to use the\nnowadays deprecated `case_insensitive` argument.\n\nLines are returned as a single string with lines joined together with\na newline. Possible trailing newline is never returned. The number\nof matching lines is automatically logged.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nGet lines matching regexp\n    ${lines} =    Get Lines Matching Pattern    ${string}    Wild???? example\n    ${lines} =    Get Lines Matching Pattern    ${string}    FAIL: *    ignore_case=True\n```\n\nSee [Get Lines Matching Regexp] if you need more complex\npatterns and [Get Lines Containing String] if searching\nliteral strings is enough.\n\nIf the first argument is bytes, the second argument is automatically\nconverted to bytes as well. Bytes support is new in Robot Framework 7.4.",
+      "shortdoc": "Returns lines of the given `string` that match the `pattern`.",
       "args": [
         {
           "name": "string",
+          "doc": "The string or bytes to search lines from.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -740,16 +857,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -758,6 +878,7 @@
         },
         {
           "name": "pattern",
+          "doc": "The glob pattern to match.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -766,16 +887,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -784,6 +908,7 @@
         },
         {
           "name": "case_insensitive",
+          "doc": "Deprecated alias for `ignore_case`.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -792,16 +917,19 @@
                 "name": "bool",
                 "typedoc": "boolean",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -810,11 +938,13 @@
         },
         {
           "name": "ignore_case",
+          "doc": "If given a true value, matching is case-insensitive.",
           "type": {
             "name": "bool",
             "typedoc": "boolean",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
@@ -823,17 +953,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Returns lines of the given ``string`` that match the ``pattern``.\n\nThe ``pattern`` is a _glob pattern_ where:\n| ``*``        | matches everything |\n| ``?``        | matches any single character |\n| ``[chars]``  | matches any character inside square brackets (e.g. ``[abc]`` matches either ``a``, ``b`` or ``c``) |\n| ``[!chars]`` | matches any character not inside square brackets |\n\nA line matches only if it matches the ``pattern`` fully.\n\nThe match is case-sensitive by default, but that can be changed by\ngiving ``ignore_case`` a true value. This option is new in Robot\nFramework 7.0, but with older versions it is possible to use the\nnowadays deprecated ``case_insensitive`` argument.\n\nLines are returned as a string with lines joined together with\na newline. Possible trailing newline is never returned. The number\nof matching lines is automatically logged.\n\nExamples:\n| ${lines} = | Get Lines Matching Pattern | ${result} | Wild???? example |\n| ${ret} = | Get Lines Matching Pattern | ${ret} | FAIL: * | ignore_case=True |\n\nSee `Get Lines Matching Regexp` if you need more complex\npatterns and `Get Lines Containing String` if searching\nliteral strings is enough.\n\nIf the first argument is bytes, the second argument is automatically\nconverted to bytes as well.\n\nBytes support is new in Robot Framework 7.4.",
-      "shortdoc": "Returns lines of the given ``string`` that match the ``pattern``.",
+      "returnDoc": "Matching lines joined with newlines.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 386
+      "lineno": 523
     },
     {
       "name": "Get Lines Matching Regexp",
+      "doc": "Returns lines of the given `string` that match the regexp `pattern`.\n\nLines match only if they match the pattern fully by default, but\npartial matching can be enabled by giving the `partial_match`\nargument a true value.\n\nIf the pattern is empty, it matches only empty lines by default.\nWhen partial matching is enabled, empty pattern matches all lines.\n\nPossible flags altering how the expression is parsed (e.g. `re.IGNORECASE`,\n`re.VERBOSE`) can be given using the `flags` argument (e.g.\n`flags=IGNORECASE | VERBOSE`) or embedded to the pattern (e.g.\n`(?ix)pattern`).\n\nLines are returned as a single string concatenated back together with\nnewlines. Possible trailing newline is never returned. The\nnumber of matching lines is automatically logged.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nGet lines matching regexp\n    ${lines} =    Get Lines Matching Regexp    ${string}    Reg\\\\w{3} example\n    ${lines} =    Get Lines Matching Regexp    ${string}    Reg\\\\w{3} example    partial_match=True\n    ${lines} =    Get Lines Matching Regexp    ${string}    (?i)FAIL: .*\n    ${lines} =    Get Lines Matching Regexp    ${string}    FAIL: .*    flags=IGNORECASE\n```\n\nNotice that the backslash character that is often used with regular\nexpressions is an escape character in Robot Framework data. If\na literal backslash is needed, it needs to be doubled as the above\nexample illustrates. For more information about the supported regular\nexpression syntax and using regular expressions with Robot Framework\nin general, see the documentation of the [BuiltIn] library keyword\n`Should Match Regexp` keyword.\n\nUse [Get Lines Matching Pattern] and [Get Lines Containing String] if\nyou do not need the full regular expression powers (and complexity).\n\nIf the first argument is bytes, the second argument is automatically\nconverted to bytes as well. This is new in Robot Framework 7.4.\n\nThe `flags` argument is new in Robot Framework 6.0.",
+      "shortdoc": "Returns lines of the given `string` that match the regexp `pattern`.",
       "args": [
         {
           "name": "string",
+          "doc": "The string or bytes to search lines from.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -842,16 +975,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -860,6 +996,7 @@
         },
         {
           "name": "pattern",
+          "doc": "The regular expression pattern to match.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -868,16 +1005,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -886,11 +1026,13 @@
         },
         {
           "name": "partial_match",
+          "doc": "If given a true value, lines match if the pattern\nis found anywhere on the line.",
           "type": {
             "name": "bool",
             "typedoc": "boolean",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
@@ -899,6 +1041,7 @@
         },
         {
           "name": "flags",
+          "doc": "Optional regular expression flags.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -907,16 +1050,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -925,17 +1071,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Returns lines of the given ``string`` that match the regexp ``pattern``.\n\nSee `BuiltIn.Should Match Regexp` for more information about\nPython regular expression syntax in general and how to use it\nin Robot Framework data in particular.\n\nLines match only if they match the pattern fully by default, but\npartial matching can be enabled by giving the ``partial_match``\nargument a true value.\n\nIf the pattern is empty, it matches only empty lines by default.\nWhen partial matching is enabled, empty pattern matches all lines.\n\nPossible flags altering how the expression is parsed (e.g. ``re.IGNORECASE``,\n``re.VERBOSE``) can be given using the ``flags`` argument (e.g.\n``flags=IGNORECASE | VERBOSE``) or embedded to the pattern (e.g.\n``(?ix)pattern``).\n\nLines are returned as one string concatenated back together with\nnewlines. Possible trailing newline is never returned. The\nnumber of matching lines is automatically logged.\n\nExamples:\n| ${lines} = | Get Lines Matching Regexp | ${result} | Reg\\\\w{3} example |\n| ${lines} = | Get Lines Matching Regexp | ${result} | Reg\\\\w{3} example | partial_match=true |\n| ${ret} =   | Get Lines Matching Regexp | ${ret}    | (?i)FAIL: .* |\n| ${ret} =   | Get Lines Matching Regexp | ${ret}    | FAIL: .* | flags=IGNORECASE |\n\nSee `Get Lines Matching Pattern` and `Get Lines Containing String` if you\ndo not need the full regular expression powers (and complexity).\n\nThe ``flags`` argument is new in Robot Framework 6.0.\n\nIf the first argument is bytes, the second argument is automatically\nconverted to bytes as well. This is new in Robot Framework 7.4.",
-      "shortdoc": "Returns lines of the given ``string`` that match the regexp ``pattern``.",
+      "returnDoc": "Matching lines joined with newlines.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 436
+      "lineno": 588
     },
     {
       "name": "Get Regexp Matches",
+      "doc": "Returns a list of all non-overlapping matches in the given string.\n\n`string` is the string to find matches from and `pattern` is the\nregular expression. See the [BuiltIn] library keyword `Should Match Regexp`\nfor more information about Python regular expression syntax in general\nand how to use it in Robot Framework data in particular.\n\nIf no groups are used, the returned list contains full matches. If one\ngroup is used, the list contains only contents of that group. If\nmultiple groups are used, the list contains tuples that contain\nindividual group contents. All groups can be given as indexes (starting\nfrom 1) and named groups can also be given as names.\n\nPossible flags altering how the expression is parsed (e.g. `re.IGNORECASE`,\n`re.MULTILINE`) can be given using the `flags` argument (e.g.\n`flags=IGNORECASE | MULTILINE`) or embedded to the pattern (e.g.\n`(?im)pattern`).\n\nExamples:\n\n```robotframework\n*** Variables ***\n${string}        the string\n\n*** Test Cases ***\nNo match\n    ${result} =    Get Regexp Matches    ${string}    xxx\n    Should Be Equal    ${result}    []    type=list\n\nMatch\n    ${result} =    Get Regexp Matches    ${string}    t..\n    Should Be Equal    ${result}    [\"the\", \"tri\"]    type=list\n\nFlags\n    ${result} =    Get Regexp Matches    ${string}    T..    flags=IGNORECASE\n    Should Be Equal    ${result}    [\"the\", \"tri\"]    type=list\n\nOne group by index\n    ${result} =    Get Regexp Matches    ${string}    t(..)    1\n    Should Be Equal    ${result}    [\"he\", \"ri\"]    type=list\n\nOne group by name\n    ${result} =    Get Regexp Matches    ${string}    t(?P<name>..)    name\n    Should Be Equal    ${result}    [\"he\", \"ri\"]    type=list\n\nMultiple groups\n    ${result} =    Get Regexp Matches    ${string}    t(.)(.)    1    2\n    Should Be Equal    ${result}    [(\"h\", \"e\"), (\"r\", \"i\")]    type=list\n```\n\nIf the first argument is bytes, the second argument is automatically\nconverted to bytes as well. This is new in Robot Framework 7.4.\n\nThe `flags` argument is new in Robot Framework 6.0.",
+      "shortdoc": "Returns a list of all non-overlapping matches in the given string.",
       "args": [
         {
           "name": "string",
+          "doc": "The string or bytes to find matches from.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -944,16 +1093,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -962,6 +1114,7 @@
         },
         {
           "name": "pattern",
+          "doc": "The regular expression pattern to match.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -970,16 +1123,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -988,6 +1144,7 @@
         },
         {
           "name": "groups",
+          "doc": "Optional group indexes or names to return.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -996,16 +1153,19 @@
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
@@ -1014,6 +1174,7 @@
         },
         {
           "name": "flags",
+          "doc": "Optional regular expression flags.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1022,16 +1183,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "NAMED_ONLY",
@@ -1040,17 +1204,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Returns a list of all non-overlapping matches in the given string.\n\n``string`` is the string to find matches from and ``pattern`` is the\nregular expression. See `BuiltIn.Should Match Regexp` for more\ninformation about Python regular expression syntax in general and how\nto use it in Robot Framework data in particular.\n\nIf no groups are used, the returned list contains full matches. If one\ngroup is used, the list contains only contents of that group. If\nmultiple groups are used, the list contains tuples that contain\nindividual group contents. All groups can be given as indexes (starting\nfrom 1) and named groups also as names.\n\nPossible flags altering how the expression is parsed (e.g. ``re.IGNORECASE``,\n``re.MULTILINE``) can be given using the ``flags`` argument (e.g.\n``flags=IGNORECASE | MULTILINE``) or embedded to the pattern (e.g.\n``(?im)pattern``).\n\nExamples:\n| ${no match} =    | Get Regexp Matches | the string | xxx     |\n| ${matches} =     | Get Regexp Matches | the string | t..     |\n| ${matches} =     | Get Regexp Matches | the string | T..     | flags=IGNORECASE |\n| ${one group} =   | Get Regexp Matches | the string | t(..)   | 1 |\n| ${named group} = | Get Regexp Matches | the string | t(?P<name>..) | name |\n| ${two groups} =  | Get Regexp Matches | the string | t(.)(.) | 1 | 2 |\n=>\n| ${no match} = []\n| ${matches} = ['the', 'tri']\n| ${one group} = ['he', 'ri']\n| ${named group} = ['he', 'ri']\n| ${two groups} = [('h', 'e'), ('r', 'i')]\n\nIf the first argument is bytes, the second argument is automatically\nconverted to bytes as well. This is new in Robot Framework 7.4.\n\nThe ``flags`` argument is new in Robot Framework 6.0.",
-      "shortdoc": "Returns a list of all non-overlapping matches in the given string.",
+      "returnDoc": "A list of matches, group contents, or tuples of group contents.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 495
+      "lineno": 666
     },
     {
       "name": "Get Substring",
+      "doc": "Returns a substring from `start` index to `end` index.\n\nThe `start` index is inclusive and `end` is exclusive.\nIndexing starts from 0, and it is possible to use\nnegative indices to refer to characters from the end.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nGet substring\n    ${ignore first} =    Get Substring    ${string}    1\n    ${ignore last} =     Get Substring    ${string}    0    -1\n    ${5th to 10th} =     Get Substring    ${string}    4    10\n    ${first two} =       Get Substring    ${string}    end=1\n    ${last two} =        Get Substring    ${string}    -2\n```\n\nDefault value with `start` is new in Robot Framework 7.4.",
+      "shortdoc": "Returns a substring from `start` index to `end` index.",
       "args": [
         {
           "name": "string",
+          "doc": "The string or bytes to get the substring from.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1059,16 +1226,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -1077,6 +1247,7 @@
         },
         {
           "name": "start",
+          "doc": "Start index. Defaults to `0`.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1085,7 +1256,8 @@
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "Literal",
@@ -1095,19 +1267,23 @@
                     "name": "''",
                     "typedoc": null,
                     "nested": [],
-                    "union": false
+                    "union": false,
+                    "alias": null
                   }
                 ],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "0",
           "kind": "POSITIONAL_OR_NAMED",
@@ -1116,6 +1292,7 @@
         },
         {
           "name": "end",
+          "doc": "End index. Defaults to `None` (end of string).",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1124,7 +1301,8 @@
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "Literal",
@@ -1134,19 +1312,23 @@
                     "name": "''",
                     "typedoc": null,
                     "nested": [],
-                    "union": false
+                    "union": false,
+                    "alias": null
                   }
                 ],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -1155,17 +1337,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Returns a substring from ``start`` index to ``end`` index.\n\nThe ``start`` index is inclusive and ``end`` is exclusive.\nIndexing starts from 0, and it is possible to use\nnegative indices to refer to characters from the end.\n\nExamples:\n| ${ignore first} = | Get Substring | ${string} | 1  |    |\n| ${ignore last} =  | Get Substring | ${string} | 0  | -1 |\n| ${5th to 10th} =  | Get Substring | ${string} | 4  | 10 |\n| ${first two} =    | Get Substring | ${string} | 0  | 1  |\n| ${last two} =     | Get Substring | ${string} | -2 |    |\n\nDefault value with ``start`` is new in Robot Framework 7.4.",
-      "shortdoc": "Returns a substring from ``start`` index to ``end`` index.",
+      "returnDoc": "The requested substring.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 858
+      "lineno": 1168
     },
     {
       "name": "Remove String",
+      "doc": "Removes all `removables` from the given `string`.\n\n`removables` are used as literal strings. Each removable will be\nmatched to a temporary string from which preceding removables have\nbeen already removed. See the second example below.\n\nUse [Remove String Using Regexp] if more powerful pattern matching is\nneeded. If only a certain number of matches should be removed,\n[Replace String] or [Replace String Using Regexp] can be used.\n\nA modified version of the string is returned and the original\nstring is not altered.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nRemove string\n    ${str} =    Remove String    Robot Framework    work\n    Should Be Equal    ${str}    Robot Frame\n    ${str} =    Remove String    Robot Framework    o    bt\n    Should Be Equal    ${str}    R Framewrk\n```\n\nIf the first argument is bytes, the second argument is automatically\nconverted to bytes as well. Bytes support is new in Robot Framework 7.4.",
+      "shortdoc": "Removes all `removables` from the given `string`.",
       "args": [
         {
           "name": "string",
+          "doc": "The string or bytes to modify.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1174,16 +1359,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -1192,6 +1380,7 @@
         },
         {
           "name": "removables",
+          "doc": "Strings to remove.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1200,16 +1389,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
@@ -1218,17 +1410,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Removes all ``removables`` from the given ``string``.\n\n``removables`` are used as literal strings. Each removable will be\nmatched to a temporary string from which preceding removables have\nbeen already removed. See second example below.\n\nUse `Remove String Using Regexp` if more powerful pattern matching is\nneeded. If only a certain number of matches should be removed,\n`Replace String` or `Replace String Using Regexp` can be used.\n\nA modified version of the string is returned and the original\nstring is not altered.\n\nExamples:\n| ${str} =        | Remove String | Robot Framework | work   |\n| Should Be Equal | ${str}        | Robot Frame     |\n| ${str} =        | Remove String | Robot Framework | o | bt |\n| Should Be Equal | ${str}        | R Framewrk      |\n\nIf the first argument is bytes, the second argument is automatically\nconverted to bytes as well.\n\nBytes support is new in Robot Framework 7.4.",
-      "shortdoc": "Removes all ``removables`` from the given ``string``.",
+      "returnDoc": "The modified string or bytes.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 632
+      "lineno": 859
     },
     {
       "name": "Remove String Using Regexp",
+      "doc": "Removes `patterns` from the given `string`.\n\nThis keyword is otherwise identical to [Remove String], but\nthe `patterns` to search for are considered to be a regular\nexpression. See [Replace String Using Regexp] for more information\nabout the regular expression syntax. That keyword can also be\nused if there is a need to remove only a certain number of\noccurrences.\n\nPossible flags altering how the expression is parsed (e.g. `re.IGNORECASE`,\n`re.MULTILINE`) can be given using the `flags` argument (e.g.\n`flags=IGNORECASE | MULTILINE`) or embedded to the pattern (e.g.\n`(?im)pattern`).\n\nIf the first argument is bytes, the second argument is automatically\nconverted to bytes as well. Bytes support is new in Robot Framework 7.4.\n\nThe `flags` argument is new in Robot Framework 6.0.",
+      "shortdoc": "Removes `patterns` from the given `string`.",
       "args": [
         {
           "name": "string",
+          "doc": "The string or bytes to modify.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1237,16 +1432,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -1255,6 +1453,7 @@
         },
         {
           "name": "patterns",
+          "doc": "Regular expression patterns to remove.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1263,16 +1462,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
@@ -1281,6 +1483,7 @@
         },
         {
           "name": "flags",
+          "doc": "Optional regular expression flags.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1289,16 +1492,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "NAMED_ONLY",
@@ -1307,17 +1513,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Removes ``patterns`` from the given ``string``.\n\nThis keyword is otherwise identical to `Remove String`, but\nthe ``patterns`` to search for are considered to be a regular\nexpression. See `Replace String Using Regexp` for more information\nabout the regular expression syntax. That keyword can also be\nused if there is a need to remove only a certain number of\noccurrences.\n\nPossible flags altering how the expression is parsed (e.g. ``re.IGNORECASE``,\n``re.MULTILINE``) can be given using the ``flags`` argument (e.g.\n``flags=IGNORECASE | MULTILINE``) or embedded to the pattern (e.g.\n``(?im)pattern``).\n\nIf the first argument is bytes, the second argument is automatically\nconverted to bytes as well.\n\nThe ``flags`` argument is new in Robot Framework 6.0.\nBytes support is new in Robot Framework 7.4.",
-      "shortdoc": "Removes ``patterns`` from the given ``string``.",
+      "returnDoc": "The modified string or bytes.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 665
+      "lineno": 902
     },
     {
       "name": "Replace String",
+      "doc": "Replaces `search_for` in the given `string` with `replace_with`.\n\nIf the optional argument `count` is given, only that many\noccurrences from left are replaced. Negative `count` means\nthat all occurrences are replaced (default behavior) and zero\nmeans that nothing is done.\n\n`search_for` is used as a literal string. See [Replace String\nUsing Regexp] if more powerful pattern matching is needed.\nIf you need to just remove a string, see [Remove String].\n\nA modified version of the string is returned and the original\nstring is not altered.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nReplace string\n    ${str} =    Replace String    Hello, world!    world    tellus\n    Should Be Equal    ${str}    Hello, tellus!\n    ${str} =    Replace String    Hello, world!    l    e    count=1\n    Should Be Equal    ${str}    Heelo, world!\n```\n\nIf the first argument is bytes, the following two arguments are automatically\nconverted to bytes as well. This is new in Robot Framework 7.4.",
+      "shortdoc": "Replaces `search_for` in the given `string` with `replace_with`.",
       "args": [
         {
           "name": "string",
+          "doc": "The string or bytes to modify.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1326,16 +1535,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -1344,6 +1556,7 @@
         },
         {
           "name": "search_for",
+          "doc": "The string to search for.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1352,16 +1565,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -1370,6 +1586,7 @@
         },
         {
           "name": "replace_with",
+          "doc": "The replacement string.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1378,16 +1595,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -1396,11 +1616,13 @@
         },
         {
           "name": "count",
+          "doc": "Maximum number of replacements. `-1` means all (default).",
           "type": {
             "name": "int",
             "typedoc": "integer",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "-1",
           "kind": "POSITIONAL_OR_NAMED",
@@ -1409,17 +1631,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Replaces ``search_for`` in the given ``string`` with ``replace_with``.\n\n``search_for`` is used as a literal string. See `Replace String\nUsing Regexp` if more powerful pattern matching is needed.\nIf you need to just remove a string see `Remove String`.\n\nIf the optional argument ``count`` is given, only that many\noccurrences from left are replaced. Negative ``count`` means\nthat all occurrences are replaced (default behaviour) and zero\nmeans that nothing is done.\n\nA modified version of the string is returned and the original\nstring is not altered.\n\nExamples:\n| ${str} =        | Replace String | Hello, world!  | world | tellus   |\n| Should Be Equal | ${str}         | Hello, tellus! |       |          |\n| ${str} =        | Replace String | Hello, world!  | l     | ${EMPTY} | count=1 |\n| Should Be Equal | ${str}         | Helo, world!   |       |          |\n\nIf the first argument is bytes, the following two arguments are automatically\nconverted to bytes as well. This is new in Robot Framework 7.4.",
-      "shortdoc": "Replaces ``search_for`` in the given ``string`` with ``replace_with``.",
+      "returnDoc": "The modified string or bytes.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 551
+      "lineno": 749
     },
     {
       "name": "Replace String Using Regexp",
+      "doc": "Replaces `pattern` in the given `string` with `replace_with`.\n\nThis keyword is otherwise identical to [Replace String], but\nthe `pattern` to search for is considered to be a regular\nexpression.  See the [BuiltIn] library keyword `Should Match Regexp`\nfor more information about Python regular expression syntax in general\nand how to use it in Robot Framework data in particular.\n\nPossible flags altering how the expression is parsed (e.g. `re.IGNORECASE`,\n`re.MULTILINE`) can be given using the `flags` argument (e.g.\n`flags=IGNORECASE | MULTILINE`) or embedded to the pattern (e.g.\n`(?im)pattern`).\n\nIf you need to just remove a string see [Remove String Using Regexp].\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nReplace string using regexp\n    ${str} =    Replace String Using Regexp    ${str}    2026-\\\\d\\\\d-\\\\d\\\\d    <DATE>\n    ${str} =    Replace String Using Regexp    ${str}    (Hello|Hi)    Moi    count=1\n```\n\nIf the first argument is bytes, the following two arguments are automatically\nconverted to bytes as well. This is new in Robot Framework 7.4.\n\nThe `flags` argument is new in Robot Framework 6.0.",
+      "shortdoc": "Replaces `pattern` in the given `string` with `replace_with`.",
       "args": [
         {
           "name": "string",
+          "doc": "The string or bytes to modify.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1428,16 +1653,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -1446,6 +1674,7 @@
         },
         {
           "name": "pattern",
+          "doc": "The regular expression pattern to search for.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1454,16 +1683,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -1472,6 +1704,7 @@
         },
         {
           "name": "replace_with",
+          "doc": "The replacement string.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1480,16 +1713,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -1498,11 +1734,13 @@
         },
         {
           "name": "count",
+          "doc": "Maximum number of replacements. `-1` means all (default).",
           "type": {
             "name": "int",
             "typedoc": "integer",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "-1",
           "kind": "POSITIONAL_OR_NAMED",
@@ -1511,6 +1749,7 @@
         },
         {
           "name": "flags",
+          "doc": "Optional regular expression flags.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1519,16 +1758,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -1537,22 +1779,26 @@
         }
       ],
       "returnType": null,
-      "doc": "Replaces ``pattern`` in the given ``string`` with ``replace_with``.\n\nThis keyword is otherwise identical to `Replace String`, but\nthe ``pattern`` to search for is considered to be a regular\nexpression.  See `BuiltIn.Should Match Regexp` for more\ninformation about Python regular expression syntax in general\nand how to use it in Robot Framework data in particular.\n\nPossible flags altering how the expression is parsed (e.g. ``re.IGNORECASE``,\n``re.MULTILINE``) can be given using the ``flags`` argument (e.g.\n``flags=IGNORECASE | MULTILINE``) or embedded to the pattern (e.g.\n``(?im)pattern``).\n\nIf you need to just remove a string see `Remove String Using Regexp`.\n\nExamples:\n| ${str} = | Replace String Using Regexp | ${str} | 20\\\\d\\\\d-\\\\d\\\\d-\\\\d\\\\d | <DATE> |\n| ${str} = | Replace String Using Regexp | ${str} | (Hello|Hi) | ${EMPTY} | count=1 |\n\nIf the first argument is bytes, the following two arguments are automatically\nconverted to bytes as well. This is new in Robot Framework 7.4.\n\nThe ``flags`` argument is new in Robot Framework 6.0.",
-      "shortdoc": "Replaces ``pattern`` in the given ``string`` with ``replace_with``.",
+      "returnDoc": "The modified string or bytes.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 586
+      "lineno": 798
     },
     {
       "name": "Should Be Byte String",
+      "doc": "Fails if the given `item` is not a byte string.\n\nUse [Should Be String] if you want to verify the `item` is a string.",
+      "shortdoc": "Fails if the given `item` is not a byte string.",
       "args": [
         {
           "name": "item",
+          "doc": "The object to verify.",
           "type": {
             "name": "object",
             "typedoc": "object",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -1561,6 +1807,7 @@
         },
         {
           "name": "msg",
+          "doc": "Optional custom error message.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1569,16 +1816,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -1587,17 +1837,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Fails if the given ``item`` is not a byte string.\n\nUse `Should Be String` if you want to verify the ``item`` is a string.\n\nThe default error message can be overridden with the optional ``msg`` argument.",
-      "shortdoc": "Fails if the given ``item`` is not a byte string.",
+      "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 948
+      "lineno": 1290
     },
     {
       "name": "Should Be Lower Case",
+      "doc": "Fails if the given `string` is not in lower case.\n\nFor example, `'string'` and `'with specials!'` would pass, and\n`'String'`, `''` and `' '` would fail.\n\nSee also [Should Be Upper Case] and [Should Be Title Case].",
+      "shortdoc": "Fails if the given `string` is not in lower case.",
       "args": [
         {
           "name": "string",
+          "doc": "The string or bytes to verify.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1606,16 +1859,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -1624,6 +1880,7 @@
         },
         {
           "name": "msg",
+          "doc": "Optional custom error message.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1632,16 +1889,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -1650,22 +1910,26 @@
         }
       ],
       "returnType": null,
-      "doc": "Fails if the given ``string`` is not in lower case.\n\nFor example, ``'string'`` and ``'with specials!'`` would pass, and\n``'String'``, ``''`` and ``' '`` would fail.\n\nThe default error message can be overridden with the optional\n``msg`` argument.\n\nSee also `Should Be Upper Case` and `Should Be Title Case`.",
-      "shortdoc": "Fails if the given ``string`` is not in lower case.",
+      "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 958
+      "lineno": 1302
     },
     {
       "name": "Should Be String",
+      "doc": "Fails if the given `item` is not a string.",
+      "shortdoc": "Fails if the given `item` is not a string.",
       "args": [
         {
           "name": "item",
+          "doc": "The object to verify.",
           "type": {
             "name": "object",
             "typedoc": "object",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -1674,6 +1938,7 @@
         },
         {
           "name": "msg",
+          "doc": "Optional custom error message.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1682,16 +1947,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -1700,17 +1968,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Fails if the given ``item`` is not a string.\n\nThe default error message can be overridden with the optional ``msg`` argument.",
-      "shortdoc": "Fails if the given ``item`` is not a string.",
+      "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 924
+      "lineno": 1258
     },
     {
       "name": "Should Be Title Case",
+      "doc": "Fails if given `string` is not title.\n\n`string` is a title cased string if there is at least one upper case\nletter in each word.\n\nFor example, `'This Is Title'` and `'OK, Give Me My iPhone'`\nwould pass. `'all words lower'` and `'Word In lower'` would fail.\n\nThis logic changed in Robot Framework 4.0 to be compatible with\n[Convert To Title Case]. See [Convert To Title Case] for title case\nalgorithm and reasoning.\n\nSee also [Should Be Upper Case] and [Should Be Lower Case].",
+      "shortdoc": "Fails if given `string` is not title.",
       "args": [
         {
           "name": "string",
+          "doc": "The string or bytes to verify.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1719,16 +1990,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -1737,6 +2011,7 @@
         },
         {
           "name": "msg",
+          "doc": "Optional custom error message.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1745,16 +2020,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -1763,6 +2041,7 @@
         },
         {
           "name": "exclude",
+          "doc": "Optional words to exclude from title case verification.\nCan be a list or a comma-separated string. Each word is treated\nas a regular expression pattern.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1771,13 +2050,15 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "list",
@@ -1791,28 +2072,34 @@
                         "name": "str",
                         "typedoc": "string",
                         "nested": [],
-                        "union": false
+                        "union": false,
+                        "alias": null
                       },
                       {
                         "name": "bytes",
                         "typedoc": "bytes",
                         "nested": [],
-                        "union": false
+                        "union": false,
+                        "alias": null
                       }
                     ],
-                    "union": true
+                    "union": true,
+                    "alias": null
                   }
                 ],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -1821,22 +2108,26 @@
         }
       ],
       "returnType": null,
-      "doc": "Fails if given ``string`` is not title.\n\n``string`` is a title cased string if there is at least one upper case\nletter in each word.\n\nFor example, ``'This Is Title'`` and ``'OK, Give Me My iPhone'``\nwould pass. ``'all words lower'`` and ``'Word In lower'`` would fail.\n\nThis logic changed in Robot Framework 4.0 to be compatible with\n`Convert to Title Case`. See `Convert to Title Case` for title case\nalgorithm and reasoning.\n\nThe default error message can be overridden with the optional\n``msg`` argument.\n\nWords can be explicitly excluded with the optional ``exclude`` argument.\n\nExplicitly excluded words can be given as a list or as a string with\nwords separated by a comma and an optional space. Excluded words are\nactually considered to be regular expression patterns, so it is\npossible to use something like \"example[.!?]?\" to match the word\n\"example\" on it own and also if followed by \".\", \"!\" or \"?\".\nSee `BuiltIn.Should Match Regexp` for more information about Python\nregular expression syntax in general and how to use it in Robot\nFramework data in particular.\n\nSee also `Should Be Upper Case` and `Should Be Lower Case`.",
-      "shortdoc": "Fails if given ``string`` is not title.",
+      "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 986
+      "lineno": 1332
     },
     {
       "name": "Should Be Unicode String",
+      "doc": "Fails if the given `item` is not a Unicode string.\n\nOn Python 3 this keyword behaves exactly the same way [Should Be String].\nThat keyword should be used instead and this keyword will be deprecated.",
+      "shortdoc": "Fails if the given `item` is not a Unicode string.",
       "args": [
         {
           "name": "item",
+          "doc": "The object to verify.",
           "type": {
             "name": "object",
             "typedoc": "object",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -1845,6 +2136,7 @@
         },
         {
           "name": "msg",
+          "doc": "Optional custom error message.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1853,16 +2145,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -1871,17 +2166,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Fails if the given ``item`` is not a Unicode string.\n\nOn Python 3 this keyword behaves exactly the same way `Should Be String`.\nThat keyword should be used instead and this keyword will be deprecated.",
-      "shortdoc": "Fails if the given ``item`` is not a Unicode string.",
+      "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 940
+      "lineno": 1278
     },
     {
       "name": "Should Be Upper Case",
+      "doc": "Fails if the given `string` is not in upper case.\n\nFor example, `'STRING'` and `'WITH SPECIALS!'` would pass, and\n`'String'`, `''` and `' '` would fail.\n\nSee also [Should Be Title Case] and [Should Be Lower Case].",
+      "shortdoc": "Fails if the given `string` is not in upper case.",
       "args": [
         {
           "name": "string",
+          "doc": "The string or bytes to verify.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1890,16 +2188,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -1908,6 +2209,7 @@
         },
         {
           "name": "msg",
+          "doc": "Optional custom error message.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1916,16 +2218,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -1934,22 +2239,26 @@
         }
       ],
       "returnType": null,
-      "doc": "Fails if the given ``string`` is not in upper case.\n\nFor example, ``'STRING'`` and ``'WITH SPECIALS!'`` would pass, and\n``'String'``, ``''`` and ``' '`` would fail.\n\nThe default error message can be overridden with the optional\n``msg`` argument.\n\nSee also `Should Be Title Case` and `Should Be Lower Case`.",
-      "shortdoc": "Fails if the given ``string`` is not in upper case.",
+      "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 972
+      "lineno": 1317
     },
     {
       "name": "Should Not Be String",
+      "doc": "Fails if the given `item` is a string.",
+      "shortdoc": "Fails if the given `item` is a string.",
       "args": [
         {
           "name": "item",
+          "doc": "The object to verify.",
           "type": {
             "name": "object",
             "typedoc": "object",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -1958,6 +2267,7 @@
         },
         {
           "name": "msg",
+          "doc": "Optional custom error message.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -1966,16 +2276,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -1984,17 +2297,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Fails if the given ``item`` is a string.\n\nThe default error message can be overridden with the optional ``msg`` argument.",
-      "shortdoc": "Fails if the given ``item`` is a string.",
+      "returnDoc": "",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 932
+      "lineno": 1268
     },
     {
       "name": "Split String",
+      "doc": "Splits the `string` using `separator` as a delimiter string.\n\nIf a `separator` is not given, any whitespace string is a\nseparator. In that case also possible consecutive whitespace\nas well as leading and trailing whitespace is ignored.\n\nSplit parts are returned as a list. If the optional\n`max_split` is given, at most `max_split` splits are done, and\nthe returned list will have maximum `max_split + 1` elements.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nSplit string\n    @{words} =    Split String    ${string}\n    @{words} =    Split String    ${string}    ,${SPACE}\n    ${pre}    ${post} =    Split String    ${string}    ::    1\n```\n\nSee [Split String From Right] if you want to start splitting\nfrom right, and [Fetch From Left] and [Fetch From Right] if\nyou only want to get first/last part of the string.\n\nIf the first argument is bytes, the second argument is automatically\nconverted to bytes as well. This is new in Robot Framework 7.4.",
+      "shortdoc": "Splits the `string` using `separator` as a delimiter string.",
       "args": [
         {
           "name": "string",
+          "doc": "The string or bytes to split.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -2003,16 +2319,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -2021,6 +2340,7 @@
         },
         {
           "name": "separator",
+          "doc": "The delimiter string. Defaults to splitting on whitespace.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -2029,22 +2349,26 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -2053,11 +2377,13 @@
         },
         {
           "name": "max_split",
+          "doc": "Maximum number of splits. `-1` means no limit (default).",
           "type": {
             "name": "int",
             "typedoc": "integer",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "-1",
           "kind": "POSITIONAL_OR_NAMED",
@@ -2066,17 +2392,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Splits the ``string`` using ``separator`` as a delimiter string.\n\nIf a ``separator`` is not given, any whitespace string is a\nseparator. In that case also possible consecutive whitespace\nas well as leading and trailing whitespace is ignored.\n\nSplit words are returned as a list. If the optional\n``max_split`` is given, at most ``max_split`` splits are done, and\nthe returned list will have maximum ``max_split + 1`` elements.\n\nExamples:\n| @{words} =         | Split String | ${string} |\n| @{words} =         | Split String | ${string} | ,${SPACE} |\n| ${pre} | ${post} = | Split String | ${string} | ::    | 1 |\n\nSee `Split String From Right` if you want to start splitting\nfrom right, and `Fetch From Left` and `Fetch From Right` if\nyou only want to get first/last part of the string.\n\nIf the first argument is bytes, the second argument is automatically\nconverted to bytes as well. This is new in Robot Framework 7.4.",
-      "shortdoc": "Splits the ``string`` using ``separator`` as a delimiter string.",
+      "returnDoc": "A list of split parts.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 695
+      "lineno": 939
     },
     {
       "name": "Split String From Right",
+      "doc": "Splits the `string` using `separator` starting from right.\n\nSame as [Split String], but splitting is started from right. This has\nan effect only when `max_split` is given.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nSplit string from right\n    ${first}    ${rest} =    Split String    ${string}    -    1\n    ${rest}    ${last} =    Split String From Right    ${string}    -    1\n```\n\nIf the first argument is bytes, the second argument is automatically\nconverted to bytes as well. This is new in Robot Framework 7.4.",
+      "shortdoc": "Splits the `string` using `separator` starting from right.",
       "args": [
         {
           "name": "string",
+          "doc": "The string or bytes to split.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -2085,16 +2414,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -2103,6 +2435,7 @@
         },
         {
           "name": "separator",
+          "doc": "The delimiter string. Defaults to splitting on whitespace.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -2111,22 +2444,26 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -2135,11 +2472,13 @@
         },
         {
           "name": "max_split",
+          "doc": "Maximum number of splits. `-1` means no limit (default).",
           "type": {
             "name": "int",
             "typedoc": "integer",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "-1",
           "kind": "POSITIONAL_OR_NAMED",
@@ -2148,17 +2487,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Splits the ``string`` using ``separator`` starting from right.\n\nSame as `Split String`, but splitting is started from right. This has\nan effect only when ``max_split`` is given.\n\nExamples:\n| ${first} | ${rest} = | Split String            | ${string} | - | 1 |\n| ${rest}  | ${last} = | Split String From Right | ${string} | - | 1 |\n\nIf the first argument is bytes, the second argument is automatically\nconverted to bytes as well. This is new in Robot Framework 7.4.",
-      "shortdoc": "Splits the ``string`` using ``separator`` starting from right.",
+      "returnDoc": "A list of split parts.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 728
+      "lineno": 985
     },
     {
       "name": "Split String To Characters",
+      "doc": "Splits the given `string` to characters.\n\nExample:\n\n```robotframework\n*** Test Cases ***\nSplit string to characters\n    @{characters} =    Split String To Characters    ${string}\n```\n\nBytes support is new in Robot Framework 7.4.",
+      "shortdoc": "Splits the given `string` to characters.",
       "args": [
         {
           "name": "string",
+          "doc": "The string or bytes to split.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -2167,16 +2509,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -2185,17 +2530,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Splits the given ``string`` to characters.\n\nExample:\n| @{characters} = | Split String To Characters | ${string} |\n\nBytes support is new in Robot Framework 7.4.",
-      "shortdoc": "Splits the given ``string`` to characters.",
+      "returnDoc": "A list of single-character strings or bytes.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 751
+      "lineno": 1021
     },
     {
       "name": "Split To Lines",
+      "doc": "Splits the given string to lines.\n\nIt is possible to get only a selection of lines from `start`\nto `end` so that `start` index is inclusive and `end` is\nexclusive. Line numbering starts from 0, and it is possible to\nuse negative indices to refer to lines from the end.\n\nLines are returned without the newlines. The number of\nreturned lines is automatically logged.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nSplit to lines\n    @{lines} =           Split To Lines    ${string}\n    @{ignore first} =    Split To Lines    ${string}    1\n    @{ignore last} =     Split To Lines    ${string}    end=-1\n    @{5th to 10th} =     Split To Lines    ${string}    4    10\n    @{first two} =       Split To Lines    ${string}    end=1\n    @{last two} =        Split To Lines    ${string}    start=-2\n```\n\nUse [Get Line] if you only need to get a single line.",
+      "shortdoc": "Splits the given string to lines.",
       "args": [
         {
           "name": "string",
+          "doc": "The string or bytes to split.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -2204,16 +2552,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -2222,6 +2573,7 @@
         },
         {
           "name": "start",
+          "doc": "Start index for line selection. Defaults to `0`.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -2230,7 +2582,8 @@
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "Literal",
@@ -2240,19 +2593,23 @@
                     "name": "''",
                     "typedoc": null,
                     "nested": [],
-                    "union": false
+                    "union": false,
+                    "alias": null
                   }
                 ],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "0",
           "kind": "POSITIONAL_OR_NAMED",
@@ -2261,6 +2618,7 @@
         },
         {
           "name": "end",
+          "doc": "End index for line selection. Defaults to `None` (end of string).",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -2269,7 +2627,8 @@
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "Literal",
@@ -2279,19 +2638,23 @@
                     "name": "''",
                     "typedoc": null,
                     "nested": [],
-                    "union": false
+                    "union": false,
+                    "alias": null
                   }
                 ],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -2300,17 +2663,20 @@
         }
       ],
       "returnType": null,
-      "doc": "Splits the given string to lines.\n\nIt is possible to get only a selection of lines from ``start``\nto ``end`` so that ``start`` index is inclusive and ``end`` is\nexclusive. Line numbering starts from 0, and it is possible to\nuse negative indices to refer to lines from the end.\n\nLines are returned without the newlines. The number of\nreturned lines is automatically logged.\n\nExamples:\n| @{lines} =        | Split To Lines | ${manylines} |        |\n| @{ignore first} = | Split To Lines | ${manylines} | 1      |\n| @{ignore last} =  | Split To Lines | ${manylines} | end=-1 |\n| @{5th to 10th} =  | Split To Lines | ${manylines} | 4      | 10 |\n| @{first two} =    | Split To Lines | ${manylines} | end=1  |\n| @{last two} =     | Split To Lines | ${manylines} | -2     |\n\nUse `Get Line` if you only need to get a single line.",
-      "shortdoc": "Splits the given string to lines.",
+      "returnDoc": "A list of lines.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 297
+      "lineno": 396
     },
     {
       "name": "Strip String",
+      "doc": "Remove leading and/or trailing whitespaces from the given string.\n\n`mode` is either `left` to remove leading characters, `right` to\nremove trailing characters, `both` (default) to remove the\ncharacters from both sides of the string or `none` to return the\nunmodified string.\n\nThis keyword strips whitespace by default, but arbitrary characters\ncan be stripped by using the optional `characters` argument.\nAs the example below illustrates, each character is separately stripped\ninstead of considering `characters` a substring to be stripped.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nStrip string\n    ${stripped} =    Strip String    ${SPACE}Hello${SPACE}\n    Should Be Equal    ${stripped}    Hello\n    ${stripped} =    Strip String    ${SPACE}Hello${SPACE}    mode=left\n    Should Be Equal    ${stripped}    Hello${SPACE}\n    ${stripped} =    Strip String    aabaHelloeee    characters=abe\n    Should Be Equal    ${stripped}    Hello\n```\n\nIf the first argument is bytes, the `characters` argument is automatically\nconverted to bytes as well. Bytes support is new in Robot Framework 7.4.",
+      "shortdoc": "Remove leading and/or trailing whitespaces from the given string.",
       "args": [
         {
           "name": "string",
+          "doc": "The string or bytes to strip.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -2319,16 +2685,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -2337,6 +2706,7 @@
         },
         {
           "name": "mode",
+          "doc": "Which end(s) of the string to strip from.",
           "type": {
             "name": "Literal",
             "typedoc": "Literal",
@@ -2345,28 +2715,33 @@
                 "name": "'left'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "'right'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "'both'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "'none'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "both",
           "kind": "POSITIONAL_OR_NAMED",
@@ -2375,6 +2750,7 @@
         },
         {
           "name": "characters",
+          "doc": "Optional characters to remove instead of whitespace.",
           "type": {
             "name": "Union",
             "typedoc": null,
@@ -2383,22 +2759,26 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "bytes",
                 "typedoc": "bytes",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -2407,18 +2787,18 @@
         }
       ],
       "returnType": null,
-      "doc": "Remove leading and/or trailing whitespaces from the given string.\n\n``mode`` is either ``left`` to remove leading characters, ``right`` to\nremove trailing characters, ``both`` (default) to remove the\ncharacters from both sides of the string or ``none`` to return the\nunmodified string.\n\nIf the optional ``characters`` is given, it must be a string and the\ncharacters in the string will be stripped in the string. Please note,\nthat this is not a substring to be removed but a list of characters,\nsee the example below.\n\nExamples:\n| ${stripped}=  | Strip String | ${SPACE}Hello${SPACE} | |\n| Should Be Equal | ${stripped} | Hello | |\n| ${stripped}=  | Strip String | ${SPACE}Hello${SPACE} | mode=left |\n| Should Be Equal | ${stripped} | Hello${SPACE} | |\n| ${stripped}=  | Strip String | aabaHelloeee | characters=abe |\n| Should Be Equal | ${stripped} | Hello | |\n\nIf the first argument is bytes, the ``characters`` argument is automatically\nconverted to bytes as well.\n\nBytes support is new in Robot Framework 7.4.",
-      "shortdoc": "Remove leading and/or trailing whitespaces from the given string.",
+      "returnDoc": "The stripped string or bytes.",
+      "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 883
+      "lineno": 1206
     }
   ],
   "typedocs": [
     {
       "type": "Standard",
       "name": "boolean",
-      "doc": "Strings ``TRUE``, ``YES``, ``ON``, ``1`` and possible localization specific \"true\nstrings\" are converted to Boolean ``True``, the empty string, strings ``FALSE``,\n``NO``, ``OFF`` and ``0`` and possibly localization specific \"false strings\"\nare converted to Boolean ``False``, and the string ``NONE`` is converted to\nthe Python ``None`` object. Other strings and all other values are passed as-is,\nallowing keywords to handle them specially if needed. All string comparisons are\ncase-insensitive.\n\nExamples: ``TRUE`` (converted to ``True``), ``off`` (converted to ``False``),\n``example`` (used as-is)\n",
+      "doc": "Strings `TRUE`, `YES`, `ON`, `1` and possible localization specific \"true strings\"\nare converted to Boolean `True`, the empty string, strings `FALSE`, `NO`, `OFF`\nand `0` and possibly localization specific \"false strings\" are converted to\nBoolean `False`, and the string `NONE` is converted to the Python `None` object.\nOther strings and all other values are passed as-is, allowing keywords to handle\nthem specially if needed.\n\nAll string comparisons are case-insensitive.\n\nExamples: `TRUE` (converted to `True`), `off` (converted to `False`), `example`\n(used as-is)\n",
       "usages": [
         "Get Lines Containing String",
         "Get Lines Matching Pattern",
@@ -2434,7 +2814,7 @@
     {
       "type": "Standard",
       "name": "bytes",
-      "doc": "Strings are converted to bytes so that each Unicode code point\nbelow 256 is directly mapped to a matching byte. Higher code\npoints are not allowed. Robot Framework's ``\\xHH`` escape syntax is\nconvenient with bytes having non-printable values.\n\nExamples: ``good``, ``hyv\u00e4`` (same as ``hyv\\xE4``), ``\\x00`` (the null byte)\n\nIntegers and sequences of integers are converted to matching bytes directly.\nThey must be in range 0-255.\n\nExamples: ``0`` (converted to the null byte), ``[82, 70]`` (converted to ``RF``)\n\nSupport for integers and sequences of integers is new in Robot Framework 7.4.\n",
+      "doc": "Strings are converted to bytes so that each Unicode code point below 256 is\ndirectly mapped to a matching byte. Higher code points are not allowed.\nRobot Framework's `\\xHH` escape syntax is convenient with bytes having\nnon-printable values.\n\nExamples: `good`, `hyv\u00e4` (same as `hyv\\xE4`), `\\x00` (the null byte)\n\nIntegers and sequences of integers are converted to matching bytes directly.\nThey must be in range 0-255.\n\nExamples: `0` (converted to the null byte), `[82, 70]` (converted to `RF`)\n\nSupport for integers and sequences of integers is new in Robot Framework 7.4.\n",
       "usages": [
         "Convert To Lower Case",
         "Convert To Title Case",
@@ -2474,7 +2854,7 @@
     {
       "type": "Standard",
       "name": "integer",
-      "doc": "Conversion is done using Python's [https://docs.python.org/library/functions.html#int|int]\nbuilt-in function. Floating point\nnumbers are accepted only if they can be represented as integers exactly.\nFor example, ``1.0`` is accepted and ``1.1`` is not.\n\nIt is possible to use hexadecimal, octal and binary numbers by prefixing values\nwith ``0x``, ``0o`` and ``0b``, respectively. Spaces and underscores can be used\nas visual separators for digit grouping purposes.\n\nExamples: ``42``, ``-1``, ``0b1010``, ``10 000 000``, ``0xBAD_C0FFEE``\n",
+      "doc": "Conversion is done using Python's [int] built-in function. Floating point numbers\nare accepted only if they can be represented as integers exactly. For example,\n`1.0` is accepted but `1.1` is not.\n\nIt is possible to use hexadecimal, octal and binary numbers by prefixing values\nwith `0x`, `0o` and `0b`, respectively.\n\nSpaces and underscores can be used as visual separators for digit grouping purposes.\n\nExamples: `42`, `-1`, `0b1010`, `10 000 000`, `0xBAD_C0FFEE`\n\n[int]: https://docs.python.org/library/functions.html#int\n",
       "usages": [
         "Generate Random String",
         "Get Line",
@@ -2494,7 +2874,7 @@
     {
       "type": "Standard",
       "name": "list",
-      "doc": "Strings must be Python [https://docs.python.org/library/stdtypes.html#list|list]\nor [https://docs.python.org/library/stdtypes.html#tuple|tuple] literals.\nThey are converted using the\n[https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]\nfunction and possible tuples converted further to lists. They can contain any\nvalues ``ast.literal_eval`` supports, including lists and other collections.\n\nIf the argument is a list, it is used without conversion.\nTuples and other sequences are converted to lists.\n\nIf the type has nested types like ``list[int]``, items are converted\nto those types automatically.\n\nExamples: ``['one', 'two']``, ``[('one', 1), ('two', 2)]``\n\nSupport to convert nested types is new in Robot Framework 6.0.\nSupport for tuple literals is new in Robot Framework 7.4.\n",
+      "doc": "Strings must be Python [list] or [tuple] literals. They are converted using the\n[ast.literal_eval] function and possible tuples are converted further to lists.\nThey can contain any values `ast.literal_eval` supports, including lists and\nother collections.\n\nIf the argument is a list, it is used without conversion. Tuples and other\nsequences are converted to lists.\n\nIf the type has nested types like `list[int]`, items are converted to those\ntypes automatically.\n\nExamples: `['one', 'two']`, `[('one', 1), ('two', 2)]`\n\nSupport to convert nested types is new in Robot Framework 6.0. Support for tuple\nliterals is new in Robot Framework 7.4.\n\n[list]: https://docs.python.org/library/stdtypes.html#list\n[tuple]: https://docs.python.org/library/stdtypes.html#tuple\n[ast.literal_eval]: https://docs.python.org/library/stdtypes.html#ast.literal_eval\n",
       "usages": [
         "Convert To Title Case",
         "Should Be Title Case"
@@ -2507,7 +2887,7 @@
     {
       "type": "Standard",
       "name": "Literal",
-      "doc": "Only specified values are accepted. Values can be strings,\nintegers, bytes, Booleans, enums and None, and used arguments\nare converted using the value type specific conversion logic.\n\nStrings are case, space, underscore and hyphen insensitive,\nbut exact matches have precedence over normalized matches.\n",
+      "doc": "Only specified values are accepted. Values can be strings, integers, bytes,\nBooleans, enums and None, and used arguments are converted using the value type\nspecific conversion logic.\n\nString matching is case, space, underscore and hyphen insensitive, but exact\nmatches have precedence over normalized matches.\n",
       "usages": [
         "Get Substring",
         "Split To Lines",
@@ -2520,7 +2900,7 @@
     {
       "type": "Standard",
       "name": "None",
-      "doc": "String ``NONE`` (case-insensitive) and the empty string are converted to\nthe Python ``None`` object. Other values cause an error.\n\nConverting the empty string is new in Robot Framework 7.4.\n",
+      "doc": "String `NONE` (case-insensitive) and the empty string are converted to the Python\n`None` object. Other values cause an error.\n\nConverting the empty string is new in Robot Framework 7.4.\n",
       "usages": [
         "Convert To Title Case",
         "Get Lines Containing String",
@@ -2564,7 +2944,7 @@
     {
       "type": "Standard",
       "name": "string",
-      "doc": "All arguments are converted to Unicode strings.\n\nMost values are converted simply by using ``str(value)``. An exception is that\nbytes are mapped directly to Unicode code points with same ordinals. This means\nthat, for example, ``b\"hyv\\xe4\"`` becomes ``\"hyv\u00e4\"``.\n\nConverting bytes specially is new Robot Framework 7.4.\n",
+      "doc": "All arguments are converted to Unicode strings.\n\nMost values are converted simply by using `str(value)`. An exception is that\nbytes are mapped directly to Unicode code points with same ordinals. This means\nthat, for example, `b\"hyv\\xe4\"` becomes `\"hyv\u00e4\"`.\n\nConverting bytes specially is new Robot Framework 7.4.\n",
       "usages": [
         "Convert To Lower Case",
         "Convert To Title Case",
