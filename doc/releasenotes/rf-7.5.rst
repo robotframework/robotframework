@@ -151,8 +151,8 @@ as easy as this::
 
     libdoc Dialogs Dialogs.md
 
-The generated Markdown file has similar structure as HTML files Libdoc can
-generate. Actual documentation is got directly from the library without any
+The generated Markdown file has similar structure as in HTML files that Libdoc
+can generate. Actual documentation is got directly from the library without any
 conversion, so the result is valid Markdown only if the library uses Markdown
 as its documentation format.
 
@@ -204,10 +204,10 @@ Tests and tasks can now have metadata as name value pairs similarly as suites
         [Metadata]    Author    febb0e
         Log    Hello, world!
 
-The main benefit of using metadata instead of tags like `issue: 4409` is that
+The main benefit of using metadata instead of tags like `Issue: 4409` is that
 in the log file each metadata item is snow separately similarly as, for example,
-`Documentation` and `Start Time`. All tags are shown as a s single list, but also
-their styles have been enhanced (`#5780`_),
+`Documentation` and `Start Time`. On the other hand, all tags are shown as
+a single list, but also their styles have been enhanced (`#5780`_),
 
 Console logging enhancements
 ----------------------------
@@ -217,17 +217,18 @@ dotted, quiet, none) and the one to use can be selected with the `--console`
 option. Robot Framework 7.5 enhances this support so that it is also possible
 to use custom console loggers (`#5618`_).
 
-Custom console loggers have the same API as listeners__. Their main difference
-is that console loggers are registered with the `--console` option that then
-automatically disables normal console logging. The built-in console loggers
-can be used as a base when implementing custom loggers. This makes it easy
-to make simple changes to normal logging.
+Custom console loggers are implemented using the same API as with listeners__.
+Their main difference is that console loggers are registered with the `--console`
+option that then automatically disables normal console logging. The built-in
+console loggers can be used as a base when implementing custom loggers. This
+makes it easy to make simple changes to normal logging.
 
 A related major change is that nowadays also the Rebot tool supports the `--console`
 option (`#5674`_). It supports the same built-in loggers that can be used during
 execution as well as custom loggers.
 
-For details about the console logging API and everything else, see the documentation__.
+For details about the console logging API and everything else, see the `User
+Guide`__.
 
 __ https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-interface
 __ https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#custom-console-loggers
@@ -276,10 +277,11 @@ Python 3.15 compatibility
 Robot Framework 7.5 is officially compatible with the forthcoming `Python 3.15`__
 release (`#5708`_).
 
-Some changes were needed due `UTF-8 now being the default encoding also on Windows`__,
-but for most parts also older Robot Framework versions ought to work with Python 3.15
-as well. The default encoding change is something that Windows users probably need
-to take into account when upgrading in general.
+Some changes were needed due `UTF-8 now being the default encoding`__ also on
+Windows, but for most parts also older Robot Framework versions ought to work
+with Python 3.15 just fine. The default encoding change is something that
+Windows users probably need to take into account when upgrading to Python 3.15
+in general.
 
 __ https://docs.python.org/3.15/whatsnew/3.15.html
 __ https://docs.python.org/3.15/whatsnew/3.15.html#whatsnew315-utf8-default
@@ -332,8 +334,8 @@ Various features have been deprecated:
 
 - The Telnet library has been deprecated and will be replaced by an external
   library (`#5786`_). See issue `#3537`_ for the reasoning and for the future
-  plans. Community help would be appreciated with setting up the new project
-  and especially maintaining it.
+  plans. Community help would be appreciated with setting up and maintaining
+  the new project.
 
 - Boolean operators used with tag patterns need to be separated from tags more
   clearly and usages like `XORY` are deprecated (`#5657`_). Operators can be
@@ -403,6 +405,9 @@ the community has provided some awesome contributions:
   converting standard library docs to Markdown and taking new argument
   documentation syntax to use (`#5709`_).
 
+- `Roberto Matarazzo <https://github.com/seto>`__ implemented support to embed
+  tests/tasks to Markdown files (`#5603`_).
+
 - `René <https://github.com/Snooz82>`__ helped with Libdoc styles related to
   argument, return value and exception documentation (`#5604`_) and enhanced
   tag styles in log and report (`#5780`_).
@@ -411,9 +416,6 @@ the community has provided some awesome contributions:
   `Get Index From List` keyword that did not handle negative start indices
   correctly (`#5649`_) and enhanced handling invalid stringified type hints
   (`#5650`_).
-
-- `Roberto Matarazzo <https://github.com/seto>`__ implemented support to embed
-  tests/tasks to Markdown files (`#5603`_).
 
 - `Guillaume Yvon <https://github.com/klaoude>`__ fixed a problem that type hints
   using non-existing values crashed the whole execution with Python 3.14 (`#5658`_).
