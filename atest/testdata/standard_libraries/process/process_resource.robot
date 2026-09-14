@@ -72,6 +72,12 @@ Start Python Process
     ...    alias=${alias}    stdout=${stdout}    stderr=${stderr}    stdin=${stdin}    shell=${shell}
     RETURN    ${handle}
 
+Run Python Process Interactive
+    [Arguments]    ${command}=${EMPTY}    ${alias}=${NONE}    ${stdout}=${STDOUT}    ${stderr}=${STDERR}    ${stdin}=PIPE
+    ${result}=    Start Process    python    -i    ${command}
+    ...    alias=${alias}    stdout=${stdout}    stderr=${stderr}    stdin=${stdin}
+    RETURN    ${result}
+
 Run Python Process
     [Arguments]    ${command}    ${alias}=${NONE}    ${stdout}=${NONE}    ${stderr}=${NONE}
     ${result}=    Run Process    python    -c    ${command}
