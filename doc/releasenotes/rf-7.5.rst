@@ -92,8 +92,19 @@ exceptions using the same syntax also when not using Markdown.
         Raises:
             ValueError: When `second` is False.
 
-        Documentation can continue here after the [Google Style] documentation sections.
-        Well, actually documentation is accepted *also* between the section.
+        Documentation can continue here after the [Google Style] documentation
+        sections. It would be accepted *also* between the sections.
+
+        Examples using real Robot Framework syntax are pretty cool:
+
+        ```robotframework
+        *** Test Cases ***
+        This succeeds
+            Example    42
+
+        This fails
+            Example    1    second=False
+        ```
 
         [Google Style]: https://google.github.io/styleguide/pyguide.html#383-functions-and-methods
         """
@@ -130,8 +141,10 @@ section, to custom sections created in the introduction, to keywords and to type
 used in arguments, works using the standard Markdown reference link syntax like
 `[introduction]`. This is documented more thoroughly in `Libdoc documentation`__.
 
-Standard library documentation has also been converted to use Markdown and new
-argument documentation features (`#5709`_).
+`Standard library documentation`__ has been updated to use Markdown and the new
+argument and return value documentation syntax (`#5709`_). As an example, see how
+the `source code`__ and the `generated documentation`__ of the
+`Process.Start Process` keyword a looks like.
 
 .. note:: We may make Markdown the default documentation format in the future.
           If you plan to keep using the Robot Framework format, explicitly
@@ -141,6 +154,9 @@ __ https://en.wikipedia.org/wiki/Markdown
 __ https://google.github.io/styleguide/pyguide.html#s3.8.3-functions-and-methods
 __ https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#markdown-format
 __ https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#markdown-documentation-syntax
+__ https://robotframework.org/robotframework/#standard-libraries
+__ https://github.com/robotframework/robotframework/blob/v7.5/src/robot/libraries/Process.py#L811
+__ https://robotframework.org/robotframework/latest/libraries/Process.html#Start%20Process
 
 Markdown as Libdoc output format
 --------------------------------
