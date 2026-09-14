@@ -1,10 +1,14 @@
 import os
 import time
 import unittest
+from unittest.mock import Mock, patch
 
 from thread_resources import failing, MyException, passing, returning, sleeping
 
 from robot.errors import DataError, TimeoutExceeded
+from robot.result import TestCase as TestResult
+from robot.running import TestSuite
+from robot.running.context import _ExecutionContext
 from robot.running.timeouts import KeywordTimeout, TestTimeout
 from robot.utils.asserts import (
     assert_equal, assert_false, assert_raises, assert_raises_with_msg, assert_true, fail
@@ -78,6 +82,34 @@ class TestTimer(unittest.TestCase):
             TestTimeout,
             start=True,
         )
+
+
+class TestListenerUpdates(unittest.TestCase):
+
+    def test_listener_time_counts_towards_changed_timeout(self):
+        for original in (None, "NONE", "10 seconds", "1 minute"):
+            with self.subTest(original=original):
+                suite = TestSuite()
+                data = suite.tests.create("Test", timeout=original)
+                old_timeout = TestTimeout(original) if original else None
+                result = TestResult("Test", timeout=old_timeout)
+                namespace = Mock()
+                namespace.variables.replace_string.side_effect = lambda value: value
+                output = Mock()
+                context = _ExecutionContext(suite, namespace, output)
+                with patch(
+                    "robot.running.timeouts.timeout.time.time", return_value=100
+                ) as clock:
+
+                    def listener(data, result):
+                        data.timeout = "30 seconds"
+                        clock.return_value = 120
+
+                    output.start_test.side_effect = listener
+                    context.start_test(data, result)
+                    assert_equal(result.timeout.time_left(), 10)
+                    assert_equal(context.timeouts, [result.timeout])
+                    assert_true(result.timeout is not old_timeout)
 
 
 class TestComparison(unittest.TestCase):
