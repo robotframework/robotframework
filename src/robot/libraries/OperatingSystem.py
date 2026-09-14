@@ -971,7 +971,7 @@ class OperatingSystem:
     def _are_source_and_destination_same_file(self, src: str, dst: str) -> bool:
         if os.path.exists(src) and os.path.exists(dst) and os.path.samefile(src, dst):
             self._link(
-                "Source '%s' and destination '%s' point to the same file.", src, dst,
+                "Source '%s' and destination '%s' point to the same file.", src, dst
             )
             return True
         return False
