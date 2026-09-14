@@ -40,14 +40,13 @@ PROCESSES = ConnectionCache("No active processes.")
 class OperatingSystem:
     r"""A library providing keywords for operating system related tasks.
 
-    `OperatingSystem` is Robot Framework's standard library that
-    enables various operating system related tasks to be performed in
-    the system where Robot Framework is running. It can, among other
-    things, execute commands (e.g. [Run]), create and remove files and
-    directories (e.g. [Create File], [Remove Directory]), check
-    whether files or directories exists or contain something
-    (e.g. [File Should Exist], [Directory Should Be Empty]) and
-    manipulate environment variables (e.g. [Set Environment Variable]).
+    OperatingSystem is Robot Framework's standard library that enables various
+    operating system related tasks to be performed in the system where Robot
+    Framework is running. It can, for example, create and remove files and
+    directories (e.g. [Create File], [Remove Directory]), check whether files
+    or directories exists or contain something (e.g. [File Should Exist],
+    [Directory Should Be Empty]), manipulate environment variables (e.g.
+    [Set Environment Variable]) and execute commands (e.g. [Run]).
 
     %TOC%
 
@@ -68,21 +67,23 @@ class OperatingSystem:
 
     # Pattern matching
 
-    Many keywords accept arguments as either _glob_ or _regular expression_ patterns.
+    Many keywords accept arguments as either *glob patterns* or *regular
+    expressions*.
 
     ## Glob patterns
 
-    Some keywords, for example [List Directory], support so called
-    [glob patterns](http://en.wikipedia.org/wiki/Glob_(programming)) where:
+    Some keywords, for example [List Directory], support
+    [glob patterns](https://en.wikipedia.org/wiki/Glob_(programming) "Wikipedia")
+    that support the following wildcard characters and character sequences.
 
-    | Pattern   | Matches                                 |
-    | --------- | --------------------------------------- |
-    | `*`       | Any string, even an empty string        |
-    | `?`       | Any single character                    |
-    | `[chars]` | One character in the bracket            |
-    | `[!chars]` | One character not in the bracket       |
-    | `[a-z]`   | One character from the range in bracket |
-    | `[!a-z]`  | One character not from range in bracket |
+    |  Pattern   |                   Explanation                            |
+    | ---------- | -------------------------------------------------------- |
+    | `*`        | Matches any string, even an empty string.                |
+    | `?`        | Matches any single character.                            |
+    | `[chars]`  | Matches one character in the bracket.                    |
+    | `[!chars]` | Matches one character not in the bracket.                |
+    | `[a-z]`    | Matches one character from the range in the bracket.     |
+    | `[!a-z]`   | Matches one character not from the range in the bracket. |
 
     Unless otherwise noted, matching is case-insensitive on case-insensitive
     operating systems such as Windows.
@@ -90,25 +91,24 @@ class OperatingSystem:
     ## Regular expressions
 
     Some keywords, for example [Grep File], support
-    [regular expressions](http://en.wikipedia.org/wiki/Regular_expression)
+    [regular expressions](https//en.wikipedia.org/wiki/Regular_expression "Wikipedia")
     that are more powerful but also more complicated than glob patterns.
     The regular expression support is implemented using Python's
-    [re module](http://docs.python.org/library/re.html) and its documentation
+    [re](https://docs.python.org/library/re.html) module and its documentation
     should be consulted for more information about the syntax.
 
-    Because the backslash character (`\`) is an escape character in
-    Robot Framework data, possible backslash characters in regular
-    expressions need to be escaped with another backslash like `\\d\\w+`.
-    Strings that may contain special characters but should be handled
-    as literal strings, can be escaped with the `Regexp Escape`
-    keyword from the [BuiltIn] library.
+    Because the backslash character (`\`) is an escape character in Robot Framework
+    data, possible backslash characters in regular expressions need to be escaped
+    with another backslash like `\\d\\w+`. Strings that may contain special
+    characters but should be handled as literal strings, can be escaped with the
+    `Regexp Escape` keyword from the [BuiltIn] library.
 
     # Tilde expansion
 
     Paths beginning with `~` or `~username` are expanded to the current or
     specified user's home directory, respectively. The resulting path is
-    operating system dependent, but typically e.g. `~/robot` is expanded to
-    `C:\Users\<user>\robot` on Windows and `/home/<user>/robot` on Unixes.
+    operating system dependent, but typically e.g. `~/file.txt` is expanded to
+    `C:\Users\<user>\file.txt` on Windows and `/home/<user>/file.txt` on Unixes.
 
     # `pathlib.Path` support
 
@@ -123,10 +123,10 @@ class OperatingSystem:
 
     ```robotframework
     *** Settings ***
-    Library    OperatingSystem
+    Library          OperatingSystem
 
     *** Variables ***
-    ${PATH}    ${CURDIR}/example.txt
+    ${PATH}          ${CURDIR}/example.txt
 
     *** Test Cases ***
     Example
@@ -144,8 +144,7 @@ class OperatingSystem:
     ROBOT_LIBRARY_VERSION = __version__
 
     def run(self, command: str) -> str:
-        """_This keyword is considered deprecated. Use the
-        [Process] library instead._
+        r"""*This keyword is considered deprecated. Use the [Process] library instead.*
 
         Runs the given command in the system and returns the output.
 
@@ -155,24 +154,16 @@ class OperatingSystem:
         Returns:
             The command output with a possible trailing newline removed.
 
-        The execution status of the command _is not checked_ by this
-        keyword, and it must be done separately based on the returned
-        output. If the execution return code is needed, either
-        [Run And Return RC] or [Run And Return RC And Output] can be used.
+        The execution status of the command is not checked by this keyword, and
+        it must be done separately based on the returned output. If the execution
+        return code is needed, either [Run And Return RC] or [Run And Return RC
+        And Output] can be used.
 
-        The standard error stream is automatically redirected to the standard
-        output stream by adding `2>&1` after the executed command. This
-        automatic redirection is done only when the executed command does not
-        contain additional output redirections. You can thus freely forward
-        the standard error somewhere else, for example, like
-        `my_command 2>stderr.txt`.
-
-        The returned output contains everything written into the standard
-        output or error streams by the command (unless either of them
-        is redirected explicitly). Many commands add an extra newline
-        (`\\n`) after the output to make it easier to read in the
-        console. To ease processing the returned output, this possible
-        trailing newline is stripped by this keyword.
+        The returned output contains everything written into the standard output
+        or error streams by the command (unless either of them is redirected
+        explicitly). Many commands add an extra newline (`\n`) after the output
+        to make it easier to read in the console. To ease processing the returned
+        output, this possible trailing newline is stripped by this keyword.
 
         Examples:
 
@@ -181,19 +172,17 @@ class OperatingSystem:
         Run
             ${output} =    Run    ls -lhF /tmp
             Log    ${output}
-            ${result} =    Run    ${CURDIR}${/}tester.py arg1 arg2
+            ${result} =    Run    ${CURDIR}${/}script.py arg1 arg2
             Should Not Contain    ${result}    FAIL
             ${stdout} =    Run    /opt/script.sh 2>/tmp/stderr.txt
             Should Be Equal    ${stdout}    TEST PASSED
             File Should Be Empty    /tmp/stderr.txt
         ```
-
         """
         return self._run(command)[1]
 
     def run_and_return_rc(self, command: str) -> int:
-        """_This keyword is considered deprecated. Use the
-        [Process] library instead._
+        """*This keyword is considered deprecated. Use the [Process] library instead.*
 
         Runs the given command in the system and returns the return code (RC).
 
@@ -201,15 +190,12 @@ class OperatingSystem:
             command: Command to execute.
 
         Returns:
-            The command return code as an integer in the range 0-255.
+            The command return code as an integer in range 0-255.
 
-        The return code is returned as a positive integer in
-        range from 0 to 255 as returned by the executed command. On
-        some operating systems (notable Windows) original return codes
-        can be something else, but this keyword always maps them to
-        the 0-255 range. Since the return code is an integer, it should be
-        checked e.g. with [BuiltIn] keyword `Should Be Equal` using
-        `type=int`.
+        The return code is returned as an integer in range from 0 to 255 as
+        returned by the executed command. On some operating systems (notable
+        Windows) the original return code can be something else, but this
+        keyword always maps them to the 0-255 range.
 
         Examples:
 
@@ -224,17 +210,15 @@ class OperatingSystem:
 
         See [Run] and [Run And Return RC And Output] if you need to get the
         output of the executed command.
-
         """
         return self._run(command)[0]
 
     def run_and_return_rc_and_output(self, command: str) -> "tuple[int, str]":
-        """_This keyword is considered deprecated. Use the
-        [Process] library instead._
+        """*This keyword is considered deprecated. Use the [Process] library instead.*
 
-        Runs the given command in the system and returns the return code (RC)
-        and output. The return code is returned similarly as with
-        [Run And Return RC] and the output similarly as with [Run].
+        Runs the given command in the system and returns the return code (RC) and
+        output. The return code is returned similarly as with [Run And Return RC]
+        and the output similarly as with [Run].
 
         Args:
             command: Command to execute.
@@ -255,7 +239,6 @@ class OperatingSystem:
             Should Be Equal    ${stdout}    TEST PASSED
             File Should Be Empty    /tmp/stderr.txt
         ```
-
         """
         return self._run(command)
 
@@ -268,8 +251,7 @@ class OperatingSystem:
         output = console_decode(output, "SYSTEM").replace("\r\n", "\n")
         if output.endswith("\n"):
             output = output[:-1]
-        rc = process.returncode % 256
-        return rc, output
+        return process.returncode % 256, output
 
     def get_file(
         self,
@@ -307,8 +289,8 @@ class OperatingSystem:
 
         - `strict`: Fail if characters cannot be decoded (default).
         - `ignore`: Ignore characters that cannot be decoded.
-        - `replace`: Replace characters that cannot be decoded with
-          a replacement character.
+        - `replace`: Replace characters that cannot be decoded with a replacement
+          character.
         """
         path = self._absnorm(path)
         self._link("Getting file '%s'.", path)
@@ -359,7 +341,8 @@ class OperatingSystem:
             pattern: Glob or regular expression pattern to match.
             encoding: File encoding to use.
             encoding_errors: Error handler to use if decoding fails.
-            regexp: Use regular expression matching instead of glob matching.
+            regexp: When true, the `pattern` is considered to be a regular
+              expression instead of a glob pattern.
 
         Returns:
             Matching lines joined with newlines, without a trailing newline.
@@ -374,12 +357,12 @@ class OperatingSystem:
         A line matches if it contains the `pattern` anywhere in it i.e. it does
         not need to match the pattern fully. There are two supported pattern types:
 
-        - By default the pattern is considered a _glob_ pattern where, for example,
+        - By default the pattern is considered a [glob pattern] where, for example,
           `*` and `?` can be used as wildcards.
         - If the `regexp` argument is given a true value, the pattern is
-          considered to be a _regular expression_. These patterns are more
+          considered to be a [regular expression]. These patterns are more
           powerful but also more complicated than glob patterns. They often use
-          the backslash character and it needs to be escaped in Robot Framework
+          the backslash character, and it needs to be escaped in Robot Framework
           data like `\\`.
 
         For more information about glob and regular expression syntax, see
@@ -403,20 +386,20 @@ class OperatingSystem:
         """
         path = self._absnorm(path)
         if not regexp:
-            pattern = fnmatch.translate(f"{pattern}*")
-        reobj = re.compile(pattern)
+            pattern = fnmatch.translate(f"*{pattern}*")
+        search = re.compile(pattern).search
         encoding = self._map_encoding(encoding)
-        lines = []
-        total_lines = 0
+        matches = []
+        lines = 0
         self._link("Reading file '%s'.", path)
         with open(path, encoding=encoding, errors=encoding_errors) as file:
             for line in file:
-                total_lines += 1
+                lines += 1
                 line = line.rstrip("\r\n")
-                if reobj.search(line):
-                    lines.append(line)
-            self._info(f"{len(lines)} out of {total_lines} lines matched.")
-            return "\n".join(lines)
+                if search(line):
+                    matches.append(line)
+        self._info(f"{len(matches)} out of {lines} lines matched.")
+        return "\n".join(matches)
 
     def log_file(
         self,
@@ -434,9 +417,8 @@ class OperatingSystem:
         Returns:
             The logged file contents.
 
-        The file is logged with the INFO level. If you want something else,
-        just use [Get File] and the [BuiltIn] keyword
-        `Log` with the desired level.
+        The file is logged with the INFO level. If you want something else, just
+        use [Get File] and the [BuiltIn] keyword `Log` with the desired level.
 
         See [Get File] for more information about `encoding` and
         `encoding_errors` arguments.
@@ -456,8 +438,6 @@ class OperatingSystem:
 
         The path can be given as an exact path or as a glob pattern.
         See the [Glob patterns] section for details about the supported syntax.
-
-        The default error message can be overridden with the `msg` argument.
         """
         path = self._absnorm(path)
         if not self._glob(path):
@@ -473,8 +453,6 @@ class OperatingSystem:
 
         The path can be given as an exact path or as a glob pattern.
         See the [Glob patterns] section for details about the supported syntax.
-
-        The default error message can be overridden with the `msg` argument.
         """
         path = self._absnorm(path)
         matches = self._glob(path)
@@ -502,8 +480,6 @@ class OperatingSystem:
 
         The path can be given as an exact path or as a glob pattern.
         See the [Glob patterns] section for details about the supported syntax.
-
-        The default error message can be overridden with the `msg` argument.
         """
         path = self._absnorm(path)
         matches = [p for p in self._glob(path) if os.path.isfile(p)]
@@ -520,8 +496,6 @@ class OperatingSystem:
 
         The path can be given as an exact path or as a glob pattern.
         See the [Glob patterns] section for details about the supported syntax.
-
-        The default error message can be overridden with the `msg` argument.
         """
         path = self._absnorm(path)
         matches = [p for p in self._glob(path) if os.path.isfile(p)]
@@ -538,8 +512,6 @@ class OperatingSystem:
 
         The path can be given as an exact path or as a glob pattern.
         See the [Glob patterns] section for details about the supported syntax.
-
-        The default error message can be overridden with the `msg` argument.
         """
         path = self._absnorm(path)
         matches = [p for p in self._glob(path) if os.path.isdir(p)]
@@ -556,8 +528,6 @@ class OperatingSystem:
 
         The path can be given as an exact path or as a glob pattern.
         See the [Glob patterns] section for details about the supported syntax.
-
-        The default error message can be overridden with the `msg` argument.
         """
         path = self._absnorm(path)
         matches = [p for p in self._glob(path) if os.path.isdir(p)]
@@ -656,8 +626,6 @@ class OperatingSystem:
         Args:
             path: Path to the directory to check.
             msg: Optional custom error message.
-
-        The default error message can be overridden with the `msg` argument.
         """
         path = self._absnorm(path)
         items = self._list_dir(path)
@@ -672,8 +640,6 @@ class OperatingSystem:
         Args:
             path: Path to the directory to check.
             msg: Optional custom error message.
-
-        The default error message can be overridden with the `msg` argument.
         """
         path = self._absnorm(path)
         items = self._list_dir(path)
@@ -687,8 +653,6 @@ class OperatingSystem:
         Args:
             path: Path to the file to check.
             msg: Optional custom error message.
-
-        The default error message can be overridden with the `msg` argument.
         """
         path = self._absnorm(path)
         if not os.path.isfile(path):
@@ -704,8 +668,6 @@ class OperatingSystem:
         Args:
             path: Path to the file to check.
             msg: Optional custom error message.
-
-        The default error message can be overridden with the `msg` argument.
         """
         path = self._absnorm(path)
         if not os.path.isfile(path):
@@ -723,19 +685,19 @@ class OperatingSystem:
         content: "str | Secret" = "",
         encoding: str = "UTF-8",
     ):
-        """Creates a file with the given content and encoding.
+        r"""Creates a file with the given content and encoding.
 
         Args:
             path: Path to the file to create.
-            content: Content to write. Secret values are not logged.
+            content: Content to write. [Secret] values are not logged.
             encoding: Encoding to use when writing the file.
 
         If the directory where the file is created does not exist, it is
         automatically created along with possible missing intermediate
         directories. Possible existing file is overwritten.
 
-        On Windows newline characters (`\\n`) in content are automatically
-        converted to Windows native newline sequence (`\\r\\n`).
+        On Windows newline characters (`\n`) in content are automatically
+        converted to Windows native newline sequence (`\r\n`).
 
         See [Get File] for more information about possible `encoding` values,
         including special values `SYSTEM` and `CONSOLE`.
@@ -746,14 +708,13 @@ class OperatingSystem:
         *** Test Cases ***
         Create File
             Create File    ${dir}/example.txt    Hello, world!
-            Create File    ${path}    Hyv\\xe4 esimerkki    Latin-1
-            Create File    /tmp/foo.txt    3\\nlines\\nhere\\n    SYSTEM
+            Create File    ${path}    Hyvä esimerkki    encoding=Latin-1
+            Create File    /tmp/foo.txt    3\nlines\nhere\n    SYSTEM
         ```
 
-        Use [Append To File] if you want to append to an existing file
-        and [Create Binary File] if you need to write bytes without encoding.
-        [File Should Not Exist] can be used to avoid overwriting existing
-        files.
+        Use [Append To File] if you want to append to an existing file and
+        [Create Binary File] if you need to write bytes without encoding.
+        [File Should Not Exist] can be used to avoid overwriting existing files.
         """
         if isinstance(content, Secret):
             content = content.value
@@ -785,11 +746,10 @@ class OperatingSystem:
             content: Binary content to write.
 
         If content is given as a Unicode string, it is first converted to bytes
-        character by character. All characters with ordinal below 256 can be
-        used and are converted to bytes with same values. Using characters
-        with higher ordinal is an error.
-
-        Byte strings, and possible other types, are written to the file as is.
+        character by character. Bytes that cannot be represented as visible
+        characters can be created using escape sequences like `\x00`. All
+        characters with ordinal below 256 can be used and are converted to
+        bytes with same values. Using characters with higher ordinal is an error.
 
         If the directory for the file does not exist, it is created, along
         with missing intermediate directories.
@@ -799,8 +759,8 @@ class OperatingSystem:
         ```robotframework
         *** Test Cases ***
         Create Binary File
-            Create Binary File    ${dir}/example.png    ${image content}
-            Create Binary File    ${path}    \x01\x00\xe4\x00
+            Create Binary File    ${dir}/example.png    ${image}
+            Create Binary File    ${path}    \x00RF\x01
         ```
 
         Use [Create File] if you want to create a text file using a certain
@@ -820,7 +780,7 @@ class OperatingSystem:
 
         Args:
             path: Path to the file to append to.
-            content: Content to append. Secret values are not logged.
+            content: Content to append. [Secret] values are not logged.
             encoding: Encoding to use when writing the file.
 
         If the file exists, the given text is written to its end. If the file
@@ -860,15 +820,16 @@ class OperatingSystem:
 
     def remove_files(self, *paths: str):
         """Uses [Remove File] to remove multiple files one-by-one.
-        Example:
 
         Args:
             *paths: Exact file paths or glob patterns identifying files to remove.
 
+        Example:
+
         ```robotframework
         *** Test Cases ***
         Remove Files
-            Remove Files    ${TEMPDIR}${/}foo.txt    ${TEMPDIR}${/}bar.txt    ${TEMPDIR}${/}zap.txt
+            Remove Files    ${TEMPDIR}/foo.txt    ${TEMPDIR}/*.log
         ```
         """
         for path in paths:
@@ -916,11 +877,10 @@ class OperatingSystem:
 
         Args:
             path: Path to the directory to remove.
-            recursive: Remove the directory recursively if set to a true value.
+            recursive: When true, remove the directory recursively.
 
-        If the second argument `recursive` is given a true value, the
-        directory is removed recursively. Otherwise, removing fails if
-        the directory is not empty.
+        If `recursive` is given a true value, the directory is removed recursively.
+        Otherwise, removing fails if the directory is not empty.
 
         If the directory pointed to by the `path` does not exist, the keyword
         passes, but it fails, if the `path` points to a file.
@@ -951,26 +911,22 @@ class OperatingSystem:
             The resulting destination file path.
 
         Source must be a path to an existing file or a glob pattern (see
-        [Glob patterns]) that matches exactly one file. How the
-        destination is interpreted is explained below.
+        [Glob patterns]) that matches exactly one file. How the destination is
+        interpreted is explained below:
 
-        1) If the destination is an existing file, the source file is copied
-        over it.
+        1. If the destination is an existing file, the source file is copied
+           over it.
+        2. If the destination is an existing directory, the source file is
+           copied into it. A possible file with the same name as the source is
+           overwritten.
+        3. If the destination does not exist, and it ends with a path separator
+           (`/` or `\`), it is considered a directory. That directory is created
+           and a source file copied into it. Possible missing intermediate
+           directories are also created.
+        4. If the destination does not exist, and it does not end with a path
+           separator, it is considered a file. If the path to the file does not
+           exist, it is created.
 
-        2) If the destination is an existing directory, the source file is
-        copied into it. A possible file with the same name as the source is
-        overwritten.
-
-        3) If the destination does not exist, and it ends with a path
-        separator (`/` or `\`), it is considered a directory. That
-        directory is created and a source file copied into it.
-        Possible missing intermediate directories are also created.
-
-        4) If the destination does not exist, and it does not end with a path
-        separator, it is considered a file. If the path to the file does not
-        exist, it is created.
-
-        The resulting destination path is returned.
         See also [Copy Files], [Move File], and [Move Files].
         """
         source, destination = self._prepare_copy_file(source, destination)
@@ -1012,16 +968,10 @@ class OperatingSystem:
         elif not os.path.isdir(path):
             self._error(f"Destination '{path}' exists and is not a directory.")
 
-    def _are_source_and_destination_same_file(self, source: str, dest: str) -> bool:
-        if (
-            os.path.exists(source)
-            and os.path.exists(dest)
-            and os.path.samefile(source, dest)
-        ):
+    def _are_source_and_destination_same_file(self, src: str, dst: str) -> bool:
+        if os.path.exists(src) and os.path.exists(dst) and os.path.samefile(src, dst):
             self._link(
-                "Source '%s' and destination '%s' point to the same file.",
-                source,
-                dest,
+                "Source '%s' and destination '%s' point to the same file.", src, dst,
             )
             return True
         return False
@@ -1080,7 +1030,7 @@ class OperatingSystem:
 
         Args:
             *sources_and_destination: Source paths or glob patterns followed by
-                the destination directory as the final argument.
+              the destination directory as the final argument.
 
         Source files can be given as exact paths and as glob patterns (see
         [Glob patterns]). At least one source must be given, but it is
@@ -1094,7 +1044,7 @@ class OperatingSystem:
         ```robotframework
         *** Test Cases ***
         Copy Files
-            Copy Files    ${dir}/file1.txt     ${dir}/file2.txt    ${dir2}
+            Copy Files    ${dir}/file-1.txt    ${dir}/file-2.txt    ${dir2}
             Copy Files    ${dir}/file-*.txt    ${dir2}
         ```
 
@@ -1123,7 +1073,7 @@ class OperatingSystem:
 
         Args:
             *sources_and_destination: Source paths or glob patterns followed by
-                the destination directory as the final argument.
+              the destination directory as the final argument.
 
         Arguments have exactly same semantics as with [Copy Files] keyword.
         See also [Move File], [Copy File], and [Copy Files].
@@ -1172,9 +1122,8 @@ class OperatingSystem:
             source: Path to the existing source directory.
             destination: Destination directory path.
 
-        Uses [Copy Directory] keyword internally, and `source` and
-        `destination` arguments have exactly same semantics as with
-        that keyword.
+        Uses [Copy Directory] keyword internally, and `source` and `destination`
+        arguments have exactly same semantics as with that keyword.
         """
         source, destination = self._prepare_copy_dir(source, destination)
         shutil.move(source, destination)
@@ -1187,8 +1136,7 @@ class OperatingSystem:
 
         Args:
             name: Name of the environment variable.
-            default: Value to return if the variable does not exist. If omitted,
-                a missing variable causes an error.
+            default: Value to return if the variable does not exist.
 
         Returns:
             The environment variable value or the given default value.
@@ -1196,11 +1144,8 @@ class OperatingSystem:
         If no environment variable is found, returns possible default value.
         If no default value is given, the keyword fails.
 
-        Returned variables are automatically decoded to Unicode using
-        the system encoding.
-
-        Note that you can also access environment variables directly using
-        the variable syntax `%{ENV_VAR_NAME}`.
+        Note that you can also access environment variables using the variable
+        syntax `%{ENV_VAR_NAME}`.
         """
         value = get_env_var(name, default)
         if value is None:
@@ -1212,10 +1157,7 @@ class OperatingSystem:
 
         Args:
             name: Name of the environment variable.
-            value: Value to set. Secret values are not logged.
-
-        Values are converted to strings automatically. Set variables are
-        automatically encoded using the system encoding.
+            value: Value to set. [Secret] values are not logged.
         """
         if isinstance(value, Secret):
             value = value.value
@@ -1239,7 +1181,7 @@ class OperatingSystem:
 
         Args:
             name: Name of the environment variable.
-            *values: Values to append. Secret values are not logged.
+            *values: Values to append. [Secret] values are not logged.
             separator: Separator to use between values.
 
         If the environment variable already exists, values are added after it,
@@ -1301,8 +1243,6 @@ class OperatingSystem:
 
         Environment variable is considered not to be set if it does not exist
         or if its value is an empty string.
-
-        The default error message can be overridden with the `msg` argument.
         """
         value = get_env_var(name)
         if not value:
@@ -1322,8 +1262,6 @@ class OperatingSystem:
 
         Environment variable is considered not to be set if it does not exist
         or if its value is an empty string.
-
-        The default error message can be overridden with the `msg` argument.
         """
         value = get_env_var(name)
         if value:
@@ -1333,12 +1271,11 @@ class OperatingSystem:
     def get_environment_variables(self) -> "dict[str, str]":
         """Returns currently available environment variables as a dictionary.
 
-        Both keys and values are decoded to Unicode using the system encoding.
-        Altering the returned dictionary has no effect on the actual environment
-        variables.
-
         Returns:
             A dictionary containing the available environment variables.
+
+        Altering the returned dictionary has no effect on the actual environment
+        variables.
         """
         return get_env_vars()
 
@@ -1353,7 +1290,7 @@ class OperatingSystem:
         Returns:
             A dictionary containing the available environment variables.
 
-        Environment variables are also returned the same way as with
+        Environment variables are returned the same way as with the
         [Get Environment Variables] keyword.
         """
         variables = get_env_vars()
@@ -1364,16 +1301,16 @@ class OperatingSystem:
     # Path
 
     def join_path(self, base: str, *parts: str) -> str:
-        """Joins the given path part(s) to the given base path.
+        r"""Joins the given path part(s) to the given base path.
 
         Args:
             base: Base path.
             *parts: Path parts to join to the base path.
 
         Returns:
-            The joined and normalized path.
+            The constructed and normalized path.
 
-        The path separator (`/` or `\\`) is inserted when needed and
+        The path separator (`/` or `\`) is inserted when needed and
         the possible absolute paths handled as expected. The resulted
         path is also normalized.
 
@@ -1382,31 +1319,31 @@ class OperatingSystem:
         ```robotframework
         *** Test Cases ***
         Join Path
-            ${path} =    Join Path    my    path
-            ${p2} =    Join Path    my/    path/
-            ${p3} =    Join Path    my    path    my    file.txt
-            ${p4} =    Join Path    my    /path
-            ${p5} =    Join Path    /my/path/    ..    path2
-            Should Be Equal    ${path}    my/path
-            Should Be Equal    ${p2}    my/path
-            Should Be Equal    ${p3}    my/path/my/file.txt
-            Should Be Equal    ${p4}    /path
-            Should Be Equal    ${p5}    /my/path2
+            ${path1} =    Join Path    my    path
+            ${path2} =    Join Path    my/    path/
+            ${path3} =    Join Path    my    path    my    file.txt
+            ${path4} =    Join Path    my    /path
+            ${path5} =    Join Path    /my/path/    ..    path2
+            Should Be Equal    ${path1}    my/path
+            Should Be Equal    ${path2}    my/path
+            Should Be Equal    ${path3}    my/path/my/file.txt
+            Should Be Equal    ${path4}    /path
+            Should Be Equal    ${path5}    /my/path2
         ```
 
-        On Windows results would use `\\` instead of `/`.
+        On Windows results would use `\` instead of `/`.
         """
         return self.normalize_path(os.path.join(base, *parts))
 
     def join_paths(self, base: str, *paths: str) -> "list[str]":
-        """Joins given paths with base and returns resulted paths.
+        r"""Joins given paths with base and returns resulted paths.
 
         Args:
             base: Base path.
             *paths: Paths to join to the base path.
 
         Returns:
-            A list of joined and normalized paths.
+            A list of constructed and normalized paths.
 
         See [Join Path] for more information.
 
@@ -1415,30 +1352,30 @@ class OperatingSystem:
         ```robotframework
         *** Test Cases ***
         Join Paths
-            @{p1} =    Join Paths    base    example    other
-            @{p2} =    Join Paths    /my/base    /example    other
-            @{p3} =    Join Paths    my/base    example/path/    other    one/more
-            Should Be Equal    ${p1}    ['base/example', 'base/other']    type=list
-            Should Be Equal    ${p2}    ['/example', '/my/base/other']    type=list
-            Should Be Equal    ${p3}    ['my/base/example/path', 'my/base/other', 'my/base/one/more']    type=list
+            @{paths1} =    Join Paths    base    example    other
+            @{paths2} =    Join Paths    /my/base    /root    one/more
+            Should Be Equal    ${paths1}    ['base/example', 'base/other']    type=list
+            Should Be Equal    ${paths2}    ['/root', '/my/base/one/more']    type=list
         ```
 
-        On Windows results would use `\\` instead of `/`.
+        On Windows results would use `\` instead of `/`.
         """
         return [self.join_path(base, path) for path in paths]
 
     def normalize_path(self, path: str, case_normalize=False) -> str:
-        """Normalizes the given path.
+        r"""Normalizes the given path.
 
         Args:
             path: Path to normalize.
-            case_normalize: Normalize character case on Windows if true.
+            case_normalize: When true, normalize character case on Windows.
 
         Returns:
             The normalized path.
 
+        In practice this keyword does the following:
+
         - Collapses redundant separators and up-level references.
-        - Converts `/` to `\\` on Windows.
+        - Converts `/` to `\` on Windows.
         - Replaces initial `~` or `~user` by that user's home directory.
         - If `case_normalize` is given a true value on Windows, converts
           the path to all lowercase.
@@ -1459,7 +1396,7 @@ class OperatingSystem:
             Should Be Equal    ${path4}    /home/robot/stuff
         ```
 
-        On Windows result would use `\\` instead of `/` and home directory
+        On Windows result would use `\` instead of `/` and the home directory
         would be different.
         """
         path = os.path.normpath(os.path.expanduser(path))
@@ -1472,7 +1409,7 @@ class OperatingSystem:
         return path or "."
 
     def split_path(self, path: str) -> "tuple[str, str]":
-        """Splits the given path from the last path separator (`/` or `\\`).
+        r"""Splits the given path from the last path separator (`/` or `\`).
 
         Args:
             path: Path to split.
@@ -1480,10 +1417,9 @@ class OperatingSystem:
         Returns:
             A tuple containing the directory and final path component.
 
-        The given path is first normalized (e.g. a possible trailing
-        path separator is removed, special directories `..` and `.`
-        removed). The parts that are split are returned as separate
-        components.
+        The given path is first normalized (e.g. a possible trailing path
+        separator and special directories `..` and `.` removed). The parts that
+        are split are returned as separate components.
 
         Examples:
 
@@ -1492,13 +1428,10 @@ class OperatingSystem:
         Split Path
             ${path1}    ${dir} =    Split Path    abc/def
             ${path2}    ${file} =    Split Path    abc/def/ghi.txt
-            ${path3}    ${d2} =    Split Path    abc/../def/ghi/
             Should Be Equal    ${path1}    abc
             Should Be Equal    ${dir}    def
             Should Be Equal    ${path2}    abc/def
             Should Be Equal    ${file}    ghi.txt
-            Should Be Equal    ${path3}    def
-            Should Be Equal    ${d2}    ghi
         ```
         """
         return os.path.split(self.normalize_path(path))
@@ -1513,37 +1446,37 @@ class OperatingSystem:
             A tuple containing the path without the extension and the extension
             without its leading dot.
 
-        The given path is first normalized (e.g. possible trailing
-        path separators removed, special directories `..` and `.`
-        removed). The base path and extension are returned as separate
-        components so that the dot used as an extension separator is
-        removed. If the path contains no extension, an empty string is
-        returned for it. Possible leading and trailing dots in the file
-        name are never considered to be extension separators.
+        The given path is first normalized (e.g. possible trailing path
+        separator and special directories `..` and `.` removed). The base path
+        and the extension are returned as separate components so that the dot
+        used as an extension separator is removed. If the path contains no
+        extension, an empty string is returned for it. Possible leading and
+        trailing dots in the file name are never considered to be extension
+        separators.
 
         Examples:
 
         ```robotframework
         *** Test Cases ***
         Split Extension
-            ${path}    ${ext} =    Split Extension    file.extension
-            ${p2}    ${e2} =    Split Extension    path/file.ext
-            ${p3}    ${e3} =    Split Extension    path/file
-            ${p4}    ${e4} =    Split Extension    p1/../p2/file.ext
-            ${p5}    ${e5} =    Split Extension    path/.file.ext
-            ${p6}    ${e6} =    Split Extension    path/.file
-            Should Be Equal    ${path}    file
-            Should Be Equal    ${ext}    extension
-            Should Be Equal    ${p2}    path/file
-            Should Be Equal    ${e2}    ext
-            Should Be Equal    ${p3}    path/file
-            Should Be Empty    ${e3}
-            Should Be Equal    ${p4}    p2/file
-            Should Be Equal    ${e4}    ext
-            Should Be Equal    ${p5}    path/.file
-            Should Be Equal    ${e5}    ext
-            Should Be Equal    ${p6}    path/.file
-            Should Be Empty    ${e6}
+            ${path1}    ${ext1} =    Split Extension    file.extension
+            ${path2}    ${ext2} =    Split Extension    path/file.ext
+            ${path3}    ${ext3} =    Split Extension    path/file
+            ${path4}    ${ext4} =    Split Extension    p1/../p2/file.ext
+            ${path5}    ${ext5} =    Split Extension    path/.file.ext
+            ${path6}    ${ext6} =    Split Extension    path/.file
+            Should Be Equal    ${path1}    file
+            Should Be Equal    ${ext1}     extension
+            Should Be Equal    ${path2}    path/file
+            Should Be Equal    ${ext2}     ext
+            Should Be Equal    ${path3}    path/file
+            Should Be Empty    ${ext3}
+            Should Be Equal    ${path4}    p2/file
+            Should Be Equal    ${ext4}     ext
+            Should Be Equal    ${path5}    path/.file
+            Should Be Equal    ${ext5}     ext
+            Should Be Equal    ${path6}    path/.file
+            Should Be Empty    ${ext6}
         ```
         """
         path = self.normalize_path(path)
@@ -1586,36 +1519,28 @@ class OperatingSystem:
         string as follows. Note that all checks are case-insensitive.
         Returned time is also automatically logged.
 
-        1. If `format` contains the word `epoch`, the time is returned
-           in seconds after the UNIX epoch. The return value is always
-           an integer.
+        1. If `format` contains the word `epoch`, the time is returned in seconds
+           after the UNIX epoch. The return value is always an integer.
+        2. If `format` contains any of the words `year`, `month`, `day`, `hour`,
+           `min` or `sec`, only the selected parts are returned. The order of
+           the returned parts is always the one in the previous sentence and
+           the order of the words in `format` is not significant. The parts are
+           returned as zero-padded strings (e.g. May -> `05`).
+        3. Otherwise, and by default, the time is returned as a timestamp string
+           in the format `2006-02-24 15:08:31`.
 
-        2. If `format` contains any of the words `year`, `month`,
-           `day`, `hour`, `min` or `sec`, only the selected parts are
-           returned. The order of the returned parts is always the one
-           in the previous sentence and the order of the words in
-           `format` is not significant. The parts are returned as
-           zero-padded strings (e.g. May -> `05`).
-
-        3. Otherwise, and by default, the time is returned as a
-           timestamp string in the format `2006-02-24 15:08:31`.
-        Examples (when the modified time of `${CURDIR}` is
-        2006-03-29 15:06:21):
+        Examples (when the modified time of `${CURDIR}` is 2006-03-29 15:06:21):
 
         ```robotframework
         *** Test Cases ***
         Get Modified Time
             ${time} =    Get Modified Time    ${CURDIR}
             ${secs} =    Get Modified Time    ${CURDIR}    epoch
-            ${year} =    Get Modified Time    ${CURDIR}    return year
-            ${y}    ${d} =    Get Modified Time    ${CURDIR}    year,day
-            @{time} =    Get Modified Time    ${CURDIR}    year,month,day,hour,min,sec
-            Should Be Equal    ${time}    2006-03-29 15:06:21
-            Should Be Equal    ${secs}    1143637581    type=int
-            Should Be Equal    ${year}    2006
-            Should Be Equal    ${y}    2006
-            Should Be Equal    ${d}    29
-            Should Be Equal    ${time}    ${{['2006', '03', '29', '15', '06', '21']}}
+            ${year}    ${month} =    Get Modified Time    ${CURDIR}    year, month
+            Should Be Equal    ${time}     2006-03-29 15:06:21
+            Should Be Equal    ${secs}     1143637581    type=int
+            Should Be Equal    ${year}     2006
+            Should Be Equal    ${month}    03
         ```
         """
         path = self._absnorm(path)
@@ -1632,42 +1557,35 @@ class OperatingSystem:
             path: Path to the regular file to modify.
             mtime: New modification time in one of the supported formats.
 
-        Changes the modification and access times of the given file to
-        the value determined by `mtime`. The time can be given in
-        different formats described below. Note that all checks
-        involving strings are case-insensitive. Modified time can only
-        be set to regular files.
+        Changes the modification and access times of the given file to the value
+        determined by `mtime`. The time can be given in different formats
+        described below. Note that all checks involving strings are
+        case-insensitive. Modified time can only be set to regular files.
 
         1. If `mtime` is a number, or a string that can be converted
            to a number, it is interpreted as seconds since the UNIX
            epoch (1970-01-01 00:00:00 UTC). This documentation was
            originally written about 1177654467 seconds after the epoch.
-
-        2. If `mtime` is a timestamp, that time will be used. Valid
-           timestamp formats are `YYYY-MM-DD hh:mm:ss` and
-           `YYYYMMDD hhmmss`.
-
+        2. If `mtime` is a timestamp, that time will be used. Valid timestamps
+           formats are `YYYY-MM-DD hh:mm:ss` and `YYYYMMDD hhmmss`.
         3. If `mtime` is equal to `NOW`, the current local time is used.
-
         4. If `mtime` is equal to `UTC`, the current time in
-           [UTC](http://en.wikipedia.org/wiki/Coordinated_Universal_Time)
-           is used.
-
-        5. If `mtime` is in the format like `NOW - 1 day` or
-           `UTC + 1 hour 30 min`, the current local/UTC time plus/minus the time
-           specified with the time string is used. The time string format
-           is described in an appendix of Robot Framework User Guide.
+           [UTC](https//en.wikipedia.org/wiki/Coordinated_Universal_Time) is used.
+        5. If `mtime` is in the format like `NOW - 1 day` or `UTC + 1 hour 30 min`,
+           the current local/UTC time plus/minus the time specified with the time
+           string is used. The time string format is described in an appendix of
+           Robot Framework User Guide.
 
         Examples:
 
         ```robotframework
         *** Test Cases ***
         Set Modified Time
-            Set Modified Time    /path/file    1177654467    # Time given as epoch seconds
-            Set Modified Time    /path/file    2007-04-27 9:14:27    # Time given as a timestamp
-            Set Modified Time    /path/file    NOW    # The local time of execution
-            Set Modified Time    /path/file    NOW - 1 day    # 1 day subtracted from the local time
-            Set Modified Time    /path/file    UTC + 1h 2min 3s    # 1h 2min 3s added to the UTC time
+            Set Modified Time    /path/file    1177654467
+            Set Modified Time    /path/file    2007-04-27 9:14:27
+            Set Modified Time    /path/file    NOW
+            Set Modified Time    /path/file    NOW - 1 day
+            Set Modified Time    /path/file    UTC + 1h 2min 3s
         ```
         """
         mtime = parse_time(mtime)
@@ -1708,7 +1626,7 @@ class OperatingSystem:
         Args:
             path: Path to the directory to list.
             pattern: Optional glob pattern for filtering items.
-            absolute: Return absolute paths instead of names if true.
+            absolute: When true, return absolute file paths instead of file names.
 
         Returns:
             A case-sensitively sorted list of matching items.
@@ -1719,14 +1637,13 @@ class OperatingSystem:
         items are automatically logged.
 
         File and directory names are returned relative to the given path
-        (e.g. `'file.txt'`) by default. If you want them be returned in
-        absolute format (e.g. `'/home/robot/file.txt'`), give the `absolute`
+        (e.g. `file.txt`) by default. If you want them be returned in
+        absolute format (e.g. `/home/robot/file.txt`), give the `absolute`
         argument a true value.
 
         If `pattern` is given, only items matching it are returned. The pattern
-        is considered to be a _glob pattern_ and the full syntax is explained in
-        the [Glob patterns] section. With this keyword matching is always
-        case-sensitive.
+        is considered to be a glob pattern (see [Glob patterns]). With this
+        keyword matching is always case-sensitive.
 
         Examples (using also other [List Directory] variants):
 
@@ -1794,8 +1711,7 @@ class OperatingSystem:
             The number of matching items.
 
         The argument `pattern` has the same semantics as with [List Directory]
-        keyword. The count is returned as an integer, so it should be checked e.g.
-        with [BuiltIn] keyword `Should Be Equal` using `type=int`.
+        keyword.
         """
         count = len(self._list_dir(path, pattern))
         self._info(f"{count} item{s(count)}.")
@@ -1907,8 +1823,8 @@ class OperatingSystem:
     def _absnorm(self, path: str) -> str:
         return abspath(self.normalize_path(path))
 
-    def _fail(self, *messages: str) -> NoReturn:
-        raise AssertionError(next(msg for msg in messages if msg))
+    def _fail(self, msg1: "str | None", msg2: "str | None" = None) -> NoReturn:
+        raise AssertionError(msg1 or msg2)
 
     def _error(self, msg: str) -> NoReturn:
         raise RuntimeError(msg)

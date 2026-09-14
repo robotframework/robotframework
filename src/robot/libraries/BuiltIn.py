@@ -50,7 +50,7 @@ class Expression:
     """An expression evaluated in Python.
 
     Expressions are evaluated using Python's
-    [eval](http://docs.python.org/library/functions.html#eval) function so
+    [eval](https://docs.python.org/library/functions.html#eval) function so
     that all Python built-ins like `len()` and `int()` are available.
     In addition to that, all unrecognized variables are considered to be
     modules that are automatically imported. It is possible to use all
@@ -5140,7 +5140,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     ## Evaluation namespace
 
     Expressions are evaluated using Python's
-    [eval](http://docs.python.org/library/functions.html#eval) function so
+    [eval](https://docs.python.org/library/functions.html#eval) function so
     that all Python built-ins like `len()` and `int()` are available.
     In addition to that, all unrecognized variables are considered to be
     modules that are automatically imported. It is possible to use all
@@ -5258,10 +5258,10 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     ## Glob patterns
 
     Some keywords, for example [Should Match], support so called
-    [glob patterns](http://en.wikipedia.org/wiki/Glob_(programming)) that
-    support wildcard characters and character sequences.
+    [glob patterns](https://en.wikipedia.org/wiki/Glob_(programming) "Wikipedia")
+    that support the following wildcard characters and character sequences.
 
-    | Wilidcard  |                   Explanation                            |
+    |  Pattern   |                   Explanation                            |
     | ---------- | -------------------------------------------------------- |
     | `*`        | Matches any string, even an empty string.                |
     | `?`        | Matches any single character.                            |
@@ -5276,10 +5276,10 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     ## Regular expressions
 
     Some keywords, for example [Should Match Regexp], support
-    [regular expressions](http://en.wikipedia.org/wiki/Regular_expression)
+    [regular expressions](https://en.wikipedia.org/wiki/Regular_expression "Wikipedia")
     that are more powerful but also more complicated that glob patterns.
     The regular expression support is implemented using Python's
-    [re module](http://docs.python.org/library/re.html) and its documentation
+    [re](https://docs.python.org/library/re.html) module and its documentation
     should be consulted for more information about the syntax.
 
     Because the backslash character (`\`) is an escape character in
@@ -5291,8 +5291,8 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     # Multiline string comparison
 
     [Should Be Equal] and [Should Be Equal As Strings] report the failures using
-    [unified diff format](http://en.wikipedia.org/wiki/Diff_utility#Unified_format)
-    if both strings have more than two lines.
+    [unified diff format](https://en.wikipedia.org/wiki/Diff_utility#Unified_format
+    "Wikipedia") if both strings have more than two lines.
 
     Example:
     ```robotframework
@@ -5327,7 +5327,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     ```
 
     [DateTime]: https://robotframework.org/robotframework/latest/libraries/DateTime.html
-    [search path]: http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#module-search-path
+    [search path]: https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#module-search-path
     [VAR syntax]: https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#var-syntax
     [IF/ELSE syntax]: https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#if-else-syntax
     [TRY/EXCEPT syntax]: https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#try-except-syntax
