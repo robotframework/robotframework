@@ -76,7 +76,7 @@ exceptions using the same syntax also when not using Markdown.
     def example(first: int, second: bool = True) -> float:
         """Example keyword!
 
-        This keywords uses:
+        This keyword uses:
 
         - [Markdown](https://en.wikipedia.org/wiki/Markdown) *formatting*.
         - [Google Style] argument, return value and exception documentation.
