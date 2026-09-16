@@ -339,6 +339,33 @@ class TestSplitArgsFromNameOrPath(unittest.TestCase):
         finally:
             os.remove(path)
 
+    def test_existing_windows_path_with_args(self):
+        if os.sep != "\\":
+            return
+        root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+        path = os.path.join(root, "atest", "testresources", "consoles", "CustomConsole.py")
+        path_with_parent_segments = os.path.join(
+            root,
+            "utest",
+            "output",
+            "..",
+            "..",
+            "atest",
+            "testresources",
+            "consoles",
+            "CustomConsole.py",
+        )
+        self.verify(path_with_parent_segments + ":arg", (path, ["arg"]))
+
+        path_with_semicolon = os.path.join(
+            root, "robot-framework-unit-test-file-12q3405909qasf;part.py"
+        )
+        open(path_with_semicolon, "w", encoding="ASCII").close()
+        try:
+            self.verify(path_with_semicolon, (path_with_semicolon, []))
+        finally:
+            os.remove(path_with_semicolon)
+
     def test_existing_path_with_colons(self):
         # Colons aren't allowed in Windows paths (other than in "c:")
         if os.sep == "\\":
