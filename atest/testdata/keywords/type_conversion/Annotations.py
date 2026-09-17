@@ -231,11 +231,11 @@ def kwonly(*, argument: float, expected=None):
     _validate_type(argument, expected)
 
 
-def none_as_default(argument: list = None, expected=None):
+def none_as_default(argument: list = None, expected=None):  # noqa
     _validate_type(argument, expected)
 
 
-def none_as_default_with_unknown_type(argument: Unknown = None, expected=None):
+def none_as_default_with_unknown_type(argument: Unknown = None, expected=None):  # noqa
     _validate_type(argument, expected)
 
 
@@ -308,7 +308,7 @@ def keyword_with_wraps(argument: int, expected=None):
     _validate_type(argument, expected)
 
 
-def type_and_default_1(argument: list = None, expected=None):
+def type_and_default_1(argument: list = None, expected=None):  # noqa
     _validate_type(argument, expected)
 
 
@@ -320,7 +320,7 @@ def type_and_default_3(argument: timedelta = 0, expected=None):
     _validate_type(argument, expected)
 
 
-def type_and_default_4(argument: list = [], expected=None):
+def type_and_default_4(argument: list = [], expected=None):  # noqa
     _validate_type(argument, expected)
 
 

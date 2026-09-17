@@ -10,7 +10,7 @@ Documentation
     Doc Should Start With
     ...    A library providing communication over Telnet connections.
     ...
-    ...    ``Telnet`` is Robot Framework's standard library that makes it possible to
+    ...    Telnet is Robot Framework's standard library that makes it possible to
 
 Version
     Version Should Match             [6789].*
@@ -35,7 +35,8 @@ Init Documentation
     Init Doc Should Start With       0
     ...    Telnet library can be imported with optional configuration parameters.
     ...
-    ...    Configuration parameters are used as default values when new\nconnections are
+    ...    Configuration parameters are used as default values when new connections
+    ...    are opened with the [Open Connection] keyword.
 
 Init Arguments
     Init Arguments Should Be         0    timeout=3 seconds    newline=CRLF
@@ -46,7 +47,7 @@ Init Arguments
 
 Init Source Info
     Keyword Should Not Have Source   0    xpath=inits/init
-    Keyword Lineno Should Be         0    287      xpath=inits/init
+    Keyword Lineno Should Be         0    297      xpath=inits/init
 
 Keyword Names
     Keyword Name Should Be           0    Close All Connections
@@ -59,29 +60,20 @@ Keyword Arguments
 Keyword Documentation
     Keyword Doc Should Start With    0    Closes all open connections
     Keyword Doc Should Start With    2
-    ...    Executes the given ``command`` and reads, logs, and returns everything until the prompt.
+    ...    Executes the given `command` and reads, logs, and returns resulting output.
     ...
-    ...    This keyword requires the prompt to be [#Configuration|configured]
-    ...    either in `importing` or with `Open Connection` or `Set Prompt` keyword.
-    ...
-    ...    This is a convenience keyword that uses `Write` and `Read Until Prompt`
-    ...    internally. Following two examples are thus functionally identical:\
-    ...
-    ...    | \${out} = | `Execute Command`${SPACE*3}| pwd |
-    ...
-    ...    | `Write`${SPACE*2}| pwd${SPACE*17}|
-    ...    | \${out} = | `Read Until Prompt` |
-    ...
+    ...    This is a convenience keyword that uses [Write] and [Read Until Prompt]
+    ...    internally. Following two examples are thus functionally identical:
 
 Keyword Source Info
     # This keyword is from the "main library".
     Keyword Name Should Be           0    Close All Connections
     Keyword Should Not Have Source   0
-    Keyword Lineno Should Be         0    517
+    Keyword Lineno Should Be         0    574
     # This keyword is from an external library component.
     Keyword Name Should Be           7    Read Until Prompt
     Keyword Should Not Have Source   7
-    Keyword Lineno Should Be         7    1087
+    Keyword Lineno Should Be         7    1261
 
 KwArgs and VarArgs
     Run Libdoc And Parse Output      ${TESTDATADIR}/KwArgs.py

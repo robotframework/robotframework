@@ -23,20 +23,20 @@ RF 5.0 JSON
     ${BASE}-5.0.json
 
 RF 4.0 XML
-    ${BASE}-4.0.xml    datatypes=True
+    ${BASE}-4.0.xml
 
 RF 4.0 JSON
-    ${BASE}-4.0.json    datatypes=True
+    ${BASE}-4.0.json
 
 *** Keywords ***
 Generate and validate
-    [Arguments]    ${path}    ${source}=BackwardsCompatibility.py    ${datatypes}=False
+    [Arguments]    ${path}    ${source}=BackwardsCompatibility.py
     # JSON source files must be generated using RAW format as well.
     Run Libdoc And Parse Output    --specdocformat RAW ${path}
-    Validate    ${source}    ${datatypes}
+    Validate    ${source}
 
 Validate
-    [Arguments]    ${source}    ${datatypes}=False
+    [Arguments]    ${source}
     [Tags]    robot:recursive-continue-on-failure
     Validate library    ${source}
     Validate keyword 'Simple'
@@ -71,7 +71,7 @@ Validate keyword 'Arguments'
     Keyword Name Should Be             0    Arguments
     Keyword Doc Should Be              0    ${EMPTY}
     Keyword Tags Should Be             0
-    Keyword Lineno Should Be           0    39
+    Keyword Lineno Should Be           0    38
     Keyword Arguments Should Be        0    a    b=2    *c    d=4    e    **f
 
 Validate keyword 'Types'

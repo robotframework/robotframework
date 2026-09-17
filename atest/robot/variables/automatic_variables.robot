@@ -15,6 +15,16 @@ Test Documentation
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc.doc}    My doc.\nIn 2 lines! And with variable value!!
 
+Test Metadata
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal    ${tc.metadata}[TeSt1]    Value
+    Should Be Equal    ${tc.metadata}[test2]    variable value
+
+Modifying \&{TEST METADATA} does not affect actual metadata test has
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal    ${tc.metadata}[TeSt1]    Value
+    Dictionary Should Not Contain Key    ${tc.metadata}    NotSet
+
 Test Tags
     Check Test Tags    ${TEST NAME}    Force 1    Hello, world!    id-42    include this test    variable value
 

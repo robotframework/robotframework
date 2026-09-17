@@ -406,7 +406,7 @@ class ArgFileParser:
         try:
             with FileReader(path) as reader:
                 return reader.read()
-        except (IOError, UnicodeError) as err:
+        except (OSError, UnicodeError) as err:
             raise DataError(f"Opening argument file '{path}' failed: {err}")
 
     def _process_file(self, content):

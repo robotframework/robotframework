@@ -21,13 +21,11 @@ def library_keyword_tags_with_documentation():
 
     Tags not only on the last line is new in RF 7.5.
     """
-    pass
 
 
 @keyword(tags=["one", 2])
 def library_keyword_tags_with_documentation_and_attribute():
     """Tags: one, two words"""
-    pass
 
 
 @keyword(tags=42)

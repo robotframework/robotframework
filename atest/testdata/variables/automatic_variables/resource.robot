@@ -22,6 +22,7 @@ Check Variables In Suite Teardown
 
 Check Test Variables Do Not Exist
     Variable Should Not Exist    $TEST_NAME
+    Variable Should Not Exist    $TEST_METADATA
     Variable Should Not Exist    $TEST_STATUS
     Variable Should Not Exist    $TEST_MESSAGE
 
@@ -47,3 +48,8 @@ Suite Metadata Should Be Correct
     [Arguments]    ${expected}
     ${expected} =    Evaluate    ${expected}
     Dictionaries Should Be Equal    ${SUITE METADATA}    ${expected}
+
+Test Metadata Should Be Correct
+    [Arguments]    ${expected}
+    ${expected} =    Evaluate    ${expected}
+    Dictionaries Should Be Equal    ${TEST METADATA}    ${expected}

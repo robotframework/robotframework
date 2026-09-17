@@ -8,11 +8,11 @@ from os.path import abspath, dirname, join, normpath
 import robot
 
 __all__ = [
+    "CONSOLE_ENCODING",
+    "DATADIR",
     "ROBOTPATH",
     "ROBOT_VERSION",
-    "DATADIR",
     "SYSTEM_ENCODING",
-    "CONSOLE_ENCODING",
     "datetime",
     "timedelta",
 ]

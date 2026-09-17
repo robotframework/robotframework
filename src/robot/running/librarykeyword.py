@@ -74,7 +74,7 @@ class LibraryKeyword(KeywordImplementation):
         method = self.method
         try:
             lines, start_lineno = inspect.getsourcelines(inspect.unwrap(method))
-        except (TypeError, OSError, IOError):
+        except (TypeError, OSError):
             return None
         for increment, line in enumerate(lines):
             if line.strip().startswith("def "):

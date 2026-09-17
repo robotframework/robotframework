@@ -10,7 +10,7 @@ from typing import TypedDict, Union
 ROBOT_LIBRARY_VERSION = "1.0"
 
 
-__all__ = ["simple", "arguments", "types", "special_types", "union"]
+__all__ = ["arguments", "simple", "special_types", "types", "union"]
 
 
 class Color(Enum):
@@ -33,7 +33,6 @@ def simple():
 
     Tags: example
     """
-    pass
 
 
 def arguments(a, b=2, *c, d=4, e, **f):

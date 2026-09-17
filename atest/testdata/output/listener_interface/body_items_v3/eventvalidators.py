@@ -55,7 +55,7 @@ class EventValidator:
 
     def _started_events_are_consumed(self):
         if len(self.started) == 1:
-            data, result, implementation = self.started[0]
+            data, result, _ = self.started[0]
             if data.type == result.type == "TEARDOWN":
                 return True
         return False

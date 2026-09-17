@@ -454,16 +454,14 @@ class AndOrPatternGenerator:
 
     def __iter__(self):
         for tag in self.tags:
-            for pattern in self._generate([tag], self.max_length - 1):
-                yield pattern
+            yield from self._generate([tag], self.max_length - 1)
 
     def _generate(self, tokens, length):
         yield " ".join(tokens)
         if length:
             for operator in self.operators:
                 for tag in self.tags:
-                    for pattern in self._generate(tokens + [operator, tag], length - 1):
-                        yield pattern
+                    yield from self._generate(tokens + [operator, tag], length - 1)
 
 
 if __name__ == "__main__":

@@ -181,14 +181,14 @@ class TestAsserts(unittest.TestCase):
     def test_assert_true(self):
         assert_true(True)
         assert_true("non-empty string is true")
-        assert_true(-1 < 0 < 1, "my message")
+        assert_true(True, "my message")
         assert_raises(AssertionError, assert_true, False)
         assert_raises(AssertionError, assert_true, "")
         assert_raises_with_msg(
             AssertionError,
             "message",
             assert_true,
-            1 < 0,
+            False,
             "message",
         )
 
@@ -202,7 +202,7 @@ class TestAsserts(unittest.TestCase):
             AssertionError,
             "message",
             assert_false,
-            0 < 1,
+            True,
             "message",
         )
 

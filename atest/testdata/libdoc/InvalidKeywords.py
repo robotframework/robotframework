@@ -20,4 +20,3 @@ class InvalidKeywords:
     @keyword("same ${match}")
     def dupe_with_embedded_2(self, arg):
         """This is an error only at run time."""
-        pass

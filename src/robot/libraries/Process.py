@@ -36,19 +36,19 @@ from robot.utils import (
 from robot.version import get_version
 
 LOCALE_ENCODING = "locale" if sys.version_info >= (3, 10) else None
-Handle = Union[subprocess.Popen, "str", None]
+Handle = Union[subprocess.Popen, str, None]
 Stdin = Union[str, Secret, Path, int, IOBase, None]
 OnTimeout = Literal["continue", "terminate", "kill"]
 
 
 class ProcessResult:
-    """An object containing process execution results in its attributes.
+    r"""An object containing process execution results in its attributes.
 
-    | Attribute | Explanation |
-    |-----------|-------------|
-    | rc | Return code of the process as an integer. |
-    | stdout | Contents of the standard output stream. |
-    | stderr | Contents of the standard error stream. |
+    |  Attribute  |                       Explanation                             |
+    |-------------|---------------------------------------------------------------|
+    | rc          | Return code of the process as an integer.                     |
+    | stdout      | Contents of the standard output stream.                       |
+    | stderr      | Contents of the standard error stream.                        |
     | stdout_path | Path where stdout was redirected or `None` if not redirected. |
     | stderr_path | Path where stderr was redirected or `None` if not redirected. |
 
@@ -57,19 +57,15 @@ class ProcessResult:
     ```robotframework
     *** Test Cases ***
     Run process
-        ${result} =            Run Process         program
-        Should Be Equal        ${result.rc}          0    type=int
-        Should Match           ${result.stdout}      Some t?xt*
-        Should Be Empty        ${result.stderr}
-        ${stdout} =            Get File            ${result.stdout_path}
-        Should Be Equal        ${stdout}             ${result.stdout}
-        File Should Be Empty   ${result.stderr_path}
-
+        ${result} =    Run Process    python    -c    print("Hello!")
+        Should Be Equal    ${result.rc}    0    type=int
+        Should Be Equal    ${result.stdout}    Hello!
+        Should Be Empty    ${result.stderr}
     ```
 
     Notice that in `stdout` and `stderr` content possible trailing newline
-    is removed and `\\r\\n` converted to `\\n` automatically. If you
-    need to see the original process output, redirect it to a file using
+    is removed and `\r\n` converted to `\n` automatically. If you need to see
+    the original process output, redirect it to a file using
     [process configuration] and read it from there.
     """
 
@@ -81,6 +77,7 @@ class ProcessResult:
         stdin=None,
         rc=None,
         output_encoding=None,
+        streams_to_close=(),
     ):
         self._process = process
         self.stdout_path = self._get_path(stdout)
@@ -94,6 +91,7 @@ class ProcessResult:
             for stream in (stdout, stderr, stdin)
             if self._is_custom_stream(stream)
         ]
+        self._streams_to_close = streams_to_close
 
     def _get_path(self, stream):
         return stream.name if self._is_custom_stream(stream) else None
@@ -134,7 +132,7 @@ class ProcessResult:
             return ""
         try:
             content = stream.read()
-        except IOError:
+        except OSError:
             content = ""
         finally:
             if stream_path:
@@ -153,24 +151,20 @@ class ProcessResult:
         return output
 
     def close_streams(self):
-        standard_streams = self._get_and_read_standard_streams(self._process)
-        for stream in standard_streams + self._custom_streams:
-            if self._is_open(stream):
-                stream.close()
-
-    def _get_and_read_standard_streams(self, process):
-        stdin, stdout, stderr = process.stdin, process.stdout, process.stderr
-        if self._is_open(stdout):
+        if self._is_open(self._process.stdout):
             self._read_stdout()
-        if self._is_open(stderr):
+        if self._is_open(self._process.stderr):
             self._read_stderr()
-        return [stdin, stdout, stderr]
+        for stream in self._streams_to_close:
+            stream.close()
+        self._streams_to_close = ()
 
     def __str__(self):
         return f"<result object with rc {self.rc}>"
 
 
 class ProcessConfiguration:
+
     def __init__(
         self,
         cwd=None,
@@ -187,6 +181,7 @@ class ProcessConfiguration:
         self.shell = shell
         self.alias = alias
         self.output_encoding = output_encoding
+        self.streams_to_close = []
         self.stdout_stream = self._new_stream(stdout)
         self.stderr_stream = self._get_stderr(stderr, stdout, self.stdout_stream)
         self.stdin_stream = self._get_stdin(stdin)
@@ -194,18 +189,21 @@ class ProcessConfiguration:
         self.env = self._construct_env(env, env_extra)
 
     def _new_stream(self, name):
+        if not name:
+            return subprocess.PIPE
         if name == "DEVNULL":
-            return open(os.devnull, "w", encoding=LOCALE_ENCODING)
-        if name:
+            stream = open(os.devnull, "w", encoding=LOCALE_ENCODING)
+        else:
             path = os.path.normpath(os.path.join(self.cwd, name))
-            return open(path, "w", encoding=LOCALE_ENCODING)
-        return subprocess.PIPE
+            stream = open(path, "w", encoding=LOCALE_ENCODING)
+        self.streams_to_close.append(stream)
+        return stream
 
     def _get_stderr(self, stderr, stdout, stdout_stream):
         if stderr and stderr in ["STDOUT", stdout]:
-            if stdout_stream != subprocess.PIPE:
-                return stdout_stream
-            return subprocess.STDOUT
+            if stdout_stream == subprocess.PIPE:
+                return subprocess.STDOUT
+            return stdout_stream
         return self._new_stream(stderr)
 
     def _get_stdin(self, stdin):
@@ -221,10 +219,12 @@ class ProcessConfiguration:
             return subprocess.PIPE
         path = os.path.normpath(os.path.join(self.cwd, stdin))
         if os.path.isfile(path):
-            return open(path, encoding=LOCALE_ENCODING)
-        stdin_file = NamedTemporaryFile(prefix="stdin-")
-        stdin_file.write(console_encode(stdin, self.output_encoding, force=True))
-        stdin_file.seek(0)
+            stdin_file = open(path, encoding=LOCALE_ENCODING)
+        else:
+            stdin_file = NamedTemporaryFile(prefix="stdin-")
+            stdin_file.write(console_encode(stdin, self.output_encoding, force=True))
+            stdin_file.seek(0)
+        self.streams_to_close.append(stdin_file)
         return stdin_file
 
     def _construct_env(self, env, extra):
@@ -300,6 +300,7 @@ class ProcessConfiguration:
             "stderr": self.stderr_stream,
             "stdin": self.stdin_stream,
             "output_encoding": self.output_encoding,
+            "streams_to_close": tuple(self.streams_to_close),
         }
 
     def __str__(self):
@@ -339,20 +340,20 @@ def _popen_documentation(value):
 
     ```robotframework
     *** Test Cases ***
-    Start process
+    Popen Object
         ${process} =    Start Process    ${command}
-        Log             PID: ${process.pid}
-        # Other keywords
-        ${result} =     Terminate Process    ${process}
-
+        Log    PID: ${process.pid}
+        # Later
+        ${result} =    Terminate Process    ${process}
     ```
-
-    [subprocess.Popen]: https://docs.python.org/3/library/subprocess.html#popen-objects "subprocess.Popen"
     """
     return value
 
 
 @library(
+    version=get_version(),
+    scope="GLOBAL",
+    doc_format="MARKDOWN",
     converters={
         ProcessResult: lambda value: value,
         subprocess.Popen: _popen_documentation,
@@ -360,31 +361,26 @@ def _popen_documentation(value):
     auto_keywords=True,
 )
 class Process:
-    """Robot Framework library for running processes.
+    r"""Robot Framework library for running processes.
 
     The library has following main usages:
 
-    - Running processes in system and waiting for their completion using
+    - Running processes in the system and waiting for their completion using
       the [Run Process] keyword.
     - Starting processes on background using the [Start Process] keyword.
     - Waiting started process to complete using [Wait For Process] or
       stopping them with [Terminate Process] or [Terminate All Processes].
 
     This library provides various benefits over using `Run` and other similar
-    keywords in the
-    [OperatingSystem]
-    library:
+    keywords in the [OperatingSystem] library:
 
     - Better [process configuration].
-    - Convenient [result object] with all result information (rc, stdout, stderr).
+    - Convenient [result object] with all result information (`rc`, `stdout`,
+      `stderr`).
     - Support for background processes, process termination, sending signals
       and so on.
 
-    This library utilizes Python's
-    [subprocess]
-    module and its
-    [Popen]
-    class.
+    This library uses Python's standard [subprocess] module internally.
 
     ### Table of contents
 
@@ -408,11 +404,12 @@ class Process:
 
     ```robotframework
     *** Test Cases ***
-    Specifying command and arguments
-        Run Process    ${tools}${/}prog.py    argument    second arg with spaces
-        Run Process    java    -jar    ${jars}${/}example.jar    --option    value
-        Run Process    prog.py "one arg" && tool.sh    shell=yes    cwd=${tools}
+    Command and arguments separately
+        Run Process    python    -c    print("Hello!")
+        Run Process    ${tools}/prog.py    argument    second arg with spaces
 
+    Command and arguments as single string
+        Run Process    prog.py "one arg" && tool.sh    shell=True    cwd=${tools}
     ```
 
     Possible non-string arguments are converted to strings automatically.
@@ -425,21 +422,21 @@ class Process:
     `name=value` syntax. Available configuration arguments are
     listed below and discussed further in the subsequent sections.
 
-    | Name | Explanation |
-    |------|-------------|
-    | shell | Specify whether to run the command in a shell or not. |
-    | cwd | Specify the working directory. |
-    | env | Specify environment variables given to the process. |
-    | **env_extra | Override named environment variables using `env:<name>=<value>` syntax. |
-    | stdout | Path to a file where to write standard output. |
-    | stderr | Path to a file where to write standard error. |
-    | stdin | Configure process standard input. New in RF 4.1.2. |
-    | output_encoding | Encoding to use when reading command outputs. |
-    | alias | A custom name given to the process. |
+    |       Name      |                    Explanation                           |
+    |-----------------|----------------------------------------------------------|
+    | shell           | Whether to run the command in a shell or not.            |
+    | cwd             | Directory where to run the command.                      |
+    | env             | Environment variables as a dictionary.                   |
+    | **env_extra     | Environment variables using `env:<name>=<value>` syntax. |
+    | stdout          | Path to a file where to write standard output.           |
+    | stderr          | Path to a file where to write standard error.            |
+    | stdin           | Configure process standard input. New in RF 4.1.2.       |
+    | output_encoding | Encoding to use when reading command outputs.            |
+    | alias           | A custom name given to the process.                      |
 
-    Note that possible equal signs in other arguments passed to [Run Process]
-    and [Start Process] must be escaped with a backslash like `name\\=value`.
-    See [Run Process] for an example.
+    Note that possible equal signs in other arguments passed to the [Run Process]
+    and [Start Process] keywords must be escaped with a backslash like `name\=value`.
+    See the [Run Process] keyword for an example.
 
     ## Running processes in shell
 
@@ -448,16 +445,15 @@ class Process:
     like `copy` and `dir` on Windows, are not available. You can, however,
     run shell scripts and batch files without using a shell.
 
-    Giving the `shell` argument any non-false value, such as `shell=True`,
-    changes the program to be executed in a shell. It allows using the shell
-    capabilities, but can also make the process invocation operating system
-    dependent. Having a shell between the actually started process and this
-    library can also interfere communication with the process such as stopping
-    it and reading its outputs. Because of these problems, it is recommended
-    to use the shell only when absolutely necessary.
+    Using `shell=True` changes the program to be executed in a shell. It allows
+    using the shell capabilities, but can also make the process invocation
+    operating system dependent. Having a shell between the actually started
+    process and this library can also interfere communication with the process
+    such as stopping it and reading its outputs. Because of these problems,
+    it is recommended to use the shell only when absolutely necessary.
 
     When using a shell it is possible to give the whole command to execute
-    as a single string. See [Specifying command and arguments] section for
+    as a single string. See the [Specifying command and arguments] section for
     examples and more details in general.
 
     ## Current working directory
@@ -468,9 +464,8 @@ class Process:
     Forward slashes in the given path are automatically converted to
     backslashes on Windows.
 
-    [Standard output and error streams], when redirected to files,
-    are also relative to the current working directory possibly set using
-    the `cwd` argument.
+    When [standard output and error streams] are redirected to files,
+    file paths are relative to the current working directory as well.
 
     Example:
 
@@ -478,7 +473,6 @@ class Process:
     *** Test Cases ***
     Current working directory
         Run Process    prog.exe    cwd=${ROOT}/directory    stdout=stdout.txt
-
     ```
 
     ## Environment variables
@@ -498,7 +492,6 @@ class Process:
         Run Process    program    env=${environ}
         Run Process    program    env:http_proxy=10.144.1.10:8080    env:PATH=%{PATH}${:}${PROGDIR}
         Run Process    program    env=${environ}    env:EXTRA=value
-
     ```
 
     ## Standard output and error streams
@@ -506,7 +499,7 @@ class Process:
     By default, processes are run so that their standard output and standard
     error streams are kept in the memory. This typically works fine, but there
     can be problems if the amount of output is large or unlimited. Prior to
-    Robot Framework 7.3 the limit was smaller than nowadays and reaching it
+    Robot Framework 7.3, the limit was smaller than nowadays and reaching it
     caused a deadlock.
 
     To avoid the above-mentioned problems, it is possible to use `stdout`
@@ -514,8 +507,9 @@ class Process:
     redirect the output. This can also be useful if other processes or
     other keywords need to read or manipulate the output somehow.
 
-    Given `stdout` and `stderr` paths are relative to the [current working directory]. Forward slashes in the given paths are automatically converted
-    to backslashes on Windows.
+    Given `stdout` and `stderr` paths are relative to the [current working directory].
+    Forward slashes in the given paths are automatically converted to backslashes
+    on Windows.
 
     Regardless are outputs redirected to files or not, they are accessible
     through the [result object] returned when the process ends. Commands are
@@ -525,7 +519,7 @@ class Process:
     As a special feature, it is possible to redirect the standard error to
     the standard output by using `stderr=STDOUT`.
 
-    If you are not interested in output at all, you can explicitly ignore it by
+    If you are not interested in outputs at all, you can explicitly ignore it by
     using a special value `DEVNULL` both with `stdout` and `stderr`. For
     example, `stdout=DEVNULL` is the same as redirecting output on console
     with `> /dev/null` on UNIX-like operating systems or `> NUL` on Windows.
@@ -536,13 +530,14 @@ class Process:
 
     ```robotframework
     *** Test Cases ***
-    Run process
-        ${result} =    Run Process    program    stdout=${TEMPDIR}/stdout.txt    stderr=${TEMPDIR}/stderr.txt
-        Log Many       stdout: ${result.stdout}    stderr: ${result.stderr}
-        ${result} =    Run Process    program    stderr=STDOUT
-        Log            all output: ${result.stdout}
-        ${result} =    Run Process    program    stdout=DEVNULL    stderr=DEVNULL
+    Redirect stdout and stderr
+        ${result} =    Run Process    program    stdout=${TMP}/stdout.txt    stderr=${TMP}/stderr.txt
 
+    Merge stderr to stdout
+        ${result} =    Run Process    program    stderr=STDOUT
+
+    Discard output
+        ${result} =    Run Process    program    stdout=DEVNULL    stderr=DEVNULL
     ```
 
     Note that the created output files are not automatically removed after
@@ -554,28 +549,34 @@ class Process:
     input stream of the started process. How its value is interpreted is
     explained in the table below.
 
-    | Value | Explanation |
-    |-------|-------------|
-    | String `NONE` | Inherit stdin from the parent process. This is the default. |
-    | String `PIPE` | Make stdin a pipe that can be written to. |
-    | Path to a file | Open the specified file and use it as the stdin. |
-    | Any other string | Create a temporary file with the text as its content and use it as the stdin. |
-    | Any non-string value | Used as-is. Could be a file descriptor, stdout of another process, etc. |
+    |       Value      |                     Explanation                             |
+    |------------------|-------------------------------------------------------------|
+    | String `NONE`    | Inherit stdin from the parent process. This is the default. |
+    | String `PIPE`    | Make stdin a pipe that can be written to.                   |
+    | Path to a file   | Open the specified file and use it as the stdin.            |
+    | Any other string | Write the text to a temporary file and use it as the stdin. |
+    | Any other value  | Used as-is. Could be a file descriptor, stdout of another process, etc. |
 
     Values `PIPE` and `NONE` are case-insensitive and internally mapped to
-    `subprocess.PIPE` and `None`, respectively, when calling
-    [subprocess.Popen].
+    `subprocess.PIPE` and `None`, respectively.
 
     Examples:
 
     ```robotframework
     *** Test Cases ***
-    Run process
-        Run Process    command    stdin=PIPE
+    Stdin as file
         Run Process    command    stdin=${CURDIR}/stdin.txt
+
+    Stdin as text
         Run Process    command    stdin=Stdin as text.
 
+    Stdin from other process
+        ${process} =    Start Process    command1
+        Run Process    command2    stdin=${process.stdout}
     ```
+
+    The [Examples] section has an executable example where output of a process
+    is passed to another using `stdin`.
 
     The support to configure `stdin` is new in Robot Framework 4.1.2. Its default
     value used to be `PIPE` until Robot Framework 7.0.
@@ -586,7 +587,7 @@ class Process:
     [standard output and error streams] using the encoding used by the
     system console. If the command uses some other encoding, that can be
     configured using the `output_encoding` argument. This is especially
-    useful on Windows where the console uses a different encoding than rest
+    useful on Windows where the console can use a different encoding than rest
     of the system, and many commands use the general system encoding instead
     of the console encoding.
 
@@ -601,10 +602,9 @@ class Process:
 
     ```robotframework
     *** Test Cases ***
-    Start process
+    Output encoding
         Start Process    program    output_encoding=UTF-8
         Run Process      program    stdout=${path}    output_encoding=SYSTEM
-
     ```
 
     ## Alias
@@ -617,9 +617,9 @@ class Process:
     ```robotframework
     *** Test Cases ***
     Alias
-        Start Process    program    alias=example
-        Run Process      python     -c    print('hello')    alias=hello
-
+        Start Process    program    alias=MyProgram
+        # Later
+        Wait For Process    MyProgram
     ```
 
     # Active process
@@ -631,7 +631,7 @@ class Process:
 
     The keywords that operate on started processes will use the active process
     by default, but it is possible to explicitly select a different process
-    using the `handle` argument. The handle can be an `alias` explicitly
+    using the `handle` argument. The handle can be an [alias] explicitly
     given to [Start Process] or the process object returned by it.
 
     # Result object
@@ -642,11 +642,11 @@ class Process:
     be get using [Get Process Result] keyword. Attributes available in the
     object are documented in the table below.
 
-    | Attribute | Explanation |
-    |-----------|-------------|
-    | rc | Return code of the process as an integer. |
-    | stdout | Contents of the standard output stream. |
-    | stderr | Contents of the standard error stream. |
+    |  Attribute  |                       Explanation                             |
+    |-------------|---------------------------------------------------------------|
+    | rc          | Return code of the process as an integer.                     |
+    | stdout      | Contents of the standard output stream.                       |
+    | stderr      | Contents of the standard error stream.                        |
     | stdout_path | Path where stdout was redirected or `None` if not redirected. |
     | stderr_path | Path where stderr was redirected or `None` if not redirected. |
 
@@ -655,22 +655,20 @@ class Process:
     ```robotframework
     *** Test Cases ***
     Result object
-        ${result} =            Run Process         program
-        Should Be Equal        ${result.rc}          0    type=int
-        Should Match           ${result.stdout}      Some t?xt*
-        Should Be Empty        ${result.stderr}
-        ${stdout} =            Get File            ${result.stdout_path}
-        Should Be Equal        ${stdout}             ${result.stdout}
-        File Should Be Empty   ${result.stderr_path}
-
+        ${result} =    Run Process    python    -c    print("Hello!")
+        Should Be Equal    ${result.rc}    0    type=int
+        Should Be Equal    ${result.stdout}    Hello!
+        Should Be Empty    ${result.stderr}
     ```
 
     Notice that in `stdout` and `stderr` content possible trailing newline
-    is removed and `\\r\\n` converted to `\\n` automatically. If you
-    need to see the original process output, redirect it to a file using
+    is removed and `\r\n` converted to `\n` automatically. If you need to see
+    the original process output, redirect it to a file using
     [process configuration] and read it from there.
 
-    # Example
+    # Examples
+
+    These examples can be executed locally.
 
     ```robotframework
     *** Settings ***
@@ -678,26 +676,39 @@ class Process:
     Suite Teardown    Terminate All Processes    kill=True
 
     *** Test Cases ***
-    Example
-        Start Process    program    arg1    arg2    alias=First
-        ${handle} =    Start Process    command.sh arg | command2.sh    shell=True    cwd=/path
-        ${result} =    Run Process    ${CURDIR}/script.py
-        Should Not Contain    ${result.stdout}    FAIL
-        Terminate Process    ${handle}
-        ${result} =    Wait For Process    First
-        Should Be Equal As Integers    ${result.rc}    0
+    Simple execution
+        ${result} =    Run Process    python    -c    print("Hello, world!")
+        Should Be Equal    ${result.stdout}    Hello, world!
+
+    Background processes and process configuration
+        ${process} =    Start Process    python    -c    print("Hello!")
+        Start Process
+        ...    python -c "import time; time.sleep(3)" && python -c "print('Hi!')"
+        ...    stdout=${CURDIR}/stdout.txt
+        ...    stderr=STDOUT
+        ...    shell=True
+        ...    alias=Slow
+        ${result1} =    Run Process    python    -c    print("Moi!")
+        Should Be Equal    ${result1.stdout}    Moi!
+        ${result2} =    Wait For Process    ${process}
+        Should Be Equal    ${result2.stdout}    Hello!
+        ${result3} =    Wait For Process    Slow
+        Should Be Equal    ${result3.stdout}    Hi!
+
+    Pipeline
+        ${process} =    Start Process    python    -c    print("Hello, world!")
+        ${result} =    Run Process
+        ...    python    -c    import sys; print(sys.stdin.read().upper().strip())
+        ...    stdin=${process.stdout}
+        Wait For Process    ${process}
+        Should Be Equal    ${result.stdout}    HELLO, WORLD!
     ```
 
-    [OperatingSystem]: http://robotframework.org/robotframework/latest/libraries/OperatingSystem.html "OperatingSystem"
-
-    [subprocess]: http://docs.python.org/library/subprocess.html "subprocess"
-
-    [Popen]: http://docs.python.org/library/subprocess.html#popen-constructor "Popen"
+    [OperatingSystem]: https://robotframework.org/robotframework/latest/libraries/OperatingSystem.html
+    [subprocess]: https://docs.python.org/library/subprocess.html
+    [subprocess.Popen]: https://docs.python.org/3/library/subprocess.html#popen-objects
     """
 
-    ROBOT_LIBRARY_SCOPE = "GLOBAL"
-    ROBOT_LIBRARY_VERSION = get_version()
-    ROBOT_LIBRARY_DOC_FORMAT = "Markdown"
     TERMINATE_TIMEOUT = 30
     KILL_TIMEOUT = 10
 
@@ -721,16 +732,34 @@ class Process:
         env: "dict[str, str | Secret] | None" = None,
         **env_extra: "str | Secret",
     ) -> ProcessResult:
-        """Runs a process and waits for it to complete.
+        r"""Runs a process and waits for it to complete.
 
-        `command` and `arguments` specify the command to execute and
-        arguments passed to it. See [Specifying command and arguments] for
+        Args:
+            command: Command to execute.
+            *arguments: Arguments passed to the command.
+            cwd: Working directory of the process.
+            shell: Whether to run the command in a shell.
+            stdout: Path to file for standard output.
+            stderr: Path to file for standard error.
+            stdin: Process standard input configuration.
+            output_encoding: Encoding for reading command outputs.
+            alias: Custom name for the process.
+            timeout: Maximum time to wait for the process.
+            on_timeout: Action when timeout occurs.
+            env: Environment variables as a Python dictionary.
+            **env_extra: Override named environment variables using
+                `env:<name>=<value>` syntax.
+
+        Returns:
+            Result object containing execution results.
+
+        `command` and `arguments` specify the command to execute and arguments
+        passed to it. See the [Specifying command and arguments] section for
         more details.
 
-        The started process can be configured using `cwd`, `shell`, `stdout`,
-        `stderr`, `stdin`, `output_encoding`, `alias`, `env` and
-        `env_extra` parameters that are documented in the [Process configuration]
-        section.
+        The started process can be configured using the `cwd`, `shell`, `stdout`,
+        `stderr`, `stdin`, `output_encoding`, `env`, `env_extra` and `alias`
+        parameters that are documented in the [Process configuration] section.
 
         Configuration related to waiting for processes consists of `timeout`
         and `on_timeout` parameters that have same semantics than with the
@@ -740,43 +769,24 @@ class Process:
         This typically works fine, but there can be problems if the amount of
         output is large or unlimited. To avoid such problems, outputs can be
         redirected to files using the `stdout` and `stderr` configuration
-        parameters. For more information see the [Standard output and error streams]
-        section.
+        parameters. See the [Standard output and error streams] section for
+        more information.
 
         Note that possible equal signs in `command` and `arguments` must
-        be escaped with a backslash (e.g. `name\\=value`).
+        be escaped with a backslash (e.g. `name\=value`).
 
         This keyword does not change the [active process].
-
-        Args:
-            command: Command to execute.
-            *arguments: Arguments passed to the command.
-            cwd: Working directory for the process.
-            shell: Whether to run the command in a shell.
-            stdout: Path to file for standard output.
-            stderr: Path to file for standard error.
-            stdin: Process standard input configuration.
-            output_encoding: Encoding for reading command outputs.
-            alias: Custom name for the process.
-            timeout: Maximum time to wait for the process.
-            on_timeout: Action when timeout occurs.
-            env: Environment variables as Python dictionary.
-            **env_extra: Override named environment variables using
-                `env:<name>=<value>` syntax.
-
-        Returns:
-            [result object] containing information about the execution.
 
         Examples:
 
         ```robotframework
         *** Test Cases ***
         Run process
-            ${result} =    Run Process    python    -c    print('Hello, world!')
+            ${result} =    Run Process    python    -c    print("Hello, world!")
             Should Be Equal    ${result.stdout}    Hello, world!
             ${result} =    Run Process    ${command}    stdout=${CURDIR}/stdout.txt    stderr=STDOUT
-            ${result} =    Run Process    ${command}    timeout=1min    on_timeout=continue
-            ${result} =    Run Process    java -Dname\\=value Example    shell=True    cwd=${EXAMPLE}
+            ${result} =    Run Process    ${command}    timeout=1 minute    on_timeout=continue
+            ${result} =    Run Process    java -Dname\=value Example    shell=True    cwd=${EXAMPLE}
         ```
         """
         current = self._processes.current
@@ -814,21 +824,6 @@ class Process:
     ) -> subprocess.Popen:
         """Starts a new process on background.
 
-        See [Specifying command and arguments] and [Process configuration] sections
-        for more information about the arguments, and [Run Process] keyword
-        for related examples. This includes information about redirecting
-        process outputs to avoid process handing due to output buffers getting
-        full.
-
-        Makes the started process new [active process].
-
-        Processes are started so that they create a new process group. This
-        allows terminating and sending signals to possible child processes.
-
-        Returning a `subprocess.Popen` object is new in Robot Framework 5.0.
-        Earlier versions returned a generic handle and getting the process object
-        required using [Get Process Object] separately.
-
         Args:
             command: Command to execute.
             *arguments: Arguments passed to the command.
@@ -839,51 +834,47 @@ class Process:
             stdin: Process standard input configuration.
             output_encoding: Encoding for reading command outputs.
             alias: Custom name for the process.
-            env: Environment variables as Python dictionary.
+            env: Environment variables as a Python dictionary.
             **env_extra: Override named environment variables using
                 `env:<name>=<value>` syntax.
 
         Returns:
-            Created [subprocess.Popen]
-            object which can be used later to activate this process. `Popen`
-            attributes like `pid` can also be accessed directly.
+            Created [subprocess.Popen] object which can be used later to activate
+            this process. `Popen` attributes like `pid` can also be accessed directly.
+
+        See the [Specifying command and arguments] and [Process configuration]
+        sections for more information about the arguments, and the [Run Process]
+        keyword for related examples. This includes information about redirecting
+        process outputs to avoid process handing due to output buffers getting
+        full.
+
+        Processes are started so that they create a new process group. This
+        allows terminating and sending signals to possible child processes.
+
+        Makes the started process new [active process].
 
         Examples:
 
-        Start process and wait for it to end later using an alias:
-
         ```robotframework
         *** Test Cases ***
-        Start process
+        Start process and wait using alias
             Start Process    ${command}    alias=example
-            # Other keywords
+            # Later
             ${result} =    Wait For Process    example
 
-        ```
-
-        Use returned `Popen` object:
-
-        ```robotframework
-        *** Test Cases ***
-        Start process
+        Start process and terminate using process object
             ${process} =    Start Process    ${command}
-            Log             PID: ${process.pid}
-            # Other keywords
-            ${result} =     Terminate Process    ${process}
-
+            Log    PID: ${process.pid}
+            # Later
+            Terminate Process    ${process}
         ```
 
-        Use started process in a pipeline with another process:
+        See the [Examples] section for examples starting multiple processes
+        and creating process pipelines.
 
-        ```robotframework
-        *** Test Cases ***
-        Start process
-            ${process} =    Start Process    python    -c    print('Hello, world!')
-            ${result} =     Run Process      python    -c    import sys; print(sys.stdin.read().upper().strip())    stdin=${process.stdout}
-            Wait For Process    ${process}
-            Should Be Equal     ${result.stdout}    HELLO, WORLD!
-
-        ```
+        Returning a [subprocess.Popen] object is new in Robot Framework 5.0.
+        Earlier versions returned a generic handle and getting the process object
+        required using the [Get Process Object] keyword separately.
         """
         config = ProcessConfiguration(
             cwd=cwd,
@@ -920,7 +911,7 @@ class Process:
 
         Args:
             handle: Process handle or alias. Uses the current [active process]
-                if not given.
+              by default.
 
         Returns:
             `True` if the process is still running and `False` otherwise.
@@ -936,7 +927,7 @@ class Process:
 
         Args:
             handle: Process handle or alias. Uses the current [active process]
-                if not given.
+              by default.
             error_message: Message used if verification fails.
 
         Raises:
@@ -954,7 +945,7 @@ class Process:
 
         Args:
             handle: Process handle or alias. Uses the current [active process]
-                if not given.
+              by default.
             error_message: Message used if verification fails.
 
         Raises:
@@ -971,27 +962,33 @@ class Process:
     ) -> "ProcessResult | None":
         """Waits for the process to complete or to reach the given timeout.
 
-        The process to wait for must have been started earlier with
-        [Start Process].
+        Args:
+            handle: Process handle or alias. Uses the current [active process]
+              by default.
+            timeout: Maximum time to wait for the process.
+            on_timeout: What to do if the process does not end within the `timeout`.
+
+        Returns:
+            Result object if the process ends, `None` if it is left running.
+
+        The process to wait for must have been started earlier using the
+        [Start Process] keyword.
 
         `timeout` defines the maximum time to wait for the process. It can be
-        given in
-        [various time formats]
-        supported by Robot Framework, for example, `42`,
-        `42 s`, or `1 minute 30 seconds`. The timeout is ignored if it is
-        `None` (default), zero or negative.
+        given in formats like `42`, `42 s`, or `1 minute 30 seconds`. The timeout
+        is ignored if it is `None` (default), zero or negative.
 
         `on_timeout` defines what to do if the timeout occurs. Possible values
         and corresponding actions are explained in the table below. Notice
         that reaching the timeout never fails the test.
 
-        | Value | Action |
-        |-------|--------|
-        | continue | The process is left running (default). |
-        | terminate | The process is gracefully terminated. |
-        | kill | The process is forcefully stopped. |
+        |   Value   |                Action                  |
+        |-----------|----------------------------------------|
+        | continue  | The process is left running (default). |
+        | terminate | The process is gracefully terminated.  |
+        | kill      | The process is forcefully stopped.     |
 
-        See [Terminate Process] keyword for more details how processes are
+        See the [Terminate Process] keyword for more details how processes are
         terminated and killed.
 
         If the process ends before the timeout, or it is terminated or killed,
@@ -1004,36 +1001,24 @@ class Process:
         to avoid leaving it running on the background. This is new in Robot
         Framework 7.3.
 
-        Args:
-            handle: Process handle or alias. Uses the current [active process]
-                if not given.
-            timeout: Maximum time to wait for the process.
-            on_timeout: Action when timeout occurs.
-
-        Returns:
-            [result object] if the process ends, or `None` if it is left running.
-
         Examples:
 
         ```robotframework
         *** Test Cases ***
-        Wait for process
-            # Process ends cleanly
-            ${result} =                 Wait For Process    example
+        Process ends cleanly
+            ${result} =    Wait For Process    example
             Process Should Be Stopped   example
-            Should Be Equal As Integers    ${result.rc}     0
-            # Process does not end
-            ${result} =                 Wait For Process    timeout=42 secs
+            Should Be Equal    ${result.rc}     0    type=int
+
+        Process does not end
+            ${result} =    Wait For Process    timeout=42 secods
             Process Should Be Running
-            Should Be Equal             ${result}        ${NONE}
-            # Kill non-ending process
-            ${result} =                 Wait For Process    timeout=1min 30s    on_timeout=kill
-            Process Should Be Stopped
-            Should Be Equal As Integers    ${result.rc}     -9
+            Should Be Equal    ${result}    None    type=None
 
+        Kill non-ending process
+            ${result} =    Wait For Process    timeout=1min 30s    on_timeout=kill
+            Should Be Equal    ${result.rc}    -9    type=int
         ```
-
-        [various time formats]: http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#time-format "various time formats"
         """
         process = self._processes[handle]
         logger.info("Waiting for process to complete.")
@@ -1086,45 +1071,36 @@ class Process:
     ) -> ProcessResult:
         """Stops the process gracefully or forcefully.
 
+        Args:
+            handle: Process handle or alias. Uses the current [active process]
+            by default.
+            kill: Whether to forcefully kill the process.
+
+        Returns:
+            Result object containing information about the execution.
+
+        Raises:
+            RuntimeError: If terminating processes is not supported by the
+              used Python version, or if forceful kill fails.
+
         By default, first tries to stop the process gracefully. If the process
         does not stop in 30 seconds, or the `kill` argument is given a true
         value, kills the process forcefully. Stops also all the child processes
         of the originally started process.
 
-        Waits for the process to stop after terminating it. Returns a [result object] containing information about the execution similarly as [Wait For Process].
+        Waits for the process to stop after terminating it. Returns a
+        [result object] containing information about the execution similarly
+        as [Wait For Process].
 
-        On Unix-like machines graceful termination is done using `TERM (15)`
+        On Unix-like machines graceful termination is done using the `TERM (15)`
         signal and forceful kill using `KILL (9)`. Use [Send Signal To Process]
         instead if you just want to send either of these signals without
         waiting for the process to stop.
 
-        On Windows graceful termination is done using `CTRL_BREAK_EVENT`
+        On Windows graceful termination is done using the `CTRL_BREAK_EVENT`
         event and forceful kill using Win32 API function `TerminateProcess()`.
         In this case forceful kill only stops the main process, not possible
         child processes.
-
-        Args:
-            handle: Process handle or alias. Uses the current [active process]
-                if not given.
-            kill: Whether to forcefully kill the process.
-
-        Returns:
-            [result object] containing information about the execution.
-
-        Raises:
-            RuntimeError: If terminating processes is not supported by this
-                Python version, or if forceful kill fails.
-
-        Examples:
-
-        ```robotframework
-        *** Test Cases ***
-        Terminate process
-            ${result} =                 Terminate Process
-            Should Be Equal As Integers    ${result.rc}      -15    # On Unixes
-            Terminate Process           myproc            kill=true
-
-        ```
         """
         process = self._processes[handle]
         if not hasattr(process, "terminate"):
@@ -1166,15 +1142,16 @@ class Process:
     def terminate_all_processes(self, kill: bool = False):
         """Terminates all still running processes started by this library.
 
+        Args:
+            kill: Whether to forcefully kill processes.
+
         This keyword can be used in suite teardown or elsewhere to make
         sure that all processes are stopped.
 
         Tries to terminate processes gracefully by default, but can be
-        configured to forcefully kill them immediately. See [Terminate Process]
-        that this keyword uses internally for more details.
-
-        Args:
-            kill: Whether to forcefully kill processes.
+        configured to forcefully kill them immediately. See the
+        [Terminate Process] keyword that this keyword uses internally for
+        more details.
         """
         for process in self._processes:
             if self.is_process_running(process):
@@ -1189,18 +1166,23 @@ class Process:
     ):
         """Sends the given `signal` to the specified process.
 
+        Args:
+            signal: The signal to send, either as an integer or signal name.
+            handle: Process handle or alias. Uses the current [active process]
+              by default.
+            group: Whether to send the signal to the whole process group.
+
         Signal can be specified either as an integer as a signal name. In the
         latter case it is possible to give the name both with or without `SIG`
         prefix, but names are case-sensitive. For example, all the examples
-        below send signal `INT (2)`:
+        below send signal `INT (2)`.
 
         ```robotframework
         *** Test Cases ***
-        Send signal to process
+        Send signal
             Send Signal To Process    2
             Send Signal To Process    INT
             Send Signal To Process    SIGINT    myproc
-
         ```
 
         This keyword is only supported on Unix-like machines, not on Windows.
@@ -1209,19 +1191,9 @@ class Process:
         signal handling (typically `man signal` or `man 7 signal`).
 
         By default, sends the signal only to the parent process, not to possible
-        child processes started by it. Notice that when [running processes in shell], the shell is the parent process, and it depends on the system
+        child processes started by it. Notice that when [running processes in shell],
+        the shell is the parent process, and it depends on the system
         does the shell propagate the signal to the actual started process.
-
-        Args:
-            signal: Signal to send, either as an integer or signal name.
-            handle: Process handle or alias. Uses the current [active process]
-                if not given.
-            group: Whether to send the signal to the whole process group.
-
-        Raises:
-            RuntimeError: If used on Windows, if sending signals is not
-                supported by this Python version, or if the signal name is
-                unsupported.
         """
         if os.sep == "\\":
             raise RuntimeError("This keyword does not work on Windows.")
@@ -1254,32 +1226,32 @@ class Process:
     def get_process_id(self, handle: Handle = None) -> int:
         """Returns the process ID (pid) of the process as an integer.
 
-        Starting from Robot Framework 5.0, it is also possible to directly access
-        the `pid` attribute of the `subprocess.Popen` object returned by
-        [Start Process] like `${process.pid}`.
-
         Args:
             handle: Process handle or alias. Uses the current [active process]
-                if not given.
+              by default.
 
         Returns:
             Process ID as an integer.
+
+        Starting from Robot Framework 5.0, it is also possible to directly access
+        the `pid` attribute of the [subprocess.Popen] object returned by the
+        [Start Process] keyword like `${process.pid}`.
         """
         return self._processes[handle].pid
 
     def get_process_object(self, handle: Handle = None) -> subprocess.Popen:
         """Return the underlying `subprocess.Popen` object.
 
-        Starting from Robot Framework 5.0, [Start Process] returns the created
-        `subprocess.Popen` object, not a generic handle, making this keyword
-        mostly redundant.
-
         Args:
             handle: Process handle or alias. Uses the current [active process]
-                if not given.
+              by default.
 
         Returns:
-            The underlying `subprocess.Popen` object.
+            The underlying [subprocess.Popen] object.
+
+        Starting from Robot Framework 5.0, the [Start Process] keyword returns
+        the created [subprocess.Popen] object directly. That makes this keyword
+        mostly redundant.
         """
         return self._processes[handle]
 
@@ -1294,12 +1266,25 @@ class Process:
     ) -> "ProcessResult | int | str | tuple[int | str, ...]":
         """Returns the specified [result object] or some of its attributes.
 
+        Args:
+            handle: Process handle or alias. Uses the current [active process]
+              by default.
+            rc: If true, return the return code.
+            stdout: If true, return the standard output.
+            stderr: If true, return the standard error.
+            stdout_path: If true, return the stdout path.
+            stderr_path: If true, return the stderr path.
+
+        Returns:
+            A result object, a single attribute, or a tuple of attributes
+            depending on which arguments are given.
+
         The given `handle` specifies the process whose results should be
-        returned. If no `handle` is given, results of the current [active process] are returned. In either case, the process must have been
-        finishes before this keyword can be used. In practice this means
-        that processes started with [Start Process] must be finished either
-        with [Wait For Process] or [Terminate Process] before using this
-        keyword.
+        returned. If no `handle` is given, results of the current [active process]
+        are returned. In either case, the process must have been finishes before
+        this keyword can be used. In practice this means that processes started
+        with [Start Process] must be finished either with [Wait For Process] or
+        [Terminate Process] before using this keyword.
 
         If no other arguments than the optional `handle` are given, a whole
         [result object] is returned. If one or more of the other arguments
@@ -1313,41 +1298,23 @@ class Process:
         support returning the whole result object, but individual attributes
         can be returned without problems.
 
-        Args:
-            handle: Process handle or alias. Uses the current [active process]
-                if not given.
-            rc: If true, return return code.
-            stdout: If true, return standard output.
-            stderr: If true, return standard error.
-            stdout_path: If true, return stdout path.
-            stderr_path: If true, return stderr path.
-
-        Returns:
-            Whole [result object], a single attribute, or a tuple of attributes
-            depending on which arguments are given.
-
-        Raises:
-            RuntimeError: If results of an unfinished process are requested.
-
         Examples:
 
         ```robotframework
         *** Test Cases ***
         Get process result
-            Run Process           python             -c            print('Hello, world!')    alias=myproc
+            Run Process    python    -c    print('Hello, world!')    alias=myproc
             # Get result object
-            ${result} =           Get Process Result    myproc
-            Should Be Equal       ${result.rc}       ${0}
-            Should Be Equal       ${result.stdout}   Hello, world!
-            Should Be Empty       ${result.stderr}
+            ${result} =    Get Process Result    myproc
+            Should Be Equal    ${result.rc}       0    type=int
+            Should Be Equal    ${result.stdout}   Hello, world!
             # Get one attribute
-            ${stdout} =           Get Process Result    myproc        stdout=true
-            Should Be Equal       ${stdout}          Hello, world!
-            # Multiple attributes
-            ${stdout}             ${stderr} =        Get Process Result    myproc    stdout=yes    stderr=yes
-            Should Be Equal       ${stdout}          Hello, world!
-            Should Be Empty       ${stderr}
-
+            ${stdout} =    Get Process Result    myproc    stdout=Trye
+            Should Be Equal    ${stdout}    Hello, world!
+            # Get multiple attributes
+            ${stdout}    ${stderr} =    Get Process Result    myproc    rc=True    stderr=True
+            Should Be Equal    ${rc}        0    type=int
+            Should Be Equal    ${stdout}    Hello, world!
         ```
         """
         result = self._results[self._processes[handle]]
@@ -1377,23 +1344,22 @@ class Process:
     def switch_process(self, handle: Handle):
         """Makes the specified process the current [active process].
 
-        The handle can be an identifier returned by [Start Process] or
-        the `alias` given to it explicitly.
-
         Args:
             handle: Process handle or alias to activate.
+
+        The handle can be the process object returned by the [Start Process]
+        keyword or the `alias` given to it explicitly.
 
         Example:
 
         ```robotframework
         *** Test Cases ***
-        Switch process
+        Switch Active Process
             Start Process    prog1    alias=process1
             Start Process    prog2    alias=process2
-            # currently active process is process2
+            # The active process is 'process2' at this point.
             Switch Process    process1
-            # now active process is process1
-
+            # Now active process is 'process1'.
         ```
         """
         self._processes.switch(handle)
@@ -1408,6 +1374,13 @@ class Process:
     def split_command_line(self, command: str, escaping: bool = False) -> "list[str]":
         """Splits command line string into a list of arguments.
 
+        Args:
+            command: Command line string to split.
+            escaping: Whether to treat backslash as an escape character.
+
+        Returns:
+            List of command line arguments.
+
         String is split from spaces, but argument surrounded in quotes may
         contain spaces in them.
 
@@ -1416,21 +1389,13 @@ class Process:
         quotes, and so on, but it also requires doubling backslashes
         in Windows paths and elsewhere.
 
-        Args:
-            command: Command line string to split.
-            escaping: Whether to treat backslash as an escape character.
-
-        Returns:
-            List of command line arguments.
-
         Examples:
 
         ```robotframework
         *** Test Cases ***
-        Split command line
+        Parse Command Line
             @{cmd} =    Split Command Line    --option "value with spaces"
-            Should Be True    $cmd == ['--option', 'value with spaces']
-
+            Should Be Equal    ${cmd}    ['--option', 'value with spaces']    type=list
         ```
         """
         return cmdline2list(command, escaping=escaping)
@@ -1438,40 +1403,30 @@ class Process:
     def join_command_line(self, *command: "Sequence[str] | str") -> str:
         """Joins arguments into one command line string.
 
+        Args:
+            *command: Arguments to join, either as individual strings or as a list.
+
+        Returns:
+            Joined command line string.
+
         In resulting command line string arguments are delimited with a space,
         arguments containing spaces are surrounded with quotes, and possible
         quotes are escaped with a backslash.
 
         Command to join can be given as individual arguments or as a list.
 
-        Args:
-            *command: Arguments to join, either as individual strings or as
-                a list.
-
-        Returns:
-            Joined command line string.
-
         Examples:
 
-        Giving command as individual arguments:
-
         ```robotframework
         *** Test Cases ***
-        Join command line
-            ${cmd} =        Join Command Line    --option    value with spaces
-            Should Be Equal    ${cmd}            --option "value with spaces"
+        Command as individual arguments
+            ${cmd} =    Join Command Line    --option    value with spaces
+            Should Be Equal    ${cmd}    --option "value with spaces"
 
-        ```
-
-        Giving command as a list:
-
-        ```robotframework
-        *** Test Cases ***
-        Join command line
-            VAR             @{arguments}      --option    value with spaces
-            ${cmd} =        Join Command Line    ${arguments}
-            Should Be Equal    ${cmd}            --option "value with spaces"
-
+        Command as list
+            VAR    @{arguments}    --option    value with spaces
+            ${cmd} =    Join Command Line    ${arguments}
+            Should Be Equal    ${cmd}    --option "value with spaces"
         ```
         """
         parts = []

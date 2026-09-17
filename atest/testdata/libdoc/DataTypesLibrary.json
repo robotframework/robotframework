@@ -3,7 +3,7 @@
   "name": "DataTypesLibrary",
   "doc": "<p>This Library has Data Types.</p>\n<p>It has some in <code>__init__</code> and others in the <a href=\"#Keywords\" title=\"&quot;Keywords&quot; section\" class=\"name\">Keywords</a>.</p>\n<p>Custom data types include <a href=\"#type-GeoLocation\" title=\"&quot;GeoLocation&quot; type\" class=\"name\">GeoLocation</a> and <a href=\"#type-Small\" title=\"&quot;Small&quot; type\" class=\"name\">Small</a>.</p>",
   "version": "",
-  "generated": "2026-07-04T12:50:42+00:00",
+  "generated": "2026-09-03T10:27:40+00:00",
   "type": "LIBRARY",
   "scope": "TEST",
   "docFormat": "HTML",
@@ -23,7 +23,8 @@
             "name": "Small",
             "typedoc": "Small",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "one",
           "kind": "POSITIONAL_OR_NAMED",
@@ -65,16 +66,19 @@
                 "name": "AssertionOperator",
                 "typedoc": "AssertionOperator",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
@@ -88,7 +92,8 @@
             "name": "str",
             "typedoc": "string",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": "something?",
           "kind": "POSITIONAL_OR_NAMED",
@@ -101,7 +106,7 @@
       "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
-      "lineno": 109
+      "lineno": 108
     },
     {
       "name": "Custom",
@@ -115,7 +120,8 @@
             "name": "CustomType",
             "typedoc": "CustomType",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -129,7 +135,8 @@
             "name": "CustomType2",
             "typedoc": "CustomType2",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -143,7 +150,8 @@
             "name": "CustomType",
             "typedoc": "CustomType",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -157,7 +165,8 @@
             "name": "Unknown",
             "typedoc": null,
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -170,7 +179,7 @@
       "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
-      "lineno": 142
+      "lineno": 140
     },
     {
       "name": "Funny Unions",
@@ -188,52 +197,61 @@
                 "name": "bool",
                 "typedoc": "boolean",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "float",
                 "typedoc": "float",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "AssertionOperator",
                 "typedoc": "AssertionOperator",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "Small",
                 "typedoc": "Small",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "GeoLocation",
                 "typedoc": "GeoLocation",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": "None",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": true
+            "union": true,
+            "alias": null
           },
           "defaultValue": "equal",
           "kind": "POSITIONAL_OR_NAMED",
@@ -249,7 +267,8 @@
             "name": "int",
             "typedoc": "integer",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           {
             "name": "List",
@@ -259,19 +278,22 @@
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": false
+            "union": false,
+            "alias": null
           }
         ],
-        "union": true
+        "union": true,
+        "alias": null
       },
       "returnDoc": "",
       "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
-      "lineno": 121
+      "lineno": 119
     },
     {
       "name": "Set Location",
@@ -285,7 +307,8 @@
             "name": "GeoLocation",
             "typedoc": "GeoLocation",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -297,13 +320,14 @@
         "name": "bool",
         "typedoc": "boolean",
         "nested": [],
-        "union": false
+        "union": false,
+        "alias": null
       },
       "returnDoc": "",
       "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
-      "lineno": 106
+      "lineno": 105
     },
     {
       "name": "Typing Types",
@@ -321,10 +345,12 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -342,16 +368,19 @@
                 "name": "str",
                 "typedoc": "string",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "int",
                 "typedoc": "integer",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -365,7 +394,8 @@
             "name": "Any",
             "typedoc": "Any",
             "nested": [],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -383,10 +413,12 @@
                 "name": "object",
                 "typedoc": "object",
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
@@ -399,7 +431,7 @@
       "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
-      "lineno": 130
+      "lineno": 128
     },
     {
       "name": "X Literal",
@@ -417,40 +449,47 @@
                 "name": "1",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "'xxx'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "b'yyy'",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "True",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "None",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               },
               {
                 "name": "one",
                 "typedoc": null,
                 "nested": [],
-                "union": false
+                "union": false,
+                "alias": null
               }
             ],
-            "union": false
+            "union": false,
+            "alias": null
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -463,7 +502,7 @@
       "raises": {},
       "tags": [],
       "source": "/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
-      "lineno": 139
+      "lineno": 137
     }
   ],
   "typedocs": [

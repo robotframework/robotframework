@@ -935,14 +935,12 @@ class ListenerV3:
 
         New in Robot Framework 7.0.
         """
-        pass
 
     def end_body_item(self, data, result):
         """Called by default when a keyword or a control structure ends.
 
         New in Robot Framework 7.0.
         """
-        pass
 
     def log_message(self, message: result.Message):
         """Called when a normal log message are emitted.

@@ -4,7 +4,7 @@ class NonAsciiKeywordNames:
         self.names = [
             "Unicode nön-äscïï",
             "\u2603",  # snowman
-            "UTF-8 nön-äscïï".encode("UTF-8"),
+            "UTF-8 nön-äscïï".encode(),
         ]
         if include_latin1:
             self.names.append("Latin1 nön-äscïï".encode("latin1"))

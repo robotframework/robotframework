@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from robot.api.deco import library
 
 if TYPE_CHECKING:
-    from typing import Sequence
+    from typing import Sequence  # noqa: TC004
 
     class TypeCheckingOnly:
         pass
@@ -23,7 +23,7 @@ class Library:
     def non_existing(self, arg: NonExisting):  # noqa: F821
         return arg
 
-    def invalid(self, arg: 1 / 0):
+    def invalid(self, arg: 1 / 0):  # noqa
         pass
 
 

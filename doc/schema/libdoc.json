@@ -161,6 +161,17 @@
         "union": {
           "title": "Union",
           "type": "boolean"
+        },
+        "alias": {
+          "title": "Alias",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [

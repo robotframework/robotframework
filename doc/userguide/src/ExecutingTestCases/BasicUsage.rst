@@ -675,7 +675,7 @@ idea to enable the syslog_ and see what information it provides. It is
 also possible to add some keywords to the test cases to see what is
 going on. Especially BuiltIn_ keywords :name:`Log` and :name:`Log
 Variables` are useful. If nothing else works, it is always possible to
-search help from `mailing lists`_ or elsewhere.
+ask help on `support forums`_.
 
 __ `Communicating with Robot Framework`_
 

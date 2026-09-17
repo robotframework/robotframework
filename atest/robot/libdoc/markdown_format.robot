@@ -112,21 +112,56 @@ Syntax highlighting
     ...    model=${MODEL}[keywords][3]
     <span class="c1"># This is comment in code, not a Markdown header!</span>
     ...    model=${MODEL}[keywords][3]
-    <div class="code"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fenced blocks are more commonly used.&quot;</span><span class="p">)</span>
-    ...    </code></pre></div>
+    <div class="code"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="s2">
     ...    model=${MODEL}[keywords][3]
 
 Admonitions
     <div class="admonition note">
     ...    <p class="admonition-title">Note</p>
-    ...    <p>Admonitions are provided by the <code>admonition</code> plugin.</p>
-    ...    <p>We need to make sure to add custom styles to make them render nicely.</p>
+    ...    <p>We have our own plugin that supports GFM style admonitions.</p>
+    ...    </div>
+    ...    model=${MODEL}[keywords][0]
+    <div class="admonition tip">
+    ...    <p class="admonition-title">Tip</p>
+    ...    <p>There are five supported admonition types:</p>
+    ...    <ul>
+    ...    <li>note</li>
+    ...    <li>tip</li>
+    ...    <li>important</li>
+    ...    <li>warning</li>
+    ...    <li>caution</li>
+    ...    </ul>
+    ...    </div>
+    ...    model=${MODEL}[keywords][0]
+    <div class="admonition important">
+    ...    <p class="admonition-title">Important</p>
+    ...    <p>Admonitions are not standard Markdown.</p>
     ...    </div>
     ...    model=${MODEL}[keywords][0]
     <div class="admonition warning">
     ...    <p class="admonition-title">Interoperability risk!</p>
-    ...    <p>Admonitions are not standard Markdown. Don't use them if you want good
-    ...    interoperability with other Markdown tools.</p>
+    ...    <p>We support optional titles, but GFM does not.</p>
+    ...    </div>
+    ...    model=${MODEL}[keywords][0]
+    <div class="admonition caution">
+    ...    <p class="admonition-title">Caution</p>
+    ...    <p>Just kidding, you are safe.</p>
+    ...    </div>
+    ...    model=${MODEL}[keywords][0]
+    <div class="admonition unrecognized">
+    ...    <p class="admonition-title">Unrecognized</p>
+    ...    <p>We treat unrecognized types the same as <code>note</code>.
+    ...    GFM does not support them at all.</p>
+    ...    </div>
+    ...    model=${MODEL}[keywords][0]
+    <div class="admonition note">
+    ...    <p class="admonition-title">Nesting</p>
+    ...    <p>We support nested admonitions!</p>
+    ...    <div class="admonition warning">
+    ...    <p class="admonition-title">Warning</p>
+    ...    <p>GFM does not.</p>
+    ...    </div>
+    ...    <p>Back in NOTE level.</p>
     ...    </div>
     ...    model=${MODEL}[keywords][0]
 
@@ -144,7 +179,6 @@ Table of contents
     ...    <li><a href="#table-of-contents">Table of contents</a><ul>
     ...    <li><a href="#basics">Basics</a></li>
     ...    <li><a href="#included-header-levels">Included header levels</a></li>
-    ...    <li><a href="#differences-to-robot-format">Differences to Robot format</a></li>
     ...    </ul>
     ...    </li>
     ...    </ul>

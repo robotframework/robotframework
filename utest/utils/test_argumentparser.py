@@ -152,7 +152,7 @@ class TestArgumentParserParseArgs(unittest.TestCase):
 
     def test_single_options(self):
         inargs = "-d reports --reportfile reps.html -T arg".split()
-        opts, args = self.ap.parse_args(inargs)
+        opts, _ = self.ap.parse_args(inargs)
         assert_equal(
             opts,
             {
@@ -306,7 +306,7 @@ class TestArgumentParserParseArgs(unittest.TestCase):
  --option
 """
         )
-        opts, args = ap.parse_args(["--option"])
+        opts, _ = ap.parse_args(["--option"])
         assert_equal(opts, {"option": True})
 
     def test_special_options_can_be_turned_to_normal_options(self):
@@ -320,7 +320,7 @@ class TestArgumentParserParseArgs(unittest.TestCase):
             auto_version=False,
             auto_argumentfile=False,
         )
-        opts, args = ap.parse_args(["--help", "-v", "--arg", "xxx"])
+        opts, _ = ap.parse_args(["--help", "-v", "--arg", "xxx"])
         assert_equal(opts, {"help": True, "version": True, "argumentfile": "xxx"})
 
     def test_auto_pythonpath_is_deprecated(self):
@@ -365,23 +365,23 @@ class TestDefaultsFromEnvironmentVariables(unittest.TestCase):
         os.environ.pop("ROBOT_TEST_OPTIONS")
 
     def test_flag(self):
-        opts, args = self.ap.parse_args([])
+        opts, _ = self.ap.parse_args([])
         assert_equal(opts["toggle"], True)
-        opts, args = self.ap.parse_args(["--toggle"])
+        opts, _ = self.ap.parse_args(["--toggle"])
         assert_equal(opts["toggle"], True)
-        opts, args = self.ap.parse_args(["--notoggle"])
+        opts, _ = self.ap.parse_args(["--notoggle"])
         assert_equal(opts["toggle"], False)
 
     def test_value(self):
-        opts, args = self.ap.parse_args([])
+        opts, _ = self.ap.parse_args([])
         assert_equal(opts["value"], "default")
-        opts, args = self.ap.parse_args(["--value", "given"])
+        opts, _ = self.ap.parse_args(["--value", "given"])
         assert_equal(opts["value"], "given")
 
     def test_multi_value(self):
-        opts, args = self.ap.parse_args([])
+        opts, _ = self.ap.parse_args([])
         assert_equal(opts["multi"], ["1", "2"])
-        opts, args = self.ap.parse_args(["-m3", "--multi", "4"])
+        opts, _ = self.ap.parse_args(["-m3", "--multi", "4"])
         assert_equal(opts["multi"], ["1", "2", "3", "4"])
 
     def test_arguments(self):

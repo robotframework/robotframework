@@ -47,15 +47,17 @@ TOC is replaced in HTML
     ...    <h3 id="Table of contents">Table of contents</h3>
     ...    <ul>
     ...    <li><a href="#First%20level">First level</a></li>
-    ...    <li><a href="#First%20level%20again">First level again</a></li>
+    ...    <li><a href="#First%20level%20again">First level again</a>
     ...    <ul>
     ...    <li><a href="#Second%20level">Second level</a></li>
     ...    <li><a href="#Second%20level%20again">Second level again</a></li>
     ...    </ul>
-    ...    <li><a href="#First%20level%20once%20more">First level once more</a></li>
+    ...    </li>
+    ...    <li><a href="#First%20level%20once%20more">First level once more</a>
     ...    <ul>
     ...    <li><a href="#Second%20level%20once%20more">Second level once more</a></li>
     ...    </ul>
+    ...    </li>
     ...    </ul>
     ...    <h2 id="First level">First level</h2>
     ...    <p>First level headers are included in TOC.</p>

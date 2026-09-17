@@ -27,7 +27,7 @@ with open(notify_path, "w", encoding="ASCII") as notify:
 while True:
     try:
         time.sleep(0.1)
-    except IOError:
+    except OSError:
         pass
     if not os.path.exists(notify_path):
         log("Stopping non-terminable process.")

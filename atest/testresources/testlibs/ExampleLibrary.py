@@ -32,7 +32,6 @@ class ExampleLibrary:
 
     def single_line_doc(self):
         """One line keyword documentation."""
-        pass
 
     def multi_line_doc(self):
         """Only the first line of a multi line keyword doc should be logged.
@@ -40,7 +39,6 @@ class ExampleLibrary:
         Thus for example this text here should not be there
         and neither should this.
         """
-        pass
 
     def exception(self, name, msg="", class_only=False):
         exception = getattr(builtins, name)
@@ -54,9 +52,9 @@ class ExampleLibrary:
     def implicitly_chained_exception(self):
         try:
             try:
-                1 / 0
+                1 / 0  # noqa
             except Exception:
-                ooops  # noqa: F821
+                ooops  # noqa
         except Exception:
             self._log_python_traceback()
             raise

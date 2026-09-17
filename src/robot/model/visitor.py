@@ -140,11 +140,9 @@ class SuiteVisitor:
 
         Can return explicit ``False`` to stop visiting.
         """
-        pass
 
     def end_suite(self, suite: "TestSuite"):
         """Called when a suite ends. Default implementation does nothing."""
-        pass
 
     def visit_test(self, test: "TestCase"):
         """Implements traversing through tests.
@@ -165,11 +163,9 @@ class SuiteVisitor:
 
         Can return explicit ``False`` to stop visiting.
         """
-        pass
 
     def end_test(self, test: "TestCase"):
         """Called when a test ends. Default implementation does nothing."""
-        pass
 
     def visit_keyword(self, keyword: "Keyword"):
         """Implements traversing through keywords.
@@ -603,7 +599,6 @@ class SuiteVisitor:
         Can return explicit ``False`` to stop visiting. Default implementation does
         nothing.
         """
-        pass
 
     def end_body_item(self, item: "BodyItem"):
         """Called, by default, when keywords, messages or control structures end.
@@ -614,4 +609,3 @@ class SuiteVisitor:
 
         Default implementation does nothing.
         """
-        pass

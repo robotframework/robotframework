@@ -210,6 +210,7 @@
         <xs:attribute name="name" type="xs:string" use="required" />
         <xs:attribute name="typedoc" type="xs:string" />
         <xs:attribute name="union" type="xs:boolean" />
+        <xs:attribute name="alias" type="xs:string" />
     </xs:complexType>
     <xs:simpleType name="Kind">
         <xs:restriction base="xs:string">

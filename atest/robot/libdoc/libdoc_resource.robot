@@ -9,6 +9,7 @@ ${OUTBASE}        %{TEMPDIR}${/}${LIBNAME}
 ${OUTXML}         ${OUTBASE}.xml
 ${OUTHTML}        ${OUTBASE}.html
 ${OUTJSON}        ${OUTBASE}.json
+${OUTMARKDOWN}    ${OUTBASE}.md
 ${NEWDIR_XML}     %{TEMPDIR}${/}tempdir${/}${LIBNAME}.xml
 ${NEWDIR_HTML}    %{TEMPDIR}${/}tempdir${/}${LIBNAME}.html
 
@@ -167,19 +168,22 @@ Verify Arguments Structure
         ${repr}=        Get Element Attribute        ${arg_elem}    repr
         ${name}=        Get Element Optional Text    ${arg_elem}    name
         ${types}=       Get Elements                 ${arg_elem}    type
+        ${default}=     Get Element Optional Text    ${arg_elem}    default
         IF    not $types
-            ${type}=    Set Variable                 ${None}
+            VAR         ${type}                      ${None}
+            VAR         ${alias}                     ${None}
         ELSE IF    len($types) == 1
             ${type}=    Get Type                     ${types}[0]
+            ${alias}=   Get Element Attribute        ${types}[0]    alias
         ELSE
             Fail        Cannot have more than one <type> element
         END
-        ${default}=     Get Element Optional Text    ${arg_elem}    default
         ${arg_model}=    Create Dictionary
         ...    kind=${kind}
         ...    name=${name}
         ...    type=${type}
         ...    default=${default}
+        ...    alias=${alias}
         ...    repr=${repr}
         Verify Argument Model    ${arg_model}    ${exp_repr}
         Should Be Equal    ${repr}    ${exp_repr}
@@ -201,14 +205,15 @@ Return Doc Should Be
     Element Text Should Be    ${kws}[${index}]    ${expected}    xpath=returndoc
 
 Return Type Should Be
-    [Arguments]    ${index}    ${name}    @{nested}
+    [Arguments]    ${index}    ${name}    @{nested}    ${alias}=${None}
     ${kws}=    Get Elements    ${LIBDOC}    xpath=keywords/kw
     VAR    ${kw}    ${kws}[${index}]
     IF    $name == 'NOT SET'
         Element Should Not Exist    ${kw}    returntype
         RETURN
     END
-    Element Attribute Should Be    ${kw}    name    ${name}    xpath=returntype
+    Element Attribute Should Be    ${kw}    name     ${name}     xpath=returntype
+    Element Attribute Should Be    ${kw}    alias    ${alias}    xpath=returntype
     ${type_elems} =    Get Elements    ${kw}    returntype/type
     FOR    ${elem}    ${expected}    IN ZIP    ${type_elems}    ${nested}    mode=STRICT
         Element Attribute Should Be    ${elem}    name    ${expected}
@@ -223,7 +228,10 @@ Get Type
         Append To List    ${nested}    ${type}
     END
     ${type} =    Get Element Attribute    ${elem}    name
-    IF    $elem.get('union') == 'true'
+    ${alias} =    Get Element Attribute    ${elem}    alias
+    IF    $alias
+        VAR    ${type}    ${alias}
+    ELSE IF    $elem.get('union') == 'true'
         VAR    ${type}    @{nested}    separator=${SPACE}|${SPACE}
     ELSE IF    $nested
         VAR    ${args}    @{nested}    separator=,${SPACE}
@@ -341,7 +349,7 @@ List of Dict Should Be Equal
         Dictionaries Should Be Equal    ${dict1}    ${dict2}
     END
 
-DataType Enum Should Be
+Type Doc Enum Should Be
     [Arguments]    ${index}    ${name}    ${doc}    @{exp_members}
     ${enums}=   Get Elements    ${LIBDOC}   xpath=typedocs/type[@type='Enum']
     Element Attribute Should Be    ${enums}[${index}]     name   ${name}
@@ -353,7 +361,7 @@ DataType Enum Should Be
         Element Attribute Should Be    ${member}    value    ${{${exp_member}}}[value]
     END
 
-DataType TypedDict Should Be
+Type Doc TypedDict Should Be
     [Arguments]    ${index}    ${name}    ${doc}    @{exp_items}
     ${dicts}=   Get Elements    ${LIBDOC}   xpath=typedocs/type[@type='TypedDict']
     Element Attribute Should Be    ${dicts}[${index}]     name   ${name}
@@ -374,13 +382,13 @@ DataType TypedDict Should Be
         END
     END
 
-DataType Custom Should Be
+Type Doc Custom Should Be
     [Arguments]    ${index}    ${name}    ${doc}
     ${types}=   Get Elements    ${LIBDOC}   xpath=typedocs/type[@type='Custom']
     Element Attribute Should Be    ${types}[${index}]     name      ${name}
     Element Text Should Be         ${types}[${index}]     ${doc}    xpath=doc
 
-DataType Standard Should Be
+Type Doc Standard Should Be
     [Arguments]    ${index}    ${name}    ${doc}
     ${types}=   Get Elements    ${LIBDOC}   xpath=typedocs/type[@type='Standard']
     Element Attribute Should Be    ${types}[${index}]     name       ${name}

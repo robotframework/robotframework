@@ -1,6 +1,6 @@
 def get_variables(name, value="default value", conversion: int = 0):
     if name == "FAIL":
-        1 / 0
+        1 / 0  # noqa
     assert isinstance(conversion, int)
     varz = {
         name: value,

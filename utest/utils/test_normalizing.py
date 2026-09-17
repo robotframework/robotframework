@@ -90,7 +90,7 @@ class TestNormalizedDict(unittest.TestCase):
         assert_equal(nd["foo"], "bar")
 
     def test_initial_values_as_generator(self):
-        nd = NormalizedDict((item for item in [("key", "value"), ("F O\tO", "bar")]))
+        nd = NormalizedDict(item for item in [("key", "value"), ("F O\tO", "bar")])
         assert_equal(nd["key"], "value")
         assert_equal(nd["K EY"], "value")
         assert_equal(nd["foo"], "bar")
@@ -272,7 +272,7 @@ class TestNormalizedDict(unittest.TestCase):
             assert_equal(nd[k.upper()], v)
             assert_true(k in nd)
             assert_true(k.upper() in nd)
-            assert_true(k in nd.keys())
+            assert_true(k in nd.keys())  # noqa: SIM118
 
     def test_iter(self):
         keys = list("123_aBcDeF")
@@ -302,17 +302,17 @@ class TestNormalizedDict(unittest.TestCase):
         self._verify_eq(NormalizedDict(), UserDict())
 
     def _verify_eq(self, d1, d2):
-        assert_true(d1 == d1 == d2 == d2)
+        assert_true(d1 == d1 == d2 == d2)  # noqa: PLR0124
         d1["a"] = 1
-        assert_true(d1 == d1 != d2 == d2)
+        assert_true(d1 == d1 != d2 == d2)  # noqa: PLR0124
         d2["a"] = 1
-        assert_true(d1 == d1 == d2 == d2)
+        assert_true(d1 == d1 == d2 == d2)  # noqa: PLR0124
         d1["B"] = 1
         d2["B"] = 1
-        assert_true(d1 == d1 == d2 == d2)
+        assert_true(d1 == d1 == d2 == d2)  # noqa: PLR0124
         d1["c"] = d2["C"] = 1
         d1["D"] = d2["d"] = 1
-        assert_true(d1 == d1 == d2 == d2)
+        assert_true(d1 == d1 == d2 == d2)  # noqa: PLR0124
 
     def test_eq_with_other_objects(self):
         nd = NormalizedDict()

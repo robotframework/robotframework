@@ -36,4 +36,4 @@ def failing_generator():
 class FailingDict(dict):
 
     def __getattribute__(self, item):
-        raise Exception("Bang")
+        raise RuntimeError("Bang")

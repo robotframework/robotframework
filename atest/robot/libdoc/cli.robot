@@ -6,6 +6,7 @@ Test Template    Run Libdoc And Verify Created Output File
 Default format is got from output file extension
     String ${OUTHTML}            HTML         String
     String ${OUTXML}             XML          String    path=${OUTXML}    docformat=MARKDOWN
+    String ${OUTMARKDOWN}        MARKDOWN     String    path=${OUTMARKDOWN}
 
 '*.libspec' extension creates XML file with HTML docs
     String ${OUTBASE}.libspec    LIBSPEC     String    path=${OUTBASE}.libspec
@@ -14,6 +15,7 @@ Using --format overrides output file extension
     -f XmL ${TESTDATADIR}/resource.resource ${OUTHTML}    XML         resource
     --format hTmL BuiltIn ${OUTBASE}.xxx                  HTML        BuiltIn     path=${OUTBASE}.xxx
     --format XML String ${OUTBASE}.libspec                XML         String      path=${OUTBASE}.libspec    docformat=MARKDOWN
+    --format MARKDOWN String ${OUTBASE}.xxx               MARKDOWN    String      path=${OUTBASE}.xxx
 
 Using --specdocformat to specify doc format in output
     --format XML --specdocformat RAW String ${OUTXML}              XML        String      path=${OUTXML}    docformat=MARKDOWN
@@ -65,6 +67,7 @@ Language
     --language EN String ${OUTHTML}     HTML    String    lang=en
     --language fI String ${OUTHTML}     HTML    String    lang=fi
     --language NoNe String ${OUTHTML}   HTML    String    language=
+    --language NoNe String ${OUTMARKDOWN}     MARKDOWN      String    path=${OUTMARKDOWN}
 
 Relative path with Python libraries
     [Template]    NONE
@@ -135,6 +138,14 @@ LIBSPEC Doc Should Have Been Created
     Name Should Be       ${name}
     Format Should Be     ${docformat}
     Run Keyword If       "${version}"    Version Should Match    ${version}
+
+MARKDOWN Doc Should Have Been Created
+    [Arguments]    ${path}    ${name}    ${version}
+    ${libdoc}=    Get File    ${path}
+    Should Start With    ${libdoc}    \# ${name}
+    IF    "${version}"
+        Should Contain    ${libdoc}    * Version: ${version}
+    END
 
 Path to output should be in stdout
     [Arguments]    ${path}    ${stdout}

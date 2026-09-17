@@ -1,8 +1,10 @@
 import io
+import sys
 import unittest
 import warnings
 from contextlib import contextmanager
 from pathlib import Path
+from typing import List, Union
 from xml.etree import ElementTree as ET
 
 from robot import utils
@@ -156,6 +158,15 @@ The end.
             doc, tags = utils.split_tags_from_doc("Doc\nTags: one, two")
             assert_equal(doc, "Doc")
             assert_equal(tags, ["one", "two"])
+
+    def test_is_union(self):
+        with assert_deprecation("is_union"):
+            assert utils.is_union(Union[int, str])
+            assert not utils.is_union((int, str))
+            if sys.version_info >= (3, 10):
+                assert utils.is_union(eval("int | str"))
+            for not_union in "string", 3, [int, str], list, List[int]:
+                assert not utils.is_union(not_union)
 
     def test_non_existing_attribute(self):
         assert_raises(AttributeError, getattr, utils, "xxx")

@@ -246,7 +246,8 @@ class TestJson(unittest.TestCase):
         self._test("DynamicLibrary.json")
 
     def test_roundtrip_from_python(self):
-        # If this fails, DynamicLibrary.json typically needs to be regenerated.
+        # If this test fails, DynamicLibrary.json typically needs to be regenerated:
+        # src/robot/libdoc.py atest/testdata/libdoc/DynamicLibrary.{py::dummy,json}
         self._test("DynamicLibrary.py::required")
 
     def test_roundtrip_with_datatypes(self):
@@ -292,6 +293,23 @@ class TestXmlSpec(unittest.TestCase):
         orig_data["generated"] = spec_data["generated"] = None
         self.maxDiff = None
         self.assertDictEqual(orig_data, spec_data)
+
+
+class TestLibdocMarkdownWriter(unittest.TestCase):
+
+    def test_markdown_source_written_as_is(self):
+        path = TEMPDIR / "libdoc-utest-spec.md"
+        lib = LibraryDocumentation(DATADIR / "MarkdownLibrary.py")
+        lib.save(path, format="MARKDOWN")
+        expected = (DATADIR / "MarkdownLibrary.txt").read_text(encoding="UTF-8")
+        self.assertEqual(path.read_text(encoding="UTF-8"), expected)
+
+    def test_non_markdown_source_written_verbatim_not_converted(self):
+        path = TEMPDIR / "libdoc-utest-spec.md"
+        lib = LibraryDocumentation(DATADIR / "DocFormatHtml.py")
+        lib.save(path, format="MARKDOWN")
+        content = path.read_text(encoding="UTF-8")
+        self.assertIn("*bold* or <b>bold</b> http://example.com", content)
 
 
 class TestLibdocTypedDictKeys(unittest.TestCase):

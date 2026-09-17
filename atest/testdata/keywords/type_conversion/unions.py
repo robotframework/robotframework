@@ -128,7 +128,7 @@ def optional_string_with_none_default(
     assert_equal(argument, expected)
 
 
-def string_with_none_default(argument: str = None, expected=object()):
+def string_with_none_default(argument: str = None, expected=object()):  # noqa
     assert_equal(argument, expected)
 
 
@@ -148,13 +148,13 @@ def unrecognized_type_with_incompatible_default(
 
 
 def union_with_invalid_types(
-    argument: Union["nonex", "references"],  # noqa: F821
+    argument: Union["nonex", "references"],  # noqa
     expected,
 ):
     assert_equal(argument, expected)
 
 
-def tuple_with_invalid_types(argument: ("invalid", 666), expected):  # noqa: F821
+def tuple_with_invalid_types(argument: ("invalid", 666), expected):  # noqa
     assert_equal(argument, expected)
 
 

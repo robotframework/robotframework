@@ -107,8 +107,7 @@ def get_console_length(text):
 
 
 def pad_console_length(text, width):
-    if width < 5:
-        width = 5
+    width = max(width, 5)
     diff = get_console_length(text) - width
     if diff > 0:
         text = _lose_width(text, diff + 3) + "..."

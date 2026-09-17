@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# ruff: noqa: E402
 
 """rundevel.py -- script to run the current Robot Framework code
 

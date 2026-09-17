@@ -360,12 +360,12 @@ function renderTestDetailsRows(tests, target) {
 }
 
 function configureTableSorter(sortByStatus) {
-    var config = {headers: {3: {sorter: 'status'},
-                            5: {sortInitialOrder: 'desc'},
-                            6: {sorter: 'times'}},
+    var config = {headers: {4: {sorter: 'status'},
+                            6: {sortInitialOrder: 'desc'},
+                            7: {sorter: 'times'}},
                   selectorSort: '.details-col-header'};
     if (sortByStatus)
-        config['sortList'] = [[3, 0]];
+        config['sortList'] = [[4, 0]];
     $('#test-details').tablesorter(config);
 }
 
@@ -380,18 +380,24 @@ function toggleDetailsColumn(name) {
     var column = $('.details-col-' + name);
     column.toggleClass('hidden');
     var hidden = column.hasClass('hidden');
+    if (name === 'tags') {
+      column.find('.tags').toggle();
+    }
     storage.set(name, hidden ? 'hidden' : 'visible');
     column.find('.details-col-toggle').html(hidden ? '&hellip;' : '&times;');
 }
 
 function hideHiddenDetailsColumns(elem) {
-    var names = ['doc', 'tags', 'msg', 'elapsed', 'times'];
+    var names = ['doc', 'metadata', 'tags', 'msg', 'elapsed', 'times'];
     for (var i = 0; i < names.length; i++) {
         var name = names[i];
-        if (storage.get(name, 'visible') == 'hidden') {
+        if (storage.get(name, 'visible') === 'hidden') {
             var column = elem.find('.details-col-' + name);
             column.addClass('hidden');
             column.find('.details-col-toggle').html('&hellip;');
+            if (name === 'tags') {
+                column.find('.tags').hide();
+            }
         }
     }
 }
@@ -798,6 +804,10 @@ function hideHiddenDetailsColumns(elem) {
           <div class='details-col-toggle' onclick="toggleDetailsColumn('doc')">&times;</div>
           <div class='details-col-header'>Documentation</div>
         </th>
+        <th class="details-col-metadata" title="Metadata">
+          <div class='details-col-toggle' onclick="toggleDetailsColumn('metadata')">&times;</div>
+          <div class='details-col-header'>Metadata</div>
+        </th>
         <th class="details-col-tags" title="Tags">
           <div class='details-col-toggle' onclick="toggleDetailsColumn('tags')">&times;</div>
           <div class='details-col-header'>Tags</div>
@@ -836,7 +846,8 @@ function hideHiddenDetailsColumns(elem) {
     </td>
   {{/if}}
     <td class="details-col-doc"><div class="doc details-limited">{{html doc()}}</div></td>
-    <td class="details-col-tags"><div>{{html tags.join(', ')}}</div></td>
+    <td class="details-col-metadata"><div class="details-limited">{{if metadata.length}}<table class="metadata">{{each metadata}}<tr><th>{{html $value[0]}}:</th><td class="doc">{{html $value[1]}}</td></tr>{{/each}}</table>{{/if}}</div></td>
+    <td class="details-col-tags"><div class="tags">{{each tags}}<span class="label">{{html $value}}</span>{{/each}}</div></td>
     <td class="details-col-status"><div><span class="label ${status.toLowerCase()}">${status}</span></div></td>
     <td class="details-col-msg"><div class="message details-limited">{{html message()}}</div></td>
     <td class="details-col-elapsed"><div>${times.elapsedTime}</div></td>

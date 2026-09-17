@@ -53,7 +53,7 @@ class String:
     In addition to strings, most of the keywords work also with bytes.
     Bytes support was heavily enhanced in Robot Framework 7.4.
 
-    Following keywords from `BuiltIn` library can also be used with strings
+    Following keywords from the [BuiltIn] library can also be used with strings
     and bytes:
 
     - `Get Length`
@@ -66,6 +66,8 @@ class String:
     - `Should (Not) End With`
     - `Convert To String`
     - `Convert To Bytes`
+
+    [BuiltIn]: https://robotframework.org/robotframework/latest/libraries/BuiltIn.html
     """
 
     def convert_to_lower_case(self, string: "str | bytes") -> "str | bytes":
@@ -158,9 +160,9 @@ class String:
         actually considered to be regular expression patterns, so it is
         possible to use something like `example[.!?]?` to match the word
         `example` on its own and also if followed by `.`, `!` or `?`.
-        See `BuiltIn.Should Match Regexp` for more information about Python
-        regular expression syntax in general and how to use it in Robot
-        Framework data in particular.
+        See the [BuiltIn] library keyword `Should Match Regexp` for more
+        information about Python regular expression syntax in general and
+        how to use it in Robot Framework data in particular.
 
         Examples:
 
@@ -251,9 +253,9 @@ class String:
             ${bytes} =    Encode String To Bytes    ${string}    ASCII    errors=ignore
         ```
 
-        Use [Decode Bytes To String]  if you need to convert bytes to strings.
-        Use `BuiltIn.Convert To Bytes` if you want to create bytes based
-        on character or integer sequences.
+        Use the [Decode Bytes To String] keyword if you need to convert bytes
+        to strings. Use the [BuiltIn] library keyword `Convert To Bytes` if
+        you want to create bytes based on character or integer sequences.
         """
         return bytes(string.encode(encoding, errors))
 
@@ -291,9 +293,9 @@ class String:
             ${string} =    Decode Bytes To String    ${bytes}    ASCII    errors=ignore
         ```
 
-        Use [Encode String To Bytes] if you need to convert strings to bytes,
-        Use `BuiltIn.Convert To String` if you want to convert arbitrary objects
-        to strings.
+        Use the [Encode String To Bytes] keyword if you need to convert strings
+        to bytes. Use the [BuiltIn] library keyword `Convert To String` if
+        you want to convert arbitrary objects to strings.
         """
         return bytes.decode(encoding, errors)
 
@@ -304,7 +306,7 @@ class String:
         *positional: object,
         **named: object,
     ) -> "str | bytes":
-        """Formats a `template` using the given `positional` and `named` arguments.
+        r"""Formats a `template` using the given `positional` and `named` arguments.
 
         Args:
             template: A template string or an absolute path to a template file.
@@ -338,7 +340,7 @@ class String:
         ```
 
         Prior to Robot Framework 7.1, possible equal signs in the template string
-        needed to be escaped with a backslash like `x\\={}`. Bytes support is new
+        needed to be escaped with a backslash like `x\={}`. Bytes support is new
         in Robot Framework 7.4.
 
         [format string syntax]: https://docs.python.org/library/string.html#format-string-syntax
@@ -590,7 +592,7 @@ class String:
         partial_match: bool = False,
         flags: "str | None" = None,
     ) -> "str | bytes":
-        """Returns lines of the given `string` that match the regexp `pattern`.
+        r"""Returns lines of the given `string` that match the regexp `pattern`.
 
         Args:
             string: The string or bytes to search lines from.
@@ -623,8 +625,8 @@ class String:
         ```robotframework
         *** Test Cases ***
         Get lines matching regexp
-            ${lines} =    Get Lines Matching Regexp    ${string}    Reg\\\\w{3} example
-            ${lines} =    Get Lines Matching Regexp    ${string}    Reg\\\\w{3} example    partial_match=True
+            ${lines} =    Get Lines Matching Regexp    ${string}    Reg\\w{3} example
+            ${lines} =    Get Lines Matching Regexp    ${string}    Reg\\w{3} example    partial_match=True
             ${lines} =    Get Lines Matching Regexp    ${string}    (?i)FAIL: .*
             ${lines} =    Get Lines Matching Regexp    ${string}    FAIL: .*    flags=IGNORECASE
         ```
@@ -634,8 +636,8 @@ class String:
         a literal backslash is needed, it needs to be doubled as the above
         example illustrates. For more information about the supported regular
         expression syntax and using regular expressions with Robot Framework
-        in general, see the documentation of the `BuiltIn.Should Match Regexp`
-        keyword.
+        in general, see the documentation of the [BuiltIn] library keyword
+        `Should Match Regexp` keyword.
 
         Use [Get Lines Matching Pattern] and [Get Lines Containing String] if
         you do not need the full regular expression powers (and complexity).
@@ -680,9 +682,9 @@ class String:
             A list of matches, group contents, or tuples of group contents.
 
         `string` is the string to find matches from and `pattern` is the
-        regular expression. See `BuiltIn.Should Match Regexp` for more
-        information about Python regular expression syntax in general and how
-        to use it in Robot Framework data in particular.
+        regular expression. See the [BuiltIn] library keyword `Should Match Regexp`
+        for more information about Python regular expression syntax in general
+        and how to use it in Robot Framework data in particular.
 
         If no groups are used, the returned list contains full matches. If one
         group is used, the list contains only contents of that group. If
@@ -801,7 +803,7 @@ class String:
         count: int = -1,
         flags: "str | None" = None,
     ) -> "str | bytes":
-        """Replaces `pattern` in the given `string` with `replace_with`.
+        r"""Replaces `pattern` in the given `string` with `replace_with`.
 
         Args:
             string: The string or bytes to modify.
@@ -815,8 +817,8 @@ class String:
 
         This keyword is otherwise identical to [Replace String], but
         the `pattern` to search for is considered to be a regular
-        expression.  See `BuiltIn.Should Match Regexp` for more
-        information about Python regular expression syntax in general
+        expression.  See the [BuiltIn] library keyword `Should Match Regexp`
+        for more information about Python regular expression syntax in general
         and how to use it in Robot Framework data in particular.
 
         Possible flags altering how the expression is parsed (e.g. `re.IGNORECASE`,
@@ -831,7 +833,7 @@ class String:
         ```robotframework
         *** Test Cases ***
         Replace string using regexp
-            ${str} =    Replace String Using Regexp    ${str}    2026-\\\\d\\\\d-\\\\d\\\\d    <DATE>
+            ${str} =    Replace String Using Regexp    ${str}    2026-\\d\\d-\\d\\d    <DATE>
             ${str} =    Replace String Using Regexp    ${str}    (Hello|Hi)    Moi    count=1
         ```
 

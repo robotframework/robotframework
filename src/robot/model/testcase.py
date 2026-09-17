@@ -83,7 +83,10 @@ class TestCase(ModelObject, Generic[KW]):
 
     @setter
     def metadata(self, metadata: "Mapping[str, str] | None") -> Metadata:
-        """Test metadata as a :class:`~.model.metadata.Metadata` object."""
+        """Test metadata as a :class:`~.model.metadata.Metadata` object.
+
+        New in Robot Framework 7.5.
+        """
         return Metadata(metadata)
 
     @property

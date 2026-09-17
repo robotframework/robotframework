@@ -1,10 +1,6 @@
-try:
-    from collections.abc import Mapping, Sequence
-except ImportError:
-    from collections import Mapping, Sequence
+from collections.abc import Mapping, Sequence
 
-
-__all__ = ["BROKEN_ITERABLE", "BROKEN_SEQUENCE", "BROKEN_MAPPING"]
+__all__ = ["BROKEN_ITERABLE", "BROKEN_MAPPING", "BROKEN_SEQUENCE"]
 
 
 class BrokenIterable:

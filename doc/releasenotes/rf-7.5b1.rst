@@ -32,7 +32,7 @@ to install exactly this version. Alternatively you can download the package
 from PyPI_ and install it manually. For more details and other installation
 approaches, see the `installation instructions`_.
 
-Robot Framework 7.5b1 was released on Friday July 17, 2026.
+Robot Framework 7.5 beta 1 was released on Friday July 17, 2026.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
@@ -309,7 +309,7 @@ community has provided some great contributions:
 
 Big thanks to Robot Framework Foundation, to community members listed above, and
 to everyone else who has tested preview releases, submitted bug reports, proposed
-enhancements, debugged problems, or otherwise helped with Robot Framework 7.4
+enhancements, debugged problems, or otherwise helped with Robot Framework 7.5
 development.
 
 | `Pekka Klärck <https://github.com/pekkaklarck>`_

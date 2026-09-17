@@ -17,6 +17,7 @@ from robot.errors import DataError
 
 from .htmlwriter import LibdocHtmlWriter
 from .jsonwriter import LibdocJsonWriter
+from .markdownformatter import LibdocMarkdownWriter
 from .xmlwriter import LibdocXmlWriter
 
 
@@ -30,4 +31,6 @@ def LibdocWriter(format=None, theme=None, lang=None):
         return LibdocXmlWriter()
     if format == "JSON":
         return LibdocJsonWriter()
+    if format == "MARKDOWN":
+        return LibdocMarkdownWriter()
     raise DataError(f"Invalid format '{format}'.")

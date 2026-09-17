@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.1"
+   id="kwargs"
+   x="0"
+   y="0"
+   viewBox="0 0 199.38817 98.976288"
+   xml:space="preserve"
+   width="199.38817"
+   height="98.976288"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:d="https://robotframework.org">
+  <defs
+   id="defs4" />
+  
+  
+  
+  <path
+   fill="none"
+   stroke-width="10.9468"
+   stroke-linecap="round"
+   stroke-miterlimit="10"
+   d="m 110.7504,49.533843 h 78.39065"
+   id="p1"
+   style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:13.394;stroke-dasharray:none;stroke-opacity:1" /><path
+   fill="none"
+   stroke-width="10.9468"
+   stroke-linecap="round"
+   stroke-miterlimit="10"
+   d="M 122.23015,77.249416 177.6613,21.818269"
+   id="p2"
+   style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:13.394;stroke-dasharray:none;stroke-opacity:1" /><path
+   fill="none"
+   stroke-width="10.9468"
+   stroke-linecap="round"
+   stroke-miterlimit="10"
+   d="M 149.94573,88.729166 V 10.33852"
+   id="p3"
+   style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:13.394;stroke-dasharray:none;stroke-opacity:1" /><path
+   fill="none"
+   stroke-width="10.9468"
+   stroke-linecap="round"
+   stroke-miterlimit="10"
+   d="M 177.6613,77.249416 129.59477,29.18289 122.23015,21.818269"
+   id="p4"
+   style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:13.394;stroke-dasharray:none;stroke-opacity:1" /><path
+   fill="none"
+   stroke-width="10.9468"
+   stroke-linecap="round"
+   stroke-miterlimit="10"
+   d="M 10.24712,49.442444 H 88.637767"
+   id="p1-0"
+   style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:13.394;stroke-dasharray:none;stroke-opacity:1" /><path
+   fill="none"
+   stroke-width="10.9468"
+   stroke-linecap="round"
+   stroke-miterlimit="10"
+   d="M 21.72687,77.158017 77.158017,21.72687"
+   id="p2-5"
+   style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:13.394;stroke-dasharray:none;stroke-opacity:1" /><path
+   fill="none"
+   stroke-width="10.9468"
+   stroke-linecap="round"
+   stroke-miterlimit="10"
+   d="M 49.442444,88.637767 V 10.24712"
+   id="p3-2"
+   style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:13.394;stroke-dasharray:none;stroke-opacity:1" /><path
+   fill="none"
+   stroke-width="10.9468"
+   stroke-linecap="round"
+   stroke-miterlimit="10"
+   d="M 77.158017,77.158017 29.091491,29.091491 21.72687,21.72687"
+   id="p4-2"
+   style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:13.394;stroke-dasharray:none;stroke-opacity:1" />
+  <metadata
+   id="metadata">
+    <d:name>asterisk</d:name>
+  </metadata>
+</svg>

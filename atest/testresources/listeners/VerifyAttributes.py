@@ -63,9 +63,9 @@ def verify_attrs(method_name, attrs, names):
         elif isinstance(exp_type, dict):
             verify_attr(name, value, dict)
             key_type, value_type = dict(exp_type).popitem()
-            for key, value in value.items():
+            for key in value:
                 verify_attr(f"{name}[{key}] (key)", key, key_type)
-                verify_attr(f"{name}[{key}] (value)", value, value_type)
+                verify_attr(f"{name}[{key}] (value)", value[key], value_type)
         else:
             verify_attr(name, value, exp_type)
 

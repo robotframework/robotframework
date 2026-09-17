@@ -244,7 +244,6 @@ class LoggerApi:
         ``kind`` specifies the file type. This method is not called if a result
         file specific method like :meth:`output_file` is implemented.
         """
-        pass
 
     def imported(self, import_type: str, name: str, attrs):
         pass

@@ -170,6 +170,8 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |   unresolved. New in RF 3.2.                                   |
    |                  |                  | * `doc`: Test documentation.                                   |
    |                  |                  | * `tags`: Test tags as a list of strings.                      |
+   |                  |                  | * `metadata`: `Free test metadata`_ as a dictionary.           |
+   |                  |                  |   New in RF 7.5.                                               |
    |                  |                  | * `template`: The name of the template used for the test.      |
    |                  |                  |   An empty string if the test not templated.                   |
    |                  |                  | * `source`: An absolute path of the test case source file.     |
@@ -187,6 +189,7 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `originalname`: Same as in `start_test`.                     |
    |                  |                  | * `doc`: Same as in `start_test`.                              |
    |                  |                  | * `tags`: Same as in `start_test`.                             |
+   |                  |                  | * `metadata`: Same as in `start_test`.                         |
    |                  |                  | * `template`: Same as in `start_test`.                         |
    |                  |                  | * `source`: Same as in `start_test`.                           |
    |                  |                  | * `lineno`: Same as in `start_test`.                           |
@@ -609,7 +612,7 @@ and in the API docs of the optional ListenerV3_ base class.
    |                       |                  | dictionary is replaced with an object representing the imported    |
    |                       |                  | variable file.                                                     |
    +-----------------------+------------------+--------------------------------------------------------------------+
-   | result_file           | kind, path       | Called, by default, when a `result file <result files>`__          |
+   | result_file           | kind, path       | Called, by default, when a `result file <result files_>`__         |
    |                       |                  | like an output file or a log file is ready.                        |
    |                       |                  |                                                                    |
    |                       |                  | `kind` is a string `OUTPUT`, `REPORT`, `LOG`, `XUNIT` or `DEBUG`.  |

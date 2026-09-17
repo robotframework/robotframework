@@ -1770,7 +1770,7 @@ class VariableValidator:
                 )
 
     def _is_valid_dict_item(self, item: str) -> bool:
-        name, value = split_from_equals(item)
+        _, value = split_from_equals(item)
         return value is not None or is_dict_variable(item)
 
 

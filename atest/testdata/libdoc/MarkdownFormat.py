@@ -68,23 +68,7 @@ Only two highest levels are included.
 
 #### This is not included either.
 
-## Differences to Robot format
-
-A difference compared to the Robot format is that the generated TOC does not get
-links to the Importing and Keywords sections automatically. This can be changed
-later if it is considered a problem. Instead of adding them to the TOC also with
-Markdown, we could enhance HTML outputs so that both sections are always easily
-accessible, though. Keywords already are, so this would require only making the
-Importing section somehow directly accessible, and then we wouldn't need these
-sections in the TOC with either format.
-
-In the Robot format only the top level section headers are included, but
-with Markdown we include two highest levels.
-
-Another small difference is that with Markdown TOC works everywhere, but with
-the Robot format TOC works only in the Introduction. Enhancing the Robot format
-so that it supports TOC everywhere wouldn't be too hard, though. See the [TOC]
-keyword for an example.
+The end.
 """
 
 ROBOT_LIBRARY_DOC_FORMAT = "MARKDOWN"
@@ -102,24 +86,39 @@ def references(a: int, b: "str | list[str]"):
 
 def admonitions():
     """
-    !!! note
-        Admonitions are provided by the `admonition` plugin.
+    > [!note]
+    > We have our own plugin that supports GFM style admonitions.
 
-        We need to make sure to add custom styles to make them render nicely.
+    > [!TIP]
+    >
+    > There are five supported admonition types:
+    >
+    > - note
+    > - tip
+    > - important
+    > - warning
+    > - caution
 
-    !!! tip
+    > [!Important]
+    > Admonitions are not standard Markdown.
 
-        There are four supported admonition types: note, tip, warning, and danger.
+    > [!warning] Interoperability risk!
+    > We support optional titles, but GFM does not.
 
-    !!! warning "Interoperability risk!"
-        Admonitions are not standard Markdown. Don't use them if you want good
-        interoperability with other Markdown tools.
+    > [!caution]
+    > Just kidding, you are safe.
 
-    !!! danger
-        Just kidding, this library is safe.
+    > [!unrecognized]
+    > We treat unrecognized types the same as `note`.
+    > GFM does not support them at all.
 
-    !!! unrecognized
-        Unrecognized types are treated the same as "note".
+    > [!NOTE] Nesting
+    > We support nested admonitions!
+    >
+    > > [!WARNING]
+    > > GFM does not.
+    >
+    > Back in NOTE level.
     """
 
 
@@ -136,8 +135,8 @@ def syntax_highlighting():
     ```
     ~~~python
     def keyword(arg):
-        print(arg)
         # This is comment in code, not a Markdown header!
+        return arg
     ~~~
 
     Indented code blocks are a standard Markdown feature:

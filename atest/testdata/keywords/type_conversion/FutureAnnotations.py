@@ -16,15 +16,15 @@ def abcs(a: Integral, b: Mapping):
     assert b == {"key": "value"}, repr(b)
 
 
-def typing_(a: List, b: List[int]):
+def typing_(a: List, b: List[int]):  # noqa
     assert a == ["foo", "bar"], repr(a)
     assert b == [1, 2, 3], repr(b)
 
 
 # These cause exception with `typing.get_type_hints`
-def invalid1(a: foo):  # noqa: F821
+def invalid1(a: foo):  # noqa
     assert a == "xxx"
 
 
-def invalid2(a: 1 / 0):
+def invalid2(a: 1 / 0):  # noqa
     assert a == "xxx"

@@ -157,11 +157,11 @@ def string(argument: String, expected: str = "123"):
         raise AssertionError
 
 
-def us_date(argument: UsDate, expected: date = None):
+def us_date(argument: UsDate, expected: "date | None" = None):
     assert argument == expected
 
 
-def fi_date(argument: FiDate, expected: date = None):
+def fi_date(argument: FiDate, expected: "date | None" = None):
     assert argument == expected
 
 

@@ -50,7 +50,7 @@ class Expression:
     """An expression evaluated in Python.
 
     Expressions are evaluated using Python's
-    [eval](http://docs.python.org/library/functions.html#eval) function so
+    [eval](https://docs.python.org/library/functions.html#eval) function so
     that all Python built-ins like `len()` and `int()` are available.
     In addition to that, all unrecognized variables are considered to be
     modules that are automatically imported. It is possible to use all
@@ -715,7 +715,7 @@ class _Converter(_BuiltInBase):
     def _split_dict_items(self, items):
         separate = []
         for item in items:
-            name, value = split_from_equals(item)
+            _, value = split_from_equals(item)
             if value is not None or is_dict_variable(item):
                 break
             separate.append(item)
@@ -2398,9 +2398,9 @@ class _Variables(_BuiltInBase):
         Returns:
             The value or values to assign.
 
-        !!! warning "Deprecation"
-            This keyword is considered deprecated and the [VAR syntax]
-            introduced in Robot Framework 7.0 should be used instead.
+        > [!WARNING]
+        > This keyword is considered deprecated and the [VAR syntax]
+        > introduced in Robot Framework 7.0 should be used instead.
 
         Examples:
         ```robotframework
@@ -2431,9 +2431,9 @@ class _Variables(_BuiltInBase):
             name: The variable name.
             *values: The variable value.
 
-        !!! note
-            The [VAR syntax] introduced in Robot Framework 7.0 is generally
-            recommended over this keyword.
+        > [!TIP]
+        > The [VAR syntax] introduced in Robot Framework 7.0 is generally
+        > recommended over this keyword.
 
         Variables set with this keyword are available within the
         local scope of the currently executed test case or in the local scope
@@ -2472,9 +2472,9 @@ class _Variables(_BuiltInBase):
             name: The variable name.
             *values: The variable value.
 
-        !!! note
-            The [VAR syntax] introduced in Robot Framework 7.0 is generally
-            recommended over this keyword.
+        > [!TIP]
+        > The [VAR syntax] introduced in Robot Framework 7.0 is generally
+        > recommended over this keyword.
 
         Variables set with this keyword are available everywhere within the
         scope of the currently executed test case. For example, if you set a
@@ -2510,9 +2510,9 @@ class _Variables(_BuiltInBase):
             name: Variable name.
             *values: Variable value.
 
-        !!! note
-            The [VAR syntax] introduced in Robot Framework 7.0 is generally
-            recommended over this keyword.
+        > [!TIP]
+        > The [VAR syntax] introduced in Robot Framework 7.0 is generally
+        > recommended over this keyword.
 
         This is an alias for [Set Test Variable] that is more applicable when
         creating tasks, not tests.
@@ -2527,9 +2527,9 @@ class _Variables(_BuiltInBase):
             name: Variable name.
             *values: Variable value.
 
-        !!! note
-            The [VAR syntax] introduced in Robot Framework 7.0 is generally
-            recommended over this keyword.
+        > [!TIP]
+        > The [VAR syntax] introduced in Robot Framework 7.0 is generally
+        > recommended over this keyword.
 
         Variables set with this keyword are available everywhere within the
         scope of the currently executed test suite. Setting variables with this
@@ -2606,9 +2606,9 @@ class _Variables(_BuiltInBase):
             name: The variable name.
             *values: The variable value.
 
-        !!! note
-            The [VAR syntax] introduced in Robot Framework 7.0 is generally
-            recommended over this keyword.
+        > [!TIP]
+        > The [VAR syntax] introduced in Robot Framework 7.0 is generally
+        > recommended over this keyword.
 
         Variables set with this keyword are globally available in all
         subsequent test suites, test cases and user keywords. Also variables
@@ -2836,7 +2836,7 @@ class _RunKeyword(_BuiltInBase):
                 self.run_keyword(kw, *args)
             except ExecutionPassed as err:
                 err.set_earlier_failures(errors)
-                raise err
+                raise
             except ExecutionFailed as err:
                 errors.extend(err.get_errors())
                 if not err.can_continue(self._context):
@@ -2892,9 +2892,9 @@ class _RunKeyword(_BuiltInBase):
             Return value of the executed keyword or the `None` object if
             the keyword is not executed.
 
-        !!! note
-            The [IF/ELSE syntax] introduced in Robot Framework 4.0 is generally
-            recommended over this keyword.
+        > [!TIP]
+        > The [IF/ELSE syntax] introduced in Robot Framework 4.0 is generally
+        > recommended over this keyword.
 
         The given `condition` is evaluated in Python as explained in the
         [Evaluating expressions] section, and `name` and `*args` have same
@@ -3013,9 +3013,9 @@ class _RunKeyword(_BuiltInBase):
             value. If the keyword fails, returns string `FAIL` and the error
             message.
 
-        !!! note
-            The [TRY/EXCEPT syntax] introduced in Robot Framework 5.0 is
-            generally recommended over this keyword.
+        > [!TIP]
+        > The [TRY/EXCEPT syntax] introduced in Robot Framework 5.0 is
+        > generally recommended over this keyword.
 
         Use [Run Keyword And Return Status] if you are only interested in
         the execution status.
@@ -3048,9 +3048,9 @@ class _RunKeyword(_BuiltInBase):
             value. If the keyword fails, returns string `FAIL` and the error
             message.
 
-        !!! note
-            The [TRY/EXCEPT syntax] introduced in Robot Framework 5.0 is
-            generally recommended over this keyword.
+        > [!TIP]
+        > The [TRY/EXCEPT syntax] introduced in Robot Framework 5.0 is
+        > generally recommended over this keyword.
 
         This keyword is similar to [Run Keyword And Ignore Error], but if
         the executed keyword fails, the error message is logged as a warning
@@ -3080,9 +3080,9 @@ class _RunKeyword(_BuiltInBase):
         Returns:
             Boolean `True` if the keyword succeeded, `False` otherwise.
 
-        !!! note
-            The [TRY/EXCEPT syntax] introduced in Robot Framework 5.0 is
-            generally recommended over this keyword.
+        > [!TIP]
+        > The [TRY/EXCEPT syntax] introduced in Robot Framework 5.0 is
+        > generally recommended over this keyword.
 
         Errors caused by invalid syntax, timeouts or fatal exceptions are not
         caught by this keyword, but otherwise this keyword never fails.
@@ -3127,7 +3127,7 @@ class _RunKeyword(_BuiltInBase):
         except ExecutionFailed as err:
             if not err.dont_continue:
                 err.continue_on_failure = True
-            raise err
+            raise
 
     @run_keyword_variant(resolve=1, dry_run=True)
     def run_keyword_and_expect_error(
@@ -3147,9 +3147,9 @@ class _RunKeyword(_BuiltInBase):
         Returns:
             The return value of the executed keyword.
 
-        !!! note
-            The [TRY/EXCEPT syntax] introduced in Robot Framework 5.0 is
-            generally recommended over this keyword.
+        > [!TIP]
+        > The [TRY/EXCEPT syntax] introduced in Robot Framework 5.0 is
+        > generally recommended over this keyword.
 
         The expected error must be given in the same format as in Robot Framework
         reports. It is interpreted as a glob pattern with `*`, `?` and `[chars]`
@@ -3269,10 +3269,10 @@ class _RunKeyword(_BuiltInBase):
         """
         try:
             count = self._get_repeat_count(repeat)
-        except ValueError as err:
+        except ValueError:
             timeout = self._get_repeat_timeout(repeat)
             if timeout is None:
-                raise err
+                raise
             keywords = self._keywords_repeated_by_timeout(timeout, name, args)
         else:
             keywords = self._keywords_repeated_by_count(count, name, args)
@@ -3455,9 +3455,9 @@ class _RunKeyword(_BuiltInBase):
             is false, or a subsequent value if the second value is another
             condition.
 
-        !!! note
-            The [IF/ELSE syntax] in combination with the [VAR syntax] is
-            recommended over this keyword.
+        > [!TIP]
+        > The [IF/ELSE syntax] in combination with the [VAR syntax] is
+        > recommended over this keyword.
 
         The basic usage is giving a condition and two values. The
         given condition is first evaluated the same way as with the
@@ -3663,9 +3663,9 @@ class _Control(_BuiltInBase):
     def continue_for_loop(self):
         """Skips the current loop iteration and continues from the next.
 
-        !!! warning "Deprecation"
-            This keyword is considered deprecated and the [CONTINUE statement]
-            should be used instead.
+        > [!WARNING]
+        > This keyword is considered deprecated and the [CONTINUE statement]
+        > should be used instead.
         """
         if not self._context.allow_loop_control:
             raise DataError("'Continue For Loop' can only be used inside a loop.")
@@ -3678,9 +3678,9 @@ class _Control(_BuiltInBase):
         Args:
             condition: The condition to evaluate.
 
-        !!! warning "Deprecation"
-            This keyword is considered deprecated and the [CONTINUE statement]
-            in combination with the [IF/ELSE syntax] should be used instead.
+        > [!WARNING]
+        > This keyword is considered deprecated and the [CONTINUE statement]
+        > in combination with the [IF/ELSE syntax] should be used instead.
         """
         if not self._context.allow_loop_control:
             raise DataError("'Continue For Loop If' can only be used inside a loop.")
@@ -3690,9 +3690,9 @@ class _Control(_BuiltInBase):
     def exit_for_loop(self):
         """Stops executing the enclosing loop.
 
-        !!! warning "Deprecation"
-            This keyword is considered deprecated and the [BREAK statement]
-            should be used instead.
+        > [!WARNING]
+        > This keyword is considered deprecated and the [BREAK statement]
+        > should be used instead.
         """
         if not self._context.allow_loop_control:
             raise DataError("'Exit For Loop' can only be used inside a loop.")
@@ -3705,9 +3705,9 @@ class _Control(_BuiltInBase):
         Args:
             condition: The condition to evaluate.
 
-        !!! warning "Deprecation"
-            This keyword is considered deprecated and the [BREAK statement]
-            in combination with the [IF/ELSE syntax] should be used instead.
+        > [!WARNING]
+        > This keyword is considered deprecated and the [BREAK statement]
+        > in combination with the [IF/ELSE syntax] should be used instead.
         """
         if not self._context.allow_loop_control:
             raise DataError("'Exit For Loop If' can only be used inside a loop.")
@@ -3721,9 +3721,9 @@ class _Control(_BuiltInBase):
         Args:
             *return_values: The value or values to return.
 
-        !!! warning "Deprecation"
-            This keyword is considered deprecated and the [RETURN statement]
-            should be used instead.
+        > [!WARNING]
+        > This keyword is considered deprecated and the [RETURN statement]
+        > should be used instead.
         """
         self._return_from_keyword(return_values)
 
@@ -3739,9 +3739,9 @@ class _Control(_BuiltInBase):
             condition: The condition to evaluate.
             *return_values: Value or values to return.
 
-        !!! warning "Deprecation"
-            This keyword is considered deprecated and the [RETURN statement]
-            in combination with the [IF/ELSE syntax] should be used instead.
+        > [!WARNING]
+        > This keyword is considered deprecated and the [RETURN statement]
+        > in combination with the [IF/ELSE syntax] should be used instead.
         """
         if self._is_true(condition):
             self._return_from_keyword(return_values)
@@ -3759,9 +3759,9 @@ class _Control(_BuiltInBase):
             name: The keyword to execute.
             *args: Arguments passed to the keyword.
 
-        !!! note
-            It is recommended to use the [RETURN statement] instead of special
-            keywords for returning from user keywords.
+        > [!TIP]
+        > It is recommended to use the [RETURN statement] instead of special
+        > keywords for returning from user keywords.
 
         After running the keyword, returns from the enclosing user keyword and
         passes possible return value from the executed keyword further.
@@ -3908,11 +3908,17 @@ class _Misc(_BuiltInBase):
             Sleep    2 minutes 10 seconds
             Sleep    10s    Wait for a reply
         ```
+
+        > [!WARNING]
+        > The `time_` argument will be renamed to `time` in Robot Framework 8.0.
+        > Users should avoid using the named argument syntax like `time_=1.5`
+        > and pass the time positionally like `1.5` instead. See issue
+        > [#5762](https://github.com/robotframework/robotframework/issues/5762)
+        > for more information.
         """
         seconds = timestr_to_secs(time_)
         # Python hangs with negative values
-        if seconds < 0:
-            seconds = 0
+        seconds = max(seconds, 0)
         self._sleep_in_parts(seconds)
         logger.info(f"Slept {secs_to_timestr(seconds)}.")
         if reason:
@@ -4102,8 +4108,8 @@ class _Misc(_BuiltInBase):
             if match.is_list_variable():
                 yield from value
             elif match.is_dict_variable():
-                for name, value in value.items():
-                    yield f"{name}={value}"
+                for name in value:
+                    yield f"{name}={value[name]}"
             else:
                 yield value
 
@@ -4173,7 +4179,6 @@ class _Misc(_BuiltInBase):
         A difference between this keyword and using the normal `# comment`
         syntax is that normal comments are not shown in the log file at all.
         """
-        pass
 
     def set_log_level(self, level: SettableLevel) -> SettableLevel:
         """Sets the log threshold to the specified level.
@@ -4421,10 +4426,17 @@ class _Misc(_BuiltInBase):
         Returns:
             The requested time value.
 
-        !!! tip
-            The DateTime library contains much more flexible keywords for
-            getting the current date and time and for date and time handling in
-            general.
+        > [!TIP]
+        > The [DateTime] library contains much more flexible keywords for
+        > getting the current date and time and for date and time handling in
+        > general.
+
+        > [!WARNING]
+        > The `time_` argument will be renamed to `time` in Robot Framework 8.0.
+        > Users should avoid using the named argument syntax like `time_=1.5`
+        > and pass the time positionally like `1.5` instead. See issue
+        > [#5762](https://github.com/robotframework/robotframework/issues/5762)
+        > for more information.
 
         How time is returned is determined based on the given `format`
         string as follows. Note that all checks are case-insensitive.
@@ -4734,6 +4746,75 @@ class _Misc(_BuiltInBase):
         self._variables.set_test("${TEST_DOCUMENTATION}", test.doc)
         logger.info(f"Set test documentation to:\n{test.doc}")
 
+    def set_test_metadata(
+        self,
+        name: str,
+        value: str,
+        append: bool = False,
+        separator: str = " ",
+    ):
+        """Sets metadata for the current test case.
+
+        Args:
+            name: The name of the metadata to set.
+            value: The metadata value.
+            append: If true, the given `value` is added after the earlier
+              value instead of overwriting it.
+            separator: The separator to use between the old and the new
+              value when appending.
+
+        The metadata of the current test is available as a built-in variable
+        `${TEST METADATA}` in a Python dictionary. Notice that modifying this
+        variable directly has no effect on the actual metadata the test has.
+
+        Metadata names are case, space, and underscore insensitive. This
+        keyword can not be used in suite setup or suite teardown.
+
+        When creating automated tasks, not tests, it is possible to use
+        [Set Task Metadata]. See also [Set Suite Metadata].
+
+        New in Robot Framework 7.5.
+        """
+        test = self._context.test
+        if not test:
+            raise RuntimeError(
+                "'Set Test Metadata' keyword cannot be used in "
+                "suite setup or teardown."
+            )
+        if not isinstance(name, str):
+            name = str(name)
+        metadata = test.metadata
+        original = metadata.get(name, "")
+        metadata[name] = self._get_new_text(
+            original, value, append, separator=separator
+        )
+        self._variables.set_test("${TEST_METADATA}", metadata.copy())
+        logger.info(f"Set test metadata '{name}' to value '{metadata[name]}'.")
+
+    def set_task_metadata(
+        self,
+        name: str,
+        value: str,
+        append: bool = False,
+        separator: str = " ",
+    ):
+        """Sets metadata for the current task.
+
+        Args:
+            name: The name of the metadata to set.
+            value: The metadata value.
+            append: If true, the given `value` is added after the earlier
+              value instead of overwriting it.
+            separator: The separator to use between the old and the new
+              value when appending.
+
+        This is an alias for [Set Test Metadata] that is more applicable when
+        creating tasks, not tests.
+
+        New in Robot Framework 7.5.
+        """
+        self.set_test_metadata(name, value, append, separator)
+
     def set_suite_documentation(
         self,
         doc: str,
@@ -4785,6 +4866,8 @@ class _Misc(_BuiltInBase):
         The metadata of the current suite is available as a built-in variable
         `${SUITE METADATA}` in a Python dictionary. Notice that modifying this
         variable directly has no effect on the actual metadata the suite has.
+
+        See [Set Test Metadata] if you want to set metadata for a single test.
 
         The `separator` argument is new in Robot Framework 7.2.
         """
@@ -5057,7 +5140,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     ## Evaluation namespace
 
     Expressions are evaluated using Python's
-    [eval](http://docs.python.org/library/functions.html#eval) function so
+    [eval](https://docs.python.org/library/functions.html#eval) function so
     that all Python built-ins like `len()` and `int()` are available.
     In addition to that, all unrecognized variables are considered to be
     modules that are automatically imported. It is possible to use all
@@ -5175,10 +5258,10 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     ## Glob patterns
 
     Some keywords, for example [Should Match], support so called
-    [glob patterns](http://en.wikipedia.org/wiki/Glob_(programming)) that
-    support wildcard characters and character sequences.
+    [glob patterns](https://en.wikipedia.org/wiki/Glob_(programming) "Wikipedia")
+    that support the following wildcard characters and character sequences.
 
-    | Wilidcard  |                   Explanation                            |
+    |  Pattern   |                   Explanation                            |
     | ---------- | -------------------------------------------------------- |
     | `*`        | Matches any string, even an empty string.                |
     | `?`        | Matches any single character.                            |
@@ -5193,10 +5276,10 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     ## Regular expressions
 
     Some keywords, for example [Should Match Regexp], support
-    [regular expressions](http://en.wikipedia.org/wiki/Regular_expression)
+    [regular expressions](https://en.wikipedia.org/wiki/Regular_expression "Wikipedia")
     that are more powerful but also more complicated that glob patterns.
     The regular expression support is implemented using Python's
-    [re module](http://docs.python.org/library/re.html) and its documentation
+    [re](https://docs.python.org/library/re.html) module and its documentation
     should be consulted for more information about the syntax.
 
     Because the backslash character (`\`) is an escape character in
@@ -5208,8 +5291,8 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     # Multiline string comparison
 
     [Should Be Equal] and [Should Be Equal As Strings] report the failures using
-    [unified diff format](http://en.wikipedia.org/wiki/Diff_utility#Unified_format)
-    if both strings have more than two lines.
+    [unified diff format](https://en.wikipedia.org/wiki/Diff_utility#Unified_format
+    "Wikipedia") if both strings have more than two lines.
 
     Example:
     ```robotframework
@@ -5243,7 +5326,8 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     Same
     ```
 
-    [search path]: http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#module-search-path
+    [DateTime]: https://robotframework.org/robotframework/latest/libraries/DateTime.html
+    [search path]: https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#module-search-path
     [VAR syntax]: https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#var-syntax
     [IF/ELSE syntax]: https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#if-else-syntax
     [TRY/EXCEPT syntax]: https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#try-except-syntax

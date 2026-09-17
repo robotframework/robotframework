@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<keywordspec name="DataTypesLibrary" type="LIBRARY" format="ROBOT" scope="TEST" generated="2026-07-04T12:55:06+00:00" specversion="6" source="/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py" lineno="91">
+<keywordspec name="DataTypesLibrary" type="LIBRARY" format="ROBOT" scope="TEST" generated="2026-09-03T10:28:03+00:00" specversion="7" source="/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py" lineno="91">
 <version/>
 <doc>This Library has Data Types.
 
@@ -24,7 +24,7 @@ It links to `Set Location` keyword and to `GeoLocation` data type.</doc>
 </init>
 </inits>
 <keywords>
-<kw name="Assert Something" lineno="109">
+<kw name="Assert Something" lineno="108">
 <arguments repr="value, operator: AssertionOperator | None = None, exp: str = something?">
 <arg kind="POSITIONAL_OR_NAMED" required="true" repr="value">
 <name>value</name>
@@ -48,7 +48,7 @@ It links to `Set Location` keyword and to `GeoLocation` data type.</doc>
 This is the next Line that links to `Set Location` .</doc>
 <shortdoc>This links to `AssertionOperator` .</shortdoc>
 </kw>
-<kw name="Custom" lineno="142">
+<kw name="Custom" lineno="140">
 <arguments repr="arg: CustomType, arg2: CustomType2, arg3: CustomType, arg4: Unknown">
 <arg kind="POSITIONAL_OR_NAMED" required="true" repr="arg: CustomType">
 <name>arg</name>
@@ -70,7 +70,7 @@ This is the next Line that links to `Set Location` .</doc>
 <doc/>
 <shortdoc/>
 </kw>
-<kw name="Funny Unions" lineno="121">
+<kw name="Funny Unions" lineno="119">
 <arguments repr="funny: bool | int | float | str | AssertionOperator | Small | GeoLocation | None = equal">
 <arg kind="POSITIONAL_OR_NAMED" required="false" repr="funny: bool | int | float | str | AssertionOperator | Small | GeoLocation | None = equal">
 <name>funny</name>
@@ -96,7 +96,7 @@ This is the next Line that links to `Set Location` .</doc>
 <doc/>
 <shortdoc/>
 </kw>
-<kw name="Set Location" lineno="106">
+<kw name="Set Location" lineno="105">
 <arguments repr="location: GeoLocation">
 <arg kind="POSITIONAL_OR_NAMED" required="true" repr="location: GeoLocation">
 <name>location</name>
@@ -107,7 +107,7 @@ This is the next Line that links to `Set Location` .</doc>
 <doc/>
 <shortdoc/>
 </kw>
-<kw name="Typing Types" lineno="130">
+<kw name="Typing Types" lineno="128">
 <arguments repr="list_of_str: List[str], dict_str_int: Dict[str, int], whatever: Any, *args: List[object]">
 <arg kind="POSITIONAL_OR_NAMED" required="true" repr="list_of_str: List[str]">
 <name>list_of_str</name>
@@ -136,7 +136,7 @@ This is the next Line that links to `Set Location` .</doc>
 <doc/>
 <shortdoc/>
 </kw>
-<kw name="X Literal" lineno="139">
+<kw name="X Literal" lineno="137">
 <arguments repr="arg: Literal[1, 'xxx', b'yyy', True, None, one]">
 <arg kind="POSITIONAL_OR_NAMED" required="true" repr="arg: Literal[1, 'xxx', b'yyy', True, None, one]">
 <name>arg</name>
@@ -288,9 +288,8 @@ Example usage: ``{'latitude': 59.95, 'longitude': 30.31667}``</doc>
 </type>
 <type name="integer" type="Standard">
 <doc>Conversion is done using Python's [https://docs.python.org/library/functions.html#int|int]
-built-in function. Floating point
-numbers are accepted only if they can be represented as integers exactly.
-For example, ``1.0`` is accepted and ``1.1`` is not.
+built-in function. Floating point numbers are accepted only if they can be
+represented as integers exactly. For example, ``1.0`` is accepted and ``1.1`` is not.
 
 It is possible to use hexadecimal, octal and binary numbers by prefixing values
 with ``0x``, ``0o`` and ``0b``, respectively. Spaces and underscores can be used

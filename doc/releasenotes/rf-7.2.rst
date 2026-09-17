@@ -308,7 +308,7 @@ Nowadays all iterations are executed even if one or more of them is skipped
 Changes to handling bytes
 -------------------------
 
-As discussed above, `working with bytes`__ has been enhanced so that string
+As `discussed above`__, working with bytes has been enhanced so that string
 representation for bytes outside ASCII range has been fixed (`#5052`_) and
 concatenating variables containing bytes yields bytes (`#5259`_). Both of
 these are useful enhancements, but users depending on the old behavior need
@@ -319,15 +319,17 @@ __ `Enhancements for working with bytes`_
 Other backwards incompatible changes
 ------------------------------------
 
-- JSON output format produced by Rebot has changed (`#5160`_).
-- Source distribution format has been changed from `zip` to `tar.gz`. The reason
-  is that the Python source distributions format has been standardized to `tar.gz`
-  by `PEP 625 <https://peps.python.org/pep-0625/>`__ and `zip` distributions are
-  deprecated (`#5296`_).
-- The `Message.html` attribute is serialized to JSON only if its value is `True`
-  (`#5216`_).
+- The JSON result model produced by Rebot has changed (`#5160`_).
+- Source distribution format has been changed from `zip` to `tar.gz` (`#5296`_).
+  The reason is that the Python source distributions format has been standardized
+  to `tar.gz` by `PEP 625 <https://peps.python.org/pep-0625/>`__ and `zip`
+  distributions are deprecated.
+- The `Message.html` attribute is serialized to the JSON data model only if its
+  value is `True` (`#5216`_).
 - Module is not used as a library if it contains a class decorated with the
   `@library` decorator (`#4959`_).
+- Listeners need to modify tags of the `result` object, not `data` object, to
+  get tests skipped dynamically (`#5292`_).
 
 Deprecated features
 ===================

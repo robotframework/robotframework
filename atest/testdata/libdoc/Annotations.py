@@ -20,8 +20,8 @@ class ManySmall(Enum):
     B = "b"
     C = "c"
     D = "d"
-    E = "d"
-    F = "e"
+    E = "e"
+    F = "f"
     G = "g"
     H = "h"
     I = "i"  # noqa: E741
@@ -100,7 +100,7 @@ def M_secret(token: Secret) -> str:
 
 
 try:
-    exec(
+    exec(  # noqa: S102
         """
 def X_union_syntax(a: int | str | list | tuple):
     pass

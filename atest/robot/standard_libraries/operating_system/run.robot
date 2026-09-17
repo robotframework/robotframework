@@ -3,10 +3,7 @@ Suite Setup       Run Tests    ${EMPTY}    standard_libraries/operating_system/r
 Resource          atest_resource.robot
 
 *** Variables ***
-${DEPRECATED}    _This keyword is considered deprecated. Use the
-...              [http://robotframework.org/robotframework/latest/libraries/Process.html|
-...              Process] library instead._
-...              separator=\n
+${DEPRECATED}    *This keyword is considered deprecated. Use the [Process] library instead.*
 
 *** Test Cases ***
 Run
