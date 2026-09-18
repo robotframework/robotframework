@@ -1,5 +1,6 @@
 import sys
 import unittest
+from collections.abc import Callable
 from types import NoneType
 from typing import get_args, get_origin, TypeVar, Union
 
@@ -30,10 +31,13 @@ type IndirectlyRecursive = list[Recursive]
 type InvalidRecursion = InvalidRecursion
 type MutualRecursion = RecursionMutual
 type RecursionMutual = MutualRecursion
+type ListArg = Callable[[int], None]
+type ListArgWithParam[T] = Callable[[T], None]
 type UnusedParam1[T] = int
 type UnusedParam2[T1, T2] = int | T2
 type BadTypeVar[GOOD] = GOOD | BAD | UGLY
 type UglyTypeVar[GOOD] = GOOD | UGLY
+type UnHashable = {}
 type NonExisting = NotHere  # noqa: F821
 type Invalid = 1 / 0
 
@@ -130,6 +134,19 @@ class TestTypeAliasResolver(unittest.TestCase):
             UnionArg[str], Union[str, NoneType, list[str | None]], "UnionArg[str]"
         )
 
+    def test_list_arg(self):
+        self._verify(ListArg, Callable[[int], None])
+
+    def test_list_arg_with_param(self):
+        self._verify(
+            ListArgWithParam[str], Callable[[str], None], "ListArgWithParam[str]"
+        )
+        self._verify(
+            ListArgWithParam[ListArgWithParam[ListArg]],
+            Callable[[Callable[[Callable[[int], None]], None]], None],
+            "ListArgWithParam[ListArgWithParam[ListArg]]",
+        )
+
     @unittest.skipIf(sys.version_info < (3, 13), "Defaults require Python 3.13")
     def test_param_defaults(self):
         self._verify(
@@ -185,6 +202,11 @@ class TestTypeAliasResolver(unittest.TestCase):
         self._verify(Params[1, 2], Union[1, 2], "Params[1, 2]")
         self._verify(Params[int, str, bool], Union[int, str], "Params[int, str, bool]")
         self._fails(Params[int], "Type variable 'T2' has not value.")
+
+    def test_unhashable(self):
+        self._verify(UnHashable, {})
+        self._verify(ParamToScalar[{}], {}, "ParamToScalar[{}]")
+        self._verify(ParamToScalar[[int, 42]], [int, 42], f"ParamToScalar[[{int}, 42]]")
 
     def test_non_existing(self):
         self._fails(NonExisting, "Resolving type alias 'NonExisting' failed: ")
