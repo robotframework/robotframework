@@ -124,11 +124,12 @@ Libdoc still used Robot Frameworks custom documentation format by default, so
 the documentation format needs to be specified using the `ROBOT_LIBRARY_DOC_FORMAT`
 attribute, the `@library` decorator or the `--doc-format` command line option.
 
-Because Markdown support is optional, the
-`Python-Markdown <https://python-markdown.github.io/>`_ module needs to be
-installed separately. It is typically done as follows::
+Because Markdown support is optional, the `Python-Markdown
+<https://python-markdown.github.io/>`_ module needs to be installed separately.
+If syntax highlighting is needed, `Pygments <https://pygments.org/>`_ must be
+installed as well. They can typically be installed like this:
 
-    pip install markdown
+    pip install markdown pygments
 
 A problem with Markdown is that there is no official and universally followed
 standard. Different Markdown implementations do not necessarily support the same
@@ -141,11 +142,6 @@ section, to custom sections created in the introduction, to keywords and to type
 used in arguments, works using the standard Markdown reference link syntax like
 `[introduction]`. This is documented more thoroughly in `Libdoc documentation`__.
 
-`Standard library documentation`__ has been updated to use Markdown and the new
-argument and return value documentation syntax (`#5709`_). As an example, see how
-the `source code`__ and the `generated documentation`__ of the
-`Process.Start Process` keyword a looks like.
-
 .. note:: We may make Markdown the default documentation format in the future.
           If you plan to keep using the Robot Framework format, explicitly
           specifying that documentation format is `ROBOT` is a good idea.
@@ -154,9 +150,24 @@ __ https://en.wikipedia.org/wiki/Markdown
 __ https://google.github.io/styleguide/pyguide.html#s3.8.3-functions-and-methods
 __ https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#markdown-format
 __ https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#markdown-documentation-syntax
+
+Enhancements to standard library documentation
+----------------------------------------------
+
+`Standard library documentation`__ has been updated to use Markdown and the new
+argument and return value documentation syntax discussed above (`#5709`_). In
+addition to that, examples have been enhanced and documentation has been
+improved in general.
+
+As an example, see how the `source code`__ and the `generated documentation`__
+of the `Process.Start Process` keyword looks nowadays. You can also compare
+them to the old `source code`__ and documentation__.
+
 __ https://robotframework.org/robotframework/#standard-libraries
 __ https://github.com/robotframework/robotframework/blob/v7.5/src/robot/libraries/Process.py#L811
-__ https://robotframework.org/robotframework/latest/libraries/Process.html#Start%20Process
+__ https://robotframework.org/robotframework/7.5/libraries/Process.html#Start%20Process
+__ https://github.com/robotframework/robotframework/blob/v7.4.2/src/robot/libraries/Process.py#L707
+__ https://robotframework.org/robotframework/7.4.2/libraries/Process.html#Start%20Process
 
 Markdown as Libdoc output format
 --------------------------------
@@ -313,6 +324,13 @@ unlikely to affect normal users:
   being accidentally caught by code using `except Exception:`. This means that code
   doing that on purpose does not work anymore. A fix is catching these exception
   explicitly like `except TimeoutExceeded:`.
+
+- Standard library documentation nowadays uses Markdown (`#5709`_) and thus
+  `Python-Markdown`_ and optionally Pygments_ must to be installed if there
+  are needs to generate these docs locally. When generating spec files, using
+  `--spec-doc-format raw` disables converting documentation to HTML and then
+  dependencies are not needed. HTML versions are available `online
+  <https://robotframework.org/robotframework/#standard-libraries>`__.
 
 - Libdoc has a feature that types used as type hints automatically create link
   targets that can be used with the internal linking syntax. With some types
