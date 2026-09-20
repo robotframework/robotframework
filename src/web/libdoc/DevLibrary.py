@@ -162,7 +162,7 @@ class DevLibrary:
     Generics | [Nested Generic Type]
     Argument kinds | [All Argument Kinds], [No Arguments]
     Argument documentation | [Long Argument Documentation]
-    Returns and raises | [Returns And Raises]
+    Returns and raises | [Returns And Raises], [Return Without Type]
     Deprecation | [Deprecated Keyword]
 
     > [!NOTE]
@@ -275,6 +275,25 @@ class DevLibrary:
             returns
         """
         return ""
+
+    def return_without_type(self, value: str):
+        """Documents a return value that has no type.
+
+        The keyword is not annotated, so Libdoc is given return documentation
+        but no return type. Nothing about this is unusual: an author who writes
+        a docstring is not obliged to annotate, and the frontend has to render
+        the result without leaving a column standing empty.
+
+        Args:
+            value: a plain string.
+
+        Returns:
+            The value that was given.
+
+        Tags:
+            returns
+        """
+        return value
 
     def alias_inside_generic_type(
         self,
