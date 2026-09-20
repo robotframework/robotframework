@@ -115,18 +115,34 @@
   height: 1px;
   border: 0;
 }
+/* The padding is on the box rather than on the paragraphs inside it, so that
+   every kind of content clears the border: lists, tables, code blocks and
+   nested admonitions as much as prose. */
 .doc .admonition {
   border: 0.075em solid #448aff;
   border-radius: 0.25em;
   margin: 1.5em 0;
-}
-.doc .admonition p {
   padding: 1em;
-  margin: 0;
 }
-.admonition .admonition-title {
+/* Comes after the rule above, so that a nested admonition takes this rhythm
+   rather than its own larger margins. */
+.doc .admonition > * {
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+.doc .admonition > *:last-child {
+  margin-bottom: 0;
+}
+/* The title's tint spans the full width, so the title is pulled back out to
+   the edges and given the padding again. Its radius is the box's less the
+   border, which keeps the corners concentric. Scoped to `.doc` like the
+   padding it compensates for: the negative margin is wrong without it. */
+.doc .admonition .admonition-title {
   font-weight: bold;
   background-color: #448aff1a;
+  margin: -1em -1em 1em;
+  padding: 1em;
+  border-radius: 0.175em 0.175em 0 0;
 }
 .doc .admonition.tip {
   border-color: #00bfa5;
