@@ -1,6 +1,6 @@
-// Generates libdoc/testdata.ts, the fixture rendered by `npm start`, by running
-// Libdoc from this checkout on libdoc/DevLibrary.py. Add a case to the UI by
-// adding a keyword to that library.
+// Generates the fixtures rendered by `npm start`, by running Libdoc from this
+// checkout on the libraries listed in FIXTURES. Add a case to the UI by adding a
+// keyword to the library that covers it.
 //
 // Usage: node generate-testdata.mjs [--quiet]
 
@@ -19,8 +19,26 @@ import * as prettier from "prettier";
 
 const WEB_DIR = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(WEB_DIR, "..", "..");
-const LIBRARY = path.join(WEB_DIR, "libdoc", "DevLibrary.py");
-const OUTPUT = path.join(WEB_DIR, "libdoc", "testdata.ts");
+/**
+ * One entry per fixture, generated and watched by the development server. They
+ * are separate libraries rather than one, because a library has a single
+ * documentation format and the formats are exactly what is being covered.
+ *
+ * Which fixture the page renders is decided in libdoc/libdoc.html, not here:
+ * Parcel resolves imports statically, so that file spells out each output path
+ * and the query value that selects it. Adding an entry here means adding a
+ * branch there as well.
+ */
+const FIXTURES = [
+  {
+    library: path.join(WEB_DIR, "libdoc", "DevLibrary.py"),
+    output: path.join(WEB_DIR, "libdoc", "testdata.ts"),
+  },
+  {
+    library: path.join(WEB_DIR, "libdoc", "DevLibraryRobotFormat.py"),
+    output: path.join(WEB_DIR, "libdoc", "testdata-robot.ts"),
+  },
+];
 // Stands in for the generation time, see `normalize`.
 const GENERATED = "2024-01-01T00:00:00+00:00";
 
@@ -54,11 +72,11 @@ function pythonExecutable() {
   return python;
 }
 
-function runLibdoc(python, specPath) {
+function runLibdoc(python, library, specPath) {
   const args = [
     "-m",
     "robot.libdoc",
-    path.relative(REPO_ROOT, LIBRARY),
+    path.relative(REPO_ROOT, library),
     specPath,
   ];
   const result = spawnSync(python, args, {
@@ -114,18 +132,32 @@ function normalizeItem(key, item) {
   return normalize(item);
 }
 
-async function generate({ quiet = false } = {}) {
+async function generate({ quiet = false, only = null } = {}) {
   const python = pythonExecutable();
+  const fixtures = only
+    ? FIXTURES.filter((fixture) => fixture.library === only)
+    : FIXTURES;
+  for (const fixture of fixtures) {
+    await generateFixture(python, fixture, quiet);
+  }
+}
+
+async function generateFixture(python, fixture, quiet) {
+  const library = path.basename(fixture.library);
+  const output = path
+    .relative(WEB_DIR, fixture.output)
+    .split(path.sep)
+    .join("/");
   const tmp = mkdtempSync(path.join(tmpdir(), "libdoc-testdata-"));
   try {
-    const specPath = path.join(tmp, "DevLibrary.json");
-    runLibdoc(python, specPath);
+    const specPath = path.join(tmp, "spec.json");
+    runLibdoc(python, fixture.library, specPath);
     const spec = normalize(JSON.parse(readFileSync(specPath, "utf8")));
     const source = [
       "// Development fixture rendered by `npm start`, generated with Libdoc from",
-      "// libdoc/DevLibrary.py. Add a case to the UI by adding a keyword there.",
+      `// libdoc/${library}. Add a case to the UI by adding a keyword there.`,
       "//",
-      "// Do not edit by hand: run `npm run testdata`, or just save DevLibrary.py",
+      `// Do not edit by hand: run \`npm run testdata\`, or just save ${library}`,
       "// while `npm start` is running.",
       'import type { Libdoc } from "./types";',
       "",
@@ -134,16 +166,16 @@ async function generate({ quiet = false } = {}) {
       "export { DATA };",
       "",
     ].join("\n");
-    const config = await prettier.resolveConfig(OUTPUT);
+    const config = await prettier.resolveConfig(fixture.output);
     writeFileSync(
-      OUTPUT,
-      await prettier.format(source, { ...config, filepath: OUTPUT }),
+      fixture.output,
+      await prettier.format(source, { ...config, filepath: fixture.output }),
     );
     if (!quiet) {
       const kws = spec.keywords.length;
       const types = spec.typedocs.length;
       console.log(
-        `Generated libdoc/testdata.ts from DevLibrary.py: ${kws} keywords, ${types} types.`,
+        `Generated ${output} from ${library}: ${kws} keywords, ${types} types.`,
       );
     }
   } finally {
@@ -152,7 +184,7 @@ async function generate({ quiet = false } = {}) {
 }
 
 /**
- * A failure never stops the dev server: the previously generated fixture is
+ * A failure never stops the dev server: the previously generated fixtures are
  * committed, so the frontend still has something to render.
  */
 async function generateOrWarn(options) {
@@ -161,7 +193,7 @@ async function generateOrWarn(options) {
     return true;
   } catch (error) {
     console.warn(
-      `\n⚠ Could not generate libdoc/testdata.ts, using the committed one.\n${error.message}\n`,
+      `\n⚠ Could not generate the development fixtures, using the committed ones.\n${error.message}\n`,
     );
     return false;
   }
@@ -171,4 +203,4 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   await generateOrWarn({ quiet: process.argv.includes("--quiet") });
 }
 
-export { generate, generateOrWarn, LIBRARY };
+export { generate, generateOrWarn, FIXTURES };
