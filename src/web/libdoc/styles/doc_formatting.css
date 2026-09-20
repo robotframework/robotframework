@@ -34,11 +34,19 @@
   display: block;
   margin-bottom: 1em;
 }
+/* The gutter is bounded by what documentation tables are really used for. Besides
+   tabular data, the ROBOT documentation format has long been used to lay Robot data
+   out in columns, and such tables are wide already: the standard libraries carried
+   examples up to six columns wide before they were converted to Markdown, and
+   third-party libraries still do, because ROBOT is the default format. Measured on
+   one of those, this padding leaves the table a few pixels inside a default window.
+   Wider cells push it past its container, where it wraps and loses the column
+   alignment that made the example readable. */
 .doc table th,
 .doc table td {
   border: 1px solid var(--border-color);
   background: transparent;
-  padding: 0.1em 0.3em;
+  padding: 0.25em 0.5em;
   height: 1.2em;
 }
 .doc table th {
