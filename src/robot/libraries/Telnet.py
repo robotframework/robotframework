@@ -823,7 +823,7 @@ class TelnetConnection(telnetlib.Telnet):
             level: Default log level to use for logging.
 
         Returns:
-            The dld default log level.
+            The old default log level.
 
         The old default log level is returned and can be used to restore the
         log level later.
