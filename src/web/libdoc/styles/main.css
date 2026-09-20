@@ -1076,8 +1076,13 @@ h4 {
     display: table-cell;
   }
 
-  /* Room for an exception name of ordinary length, so that neighbouring rows
-     start their documentation at the same place. */
+  /* A floor under the first column, so that a short name does not leave the
+     columns after it crowded against it: an exception name in the tables
+     below, an argument name in the one above. Seven rem is about thirteen
+     monospace characters, which covers nine in ten of the argument names in
+     the standard libraries. It is a minimum and not an alignment: a longer
+     name still widens the column. */
+  .arguments-table .arg-col-name,
   .return-info-table .arg-col-type,
   .raises-table .arg-col-type {
     min-width: 7rem;
