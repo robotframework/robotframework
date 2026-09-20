@@ -195,12 +195,8 @@ Admonitions can contain tables and indented code blocks
     ...    model=${MODEL}[keywords][0]
 
 Fenced code blocks do not work inside admonitions
-    [Documentation]    Python-Markdown's Fenced Code Block plugin only supports
-    ...                fenced code blocks at the document root level, so a fence
-    ...                inside an admonition is not recognized and its content
-    ...                ends up as an inline code span. The limitation is
-    ...                documented in the User Guide and this test is a reminder
-    ...                in case the plugin is ever replaced.
+    [Documentation]    Python-Markdown's Fenced Code Block plugin only
+    ...                supports fenced code blocks at the document root level.
     <p>Fenced code blocks do not, because Python-Markdown's Fenced Code Block
     ...    plugin only supports them at the document root level:</p>
     ...    <p><code>Not a code block!</code></p>

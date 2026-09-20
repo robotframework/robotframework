@@ -8,7 +8,7 @@ import type { Libdoc } from "./types";
 const DATA: Libdoc = {
   specversion: 4,
   name: "DevLibrary",
-  doc: '<p>Library for developing the Libdoc HTML frontend.</p>\n<div class="toc">\n<ul>\n<li><a href="#purpose">Purpose</a></li>\n<li><a href="#what-is-covered">What is covered</a></li>\n<li><a href="#formatting-examples">Formatting examples</a><ul>\n<li><a href="#lists">Lists</a></li>\n<li><a href="#code-blocks">Code blocks</a></li>\n</ul>\n</li>\n</ul>\n</div>\n<h2 id="purpose">Purpose</h2>\n<p>This library exists only to produce the development fixture rendered by\n<code>npm start</code>. It is not shipped and it is not used by any test. Every keyword\nhere earns its place by exercising something the frontend renders, so adding a\nkeyword is how you add a case to the fixture.</p>\n<p>Keywords are named after the case they present rather than after anything a\nbrowser library would do. The library is not pretending to be a real one, and\na name that says what is being rendered is easier to find when a rendering\nbug needs reproducing. What the keywords <em>accept and return</em> is a different\nmatter: do not add types, argument kinds or documentation structures that a\nreal library could not produce, because the point is to render what Libdoc\nactually receives.</p>\n<p>Run <code>npm run testdata</code> to regenerate <code>testdata.ts</code> from this file. The dev\nserver does it for you whenever this file is saved.</p>\n<p><code>DevLibraryRobotFormat.py</code> is the counterpart of this library for the ROBOT\ndocumentation format, and covers the documentation tables only that format\nproduces.</p>\n<h2 id="what-is-covered">What is covered</h2>\n<table>\n<thead>\n<tr>\n<th>Case</th>\n<th>Keywords</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Type aliases</td>\n<td><a href="#Alias%20Inside%20Generic%20Type" title="&quot;Alias Inside Generic Type&quot; keyword">Alias Inside Generic Type</a>, <a href="#Alias%20Of%20None" title="&quot;Alias Of None&quot; keyword">Alias Of None</a>, <a href="#Alias%20Of%20Union" title="&quot;Alias Of Union&quot; keyword">Alias Of Union</a>, <a href="#Deeply%20Nested%20Aliases" title="&quot;Deeply Nested Aliases&quot; keyword">Deeply Nested Aliases</a>, <a href="#Parameterized%20Alias" title="&quot;Parameterized Alias&quot; keyword">Parameterized Alias</a>, <a href="#Recursive%20Alias" title="&quot;Recursive Alias&quot; keyword">Recursive Alias</a></td>\n</tr>\n<tr>\n<td>Enums</td>\n<td><a href="#Enum%20Arguments" title="&quot;Enum Arguments&quot; keyword">Enum Arguments</a>, <a href="#Enum%20With%20Integer%20Values" title="&quot;Enum With Integer Values&quot; keyword">Enum With Integer Values</a></td>\n</tr>\n<tr>\n<td>Literals</td>\n<td><a href="#Literal%20With%20Mixed%20Types" title="&quot;Literal With Mixed Types&quot; keyword">Literal With Mixed Types</a></td>\n</tr>\n<tr>\n<td>TypedDicts</td>\n<td><a href="#Alias%20Of%20TypedDict" title="&quot;Alias Of TypedDict&quot; keyword">Alias Of TypedDict</a>, <a href="#TypedDict%20Argument%20And%20Return" title="&quot;TypedDict Argument And Return&quot; keyword">TypedDict Argument And Return</a></td>\n</tr>\n<tr>\n<td>Custom types</td>\n<td><a href="#Custom%20Type%20Documented%20By%20Class" title="&quot;Custom Type Documented By Class&quot; keyword">Custom Type Documented By Class</a>, <a href="#Custom%20Type%20With%20Converter%20Method" title="&quot;Custom Type With Converter Method&quot; keyword">Custom Type With Converter Method</a></td>\n</tr>\n<tr>\n<td>Generics</td>\n<td><a href="#Nested%20Generic%20Type" title="&quot;Nested Generic Type&quot; keyword">Nested Generic Type</a></td>\n</tr>\n<tr>\n<td>Argument kinds</td>\n<td><a href="#All%20Argument%20Kinds" title="&quot;All Argument Kinds&quot; keyword">All Argument Kinds</a>, <a href="#No%20Arguments" title="&quot;No Arguments&quot; keyword">No Arguments</a></td>\n</tr>\n<tr>\n<td>Argument documentation</td>\n<td><a href="#Long%20Argument%20Documentation" title="&quot;Long Argument Documentation&quot; keyword">Long Argument Documentation</a></td>\n</tr>\n<tr>\n<td>Returns and raises</td>\n<td><a href="#Returns%20And%20Raises" title="&quot;Returns And Raises&quot; keyword">Returns And Raises</a></td>\n</tr>\n<tr>\n<td>Deprecation</td>\n<td><a href="#Deprecated%20Keyword" title="&quot;Deprecated Keyword&quot; keyword">Deprecated Keyword</a></td>\n</tr>\n</tbody>\n</table>\n<div class="admonition note">\n<p class="admonition-title">Note</p>\n<p>Documentation is written in Markdown, so this text also covers the Markdown\nfeatures the frontend has to render. Each row of the table above is one\nsource line: a row wrapped onto a second line becomes a second row.</p>\n</div>\n<div class="admonition tip">\n<p class="admonition-title">Admonitions have optional titles</p>\n<p>And they nest:</p>\n<div class="admonition warning">\n<p class="admonition-title">Warning</p>\n<p>Do not add cases here that a real library could not produce.</p>\n</div>\n</div>\n<div class="admonition important">\n<p class="admonition-title">Admonitions hold more than paragraphs</p>\n<p>Everything that can appear in documentation can appear inside one, and\neach kind has to clear the border on its own.</p>\n<ul>\n<li>A list item.<ul>\n<li>A nested one.</li>\n</ul>\n</li>\n</ul>\n<table>\n<thead>\n<tr>\n<th>Kind</th>\n<th>Clears the border</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Lists</td>\n<td>yes</td>\n</tr>\n<tr>\n<td>Tables</td>\n<td>yes</td>\n</tr>\n<tr>\n<td>Code blocks</td>\n<td>yes</td>\n</tr>\n</tbody>\n</table>\n<div class="code"><pre><span></span><code>*** Test Cases ***\nExample\n    No Arguments\n</code></pre></div>\n\n<p>The code block above is indented rather than fenced. Python-Markdown\nsupports fenced blocks only at the document root level, so one written\ninside an admonition is not recognized.</p>\n</div>\n<h2 id="formatting-examples">Formatting examples</h2>\n<p>Basic formatting such as <strong>bold</strong>, <em>italics</em> and <code>code</code> works, and so do links\nto keywords like <a href="#Returns%20And%20Raises" title="&quot;Returns And Raises&quot; keyword">Returns And Raises</a>, to types like <a href="#type-integer" title="&quot;integer&quot; type">int</a> and to sections like\n<a href="#purpose" title="&quot;Purpose&quot; section">Purpose</a>.</p>\n<h3 id="lists">Lists</h3>\n<ul>\n<li>Unordered item.<ul>\n<li>Nested item.</li>\n<li>Another nested item.</li>\n</ul>\n</li>\n<li>Item with an ordered sublist.<ol>\n<li>First.</li>\n<li>Second.</li>\n</ol>\n</li>\n</ul>\n<h3 id="code-blocks">Code blocks</h3>\n<div class="code"><pre><span></span><code><span class="gh">*** Test Cases ***</span>\n<span class="gu">Example</span>\n<span class="p">    </span><span class="nf">Enum Arguments</span><span class="p">    </span><span class="s">id=submit</span><span class="p">    </span><span class="s">button=right</span>\n</code></pre></div>',
+  doc: '<p>Library for developing the Libdoc HTML frontend.</p>\n<div class="toc">\n<ul>\n<li><a href="#purpose">Purpose</a></li>\n<li><a href="#what-is-covered">What is covered</a></li>\n<li><a href="#formatting-examples">Formatting examples</a><ul>\n<li><a href="#lists">Lists</a></li>\n<li><a href="#code-blocks">Code blocks</a></li>\n</ul>\n</li>\n</ul>\n</div>\n<h2 id="purpose">Purpose</h2>\n<p>This library exists only to produce the development fixture rendered by\n<code>npm start</code>. It is not shipped and it is not used by any test. Every keyword\nhere earns its place by exercising something the frontend renders, so adding a\nkeyword is how you add a case to the fixture.</p>\n<p>Keywords are named after the case they present rather than after anything a\nbrowser library would do. The library is not pretending to be a real one, and\na name that says what is being rendered is easier to find when a rendering\nbug needs reproducing. What the keywords <em>accept and return</em> is a different\nmatter: do not add types, argument kinds or documentation structures that a\nreal library could not produce, because the point is to render what Libdoc\nactually receives.</p>\n<p>Run <code>npm run testdata</code> to regenerate <code>testdata.ts</code> from this file. The dev\nserver does it for you whenever this file is saved.</p>\n<p><code>DevLibraryRobotFormat.py</code> is the counterpart of this library for the ROBOT\ndocumentation format, and covers the documentation tables only that format\nproduces.</p>\n<h2 id="what-is-covered">What is covered</h2>\n<table>\n<thead>\n<tr>\n<th>Case</th>\n<th>Keywords</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Type aliases</td>\n<td><a href="#Alias%20Inside%20Generic%20Type" title="&quot;Alias Inside Generic Type&quot; keyword">Alias Inside Generic Type</a>, <a href="#Alias%20Of%20None" title="&quot;Alias Of None&quot; keyword">Alias Of None</a>, <a href="#Alias%20Of%20Union" title="&quot;Alias Of Union&quot; keyword">Alias Of Union</a>, <a href="#Deeply%20Nested%20Aliases" title="&quot;Deeply Nested Aliases&quot; keyword">Deeply Nested Aliases</a>, <a href="#Parameterized%20Alias" title="&quot;Parameterized Alias&quot; keyword">Parameterized Alias</a>, <a href="#Recursive%20Alias" title="&quot;Recursive Alias&quot; keyword">Recursive Alias</a></td>\n</tr>\n<tr>\n<td>Enums</td>\n<td><a href="#Enum%20Arguments" title="&quot;Enum Arguments&quot; keyword">Enum Arguments</a>, <a href="#Enum%20With%20Integer%20Values" title="&quot;Enum With Integer Values&quot; keyword">Enum With Integer Values</a></td>\n</tr>\n<tr>\n<td>Literals</td>\n<td><a href="#Literal%20With%20Mixed%20Types" title="&quot;Literal With Mixed Types&quot; keyword">Literal With Mixed Types</a></td>\n</tr>\n<tr>\n<td>TypedDicts</td>\n<td><a href="#Alias%20Of%20TypedDict" title="&quot;Alias Of TypedDict&quot; keyword">Alias Of TypedDict</a>, <a href="#TypedDict%20Argument%20And%20Return" title="&quot;TypedDict Argument And Return&quot; keyword">TypedDict Argument And Return</a></td>\n</tr>\n<tr>\n<td>Custom types</td>\n<td><a href="#Custom%20Type%20Documented%20By%20Class" title="&quot;Custom Type Documented By Class&quot; keyword">Custom Type Documented By Class</a>, <a href="#Custom%20Type%20With%20Converter%20Method" title="&quot;Custom Type With Converter Method&quot; keyword">Custom Type With Converter Method</a></td>\n</tr>\n<tr>\n<td>Generics</td>\n<td><a href="#Nested%20Generic%20Type" title="&quot;Nested Generic Type&quot; keyword">Nested Generic Type</a></td>\n</tr>\n<tr>\n<td>Argument kinds</td>\n<td><a href="#All%20Argument%20Kinds" title="&quot;All Argument Kinds&quot; keyword">All Argument Kinds</a>, <a href="#No%20Arguments" title="&quot;No Arguments&quot; keyword">No Arguments</a></td>\n</tr>\n<tr>\n<td>Argument documentation</td>\n<td><a href="#Long%20Argument%20Documentation" title="&quot;Long Argument Documentation&quot; keyword">Long Argument Documentation</a></td>\n</tr>\n<tr>\n<td>Returns and raises</td>\n<td><a href="#Returns%20And%20Raises" title="&quot;Returns And Raises&quot; keyword">Returns And Raises</a>, <a href="#Return%20Without%20Type" title="&quot;Return Without Type&quot; keyword">Return Without Type</a></td>\n</tr>\n<tr>\n<td>Deprecation</td>\n<td><a href="#Deprecated%20Keyword" title="&quot;Deprecated Keyword&quot; keyword">Deprecated Keyword</a></td>\n</tr>\n</tbody>\n</table>\n<div class="admonition note">\n<p class="admonition-title">Note</p>\n<p>Documentation is written in Markdown, so this text also covers the Markdown\nfeatures the frontend has to render. Each row of the table above is one\nsource line: a row wrapped onto a second line becomes a second row.</p>\n</div>\n<div class="admonition tip">\n<p class="admonition-title">Admonitions have optional titles</p>\n<p>And they nest:</p>\n<div class="admonition warning">\n<p class="admonition-title">Warning</p>\n<p>Do not add cases here that a real library could not produce.</p>\n</div>\n</div>\n<div class="admonition important">\n<p class="admonition-title">Admonitions hold more than paragraphs</p>\n<p>Everything that can appear in documentation can appear inside one, and\neach kind has to clear the border on its own.</p>\n<ul>\n<li>A list item.<ul>\n<li>A nested one.</li>\n</ul>\n</li>\n</ul>\n<table>\n<thead>\n<tr>\n<th>Kind</th>\n<th>Clears the border</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Lists</td>\n<td>yes</td>\n</tr>\n<tr>\n<td>Tables</td>\n<td>yes</td>\n</tr>\n<tr>\n<td>Code blocks</td>\n<td>yes</td>\n</tr>\n</tbody>\n</table>\n<div class="code"><pre><span></span><code>*** Test Cases ***\nExample\n    No Arguments\n</code></pre></div>\n\n<p>The code block above is indented rather than fenced. Python-Markdown\nsupports fenced blocks only at the document root level, so one written\ninside an admonition is not recognized.</p>\n</div>\n<h2 id="formatting-examples">Formatting examples</h2>\n<p>Basic formatting such as <strong>bold</strong>, <em>italics</em> and <code>code</code> works, and so do links\nto keywords like <a href="#Returns%20And%20Raises" title="&quot;Returns And Raises&quot; keyword">Returns And Raises</a>, to types like <a href="#type-integer" title="&quot;integer&quot; type">int</a> and to sections like\n<a href="#purpose" title="&quot;Purpose&quot; section">Purpose</a>.</p>\n<h3 id="lists">Lists</h3>\n<ul>\n<li>Unordered item.<ul>\n<li>Nested item.</li>\n<li>Another nested item.</li>\n</ul>\n</li>\n<li>Item with an ordered sublist.<ol>\n<li>First.</li>\n<li>Second.</li>\n</ol>\n</li>\n</ul>\n<h3 id="code-blocks">Code blocks</h3>\n<div class="code"><pre><span></span><code><span class="gh">*** Test Cases ***</span>\n<span class="gu">Example</span>\n<span class="p">    </span><span class="nf">Enum Arguments</span><span class="p">    </span><span class="s">id=submit</span><span class="p">    </span><span class="s">button=right</span>\n</code></pre></div>',
   version: "1.2.3",
   generated: "2024-01-01T00:00:00+00:00",
   type: "LIBRARY",
@@ -188,7 +188,7 @@ const DATA: Libdoc = {
       raises: {},
       tags: ["aliases"],
       source: "src/web/libdoc/DevLibrary.py",
-      lineno: 280,
+      lineno: 299,
     },
     {
       name: "Alias Of None",
@@ -206,7 +206,7 @@ const DATA: Libdoc = {
       raises: {},
       tags: ["aliases", "returns"],
       source: "src/web/libdoc/DevLibrary.py",
-      lineno: 535,
+      lineno: 554,
     },
     {
       name: "Alias Of TypedDict",
@@ -264,7 +264,7 @@ const DATA: Libdoc = {
       raises: {},
       tags: ["aliases", "typeddicts"],
       source: "src/web/libdoc/DevLibrary.py",
-      lineno: 317,
+      lineno: 336,
     },
     {
       name: "Alias Of Union",
@@ -342,7 +342,7 @@ const DATA: Libdoc = {
       raises: {},
       tags: ["aliases"],
       source: "src/web/libdoc/DevLibrary.py",
-      lineno: 378,
+      lineno: 397,
     },
     {
       name: "All Argument Kinds",
@@ -427,7 +427,7 @@ const DATA: Libdoc = {
       raises: {},
       tags: ["arguments"],
       source: "src/web/libdoc/DevLibrary.py",
-      lineno: 508,
+      lineno: 527,
     },
     {
       name: "Custom Type Documented By Class",
@@ -455,7 +455,7 @@ const DATA: Libdoc = {
       raises: {},
       tags: ["custom types"],
       source: "src/web/libdoc/DevLibrary.py",
-      lineno: 479,
+      lineno: 498,
     },
     {
       name: "Custom Type With Converter Method",
@@ -489,7 +489,7 @@ const DATA: Libdoc = {
       raises: {},
       tags: ["custom types"],
       source: "src/web/libdoc/DevLibrary.py",
-      lineno: 462,
+      lineno: 481,
     },
     {
       name: "Deeply Nested Aliases",
@@ -593,7 +593,7 @@ const DATA: Libdoc = {
       raises: {},
       tags: ["aliases"],
       source: "src/web/libdoc/DevLibrary.py",
-      lineno: 299,
+      lineno: 318,
     },
     {
       name: "Deprecated Keyword",
@@ -645,7 +645,7 @@ const DATA: Libdoc = {
       raises: {},
       tags: ["deprecation"],
       source: "src/web/libdoc/DevLibrary.py",
-      lineno: 546,
+      lineno: 565,
       deprecated: true,
     },
     {
@@ -763,7 +763,7 @@ const DATA: Libdoc = {
       raises: {},
       tags: ["enums"],
       source: "src/web/libdoc/DevLibrary.py",
-      lineno: 349,
+      lineno: 368,
     },
     {
       name: "Literal With Mixed Types",
@@ -827,7 +827,7 @@ const DATA: Libdoc = {
       raises: {},
       tags: ["literals"],
       source: "src/web/libdoc/DevLibrary.py",
-      lineno: 366,
+      lineno: 385,
     },
     {
       name: "Long Argument Documentation",
@@ -855,7 +855,7 @@ const DATA: Libdoc = {
       raises: {},
       tags: ["arguments"],
       source: "src/web/libdoc/DevLibrary.py",
-      lineno: 395,
+      lineno: 414,
     },
     {
       name: "Nested Generic Type",
@@ -950,7 +950,7 @@ const DATA: Libdoc = {
       raises: {},
       tags: ["generics"],
       source: "src/web/libdoc/DevLibrary.py",
-      lineno: 491,
+      lineno: 510,
     },
     {
       name: "No Arguments",
@@ -962,7 +962,7 @@ const DATA: Libdoc = {
       raises: {},
       tags: ["arguments"],
       source: "src/web/libdoc/DevLibrary.py",
-      lineno: 528,
+      lineno: 547,
     },
     {
       name: "Parameterized Alias",
@@ -1028,7 +1028,7 @@ const DATA: Libdoc = {
       raises: {},
       tags: ["aliases"],
       source: "src/web/libdoc/DevLibrary.py",
-      lineno: 434,
+      lineno: 453,
     },
     {
       name: "Recursive Alias",
@@ -1122,7 +1122,35 @@ const DATA: Libdoc = {
       raises: {},
       tags: ["aliases"],
       source: "src/web/libdoc/DevLibrary.py",
-      lineno: 448,
+      lineno: 467,
+    },
+    {
+      name: "Return Without Type",
+      doc: "<p>Documents a return value that has no type.</p>\n<p>The keyword is not annotated, so Libdoc is given return documentation\nbut no return type. Nothing about this is unusual: an author who writes\na docstring is not obliged to annotate, and the frontend has to render\nthe result without leaving a column standing empty.</p>",
+      shortdoc: "Documents a return value that has no type.",
+      args: [
+        {
+          name: "value",
+          doc: "<p>a plain string.</p>",
+          type: {
+            name: "str",
+            typedoc: "string",
+            nested: [],
+            union: false,
+            alias: null,
+          },
+          defaultValue: null,
+          kind: "POSITIONAL_OR_NAMED",
+          required: true,
+          repr: "value: str",
+        },
+      ],
+      returnType: null,
+      returnDoc: "<p>The value that was given.</p>",
+      raises: {},
+      tags: ["returns"],
+      source: "src/web/libdoc/DevLibrary.py",
+      lineno: 280,
     },
     {
       name: "Returns And Raises",
@@ -1193,7 +1221,7 @@ const DATA: Libdoc = {
       raises: {},
       tags: ["typeddicts"],
       source: "src/web/libdoc/DevLibrary.py",
-      lineno: 333,
+      lineno: 352,
     },
   ],
   typedocs: [
@@ -1344,6 +1372,7 @@ const DATA: Libdoc = {
         "Nested Generic Type",
         "Parameterized Alias",
         "Recursive Alias",
+        "Return Without Type",
         "Returns And Raises",
       ],
       accepts: ["Any"],
