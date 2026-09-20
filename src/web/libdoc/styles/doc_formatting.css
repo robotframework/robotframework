@@ -140,8 +140,10 @@
 .doc .admonition .admonition-title {
   font-weight: bold;
   background-color: #448aff1a;
-  margin: -1em -1em 1em;
-  padding: 1em;
+  margin: -1em -1em 0.75em;
+  /* Less above and below than beside: the band is one line of text and the
+     horizontal padding has to line up with the content underneath it. */
+  padding: 0.5em 1em;
   border-radius: 0.175em 0.175em 0 0;
 }
 .doc .admonition.tip {
