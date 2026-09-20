@@ -119,6 +119,27 @@ def admonitions():
     > > GFM does not.
     >
     > Back in NOTE level.
+
+    > [!TIP] Other content
+    > Tables work:
+    >
+    > Kind | Works
+    > ---- | -----
+    > Tables | yes
+    > Indented code blocks | yes
+    >
+    > And so do indented code blocks:
+    >
+    >     *** Test Cases ***
+    >     Example
+    >         Keyword
+    >
+    > Fenced code blocks do not, because fences are handled by a preprocessor
+    > that runs before admonitions are parsed:
+    >
+    > ```
+    > Not a code block!
+    > ```
     """
 
 
