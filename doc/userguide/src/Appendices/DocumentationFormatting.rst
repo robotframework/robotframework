@@ -781,6 +781,10 @@ Example:
     hello("Robot")
     ```
 
+.. warning:: Fenced code blocks are only supported at the document root level.
+             They cannot be nested inside lists, admonitions, or other such
+             elements.
+
 Syntax highlighting
 '''''''''''''''''''
 
