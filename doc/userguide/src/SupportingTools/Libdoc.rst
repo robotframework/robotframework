@@ -414,7 +414,7 @@ the end of this chapter.
 __ `Libdoc HTML documentation`_
 __ `Libdoc examples`_
 __ `Detecting is Robot Framework running`_
-__ http://www.python.org/dev/peps/pep-0257
+__ https://www.python.org/dev/peps/pep-0257
 
 Dynamic libraries
 ~~~~~~~~~~~~~~~~~
@@ -663,7 +663,7 @@ languages that Pygments supports.
     - Custom links like reStructuredText__ are supported.
     - Linking to \`My Keyword\` works but requires backticks to be escaped.
 
-    __ http://docutils.sourceforge.net
+    __ https://docutils.sourceforge.net
 
     .. code:: robotframework
 

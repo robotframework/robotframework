@@ -118,8 +118,8 @@
 
 .. 1. Getting started
 
-.. _Creative Commons Attribution 3.0 Unported: http://creativecommons.org/licenses/by/3.0
-.. _Apache License 2.0: http://apache.org/licenses/LICENSE-2.0
+.. _Creative Commons Attribution 3.0 Unported: https://creativecommons.org/licenses/by/3.0
+.. _Apache License 2.0: https://apache.org/licenses/LICENSE-2.0
 
 .. 2. Creating test data
 
@@ -204,30 +204,30 @@
 
 .. 6. Misc
 
-.. _download page: http://downloads.robotframework.org
-.. _version control system: http://source.robotframework.org
-.. _previous User Guides: http://robotframework.org/robotframework/#user-guide
+.. _download page: https://downloads.robotframework.org
+.. _version control system: https://source.robotframework.org
+.. _previous User Guides: https://robotframework.org/robotframework/#user-guide
 .. _schema file: https://github.com/robotframework/robotframework/tree/master/doc/schema#readme
 
 .. API docs
 
-.. _API documentation: http://robot-framework.readthedocs.org
-.. _visitor interface: http://robot-framework.readthedocs.org/en/master/autodoc/robot.model.html#module-robot.model.visitor
-.. _running.TestSuite: http://robot-framework.readthedocs.org/en/master/autodoc/robot.running.html#robot.running.model.TestSuite
-.. _running.TestCase: http://robot-framework.readthedocs.org/en/master/autodoc/robot.running.html#robot.running.model.TestCase
-.. _running.Keyword: http://robot-framework.readthedocs.org/en/master/autodoc/robot.running.html#robot.running.model.Keyword
+.. _API documentation: https://robot-framework.readthedocs.org
+.. _visitor interface: https://robot-framework.readthedocs.org/en/master/autodoc/robot.model.html#module-robot.model.visitor
+.. _running.TestSuite: https://robot-framework.readthedocs.org/en/master/autodoc/robot.running.html#robot.running.model.TestSuite
+.. _running.TestCase: https://robot-framework.readthedocs.org/en/master/autodoc/robot.running.html#robot.running.model.TestCase
+.. _running.Keyword: https://robot-framework.readthedocs.org/en/master/autodoc/robot.running.html#robot.running.model.Keyword
 .. _running.UserKeyword: https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.resourcemodel.UserKeyword
 .. _running.LibraryKeyword: https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.librarykeyword.LibraryKeyword
 .. _running.InvalidKeyword: https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.invalidkeyword.InvalidKeyword
 .. _running.TestLibrary: https://robot-framework.readthedocs.io/en/stable/autodoc/robot.running.html#robot.running.testlibraries.TestLibrary
 .. _running.ResourceFile: https://robot-framework.readthedocs.io/en/stable/autodoc/robot.running.html#robot.running.resourcemodel.ResourceFile
 .. _running.Import: https://robot-framework.readthedocs.io/en/stable/autodoc/robot.running.html#robot.running.resourcemodel.Import
-.. _running model: http://robot-framework.readthedocs.org/en/master/autodoc/robot.running.html#module-robot.running.model
-.. _result.TestSuite: http://robot-framework.readthedocs.org/en/master/autodoc/robot.result.html#robot.result.model.TestSuite
-.. _result.TestCase: http://robot-framework.readthedocs.org/en/master/autodoc/robot.result.html#robot.result.model.TestCase
-.. _result.Keyword: http://robot-framework.readthedocs.org/en/master/autodoc/robot.result.html#robot.result.model.Keyword
-.. _result.Message: http://robot-framework.readthedocs.org/en/master/autodoc/robot.result.html#robot.result.model.Message
-.. _result model: http://robot-framework.readthedocs.org/en/master/autodoc/robot.result.html#module-robot.result.model
+.. _running model: https://robot-framework.readthedocs.org/en/master/autodoc/robot.running.html#module-robot.running.model
+.. _result.TestSuite: https://robot-framework.readthedocs.org/en/master/autodoc/robot.result.html#robot.result.model.TestSuite
+.. _result.TestCase: https://robot-framework.readthedocs.org/en/master/autodoc/robot.result.html#robot.result.model.TestCase
+.. _result.Keyword: https://robot-framework.readthedocs.org/en/master/autodoc/robot.result.html#robot.result.model.Keyword
+.. _result.Message: https://robot-framework.readthedocs.org/en/master/autodoc/robot.result.html#robot.result.model.Message
+.. _result model: https://robot-framework.readthedocs.org/en/master/autodoc/robot.result.html#module-robot.result.model
 .. _ListenerV2: https://robot-framework.readthedocs.io/en/master/autodoc/robot.api.html#robot.api.interfaces.ListenerV2
 .. _ListenerV3: https://robot-framework.readthedocs.io/en/master/autodoc/robot.api.html#robot.api.interfaces.ListenerV3
 
@@ -235,13 +235,13 @@
 
 .. _reStructuredText: https://en.wikipedia.org/wiki/ReStructuredText
 .. _docutils: https://pypi.python.org/pypi/docutils
-.. _Sphinx: http://sphinx-doc.org/
-.. _Pygments: http://pygments.org/
-.. _Read the Docs: http://readthedocs.org
-.. _AutoIT: http://www.autoitscript.com/autoit3
-.. _XML-RPC: http://www.xmlrpc.com/
+.. _Sphinx: https://sphinx-doc.org/
+.. _Pygments: https://pygments.org/
+.. _Read the Docs: https://readthedocs.org
+.. _AutoIT: https://www.autoitscript.com/autoit3
+.. _XML-RPC: https://www.xmlrpc.com/
 .. _RIDE: https://github.com/robotframework/RIDE
-.. _Slack: http://slack.robotframework.org
+.. _Slack: https://slack.robotframework.org
 .. _Markdown: https://en.wikipedia.org/wiki/Markdown
 .. _CommonMark: https://spec.commonmark.org
 .. _Python-Markdown: https://python-markdown.github.io

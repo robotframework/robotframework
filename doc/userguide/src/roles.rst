@@ -5,7 +5,7 @@
 
    Standard roles are used as much as possible. There are others but these
    make most sense in our context. For more information see
-   http://docutils.sourceforge.net/docs/ref/rst/roles.html
+   https://docutils.sourceforge.net/docs/ref/rst/roles.html
 
    code       Code, CLI examples, GUI entries, variables, etc. Alias `example`
               configured below.
@@ -18,7 +18,7 @@
    ------------
 
    Need to be defined here but using these eases migrating to Sphinx in the
-   future. For details see http://sphinx-doc.org/markup/inline.html
+   future. For details see https://sphinx-doc.org/markup/inline.html
 
    option     Command line options. Notice that examples should use code role.
               Notice also that standard reST uses option class in option lists.

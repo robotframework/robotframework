@@ -173,8 +173,8 @@ They nowadays contain separate `<testsuite>` elements for each suite,
 `<testsuite>` elements have `timestamp` attribute, and `suite documentation`_
 and metadata__ is stored as `<property>` elements.
 
-__ http://en.wikipedia.org/wiki/XUnit
-__ http://jenkins-ci.org
+__ https://en.wikipedia.org/wiki/XUnit
+__ https://jenkins-ci.org
 __ https://wiki.jenkins-ci.org/display/JENKINS/Robot+Framework+Plugin
 __ `Free suite metadata`_
 

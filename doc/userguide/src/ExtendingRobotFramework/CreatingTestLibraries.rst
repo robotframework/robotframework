@@ -30,8 +30,8 @@ programming languages. A good example of this approach is the `Remote
 library`_, and another widely used approaches is running external
 scripts or tools as separate processes.
 
-__ http://docs.python.org/c-api/index.html
-__ http://docs.python.org/library/ctypes.html
+__ https://docs.python.org/c-api/index.html
+__ https://docs.python.org/library/ctypes.html
 
 Different library APIs
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -2763,7 +2763,7 @@ is that this approach works also with the `remote library interface`_.
         timestamp = int(time.time() * 1000)
         print(f'*INFO:{timestamp}* Message with timestamp')
 
-.. _Unix epoch: http://en.wikipedia.org/wiki/Unix_time
+.. _Unix epoch: https://en.wikipedia.org/wiki/Unix_time
 __ `Using log levels`_
 
 Logging to console
@@ -2927,7 +2927,7 @@ the messages are redirected automatically to Python's standard logging__
 module.
 
 __ https://robot-framework.readthedocs.io/en/master/autodoc/robot.api.html#module-robot.api.logger
-__ http://docs.python.org/library/logging.html
+__ https://docs.python.org/library/logging.html
 
 Using Python's standard `logging` module
 ''''''''''''''''''''''''''''''''''''''''
@@ -2959,7 +2959,7 @@ is mapped to `ERROR`. Custom log levels are mapped to the closest
 standard level smaller than the custom level. For example, a level
 between `INFO` and `WARNING` is mapped to Robot Framework's `INFO` level.
 
-__ http://docs.python.org/library/logging.html
+__ https://docs.python.org/library/logging.html
 
 Logging during library initialization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -3179,7 +3179,7 @@ text formats. See the `Documentation format`_ section for information how to
 set the format in the library source code and Libdoc_ chapter for more
 information about the formats in general.
 
-.. _docstrings: http://www.python.org/dev/peps/pep-0257
+.. _docstrings: https://www.python.org/dev/peps/pep-0257
 __ `Arguments, return values, exceptions and tags`_
 
 Testing libraries
