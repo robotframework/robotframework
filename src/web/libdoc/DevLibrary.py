@@ -176,6 +176,27 @@ class DevLibrary:
     > > [!WARNING]
     > > Do not add cases here that a real library could not produce.
 
+    > [!IMPORTANT] Admonitions hold more than paragraphs
+    > Everything that can appear in documentation can appear inside one, and
+    > each kind has to clear the border on its own.
+    >
+    > - A list item.
+    >     - A nested one.
+    >
+    > Kind | Clears the border
+    > ---- | -----------------
+    > Lists | yes
+    > Tables | yes
+    > Code blocks | yes
+    >
+    >     *** Test Cases ***
+    >     Example
+    >         No Arguments
+    >
+    > The code block above is indented rather than fenced. Python-Markdown
+    > supports fenced blocks only at the document root level, so one written
+    > inside an admonition is not recognized.
+
     # Formatting examples
 
     Basic formatting such as **bold**, *italics* and `code` works, and so do links
