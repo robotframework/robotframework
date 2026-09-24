@@ -9,7 +9,7 @@ from enum import Enum, IntEnum
 from subprocess import Popen
 from typing import Literal, TypedDict
 
-from robot.api.deco import library
+from robot.api.deco import keyword, library
 
 type Locator = str
 """Element locator, an alias of a standard type."""
@@ -135,25 +135,40 @@ class DevLibrary:
     here earns its place by exercising something the frontend renders, so adding a
     keyword is how you add a case to the fixture.
 
+    Keywords are named after the case they present rather than after anything a
+    browser library would do. The library is not pretending to be a real one, and
+    a name that says what is being rendered is easier to find when a rendering
+    bug needs reproducing. What the keywords *accept and return* is a different
+    matter: do not add types, argument kinds or documentation structures that a
+    real library could not produce, because the point is to render what Libdoc
+    actually receives.
+
     Run `npm run testdata` to regenerate `testdata.ts` from this file. The dev
     server does it for you whenever this file is saved.
 
+    `DevLibraryRobotFormat.py` is the counterpart of this library for the ROBOT
+    documentation format, and covers the documentation tables only that format
+    produces.
+
     # What is covered
 
-    Type | Where to look
-    ---- | -------------
-    Type aliases | [Click], [Connect To Browser], [Evaluate Json], [Box Value],
-        [Close All Browsers]
-    Nested type aliases | [Scroll To Element]
-    Long argument documentation | [Attach To Session]
-    Enums | [Click], [Set Log Level]
-    TypedDicts | [Save Page As Pdf], [Set Viewport Size]
-    Custom types | [Parse Selector], [Set Credentials]
-    Argument kinds | [All Argument Kinds]
+    Case | Keywords
+    ---- | --------
+    Type aliases | [Alias Inside Generic Type], [Alias Of None], [Alias Of Union], [Deeply Nested Aliases], [Parameterized Alias], [Recursive Alias]
+    Enums | [Enum Arguments], [Enum With Integer Values]
+    Literals | [Literal With Mixed Types]
+    TypedDicts | [Alias Of TypedDict], [TypedDict Argument And Return]
+    Custom types | [Custom Type Documented By Class], [Custom Type With Converter Method]
+    Generics | [Nested Generic Type]
+    Argument kinds | [All Argument Kinds], [No Arguments]
+    Argument documentation | [Long Argument Documentation]
+    Returns and raises | [Returns And Raises], [Return Without Type]
+    Deprecation | [Deprecated Keyword]
 
     > [!NOTE]
     > Documentation is written in Markdown, so this text also covers the Markdown
-    > features the frontend has to render.
+    > features the frontend has to render. Each row of the table above is one
+    > source line: a row wrapped onto a second line becomes a second row.
 
     > [!TIP] Admonitions have optional titles
     > And they nest:
@@ -161,10 +176,31 @@ class DevLibrary:
     > > [!WARNING]
     > > Do not add cases here that a real library could not produce.
 
+    > [!IMPORTANT] Admonitions hold more than paragraphs
+    > Everything that can appear in documentation can appear inside one, and
+    > each kind has to clear the border on its own.
+    >
+    > - A list item.
+    >     - A nested one.
+    >
+    > Kind | Clears the border
+    > ---- | -----------------
+    > Lists | yes
+    > Tables | yes
+    > Code blocks | yes
+    >
+    >     *** Test Cases ***
+    >     Example
+    >         No Arguments
+    >
+    > The code block above is indented rather than fenced. Python-Markdown
+    > supports fenced blocks only at the document root level, so one written
+    > inside an admonition is not recognized.
+
     # Formatting examples
 
     Basic formatting such as **bold**, *italics* and `code` works, and so do links
-    to keywords like [Get Text], to types like [int] and to sections like
+    to keywords like [Returns And Raises], to types like [int] and to sections like
     [Purpose].
 
     ## Lists
@@ -181,7 +217,7 @@ class DevLibrary:
     ```robotframework
     *** Test Cases ***
     Example
-        Click    id=submit    button=right
+        Enum Arguments    id=submit    button=right
     ```
     """
 
@@ -194,34 +230,37 @@ class DevLibrary:
         """Configures the library when it is imported.
 
         Args:
-            browser: browser to open.
-            timeout: default timeout for keywords that wait.
-            options: extra options passed to the browser.
+            browser: a union of an enum and a standard type.
+            timeout: a type Libdoc renders with a converter of its own.
+            options: an optional generic type.
         """
 
-    def click(
+    def enum_arguments(
         self,
         selector: Locator,
         button: MouseButton = MouseButton.left,
         *,
         modifiers: Modifier | None = None,
     ):
-        """Clicks the element matching `selector`.
+        """Takes an enum, an alias of an enum, and an alias of a standard type.
+
+        The enum members have string values, so no value is shown next to the
+        name. Tags are rendered as well.
 
         Args:
-            selector: element to click. Uses a type alias of a standard type.
-            button: which mouse button to use. Uses an enum.
-            modifiers: modifier key to hold down. Uses an alias of an enum.
+            selector: uses a type alias of a standard type.
+            button: uses an enum.
+            modifiers: uses an alias of an enum.
 
         Tags:
-            action, mouse
+            arguments, enums
         """
 
-    def get_text(self, selector: Locator) -> str:
-        """Returns the text of the element matching `selector`.
+    def returns_and_raises(self, selector: Locator) -> str:
+        """Documents a return value and two exceptions.
 
-        The `selector` argument uses the same alias as [Click], so the alias is
-        used by more than one keyword.
+        The `selector` argument uses the same alias as [Enum Arguments], so the
+        alias is used by more than one keyword.
 
         Args:
             selector: element to read.
@@ -234,117 +273,150 @@ class DevLibrary:
             TypeError: if the selector is not a string.
 
         Tags:
-            getter
+            returns
         """
         return ""
 
-    def highlight_elements(
+    def return_without_type(self, value: str):
+        """Documents a return value that has no type.
+
+        The keyword is not annotated, so Libdoc is given return documentation
+        but no return type. Nothing about this is unusual: an author who writes
+        a docstring is not obliged to annotate, and the frontend has to render
+        the result without leaving a column standing empty.
+
+        Args:
+            value: a plain string.
+
+        Returns:
+            The value that was given.
+
+        Tags:
+            returns
+        """
+        return value
+
+    def alias_inside_generic_type(
         self,
         selectors: list[Locator],
         duration: timedelta = timedelta(seconds=2),
     ) -> int:
-        """Highlights all elements matching the given selectors.
+        """Takes an alias nested inside a generic type.
 
         Args:
-            selectors: elements to highlight. The alias is nested inside a
-                generic type.
-            duration: how long the highlight is shown.
+            selectors: the alias is nested inside `list`.
+            duration: a type Libdoc renders with a converter of its own.
 
         Returns:
-            How many elements were highlighted.
+            How many elements matched.
 
         Tags:
-            action
+            aliases
         """
         return 0
 
-    def scroll_to_element(
+    def deeply_nested_aliases(
         self,
         target: WebElement | str | list[WebElement | str | list[Locator]],
         smooth: bool = True,
     ):
-        """Scrolls to the given element.
+        """Takes aliases nested inside other types and inside each other.
+
+        This is the deepest type the UI renders.
 
         Args:
-            target: element to scroll to. Aliases nested inside other types and
-                inside each other, which is the deepest type the UI renders.
-            smooth: whether the scrolling is animated.
+            target: aliases nested inside other types and inside each other.
+            smooth: a plain boolean, for contrast.
 
         Tags:
-            action
+            aliases
         """
 
-    def save_page_as_pdf(self, path: str, margins: Margins, scale: float = 1.0):
-        """Saves the current page as a PDF file.
+    @keyword("Alias Of TypedDict")
+    def alias_of_typeddict(self, path: str, margins: Margins, scale: float = 1.0):
+        """Takes an alias of a TypedDict.
+
+        The name is set with `@keyword`, because the one derived from the method
+        name would lose the capital `D`.
 
         Args:
-            path: where the PDF is written.
-            margins: page margins. Uses an alias of a TypedDict.
-            scale: scale of the rendered page.
+            path: a plain string.
+            margins: uses an alias of a TypedDict.
+            scale: a plain float.
 
         Tags:
-            action
+            aliases, typeddicts
         """
 
-    def set_viewport_size(self, size: ViewportSize) -> ViewportSize:
-        """Sets the viewport size.
+    @keyword("TypedDict Argument And Return")
+    def typeddict_argument_and_return(self, size: ViewportSize) -> ViewportSize:
+        """Takes and returns a TypedDict directly, without an alias.
+
+        The name is set with `@keyword`, as in [Alias Of TypedDict].
 
         Args:
-            size: new size. Uses a TypedDict directly.
+            size: uses a TypedDict directly.
 
         Returns:
-            The previous size.
+            The previous size, using the same TypedDict.
 
         Tags:
-            setter
+            typeddicts
         """
         return {"width": 800, "height": 600}
 
-    def set_log_level(self, level: LogLevel = LogLevel.INFO) -> LogLevel:
-        """Sets the log level.
+    def enum_with_integer_values(self, level: LogLevel = LogLevel.INFO) -> LogLevel:
+        """Takes and returns an enum whose members have integer values.
+
+        The values are shown next to the names, unlike the string-valued enum in
+        [Enum Arguments].
 
         Args:
-            level: new level. Uses an enum with integer values.
+            level: uses an enum with integer values.
 
         Returns:
             The previous level.
 
         Tags:
-            setter
+            enums
         """
         return LogLevel.INFO
 
-    def select_strategy(self, strategy: Literal["css", "xpath", "text", 1, True]):
-        """Selects the strategy used to find elements.
+    def literal_with_mixed_types(
+        self, strategy: Literal["css", "xpath", "text", 1, True]
+    ):
+        """Takes a literal whose members are not all of the same type.
 
         Args:
-            strategy: strategy to use. Uses a literal with mixed member types.
+            strategy: uses a literal with mixed member types.
 
         Tags:
-            setter
+            literals
         """
 
-    def connect_to_browser(self, handle: Handle = None) -> Handle:
-        """Connects to an already running browser.
+    def alias_of_union(self, handle: Handle = None) -> Handle:
+        """Takes and returns an alias of a union.
+
+        A union has no single type to document, which is what this case is here
+        to show.
 
         Args:
-            handle: browser to connect to. Uses an alias of a union, which has
-                no single type to document.
+            handle: uses an alias of a union.
 
         Returns:
             The previous handle.
 
         Tags:
-            action
+            aliases
         """
         return None
 
-    def attach_to_session(self, session: str = ""):
-        """Attaches to an already running browser session.
+    def long_argument_documentation(self, session: str = ""):
+        """Documents one argument at length, with code blocks inside it.
 
         Args:
             session: session to attach to. Must be a session id returned by
-                [Connect To Browser], or the name of a session stored in the
+                another keyword, or the name of a session stored in the
                 `sessions` mapping of the library.
 
                 A session id can be read from Python, which is how another
@@ -368,80 +440,95 @@ class DevLibrary:
                 *** Test Cases ***
                 Example
                     ${session} =    Get Browser Session
-                    Attach To Session    ${session}
+                    Long Argument Documentation    ${session}
                 ```
 
                 Leaving the argument empty attaches to the session that was
                 used last.
 
         Tags:
-            action
+            arguments
         """
 
-    def box_value(self, value: Boxed[str] = None) -> Boxed[int]:
-        """Boxes a value.
+    def parameterized_alias(self, value: Boxed[str] = None) -> Boxed[int]:
+        """Takes and returns a parameterized alias, with different parameters.
 
         Args:
-            value: value to box. Uses a parameterized alias.
+            value: uses a parameterized alias.
 
         Returns:
             The boxed value, using the same alias with other parameters.
+
+        Tags:
+            aliases
         """
         return None
 
-    def evaluate_json(self, data: Json) -> Json:
-        """Evaluates JSON data.
+    def recursive_alias(self, data: Json) -> Json:
+        """Takes and returns an alias that refers to itself.
 
         Args:
-            data: data to evaluate. Uses a recursive alias.
+            data: uses a recursive alias.
 
         Returns:
             The evaluated data.
+
+        Tags:
+            aliases
         """
         return data
 
-    def parse_selector(self, selector: SelectorSpec) -> SelectorSpec:
-        """Parses a selector.
+    def custom_type_with_converter_method(self, selector: SelectorSpec) -> SelectorSpec:
+        """Takes a custom type whose converter method is documented.
+
+        The documentation comes from `SelectorSpec.parse` rather than from the
+        class, because the converter is registered separately.
 
         Args:
-            selector: selector to parse. Uses a custom type whose converter
-                method is documented.
+            selector: uses a custom type documented by its converter.
 
         Returns:
             The parsed selector.
+
+        Tags:
+            custom types
         """
         return selector
 
-    def set_credentials(self, credential: Credential):
-        """Sets the credentials used with basic authentication.
+    def custom_type_documented_by_class(self, credential: Credential):
+        """Takes a custom type documented by the class itself.
+
+        The class is its own converter here, so its documentation is used.
 
         Args:
-            credential: credentials to use. Uses a custom type documented by
-                the class itself.
+            credential: uses a custom type documented by its class.
 
         Tags:
-            setter
+            custom types
         """
 
-    def set_options(
+    def nested_generic_type(
         self,
         options: dict[str, list[int]] | None = None,
     ) -> dict[str, list[int]]:
-        """Sets extra options.
+        """Takes and returns a generic type nested inside another.
 
         Args:
-            options: options to set. Uses a nested generic type.
+            options: uses a nested generic type.
 
         Returns:
             The previous options.
 
         Tags:
-            setter
+            generics
         """
         return {}
 
     def all_argument_kinds(self, a, /, b, c="d", *e, f, g="h", **i):
         """Has every kind of argument there is.
+
+        No real keyword has all of them at once, which is why this one is named
+        for the case rather than for anything it could plausibly do.
 
         Args:
             a: positional-only argument.
@@ -452,37 +539,38 @@ class DevLibrary:
             f: named-only argument without a default value.
             g: named-only argument with a default value.
             **i: free named arguments.
-        """
-
-    def close_browser(self):
-        """Closes the current browser.
-
-        Takes no arguments at all.
 
         Tags:
-            action
+            arguments
         """
 
-    def close_all_browsers(self) -> Nothing:
-        """Closes every browser.
-
-        Returns an alias of `None`. A keyword returning plain `None` shows no
-        return type at all, because every Python function returns `None`
-        implicitly, but this alias was declared and annotated on purpose.
+    def no_arguments(self):
+        """Takes no arguments at all, so no argument table is rendered.
 
         Tags:
-            action
+            arguments
         """
 
-    def open_browser_in_headless_mode(self, url: str, *, headless: bool = True):
-        """*DEPRECATED* Use [Click] instead.
+    def alias_of_none(self) -> Nothing:
+        """Returns an alias of `None`.
+
+        A keyword returning plain `None` shows no return type at all, because
+        every Python function returns `None` implicitly, but this alias was
+        declared and annotated on purpose.
+
+        Tags:
+            aliases, returns
+        """
+
+    def deprecated_keyword(self, url: str, *, headless: bool = True):
+        """*DEPRECATED* Use [Enum Arguments] instead.
 
         Deprecated keywords are shown with a strike-through in the keyword list.
 
         Args:
-            url: address to open.
-            headless: whether to hide the browser window.
+            url: a plain string.
+            headless: a named-only boolean.
 
         Tags:
-            action
+            deprecation
         """
