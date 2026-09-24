@@ -250,7 +250,9 @@
                   <table class="return-info-table kw-info-table">
                     <thead>
                       <tr>
-                        <th class="arg-col-type" scope="col">{{t "type"}}</th>
+                        {{#if (hasVisibleReturnType returnType)}}
+                          <th class="arg-col-type" scope="col">{{t "type"}}</th>
+                        {{/if}}
                         {{#if returnDoc}}
                           <th class="arg-col-doc" scope="col">{{t "doc"}}</th>
                         {{/if}}
@@ -258,11 +260,11 @@
                     </thead>
                     <tbody class="arg-group">
                       <tr class="arg-row">
-                        {{! The cell stays empty when there is no type; the
-                            header is the same either way. }}
-                        <td class="arg-cell-type">{{#if (hasVisibleReturnType
-                            returnType
-                          )}}{{{renderTypeInfo returnType}}}{{/if}}</td>
+                        {{#if (hasVisibleReturnType returnType)}}
+                          <td class="arg-cell-type">{{{renderTypeInfo
+                              returnType
+                            }}}</td>
+                        {{/if}}
                         {{#if returnDoc}}
                           <td class="arg-cell-doc">
                             <div class="arg-doc-wrap">
