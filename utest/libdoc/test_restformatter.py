@@ -124,22 +124,19 @@ class TestRestFormatter(unittest.TestCase):
         html = self.formatter().html(".. code:: text\n\n    My Keyword    argument")
         self.assertNotIn('class="nf"', html)
 
+    @unittest.skipUnless(importlib.util.find_spec("pygments"), "Requires Pygments.")
+    def test_pipe_examples_are_highlighted(self):
+        for name, example in (
+            ("pipe", "| My Keyword | value |"),
+            ("pipe-empty", "| | My Keyword | value |"),
+        ):
+            with self.subTest(name=name):
+                html = self.formatter().html(f"Example::\n\n    {example}")
+                self.assertIn('<span class="nf">My Keyword</span>', html)
+                self.assertNotIn('<span class="nf">value</span>', html)
+
     def test_reference_and_literal_regressions(self):
         cases = [
-            (
-                "pipe",
-                "Example::\n\n    | My Keyword | value |",
-                "",
-                '<span class="nf">My Keyword</span>',
-                '<span class="nf">value</span>',
-            ),
-            (
-                "pipe-empty",
-                "Example::\n\n    | | My Keyword | value |",
-                "",
-                '<span class="nf">My Keyword</span>',
-                '<span class="nf">value</span>',
-            ),
             (
                 "local-alias",
                 "alias_\n\n.. _alias: `My Keyword`_",
