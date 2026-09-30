@@ -39,6 +39,7 @@ if __name__ == "__main__" and "robot" not in sys.modules:
     set_pythonpath()
 
 from robot.conf import RobotSettings
+from robot.conf.arguments import RobotArgs
 from robot.errors import DataError
 from robot.model import ModelModifier
 from robot.output import librarylogger, LOGGER, pyloggingconf
@@ -379,7 +380,14 @@ Options
                           |  path/to/test/directory/
                           Examples:
                           --argumentfile argfile.txt --argumentfile STDIN
- -h -? --help             Print usage instructions.
+ --config path            Read configuration from this file only, disabling the
+                          automatic robot.toml/pyproject.toml discovery.
+ --no-config              Do not read any configuration file.
+ --profile name *         Activate one or more configuration profiles defined in
+                          the configuration file. Glob patterns are supported.
+ --ignore-git             Keep searching for configuration files upwards even
+                          above the project's .git directory.
+ -h --help                Print usage instructions.
  --version                Print version information.
 
 Options that are marked with an asterisk (*) can be specified multiple times.
@@ -453,6 +461,7 @@ class RobotFramework(Application):
             arg_limits=(1,),
             env_options="ROBOT_OPTIONS",
             logger=LOGGER,
+            config=RobotArgs,
         )
 
     def main(self, datasources, **options):

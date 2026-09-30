@@ -28,8 +28,9 @@ is having Python or its alternative implementation `PyPy <https://pypy.org>`_
 installed. Another recommended precondition is having the pip_ package manager
 available.
 
-Robot Framework requires Python 3.8 or newer. The latest version that supports
-Python 3.6 and 3.7 is `Robot Framework 6.1.1`__. If you need to use Python 2,
+Robot Framework requires Python 3.10 or newer. The latest version that supports
+Python 3.6 and 3.7 is `Robot Framework 6.1.1`__ and the latest that supports
+Python 3.8 and 3.9 is Robot Framework 7.5. If you need to use Python 2,
 `Jython <http://jython.org>`_ or `IronPython <http://ironpython.net>`_,
 you can use `Robot Framework 4.1.3`__.
 

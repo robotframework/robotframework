@@ -8,8 +8,8 @@ ${INPUT}          %{TEMPDIR}/input-for-cli-rebot-invalid-usage.xml
 
 *** Test Cases ***
 Invalid Options
-    option --invalid not recognized    --invalid option
-    option -I not recognized           --name valid -I
+    unknown option '--invalid'    --invalid option
+    unknown option '-I'           --name valid -I
 
 No Input
     Expected at least 1 argument, got 0.    source=
