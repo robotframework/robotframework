@@ -165,6 +165,44 @@ Admonitions
     ...    </div>
     ...    model=${MODEL}[keywords][0]
 
+Admonitions can contain tables and indented code blocks
+    <div class="admonition tip">
+    ...    <p class="admonition-title">Other content</p>
+    ...    <p>Tables work:</p>
+    ...    <table>
+    ...    <thead>
+    ...    <tr>
+    ...    <th>Kind</th>
+    ...    <th>Works</th>
+    ...    </tr>
+    ...    </thead>
+    ...    <tbody>
+    ...    <tr>
+    ...    <td>Tables</td>
+    ...    <td>yes</td>
+    ...    </tr>
+    ...    <tr>
+    ...    <td>Indented code blocks</td>
+    ...    <td>yes</td>
+    ...    </tr>
+    ...    </tbody>
+    ...    </table>
+    ...    <p>And so do indented code blocks:</p>
+    ...    <div class="code"><pre><span></span><code>*** Test Cases ***
+    ...    Example
+    ...    \ \ \ \ Keyword
+    ...    </code></pre></div>
+    ...    model=${MODEL}[keywords][0]
+
+Fenced code blocks do not work inside admonitions
+    [Documentation]    Python-Markdown's Fenced Code Block plugin only
+    ...                supports fenced code blocks at the document root level.
+    <p>Fenced code blocks do not, because Python-Markdown's Fenced Code Block
+    ...    plugin only supports them at the document root level:</p>
+    ...    <p><code>Not a code block!</code></p>
+    ...    </div>
+    ...    model=${MODEL}[keywords][0]
+
 Table of contents
     <div class="toc">
     ...    <ul>

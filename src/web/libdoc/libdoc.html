@@ -505,7 +505,14 @@
 
       if (process.env.NODE_ENV !== "production") {
         // Only runs in development and will be stripped in production builds.
-        import("./testdata.ts").then((module) => render(module.DATA));
+        // `?fixture=robot` renders the ROBOT-format fixture instead of the
+        // default Markdown one. Both imports are written out rather than built
+        // from the parameter, because Parcel resolves them statically.
+        const fixture =
+          new URLSearchParams(location.search).get("fixture") === "robot"
+            ? import("./testdata-robot.ts")
+            : import("./testdata.ts");
+        fixture.then((module) => render(module.DATA));
       } else {
         render(libdoc);
       }

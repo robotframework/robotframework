@@ -1,12 +1,12 @@
-// Development server: generates libdoc/testdata.ts from libdoc/DevLibrary.py,
-// runs Parcel, and regenerates the fixture whenever the library is saved so
-// that the browser reloads with the new Libdoc spec.
+// Development server: generates the fixtures listed in generate-testdata.mjs,
+// runs Parcel, and regenerates a fixture whenever its library is saved so that
+// the browser reloads with the new Libdoc spec.
 
 import { spawn } from "node:child_process";
 import { watch } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { generateOrWarn, LIBRARY } from "./generate-testdata.mjs";
+import { generateOrWarn, FIXTURES } from "./generate-testdata.mjs";
 
 const WEB_DIR = path.dirname(fileURLToPath(import.meta.url));
 const DEBOUNCE_MS = 100;
@@ -27,21 +27,36 @@ function startParcel() {
 }
 
 /**
- * The directory is watched rather than the file itself, because editors write
- * a new file over the old one on save, which a file watch does not survive.
+ * The directory is watched rather than the files themselves, because editors
+ * write a new file over the old one on save, which a file watch does not
+ * survive. Only the fixture whose library was saved is regenerated, so working
+ * on one library leaves the other's committed fixture alone.
  */
-function watchLibrary() {
-  const name = path.basename(LIBRARY);
-  let pending;
-  watch(path.dirname(LIBRARY), (_event, changed) => {
-    if (changed !== name) {
-      return;
-    }
-    clearTimeout(pending);
-    pending = setTimeout(() => generateOrWarn({ quiet: false }), DEBOUNCE_MS);
-  });
+function watchLibraries() {
+  const libraries = new Map(
+    FIXTURES.map(({ library }) => [path.basename(library), library]),
+  );
+  const pending = new Map();
+  for (const directory of new Set(
+    FIXTURES.map(({ library }) => path.dirname(library)),
+  )) {
+    watch(directory, (_event, changed) => {
+      const library = libraries.get(changed);
+      if (!library) {
+        return;
+      }
+      clearTimeout(pending.get(library));
+      pending.set(
+        library,
+        setTimeout(
+          () => generateOrWarn({ quiet: false, only: library }),
+          DEBOUNCE_MS,
+        ),
+      );
+    });
+  }
 }
 
 await generateOrWarn();
-watchLibrary();
+watchLibraries();
 startParcel();
