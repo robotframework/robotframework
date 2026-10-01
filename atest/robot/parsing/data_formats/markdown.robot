@@ -11,9 +11,9 @@ Markdown With Markdown Resource
 
 Parsing errors have correct source
     Previous Run Should Have Been Successful
-    Error in file    0    ${MARKDOWN DIR}/sample.md    10
+    Error in file    0    ${MARKDOWN DIR}/sample.md    16
     ...    Non-existing setting 'Invalid'.
-    Error in file    1    ${MARKDOWN DIR}/../resources/markdown_resource.md    2
+    Error in file    1    ${MARKDOWN DIR}/../resources/markdown_resource.md    3
     ...    Non-existing setting 'Invalid Resource'.
     Length should be    ${ERRORS}    2
 
@@ -40,11 +40,11 @@ Directory With Markdown Init
 
 Parsing errors in init file have correct source
     Previous Run Should Have Been Successful
-    Error in file    0    ${MARKDOWN DIR}/sample.md    10
+    Error in file    0    ${MARKDOWN DIR}/sample.md    16
     ...    Non-existing setting 'Invalid'.
-    Error in file    1    ${MARKDOWN DIR}/with_init/__init__.md    4
+    Error in file    1    ${MARKDOWN DIR}/with_init/__init__.md    5
     ...    Non-existing setting 'Invalid Init'.
-    Error in file    2    ${MARKDOWN DIR}/../resources/markdown_resource.md    2
+    Error in file    2    ${MARKDOWN DIR}/../resources/markdown_resource.md    3
     ...    Non-existing setting 'Invalid Resource'.
     Length should be    ${ERRORS}    3
 
