@@ -19,24 +19,13 @@ from urllib.parse import quote
 
 from robot.api.deco import DocFormat
 from robot.errors import DataError
-from robot.utils import (
-    attribute_escape, html_escape, html_format, NormalizedDict, validate_literal
-)
+from robot.utils import attribute_escape, html_escape, html_format, validate_literal
 from robot.utils.htmlformatters import HeaderFormatter
 from robot.utils.markdown import AdmonitionExtension, LinkifyExtension, Markdown
+from robot.utils.normalizing import NormalizedDict
 
 if TYPE_CHECKING:
     from .model import KeywordDoc
-
-try:
-    from docutils.core import publish_parts
-except ImportError:
-
-    def publish_parts(*args, **kwargs):
-        raise DataError(
-            "reStructuredText format requires 'docutils' module to be installed."
-        )
-
 
 Targets = Dict[str, "tuple[str, str]"]
 TargetTriplet = Iterable["tuple[str, str, str]"]
@@ -63,7 +52,7 @@ class DocFormatter:
                 *self._get_intro_targets(introduction, doc_format),
             )
         }
-        self._doc_to_html = DocToHtml(doc_format, targets)
+        self._doc_to_html = DocToHtml(doc_format, targets, introduction)
 
     def _get_default_targets(self) -> TargetTriplet:
         return [
@@ -111,10 +100,14 @@ class DocFormatter:
 
 class DocToHtml:
 
-    def __init__(self, doc_format: DocFormat, targets: "Targets | None" = None):
+    def __init__(
+        self, doc_format: DocFormat, targets: "Targets | None" = None, introduction=""
+    ):
         self.formatter = self._get_formatter(doc_format)
         self.targets = NormalizedDict(targets)
         self._md = None
+        self._rest = None
+        self._introduction = introduction
 
     def _get_formatter(self, doc_format: DocFormat) -> Callable[[str], str]:
         try:
@@ -172,12 +165,15 @@ class DocToHtml:
         return self._handle_backtick_links(doc)
 
     def _format_rest(self, doc: str) -> str:
-        parts = publish_parts(
-            doc,
-            writer_name="html",
-            settings_overrides={"syntax_highlight": "short"},
-        )
-        return self._handle_backtick_links(parts["html_body"])
+        if self._rest is None:
+            try:
+                from .restformatter import RestFormatter
+            except ImportError as err:
+                raise DataError(
+                    "reStructuredText format requires 'docutils' module to be installed."
+                ) from err
+            self._rest = RestFormatter(self.targets, self._introduction)
+        return self._rest.format(doc)
 
     def _format_markdown(self, doc: str) -> str:
         if self._md is None:

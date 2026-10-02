@@ -645,14 +645,29 @@ reStructuredText documentation syntax
 reStructuredText_ is simple yet powerful markup syntax used widely in Python
 projects (including this User Guide) and elsewhere. The main limitation
 is that you need to have the docutils_ module installed to be able to generate
-documentation using it. Because backtick characters have special meaning in
-reStructuredText, `linking to keywords`_ requires them to be escaped like
-:codesc:`\\\`My Keyword\\\``.
+documentation using it. Native reStructuredText references can link to keywords
+and Libdoc sections: for example, :codesc:`\`My Keyword\`_` and
+:codesc:`introduction_`. Section titles and explicit targets defined in the
+library introduction are also available in keyword documentation. A local
+target definition takes precedence over a shared target. The older escaped
+backtick syntax :codesc:`\\\`My Keyword\\\`` remains supported.
 
 One of the nice features that reStructured supports is the ability to mark code
 blocks that can be syntax highlighted.
 Syntax highlight requires additional Pygments_ module and supports all the
 languages that Pygments supports.
+
+Ordinary literal blocks introduced with :codesc:`::` are also highlighted as
+Robot Framework examples when they contain Robot-style cell separators, pipe
+syntax, section headers, or a known keyword name. Keyword calls do not require
+a test case name or section header. Other literal blocks remain unchanged;
+explicit code directives keep their selected language.
+
+Sphinx-style :codesc:`:param name:` and :codesc:`:param type name:` fields are
+rendered as a parameter list. A separate :codesc:`:type name:` field supplies
+the displayed type when it is not included in the parameter field. This is
+documentation formatting only: it does not change keyword signatures or
+runtime argument conversion. Other fields are preserved.
 
 .. sourcecode:: python
 
