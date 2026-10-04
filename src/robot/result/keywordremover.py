@@ -40,11 +40,12 @@ class KeywordRemover(SuiteVisitor, ABC):
                 "FOR": ForLoopItemsRemover,
                 "WHILE": WhileLoopItemsRemover,
                 "WUKS": WaitUntilKeywordSucceedsRemover,
+                "NOT_RUN": NotRunKeywordRemover,
             }[upper]()
         except KeyError:
             raise DataError(
                 f"Expected 'ALL', 'PASSED', 'NAME:<pattern>', "
-                f"'TAG:<pattern>', 'FOR' or 'WUKS', got '{conf}'."
+                f"'TAG:<pattern>', 'FOR', 'WUKS' or 'NOT_RUN', got '{conf}'."
             )
 
     def _clear_content(self, item):
@@ -170,6 +171,13 @@ class WaitUntilKeywordSucceedsRemover(KeywordRemover):
             for kw in keywords[:-include_from_end]:
                 if not self._warning_or_error(kw):
                     body.remove(kw)
+
+
+class NotRunKeywordRemover(KeywordRemover):
+    def visit_test(self, test):
+        before = len(test.body)
+        test.body = [kw for kw in test.body if kw.status != "NOT RUN"]
+        self.removal_message.set_to_if_removed(test, before)
 
 
 class WarningAndErrorFinder(SuiteVisitor):
