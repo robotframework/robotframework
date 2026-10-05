@@ -386,7 +386,7 @@ class OperatingSystem:
         """
         path = self._absnorm(path)
         if not regexp:
-            pattern = fnmatch.translate(f"*{pattern}*")
+            pattern = fnmatch.translate(pattern)[:-2]  # Drop anchoring.
         search = re.compile(pattern).search
         encoding = self._map_encoding(encoding)
         matches = []

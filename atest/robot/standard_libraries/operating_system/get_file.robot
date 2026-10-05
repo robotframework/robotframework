@@ -135,3 +135,6 @@ Grep File With Windows line endings
 
 Path as `pathlib.Path`
     Check Test Case    ${TESTNAME}
+
+fnmatch.translate compatibility
+    Check Test Case    ${TESTNAME}
