@@ -145,6 +145,14 @@ robot.utils.json module
    :show-inheritance:
    :undoc-members:
 
+robot.utils.markdown module
+---------------------------
+
+.. automodule:: robot.utils.markdown
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 robot.utils.markuputils module
 ------------------------------
 

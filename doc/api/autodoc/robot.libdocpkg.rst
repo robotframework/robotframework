@@ -73,6 +73,14 @@ robot.libdocpkg.languages module
    :show-inheritance:
    :undoc-members:
 
+robot.libdocpkg.markdownformatter module
+----------------------------------------
+
+.. automodule:: robot.libdocpkg.markdownformatter
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 robot.libdocpkg.model module
 ----------------------------
 
