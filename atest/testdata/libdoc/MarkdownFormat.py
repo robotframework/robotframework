@@ -80,8 +80,27 @@ def references(a: int, b: "str | list[str]"):
     like [linking], to keywords like [Admonitions] and to types like [int]
     and [list].
 
-    Custom references defined in introduction like [reference] work too!
+    Custom references defined in introduction like [reference] and locally
+    like [local] work too!
+
+    Args:
+        a: Arg with links to [introduction] and [Admonitions].
+        b: Arg with [global][reference] and [local] reference.
+
+    Returns:
+        Return with links to [introduction] and [Admonitions]
+        and [global][reference] and [local] reference.
+
+    Raises:
+        E: Error with links to [introduction] and [Admonitions].
+        F: Error with [global][reference] and [local] reference.
+
+    [local]: http://robotframework.org
     """
+
+
+def references_2():
+    """[local] references do not work with other keywords."""
 
 
 def admonitions():

@@ -23,9 +23,31 @@ Automatic reference targets
     ...    and <a href="#type-list" title="&quot;list&quot; type">list</a>.
     ...    model=${MODEL}[keywords][2]
 
-Custom references defined in introduction work also with keywords
-    Custom references defined in introduction like <a href="http://example.com" title="An &quot;example&quot;!">reference</a> work too!
+Custom references defined globally and locally work in keyword docs
+    Custom references defined in introduction like <a href="http://example.com" title="An &quot;example&quot;!">reference</a> and locally
+    ...    like <a href="http://robotframework.org">local</a> work too!
     ...    model=${MODEL}[keywords][2]
+
+Links in argument docs
+    Arg with links to <a href="#Introduction" title="&quot;Introduction&quot; section">introduction</a> and <a href="#Admonitions" title="&quot;Admonitions&quot; keyword">Admonitions</a>.
+    ...    model=${MODEL}[keywords][2][args][0]
+    Arg with <a href="http://example.com" title="An &quot;example&quot;!">global</a> and <a href="http://robotframework.org">local</a> reference.
+    ...    model=${MODEL}[keywords][2][args][1]
+
+Links in return docs
+    Return with links to <a href="#Introduction" title="&quot;Introduction&quot; section">introduction</a> and <a href="#Admonitions" title="&quot;Admonitions&quot; keyword">Admonitions</a>
+    ...    and <a href="http://example.com" title="An &quot;example&quot;!">global</a> and <a href="http://robotframework.org">local</a> reference.
+    ...    model=${MODEL}[keywords][2][returnDoc]
+
+Links in exception docs
+    Error with links to <a href="#Introduction" title="&quot;Introduction&quot; section">introduction</a> and <a href="#Admonitions" title="&quot;Admonitions&quot; keyword">Admonitions</a>.
+    ...    model=${MODEL}[keywords][2][raises][E]
+    Error with <a href="http://example.com" title="An &quot;example&quot;!">global</a> and <a href="http://robotframework.org">local</a> reference.
+    ...    model=${MODEL}[keywords][2][raises][F]
+
+Local references do not work with other keywords
+    [local] references do not work with other keywords.
+    ...    model=${MODEL}[keywords][3]
 
 Unordered lists
     <ul>\n<li>First unordered item.</li>\n<li>Second item.</li>\n</ul>
@@ -85,7 +107,7 @@ Tables
     ...    </tr>
     ...    </tbody>
     ...    </table>
-    ...    model=${MODEL}[keywords][4]
+    ...    model=${MODEL}[keywords][5]
     <table>
     ...    <thead>
     ...    <tr>
@@ -102,18 +124,18 @@ Tables
     ...    </tr>
     ...    </tbody>
     ...    </table>
-    ...    model=${MODEL}[keywords][4]
+    ...    model=${MODEL}[keywords][5]
 
 Syntax highlighting
     <div class="code"><pre><span></span><code><span class="gh">*** Test Cases ***</span>
     ...    <span class="gu">Example</span>
     ...    <span class="p"> \ \ \ </span><span class="nf">Keyword</span><span class="p"> \ \ \ </span><span class="s">arg</span>
     ...    </code></pre></div>
-    ...    model=${MODEL}[keywords][3]
+    ...    model=${MODEL}[keywords][4]
     <span class="c1"># This is comment in code, not a Markdown header!</span>
-    ...    model=${MODEL}[keywords][3]
+    ...    model=${MODEL}[keywords][4]
     <div class="code"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="s2">
-    ...    model=${MODEL}[keywords][3]
+    ...    model=${MODEL}[keywords][4]
 
 Admonitions
     <div class="admonition note">
@@ -235,7 +257,7 @@ Table of contents in keyword documentation
     ...    <li><a href="#where-to-learn-more">Where to learn more?</a></li>
     ...    </ul>
     ...    </div>
-    ...    model=${MODEL}[keywords][5]
+    ...    model=${MODEL}[keywords][6]
 
 *** Keywords ***
 Generate doc using Markdown source
@@ -244,4 +266,9 @@ Generate doc using Markdown source
 Doc should contain
     [Arguments]    @{content}    ${model}=${MODEL}
     VAR    ${content}    @{content}    separator=\n
-    Should Contain    ${model}[doc]    ${content}
+    IF    "doc" in $model
+        VAR    ${doc}    ${model}[doc]
+    ELSE
+        VAR    ${doc}    ${model}
+    END
+    Should Contain    ${doc}    ${content}
