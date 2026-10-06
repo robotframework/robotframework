@@ -35,7 +35,8 @@ except ImportError:
 
     def Markdown(*args, **kwargs):
         raise DataError(
-            "The 'markdown' module is required to convert Markdown documentation to HTML."
+            "The 'markdown' module is required to convert Markdown "
+            "documentation to HTML."
         )
 
     BlockProcessor = Extension = InlineProcessor = object

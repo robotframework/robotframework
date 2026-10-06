@@ -34,7 +34,8 @@ except ImportError:
 
     def publish_parts(*args, **kwargs):
         raise DataError(
-            "reStructuredText format requires 'docutils' module to be installed."
+            "The 'docutils' module is required to convert reStructuredText "
+            "documentation to HTML."
         )
 
 
