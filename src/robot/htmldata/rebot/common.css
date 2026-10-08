@@ -352,3 +352,12 @@ th.stats-col-graph:hover {
 [data-theme="light"] .dark-mode-icon {
     display: block;
 }
+#generator-info {
+    padding: 0.3em 0.5em;
+    font-size: 0.75em;
+    color: var(--text-color);
+    background: var(--highlight-color);
+    opacity: 0.8;
+    text-align: center;
+    word-break: break-word;
+}
