@@ -15,3 +15,4 @@ telnetlib-313-and-up; python_version >= "3.13"
 black >= 24
 ruff
 isort
+confargs >= 0.12
