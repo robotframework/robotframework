@@ -12,6 +12,7 @@ All imports are usable
 
 Listen Imports
     Init Expect
+    Start Expect    Library    BuiltIn    []
     Expect
     ...    Library
     ...    BuiltIn
@@ -19,11 +20,14 @@ Listen Imports
     ...    importer: None
     ...    originalname: BuiltIn
     ...    source: //BuiltIn.py
+    Start Expect    Resource    resource_with_imports.robot    []
+    Start Expect    Resource    another_resource.robot    []
     Expect
     ...    Resource
     ...    another_resource
     ...    importer: //resource_with_imports.robot
     ...    source: //another_resource.robot
+    Start Expect    Library    Process    []
     Expect
     ...    Library
     ...    Process
@@ -36,6 +40,7 @@ Listen Imports
     ...    resource_with_imports
     ...    importer: //imports.robot
     ...    source: //resource_with_imports.robot
+    Start Expect    Library    String    []
     Expect
     ...    Library
     ...    String
@@ -43,6 +48,7 @@ Listen Imports
     ...    importer: //imports.robot
     ...    originalname: String
     ...    source: //String.py
+    Start Expect    Library    local_lib.py    [\${2}]
     Expect
     ...    Library
     ...    Aliased
@@ -50,6 +56,7 @@ Listen Imports
     ...    importer: //imports.robot
     ...    originalname: local_lib
     ...    source: //local_lib.py
+    Start Expect    Library    pythonmodule    []
     Expect
     ...    Library
     ...    pythonmodule
@@ -57,18 +64,25 @@ Listen Imports
     ...    importer: //imports.robot
     ...    originalname: pythonmodule
     ...    source: //pythonmodule/__init__.py
+    Start Expect    Variables    vars.py    [name, value]
     Expect
     ...    Variables
     ...    vars.py
     ...    args: [name, value]
     ...    importer: //imports.robot
     ...    source: //vars.py
+    Start Expect    Variables    vars.py    [name, value]
+    Start Expect    Variables    vars.py    []
     Expect
     ...    Variables
     ...    vars.py
     ...    args: []
     ...    importer: //imports.robot
     ...    source: //vars.py
+    Start Expect    Resource    resource that does not exist and fails    []
+    Start Expect    Library    LibraryThatDoesNotExist    []
+    Start Expect    Variables    variables which dont exist.py    []
+    Start Expect    Library    OperatingSystem    []
     Expect
     ...    Library
     ...    OperatingSystem
@@ -76,11 +90,13 @@ Listen Imports
     ...    importer: //imports.robot
     ...    originalname: OperatingSystem
     ...    source: //OperatingSystem.py
+    Start Expect    Resource    //imports/dynamically_imported_resource.robot    []
     Expect
     ...    Resource
     ...    dynamically_imported_resource
     ...    importer: //imports.robot
     ...    source: //dynamically_imported_resource.robot
+    Start Expect    Variables    //imports/vars.py    [new, args]
     Expect
     ...    Variables
     ...    vars.py
@@ -109,6 +125,14 @@ Expect
     ...    Imported ${type}
     ...    name: ${name}
     ...    @{attrs}
+    Set test variable    @{EXPECTED}    @{EXPECTED}    ${entry}
+
+Start Expect
+    [Arguments]    ${type}    ${name}    ${args}
+    ${entry} =    Catenate    SEPARATOR=\n\t
+    ...    Started ${type}
+    ...    name: ${name}
+    ...    args: ${args}
     Set test variable    @{EXPECTED}    @{EXPECTED}    ${entry}
 
 Verify Expected

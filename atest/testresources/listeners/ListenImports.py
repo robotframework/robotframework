@@ -2,19 +2,56 @@ import os
 
 
 class ListenImports:
-    ROBOT_LISTENER_API_VERSION = 2
+    ROBOT_LISTENER_API_VERSION = 3
 
     def __init__(self, imports):
         self.imports = open(imports, "w", encoding="UTF-8")
 
-    def library_import(self, name, attrs):
-        self._imported("Library", name, attrs)
+    def start_library_import(self, importer):
+        self._started("Library", importer)
 
-    def resource_import(self, name, attrs):
-        self._imported("Resource", name, attrs)
+    def start_resource_import(self, importer):
+        self._started("Resource", importer)
 
-    def variables_import(self, name, attrs):
-        self._imported("Variables", name, attrs)
+    def start_variables_import(self, importer):
+        self._started("Variables", importer)
+
+    def library_import(self, library, importer):
+        self._imported(
+            "Library",
+            library.name,
+            {
+                "args": list(importer.args),
+                "importer": str(importer.source),
+                "originalname": library.real_name,
+                "source": str(library.source or ""),
+            },
+        )
+
+    def resource_import(self, resource, importer):
+        self._imported(
+            "Resource",
+            resource.name,
+            {"importer": str(importer.source), "source": str(resource.source)},
+        )
+
+    def variables_import(self, attrs, importer):
+        self._imported(
+            "Variables",
+            attrs["name"],
+            {
+                "args": list(attrs["args"]),
+                "importer": str(importer.source),
+                "source": str(attrs["source"]),
+            },
+        )
+
+    def _started(self, import_type, importer):
+        self.imports.write(
+            f"Started {import_type}\n"
+            f"\tname: {self._pretty(importer.name)}\n"
+            f"\targs: {self._pretty(list(importer.args))}\n"
+        )
 
     def _imported(self, import_type, name, attrs):
         self.imports.write(f"Imported {import_type}\n\tname: {name}\n")
