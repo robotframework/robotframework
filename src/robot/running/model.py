@@ -46,7 +46,7 @@ from robot.errors import (
 from robot.model import BodyItem, DataDict, TestSuites
 from robot.output import LOGGER, Output, pyloggingconf
 from robot.result import Result
-from robot.utils import format_assign_message, setter
+from robot.utils import format_assign_message, setter, text
 from robot.variables import VariableResolver
 
 from .bodyrunner import (
@@ -914,12 +914,20 @@ class TestSuite(model.TestSuite[Keyword, TestCase]):
                 settings = RobotSettings(options)
                 LOGGER.register_console_logger(**settings.console_output_config)
             with pyloggingconf.robot_handler_enabled(settings.log_level):
-                with STOP_SIGNAL_MONITOR:
-                    IMPORTER.reset()
-                    output = Output(settings)
-                    runner = SuiteRunner(output, settings)
-                    self.visit(runner)
-                output.close(runner.result)
+                old_max_error_lines = text.MAX_ERROR_LINES
+                old_max_assign_length = text.MAX_ASSIGN_LENGTH
+                text.MAX_ERROR_LINES = settings.max_error_lines
+                text.MAX_ASSIGN_LENGTH = settings.max_assign_length
+                try:
+                    with STOP_SIGNAL_MONITOR:
+                        IMPORTER.reset()
+                        output = Output(settings)
+                        runner = SuiteRunner(output, settings)
+                        self.visit(runner)
+                    output.close(runner.result)
+                finally:
+                    text.MAX_ERROR_LINES = old_max_error_lines
+                    text.MAX_ASSIGN_LENGTH = old_max_assign_length
         return runner.result
 
     def to_dict(self) -> DataDict:
