@@ -27,8 +27,7 @@ try:
     from docutils.parsers.rst.directives.misc import Include
 except ImportError:
     raise DataError(
-        "Using reStructuredText test data requires having "
-        "'docutils' module version 0.9 or newer installed."
+        "The 'docutils' module is required when using reStructuredText data."
     )
 
 

@@ -33,11 +33,14 @@ class RecursiveAlias:
 def resolve_type_alias(alias, context=None):
     if context is None:
         context = {}
-    if alias in context:
-        return context[alias]
+    if isinstance(alias, list):
+        return [resolve_type_alias(a, context) for a in alias]
+    aid = id(alias)
+    if aid in context:
+        return context[aid]
     # RecursiveAlias is returned above if an alias uses itself in its value.
     if isinstance(alias, TypeAliasType):
-        context[alias] = recursive = RecursiveAlias(alias.__name__)
+        context[aid] = recursive = RecursiveAlias(alias.__name__)
     else:
         recursive = None
     origin = get_origin(alias)
@@ -48,7 +51,7 @@ def resolve_type_alias(alias, context=None):
     # Update RecursiveAlias and context with the resolved value.
     if recursive:
         recursive.value = value
-    context[alias] = value
+    context[aid] = value
     return value
 
 
@@ -67,13 +70,14 @@ def _get_value(alias):
     while isinstance(alias, TypeAliasType):
         try:
             value = alias.__value__
-            if value in seen:
+            vid = id(value)
+            if vid in seen:
                 raise ValueError("Invalid recursion.")
         except Exception as err:
             raise ValueError(f"Resolving type alias '{alias}' failed: {err}") from None
         else:
+            seen.add(vid)
             alias = value
-            seen.add(value)
     return alias
 
 
@@ -106,6 +110,8 @@ def _resolve_type_var(arg, type_vars):
             return type_vars[arg]
         except KeyError:
             raise ValueError(f"Type variable '{arg.__name__}' has not value.")
+    if isinstance(arg, list):
+        return [_resolve_type_var(a, type_vars) for a in arg]
     origin = get_origin(arg)
     if origin:
         args = [_resolve_type_var(a, type_vars) for a in get_args(arg)]

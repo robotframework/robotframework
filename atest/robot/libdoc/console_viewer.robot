@@ -63,15 +63,15 @@ Show intro only
     ...    `timeout` (default: `3 seconds`) -\n \ Default timeout used when reading output.
     ...    `newline` (default: `CRLF`) -\n \ Default newline used by [Write].
     ...    `prompt` (default: `None`) -\n \ Default prompt used by [Read Until Prompt] and [Login].
-    ...    `prompt_is_regexp` (default: `False`) -\n \ Whether the default prompt is a regular expression.
+    ...    `prompt_is_regexp` (default: `False`) -\n \ When true, the prompt is considered to be\n \ a regular expression by default.
     ...    `encoding` (default: `UTF-8`) -\n \ Default encoding used for writing and reading.
     ...    `encoding_errors` (default: `ignore`) -\n \ Default error handler used with encoding.
     ...    `default_log_level` (default: `INFO`) -\n \ Default log level used for logging.
     ...    `window_size` (default: `None`) -\n \ Default terminal window size for negotiation.
     ...    `environ_user` (default: `None`) -\n \ Default `USER` environment variable value.
-    ...    `terminal_emulation` (default: `False`) -\n \ Whether to use terminal emulation by default.
+    ...    `terminal_emulation` (default: `False`) -\n \ When true, [terminal emulation] is enabled\n \ by default.
     ...    `terminal_type` (default: `None`) -\n \ Default terminal type for negotiation.
-    ...    `telnetlib_log_level` (default: `TRACE`) -\n \ Default log level for the underlying telnetlib.
+    ...    `telnetlib_log_level` (default: `TRACE`) -\n \ Default log level for the underlying `telnetlib`.
     ...    `connection_timeout` (default: `None`) -\n \ Default timeout used when opening connections.
     Should Contain Importing    ${args}
     ...    Telnet library can be imported with optional configuration parameters.

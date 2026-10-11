@@ -192,7 +192,7 @@ be escaped.
 .. note:: Support for brackets like `[abc]` and `[!a-z]` is new in
           Robot Framework 3.1.
 
-__ http://en.wikipedia.org/wiki/Glob_(programming)
+__ https://en.wikipedia.org/wiki/Glob_(programming)
 
 Tag patterns
 ~~~~~~~~~~~~
@@ -706,4 +706,4 @@ from within a python library or alternatively:
 
 can be used directly in a test case.
 
-__ http://docs.python.org/library/pdb.html
+__ https://docs.python.org/library/pdb.html

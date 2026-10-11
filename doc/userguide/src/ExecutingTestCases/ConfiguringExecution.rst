@@ -561,7 +561,7 @@ in `sys.path`__
 attribute. This list can be updated dynamically during execution, and changes
 are taken into account next time when something is imported.
 
-__ http://docs.python.org/library/sys.html#sys.path
+__ https://docs.python.org/library/sys.html#sys.path
 
 
 Setting variables
@@ -971,7 +971,7 @@ This option supports the following case-insensitive values:
 `off`
     Colors are disabled.
 
-__ http://en.wikipedia.org/wiki/ANSI_escape_code
+__ https://en.wikipedia.org/wiki/ANSI_escape_code
 
 .. note:: Using ANSI codes on Windows by default is new in Robot Framework 7.1.
 

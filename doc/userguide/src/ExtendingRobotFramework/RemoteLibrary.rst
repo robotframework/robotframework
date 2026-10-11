@@ -99,8 +99,8 @@ is shorter than keyword execution time will interrupt the keyword.
           modified.
 
 __ `Setting custom name to library`_
-__ http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml?search=8270
-__ http://stackoverflow.com/questions/14504450/pythons-xmlrpc-extremely-slow-one-second-per-call
+__ https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml?search=8270
+__ https://stackoverflow.com/questions/14504450/pythons-xmlrpc-extremely-slow-one-second-per-call
 
 Starting and stopping remote servers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -167,7 +167,7 @@ according to the following rules. Other remote servers should behave similarly.
 
 * Other types are converted to strings.
 
-__ http://docs.python.org/library/xmlrpc.client.html#binary-objects
+__ https://docs.python.org/library/xmlrpc.client.html#binary-objects
 
 Remote protocol
 ---------------

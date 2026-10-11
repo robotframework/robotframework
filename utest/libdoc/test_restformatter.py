@@ -1,11 +1,27 @@
 import importlib.util
+import sys
 import unittest
 from contextlib import redirect_stderr
 from html.parser import HTMLParser
 from io import StringIO
+from unittest.mock import patch
 
+from robot.errors import DataError
 from robot.libdocpkg.htmlutils import DocFormatter, DocToHtml
 from robot.libdocpkg.model import KeywordDoc
+
+
+class TestRestFormatterDependencies(unittest.TestCase):
+
+    def test_missing_docutils_preserves_dependency_error(self):
+        with patch.dict(sys.modules, {"robot.libdocpkg.restformatter": None}):
+            self.assertRaisesRegex(
+                DataError,
+                "The 'docutils' module is required to convert reStructuredText "
+                "documentation to HTML.",
+                DocToHtml("REST"),
+                "Example.",
+            )
 
 
 class TextCollector(HTMLParser):

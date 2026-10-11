@@ -190,6 +190,13 @@ Path as `pathlib.Path`
     ${content} =    Grep File    ${PATH/'file.txt'}    t
     Should Be Equal    ${content}    content\nthree
 
+fnmatch.translate compatibility
+    [Documentation]    Grep File drops the last two characters from the pattern
+    ...                returned by ``fnmatch.translate``. This test makes sure
+    ...                those characters are what we expext them to be.
+    ${ending} =    Evaluate    fnmatch.translate("p")[-2:].lower()
+    Should Be Equal    ${ending}   \\z
+
 *** Keywords ***
 Get And Check File
     [Arguments]    ${path}    ${expected}

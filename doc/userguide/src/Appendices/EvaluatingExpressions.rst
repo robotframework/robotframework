@@ -105,7 +105,7 @@ and added to the evaluation namespace as an argument:
 The :name:`Evaluate` keyword also supports custom evaluation namespaces if further
 customization is needed. See its documentation in the BuiltIn_ library for more details.
 
-__ http://docs.python.org/library/functions.html#eval
+__ https://docs.python.org/library/functions.html#eval
 
 Using variables
 ---------------

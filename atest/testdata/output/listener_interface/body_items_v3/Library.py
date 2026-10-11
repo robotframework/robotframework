@@ -28,7 +28,7 @@ class Library:
             )
         if escape != r"c:\temp\new":
             raise AssertionError(
-                rf"Expected path to be 'c:\temp\new', " rf"but it was '{escape}'."
+                rf"Expected path to be 'c:\temp\new', but it was '{escape}'."
             )
         if obj is not None and obj.attr != number:
             raise AssertionError(

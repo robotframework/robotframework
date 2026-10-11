@@ -236,7 +236,7 @@ The named argument syntax makes using arguments with `default values`_ more
 flexible, and allows explicitly labeling what a certain argument value means.
 Technically named arguments work exactly like `keyword arguments`__ in Python.
 
-__ http://docs.python.org/tutorial/controlflow.html#keyword-arguments
+__ https://docs.python.org/tutorial/controlflow.html#keyword-arguments
 
 Basic syntax
 ''''''''''''
@@ -376,7 +376,7 @@ visible literally. For example, both `foo=${bar}` and `${foo}=${bar}` are
 valid, as long as the variables that are used exist. An extra limitation is
 that free argument names must always be strings.
 
-__ http://docs.python.org/tutorial/controlflow.html#keyword-arguments
+__ https://docs.python.org/tutorial/controlflow.html#keyword-arguments
 __ `Where named arguments are supported`_
 __ `Free keyword arguments (**kwargs)`_
 __ `Free named arguments with user keywords`_
@@ -1206,8 +1206,8 @@ than one action.
        Then welcome page should be open
 
 __ https://en.wikipedia.org/wiki/Acceptance_test-driven_development
-__ http://en.wikipedia.org/wiki/Specification_by_example
-__ http://en.wikipedia.org/wiki/Behavior_Driven_Development
+__ https://en.wikipedia.org/wiki/Specification_by_example
+__ https://en.wikipedia.org/wiki/Behavior_Driven_Development
 
 Ignoring :name:`Given/When/Then/And/But` prefixes
 '''''''''''''''''''''''''''''''''''''''''''''''''

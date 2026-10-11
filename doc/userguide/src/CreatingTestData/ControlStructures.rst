@@ -176,7 +176,7 @@ a certain number of times. For this purpose Robot Framework has a special
 `FOR index IN RANGE limit` loop syntax that is derived from the similar Python
 idiom using the `built-in range() function`__.
 
-__ http://docs.python.org/library/functions.html#func-range
+__ https://docs.python.org/library/functions.html#func-range
 
 Similarly as other `FOR` loops, the `FOR-IN-RANGE` loop starts with
 `FOR` that is followed by a loop variable. In this format
@@ -244,7 +244,7 @@ inside the list. Robot Framework has a special
 `FOR index ... IN ENUMERATE ...` syntax for this situation.
 This syntax is derived from the `Python built-in enumerate() function`__.
 
-__ http://docs.python.org/library/functions.html#enumerate
+__ https://docs.python.org/library/functions.html#enumerate
 
 `FOR-IN-ENUMERATE` loops syntax is just like the regular `FOR` loop syntax,
 except that the separator between variables and values is `IN ENUMERATE`
@@ -334,7 +334,7 @@ Some tests build up several related lists, then loop over them together.
 Robot Framework has a shortcut for this case: `FOR ... IN ZIP ...`, which
 is derived from the `Python built-in zip() function`__.
 
-__ http://docs.python.org/library/functions.html#zip
+__ https://docs.python.org/library/functions.html#zip
 
 This may be easiest to show with an example:
 

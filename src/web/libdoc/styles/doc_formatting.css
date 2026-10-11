@@ -38,7 +38,7 @@
 .doc table td {
   border: 1px solid var(--border-color);
   background: transparent;
-  padding: 0.1em 0.3em;
+  padding: 0.25em 0.5em;
   height: 1.2em;
 }
 .doc table th {
@@ -111,14 +111,21 @@
   border: 0.075em solid #448aff;
   border-radius: 0.25em;
   margin: 1.5em 0;
-}
-.doc .admonition p {
   padding: 1em;
-  margin: 0;
 }
-.admonition .admonition-title {
+.doc .admonition > * {
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+.doc .admonition > *:last-child {
+  margin-bottom: 0;
+}
+.doc .admonition .admonition-title {
   font-weight: bold;
   background-color: #448aff1a;
+  margin: -1em -1em 0.75em;
+  padding: 0.5em 1em;
+  border-radius: 0.175em 0.175em 0 0;
 }
 .doc .admonition.tip {
   border-color: #00bfa5;

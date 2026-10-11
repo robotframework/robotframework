@@ -885,7 +885,7 @@ characters.
 
 .. note:: Support for inline flags is new in Robot Framework 7.2.
 
-__ http://en.wikipedia.org/wiki/Regular_expression
+__ https://en.wikipedia.org/wiki/Regular_expression
 __ `Embedded arguments matching wrong values`_
 __ `Resolving conflicts`_
 __ https://docs.python.org/3/library/re.html#regular-expression-syntax
@@ -900,7 +900,7 @@ regexp extensions in format `(?...)` cannot be used. If the regular
 expression syntax is invalid, creating the keyword fails with an error
 visible in `test execution errors`__.
 
-__ http://docs.python.org/library/re.html
+__ https://docs.python.org/library/re.html
 __ `Errors and warnings during execution`_
 
 Escaping special characters

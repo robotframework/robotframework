@@ -737,7 +737,7 @@ always possible to access dictionary values using syntax like
 `${DICT}[with spaces]` syntax.
 
 .. note:: Using YAML files with Robot Framework requires `PyYAML
-          <http://pyyaml.org>`_ module to be installed. You can typically
+          <https://pyyaml.org>`_ module to be installed. You can typically
           install it with pip_ like `pip install pyyaml`.
 
 Variable file as JSON

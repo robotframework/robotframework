@@ -34,7 +34,10 @@ except ImportError:
     from robot.errors import DataError
 
     def Markdown(*args, **kwargs):
-        raise DataError("Markdown format requires 'markdown' module to be installed.")
+        raise DataError(
+            "The 'markdown' module is required to convert Markdown "
+            "documentation to HTML."
+        )
 
     BlockProcessor = Extension = InlineProcessor = object
 

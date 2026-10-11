@@ -97,6 +97,9 @@ class DocFormatter:
     def html(self, doc: str) -> str:
         return self._doc_to_html(doc)
 
+    def reset(self):
+        self._doc_to_html.reset()
+
 
 class DocToHtml:
 
@@ -124,6 +127,11 @@ class DocToHtml:
 
     def __call__(self, doc: str) -> str:
         return self.formatter(doc)
+
+    def reset(self):
+        if self._md is not None:
+            self._md.reset()
+            self._md.references = self.targets.copy()
 
     def _format_robot(self, doc: str) -> str:
         toc = self._get_toc(doc) if "%TOC%" in doc else None
@@ -170,14 +178,15 @@ class DocToHtml:
                 from .restformatter import RestFormatter
             except ImportError as err:
                 raise DataError(
-                    "reStructuredText format requires 'docutils' module to be installed."
+                    "The 'docutils' module is required to convert reStructuredText "
+                    "documentation to HTML."
                 ) from err
             self._rest = RestFormatter(self.targets, self._introduction)
         return self._rest.format(doc)
 
     def _format_markdown(self, doc: str) -> str:
         if self._md is None:
-            self._md = md = Markdown(
+            self._md = Markdown(
                 extensions=[
                     "codehilite",
                     "fenced_code",
@@ -197,11 +206,8 @@ class DocToHtml:
                 },
                 output_format="html",
             )
-        else:
-            md = self._md.reset()
-        # Initialize references and use NormalizedDict to make lookup case-insensitive.
-        md.references = self.targets.copy()
-        return md.convert(doc)
+            self._md.references = self.targets.copy()
+        return self._md.convert(doc)
 
     def _handle_backtick_links(self, doc: str) -> str:
         return re.sub("`(.+?)`", self._handle_names, doc)

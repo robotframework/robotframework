@@ -73,6 +73,14 @@ robot.running.arguments.embedded module
    :show-inheritance:
    :undoc-members:
 
+robot.running.arguments.typealiasresolver module
+------------------------------------------------
+
+.. automodule:: robot.running.arguments.typealiasresolver
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 robot.running.arguments.typeconverters module
 ---------------------------------------------
 
@@ -97,10 +105,10 @@ robot.running.arguments.typeinfoparser module
    :show-inheritance:
    :undoc-members:
 
-robot.running.arguments.typevalidator module
---------------------------------------------
+robot.running.arguments.validators module
+-----------------------------------------
 
-.. automodule:: robot.running.arguments.typevalidator
+.. automodule:: robot.running.arguments.validators
    :members:
    :show-inheritance:
    :undoc-members:

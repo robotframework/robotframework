@@ -10,11 +10,11 @@ requires using different technologies and interfaces.
 The framework has a rich ecosystem around it consisting of various generic
 libraries and tools that are developed as separate projects. For more
 information about Robot Framework and the ecosystem, see
-http://robotframework.org.
+https://robotframework.org.
 
 Robot Framework is open source software released under the `Apache License
 2.0`_. Its development is sponsored by the `Robot Framework Foundation
-<http://robotframework.org/foundation>`_.
+<https://robotframework.org/foundation>`_.
 
 .. note:: The official RPA support was added in Robot Framework 3.1.
           This User Guide still talks mainly about creating tests, test data,
@@ -115,7 +115,7 @@ Project pages
 ~~~~~~~~~~~~~
 
 The number one place where to find more information about Robot Framework
-and the rich ecosystem around it is http://robotframework.org.
+and the rich ecosystem around it is https://robotframework.org.
 Robot Framework itself is hosted on GitHub__.
 
 __ https://github.com/robotframework/robotframework

@@ -747,13 +747,12 @@ Example:
 
     This section is included in TOC.
 
-Libdoc_ supports the `%TOC%` marker also when `creating table of contents`_
-with the Robot Framework custom format. In that format only the top level
-headers are included in the generated table of contents.
+.. note:: Generating table of contents is not a standard Markdown feature.
+          The `%TOC%` marker used by Robot Framework is also different to
+          what Python-Markdown's toc__ plugin uses by default.
 
-.. note:: Generating table of contents is not a standard Markdown feature and
-          even the marker used by Robot Framework is different to what
-          Python-Markdown's toc__ plugin uses by default.
+.. note:: Libdoc_ supports the same `%TOC%` marker also when
+          `creating table of contents`_ with the Robot Framework custom format.
 
 __ https://python-markdown.github.io/extensions/toc/
 
@@ -781,6 +780,10 @@ Example:
 
     hello("Robot")
     ```
+
+.. warning:: Fenced code blocks are only supported at the document root level.
+             They cannot be nested inside lists, admonitions, or other such
+             elements.
 
 Syntax highlighting
 '''''''''''''''''''

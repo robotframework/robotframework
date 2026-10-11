@@ -100,6 +100,7 @@ class LibraryDoc:
         )
         self.doc = formatter.html(self.doc)
         for item in self.inits + self.keywords:
+            formatter.reset()
             # If 'short_doc' is not set, it is generated automatically based on 'doc'
             # when accessed. Generate and set it to avoid HTML format affecting it.
             item.short_doc = item.short_doc

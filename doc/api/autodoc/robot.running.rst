@@ -35,6 +35,14 @@ robot.running.context module
    :show-inheritance:
    :undoc-members:
 
+robot.running.docstringparser module
+------------------------------------
+
+.. automodule:: robot.running.docstringparser
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 robot.running.dynamicmethods module
 -----------------------------------
 

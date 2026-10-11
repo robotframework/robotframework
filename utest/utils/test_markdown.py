@@ -184,7 +184,7 @@ class TestMarkdownNotInstalled(unittest.TestCase):
 
         assert_raises_with_msg(
             DataError,
-            "Markdown format requires 'markdown' module to be installed.",
+            "The 'markdown' module is required to convert Markdown documentation to HTML.",
             Markdown,
         )
 

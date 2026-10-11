@@ -612,7 +612,7 @@ and in the API docs of the optional ListenerV3_ base class.
    |                       |                  | dictionary is replaced with an object representing the imported    |
    |                       |                  | variable file.                                                     |
    +-----------------------+------------------+--------------------------------------------------------------------+
-   | result_file           | kind, path       | Called, by default, when a `result file <result files>`__          |
+   | result_file           | kind, path       | Called, by default, when a `result file <result files_>`__         |
    |                       |                  | like an output file or a log file is ready.                        |
    |                       |                  |                                                                    |
    |                       |                  | `kind` is a string `OUTPUT`, `REPORT`, `LOG`, `XUNIT` or `DEBUG`.  |
