@@ -16,9 +16,12 @@
 import asyncio
 import inspect
 import sys
+import time
 from contextlib import contextmanager
 
 from robot.errors import DataError, ExecutionFailed
+
+from .timeouts import TestTimeout
 
 
 class Asynchronous:
@@ -264,14 +267,28 @@ class _ExecutionContext:
         self.variables["${SUITE_MESSAGE}"] = message
 
     def start_test(self, data, result):
+        timeout, timeout_string = result.timeout, data.timeout
+        start_time = time.time()
         self.test = result
-        self._add_timeout(result.timeout)
+        self._add_timeout(timeout)
+        if timeout:
+            start_time = timeout.start_time
         self.namespace.start_test()
         self.variables.set_test("${TEST_NAME}", result.name)
         self.variables.set_test("${TEST_DOCUMENTATION}", result.doc)
         self.variables.set_test("${TEST_METADATA}", result.metadata.copy())
         self.variables.set_test("@{TEST_TAGS}", list(result.tags))
         self.output.start_test(data, result)
+        if data.timeout != timeout_string:
+            self._remove_timeout(timeout)
+            result.timeout = (
+                TestTimeout(data.timeout, self.variables, rpa=data.parent.rpa)
+                if data.timeout
+                else None
+            )
+            self._add_timeout(result.timeout)
+            if result.timeout:
+                result.timeout.start_time = start_time
 
     def _add_timeout(self, timeout):
         if timeout:
