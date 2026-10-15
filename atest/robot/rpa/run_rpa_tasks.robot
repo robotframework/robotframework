@@ -29,7 +29,7 @@ Conflicting headers cause error
     [Template]    Run and validate conflict
     rpa/tests.robot rpa/tasks    Rpa.Tests           Rpa.Tasks    tests    tasks
     rpa/                         Rpa.Task Aliases    Rpa.Tests    tasks    tests
-    ...    [[] ERROR ] Error in file '*[/\\]task_aliases.robot' on line 7:
+    ...    [[] ERROR ] Error in file '*[/\\]task_aliases.robot' on line 8:
     ...    Non-existing setting 'Tesk Setup'. Did you mean:\n
     ...    ${SPACE*3}Test Setup\n
     ...    ${SPACE*3}Task Setup\n
