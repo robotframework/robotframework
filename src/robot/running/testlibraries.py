@@ -23,8 +23,8 @@ from robot.errors import DataError
 from robot.libraries import STDLIBS
 from robot.output import LOGGER
 from robot.utils import (
-    get_error_details, getdoc, Importer, is_dict_like, is_list_like, normalize,
-    NormalizedDict, seq2str2, setter, type_name
+    get_error_details, get_error_message, getdoc, Importer, is_dict_like, is_list_like,
+    normalize, NormalizedDict, seq2str2, setter, type_name
 )
 
 from .arguments import CustomArgumentConverters
@@ -381,7 +381,12 @@ class ClassLibrary(TestLibrary):
     ) -> "ClassLibrary":
         init = LibraryInit.from_class(klass)
         library = cls(klass, init, name, real_name, source, logger)
-        positional, named = init.args.resolve(args, variables=variables)
+        try:
+            positional, named = init.args.resolve(args, variables=variables)
+        except DataError:
+            raise
+        except Exception:
+            raise DataError(get_error_message())
         init.positional, init.named = list(positional), dict(named)
         if create_keywords:
             library.create_keywords()

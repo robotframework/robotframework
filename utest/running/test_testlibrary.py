@@ -2,6 +2,7 @@ import os.path
 import re
 import sys
 import unittest
+from datetime import timedelta
 from pathlib import Path
 
 from classes import (
@@ -181,6 +182,27 @@ class TestLibraryInit(unittest.TestCase):
 
     def test_library_with_zero_len(self):
         self._test_init_handler("LenLibrary")
+
+    def test_argument_conversion(self):
+        class Library:
+            def __init__(self, integer: int, timeout: timedelta = timedelta()):
+                pass
+
+        lib = TestLibrary.from_class(Library, args=["42", "1 minute"])
+        assert_equal(lib.init.positional, [42, timedelta(minutes=1)])
+        assert_raises_with_msg(
+            DataError,
+            "ValueError: Argument 'integer' got value 'invalid' that cannot be "
+            "converted to integer.",
+            TestLibrary.from_class,
+            Library,
+            args=["invalid"],
+        )
+        # Conversion can fail also with other exceptions than `ValueError`.
+        error = assert_raises(
+            DataError, TestLibrary.from_class, Library, args=["42", "1e20"]
+        )
+        assert_true(str(error).startswith("OverflowError: "), str(error))
 
     def _test_init_handler(self, libname, args=None, min=0, max=0):
         lib = TestLibrary.from_name(libname, args=args)
