@@ -37,6 +37,17 @@ class Metadata(NormalizedDict[str]):
             value = str(value)
         super().__setitem__(key, value)
 
+    def set(self, name: str, value: str = ""):
+        """Set metadata value or remove it if the name starts with a hyphen.
+
+        Removing metadata that does not exist does nothing.
+        New in Robot Framework 7.6.
+        """
+        if name.startswith("-"):
+            self.pop(name[1:], None)
+        else:
+            self[name] = value
+
     def __str__(self):
         items = ", ".join(f"{key}: {self[key]}" for key in self)
         return f"{{{items}}}"

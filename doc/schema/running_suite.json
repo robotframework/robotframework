@@ -679,6 +679,13 @@
             "type": "string"
           }
         },
+        "metadata": {
+          "title": "Metadata",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
         "template": {
           "title": "Template",
           "type": "string"

@@ -43,6 +43,7 @@ class CustomParser(Parser):
         if self.bad_return:
             return 42
         defaults.tags = ["tag from init"]
+        defaults.metadata = {"Metadata": "from init"}
         defaults.setup = {"name": "Log", "args": ["setup from init"]}
         defaults.teardown = {"name": "Log", "args": ["teardown from init"]}
         defaults.timeout = "42s"

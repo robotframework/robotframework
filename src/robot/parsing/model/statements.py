@@ -535,6 +535,44 @@ class Metadata(DocumentationOrMetadata):
 
 
 @Statement.register
+class TestMetadata(DocumentationOrMetadata):
+    type = Token.TEST_METADATA
+
+    @classmethod
+    def from_params(
+        cls,
+        name: str,
+        value: str,
+        separator: str = FOUR_SPACES,
+        eol: str = EOL,
+    ) -> "TestMetadata":
+        tokens = [
+            Token(Token.TEST_METADATA, "Test Metadata"),
+            Token(Token.SEPARATOR, separator),
+            Token(Token.NAME, name),
+        ]
+        metadata_lines = value.splitlines()
+        if metadata_lines:
+            tokens += [
+                Token(Token.SEPARATOR, separator),
+                Token(Token.ARGUMENT, metadata_lines[0]),
+                Token(Token.EOL, eol),
+            ]
+        for line in metadata_lines[1:]:
+            tokens += [
+                Token(Token.CONTINUATION),
+                Token(Token.SEPARATOR, separator),
+                Token(Token.ARGUMENT, line),
+                Token(Token.EOL, eol),
+            ]
+        return cls(tokens)
+
+    @property
+    def name(self) -> str:
+        return self.get_value(Token.NAME, "")
+
+
+@Statement.register
 class TestTags(MultiValue):
     type = Token.TEST_TAGS
 

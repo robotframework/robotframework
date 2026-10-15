@@ -575,6 +575,12 @@ class TestToFromDictAndJson(unittest.TestCase):
             body=[],
             template="K",
         )
+        self._verify(
+            TestCase("N", metadata={"Owner": "QA Team"}),
+            name="N",
+            metadata={"Owner": "QA Team"},
+            body=[],
+        )
 
     def test_test_structure(self):
         test = TestCase("TC")

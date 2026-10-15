@@ -135,6 +135,64 @@ Default Tags      Not allowed in init file
         ]  # fmt: skip
         assert_tokens(data, expected, get_init_tokens, data_only=True)
 
+    def test_test_metadata(self):
+        data = """\
+*** Settings ***
+Test Metadata     Owner       QA Team
+Task Metadata     Priority    Normal
+Test Metadata     -Owner
+"""
+        expected = [
+            (T.SETTING_HEADER, "*** Settings ***", 1, 0),
+            (T.EOS, "", 1, 16),
+            (T.TEST_METADATA, "Test Metadata", 2, 0),
+            (T.NAME, "Owner", 2, 18),
+            (T.ARGUMENT, "QA Team", 2, 30),
+            (T.EOS, "", 2, 37),
+            (T.TEST_METADATA, "Task Metadata", 3, 0),
+            (T.NAME, "Priority", 3, 18),
+            (T.ARGUMENT, "Normal", 3, 30),
+            (T.EOS, "", 3, 36),
+            (T.TEST_METADATA, "Test Metadata", 4, 0),
+            (T.NAME, "-Owner", 4, 18),
+            (T.EOS, "", 4, 24),
+        ]
+        self._verify(data, expected)
+        self._verify(data, expected, get_tokens=get_init_tokens)
+
+    def test_test_metadata_removal_does_not_accept_value(self):
+        data = """\
+*** Settings ***
+Test Metadata     -Owner    value
+"""
+        expected = [
+            (T.SETTING_HEADER, "*** Settings ***", 1, 0),
+            (T.EOS, "", 1, 16),
+            (T.ERROR, "Test Metadata", 2, 0,
+             "Setting 'Test Metadata' does not accept a value when removing "
+             "metadata using the '-name' syntax, got 1."),
+            (T.EOS, "", 2, 13),
+        ]  # fmt: skip
+        self._verify(data, expected)
+        self._verify(data, expected, get_tokens=get_init_tokens)
+
+    def test_test_metadata_not_allowed_in_resource_file(self):
+        data = """\
+*** Settings ***
+Test Metadata     Owner    QA Team
+"""
+        expected = [
+            (T.SETTING_HEADER, "*** Settings ***", 1, 0),
+            (T.EOS, "", 1, 16),
+            (T.ERROR, "Test Metadata", 2, 0,
+             "Setting 'Test Metadata' is not allowed in resource file."),
+            (T.EOS, "", 2, 13),
+        ]  # fmt: skip
+        self._verify(data, expected, get_tokens=get_resource_tokens)
+
+    def _verify(self, data, expected, get_tokens=get_tokens):
+        assert_tokens(data, expected, get_tokens=get_tokens, data_only=True)
+
     def test_suite_settings_not_allowed_in_resource_file(self):
         data = """\
 *** Settings ***
