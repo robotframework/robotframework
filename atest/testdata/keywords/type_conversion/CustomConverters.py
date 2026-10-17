@@ -2,7 +2,7 @@ from datetime import date, datetime
 from types import ModuleType
 from typing import Dict, List, Set, Tuple, TypedDict, Union
 
-from robot.api.deco import not_keyword
+from robot.api.deco import not_keyword, register_converter
 
 not_keyword(TypedDict)
 
@@ -36,6 +36,30 @@ def parse_bool(value: Union[str, int, bool]):
     if isinstance(value, str):
         value = value.lower()
     return value not in ["false", "", "epätosi", "\u2639", False, 0]
+
+
+class AutoConvertedNumber:
+    """type placeholder"""
+
+
+@register_converter(AutoConvertedNumber)
+def autonumber_from_str(value):
+    try:
+        return ["zero", "one", "two", "three", "four"].index(value.lower())
+    except ValueError:
+        raise ValueError(f"Don't know number {value!r}.")
+
+
+class AutoConvertedSpecialNumber:
+    """type placeholder"""
+
+
+@register_converter(AutoConvertedSpecialNumber, str, type_name='special number')
+def specialnumber_from_str(value, type_info):
+    try:
+        return dict(two=2, three=3, five=5, seven=7, eleven=11)[value.lower()]
+    except KeyError:
+        raise ValueError(f"Number {value!r} isn't a {type_info.name}.")
 
 
 class UsDate(date):
@@ -143,6 +167,9 @@ def number(argument: Number, expected: int = 0):
     if argument != expected:
         raise AssertionError(f"Expected value to be {expected!r}, got {argument!r}.")
 
+def special_number(argument: AutoConvertedSpecialNumber, expected: int = 0):
+    if argument != expected:
+        raise AssertionError(f"Expected value to be {expected!r}, got {argument!r}.")
 
 def true(argument: bool):
     assert argument is True

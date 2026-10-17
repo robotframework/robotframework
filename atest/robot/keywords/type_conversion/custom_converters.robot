@@ -60,6 +60,9 @@ Invalid converters
 Non-type annotation
     Check Test Case    ${TESTNAME}
 
+From registered type
+    Check Test Case    ${TESTNAME}
+
 Using library decorator
     Check Test Case    ${TESTNAME}
 
