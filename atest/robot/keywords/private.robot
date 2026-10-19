@@ -46,6 +46,15 @@ If All Keywords Are Private Raise Multiple Keywords Found
 If More Than Two Keywords Are Public Raise Multiple Keywords Found
     Check Test Case    ${TESTNAME}
 
+Valid Usage With Local Embedded Keyword
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Length Should Be    ${tc[0, 0].body}    1
+
+Invalid Usage With Local Embedded Keyword
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Private Call Warning Should Be    Private Keyword With \${argument}    ${tc[0, 0]}    ${ERRORS[3]}
+    Length Should Be    ${tc[0].body}    2
+
 *** Keywords ***
 Private Call Warning Should Be
     [Arguments]    ${name}    @{messages}

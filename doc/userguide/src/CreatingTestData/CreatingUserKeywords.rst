@@ -1253,9 +1253,19 @@ Private user keywords
 ---------------------
 
 User keywords can be tagged__ with a special `robot:private` tag to indicate
-that they should only be used in the file where they are created:
+that they should only be called by user keywords defined in the same file.
+This applies to keywords defined in both suite files and resource files.
+Calling a private keyword directly from a test case causes a warning even
+when the test and the keyword are in the same file:
 
 .. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Call Through Public Keyword
+       Public Keyword
+
+   Direct Call Causes Warning
+       Private Keyword
 
    *** Keywords ***
    Public Keyword
@@ -1265,8 +1275,9 @@ that they should only be used in the file where they are created:
        [Tags]    robot:private
        No Operation
 
-Using the `robot:private` tag does not outright prevent using the keyword
-outside the file where it is created, but such usages will cause a warning.
+Using the `robot:private` tag does not outright prevent calling the keyword
+directly from a test or from a keyword in another file, but such usages
+will cause a warning.
 If there is both a public and a private keyword with the same name,
 the public one will be used but also this situation causes a warning.
 

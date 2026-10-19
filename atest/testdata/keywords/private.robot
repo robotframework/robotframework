@@ -48,6 +48,12 @@ If More Than Two Keywords Are Public Raise Multiple Keywords Found
     ...    ${SPACE*4}private3.Private In One Resource And Public In Two
     Private In One Resource And Public In Two
 
+Valid Usage With Local Embedded Keyword
+    Public Embedded Keyword
+
+Invalid Usage With Local Embedded Keyword
+    Private Keyword With An Argument
+
 *** Keywords ***
 Public Keyword
     Private Keyword
@@ -55,3 +61,10 @@ Public Keyword
 Private Keyword
     [Tags]    robot:private
     No Operation
+
+Public Embedded Keyword
+    Private Keyword With An Argument
+
+Private Keyword With ${argument}
+    [Tags]    robot:private
+    Should Be Equal    ${argument}    An Argument
