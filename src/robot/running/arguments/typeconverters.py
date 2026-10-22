@@ -141,6 +141,15 @@ class TypeConverter:
             return self._string_convert(value)
         except ValueError as error:
             return self._handle_error(value, name, kind, error)
+        except RecursionError:
+            # Deeply nested values with recursive types can exceed the recursion
+            # limit. That is not a conversion error and must not be hidden.
+            raise
+        except Exception:
+            # Converters should raise `ValueError`, but, for example, `set()` can
+            # raise `TypeError` and `timedelta()` can raise `OverflowError`.
+            message = get_error_message()
+            return self._handle_error(value, name, kind, ValueError(message))
 
     def no_conversion_needed(self, value: object) -> bool:
         try:

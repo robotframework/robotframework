@@ -568,6 +568,27 @@ class conversion:
             ["invalid"],
         )
 
+    def test_argument_conversion_failing_with_other_exception_than_value_error(self):
+        path = create_temp_file(
+            "conversion_error.py",
+            extra_content="""
+from datetime import timedelta
+
+class conversion_error:
+    def __init__(self, arg: timedelta):
+        self.arg = arg
+""",
+        )
+        assert_raises_with_msg(
+            DataError,
+            f"Importing xxx '{path}' failed: "
+            "Argument 'arg' got value 'inf' that cannot be converted to timedelta: "
+            "OverflowError: cannot convert float infinity to integer",
+            Importer("XXX").import_class_or_module,
+            path,
+            ["inf"],
+        )
+
     def test_modules_do_not_take_arguments(self):
         path = create_temp_file("no_args_allowed.py")
         assert_raises_with_msg(
