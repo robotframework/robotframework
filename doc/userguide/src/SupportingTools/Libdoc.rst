@@ -52,12 +52,11 @@ Options
                            from the output file extension. The `markdown` format is new
                            in Robot Framework 7.5.
   -s, --specdocformat <raw|html>
-                           Specifies the documentation format used with XML and JSON
-                           spec files. `raw` means preserving the original documentation
-                           format and `html` means converting documentation to HTML. The
-                           default is `raw` with XML spec files and `html` with JSON
-                           specs and when using the special `libspec` format. Not
-                           applicable with `html` or `markdown` outputs.
+                           Specifies the `documentation format in spec files`_.
+                           `raw` means preserving the original documentation format
+                           and `html` means converting documentation to HTML.
+                           Notice that the default behavior with Markdown will
+                           change in Robot Framework 7.6.
   -F, --docformat <robot|markdown|html|text|rest>
                            Specifies the source documentation format. Possible
                            values are Robot Framework's documentation format,
@@ -241,15 +240,6 @@ spec file, the spec file root element has a dedicated `specversion`
 attribute. It was added in Robot Framework 3.2 with value `2` and earlier
 spec files can be considered to have version `1`. The spec version will
 be incremented in the future if and when changes are made.
-Robot Framework 4.0 introduced new spec version `3` which is incompatible
-with earlier versions.
-
-.. note:: The `XML:HTML` format introduced in Robot Framework 3.2. has been
-          replaced by the format `LIBSPEC` ot the option combination
-          `--format XML --specdocformat HTML`.
-
-.. note:: Including source information and spec version are new in Robot
-          Framework 3.2.
 
 __ https://en.wikipedia.org/wiki/XML_Schema_(W3C)
 
@@ -271,6 +261,22 @@ at https://github.com/robotframework/robotframework/tree/master/doc/schema.
 The spec file format may change between Robot Framework major releases.
 
 __ https://json-schema.org/
+
+Documentation format in spec files
+''''''''''''''''''''''''''''''''''
+
+When generating XML or JSON spec files, Libdoc can either preserve the original
+documentation as-is or convert it to HTML. This can be controlled by using
+the :option:`--specdocformat (-s)` with values `raw` or `html`, respectively.
+
+By default, Libdoc converts documentation to HTML when generating JSON spec files
+and when generating XML spec files with the special :file:`*.libspec` extension.
+When generating XML spec files with the :file:`*.xml` extension, the original
+documentation format is preserved.
+
+The plan is to change the default behavior in Robot Framework 7.6 so that Markdown
+documentation is not converted to HTML regardless the spec format. If you want to
+preserve the current functionality, use `--specdocformat html` explicitly.
 
 Libdoc Markdown documentation
 '''''''''''''''''''''''''''''

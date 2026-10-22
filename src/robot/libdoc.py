@@ -88,6 +88,10 @@ Options
                           spec files and HTML with JSON specs and when using
                           the special LIBSPEC format. Not applicable with HTML
                           or MARKDOWN outputs.
+                          NOTE: Markdown documentation will not be converted to
+                          HTML by default, regardless the spec format, starting
+                          from RF 7.6. Use `-s HTML` if you want to preserve
+                          the current behavior.
  -F --docformat ROBOT|MARKDOWN|HTML|TEXT|REST
                           Specifies the source documentation format. Possible
                           values are Robot Framework's documentation format,
