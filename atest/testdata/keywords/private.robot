@@ -53,6 +53,12 @@ Raise multiple keywords error if more than one keyword is public
     ...    ${SPACE*4}private3.Private In One Resource And Public In Two
     Private In One Resource And Public In Two
 
+Test can call local private keyword with embedded arguments
+    Private Keyword With An Argument
+
+Resource keyword calling private keyword with embedded arguments in suite file causes warning
+    Call Private Embedded Keyword From Suite File
+
 *** Keywords ***
 Public Keyword In Suite File
     Private Keyword In Suite File
@@ -60,3 +66,7 @@ Public Keyword In Suite File
 Private Keyword In Suite File
     [Tags]    robot:private
     No Operation
+
+Private Keyword With ${argument}
+    [Tags]    robot:private
+    Should Be Equal    ${argument}    An Argument

@@ -8,7 +8,7 @@ Suite can call local private keyword
 
 Suite calling private resource keyword causes warning
     Private Call Warning Should Be    private.Private Keyword In Resource
-    ...    ${SUITE.teardown[0]}    ${ERRORS[3]}
+    ...    ${SUITE.teardown[0]}    ${ERRORS[4]}
     Length Should Be    ${SUITE.teardown.body}    2
 
 Test can call local public keyword
@@ -60,6 +60,16 @@ Raise multiple keywords error if all keywords are private
 
 Raise multiple keywords error if more than one keyword is public
     Check Test Case    ${TESTNAME}
+
+Test can call local private keyword with embedded arguments
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Length Should Be    ${tc[0].body}    1
+
+Resource keyword calling private keyword with embedded arguments in suite file causes warning
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Private Call Warning Should Be    Private Keyword With \${argument}
+    ...    ${tc[0, 0, 0]}    ${ERRORS[3]}
+    Length Should Be    ${tc[0, 0].body}    2
 
 *** Keywords ***
 Private Call Warning Should Be
