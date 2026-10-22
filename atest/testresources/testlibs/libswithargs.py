@@ -29,3 +29,9 @@ class Mixed(Defaults):
 
     def __init__(self, mandatory, default=42, *extra):
         super().__init__(mandatory, default, " ".join(str(a) for a in extra))
+
+
+class Typed:
+
+    def __init__(self, integer: int):
+        self.integer = integer

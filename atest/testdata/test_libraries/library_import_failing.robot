@@ -8,6 +8,7 @@ Library         NonExistingLibrary
 Library         ${non existing nön äscii}
 Library         InitializationFailLibrary.py    ${nön existing}    ${vars here}
 Library         # Missing name causes error
+Library         libswithargs.Typed    not integer
 Library         OperatingSystem    # This succeeds after all failed imports
 
 *** Variables ***
