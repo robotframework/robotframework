@@ -47,7 +47,7 @@ Init Arguments
 
 Init Source Info
     Keyword Should Not Have Source   0    xpath=inits/init
-    Keyword Lineno Should Be         0    297      xpath=inits/init
+    Keyword Lineno Should Be         0    298      xpath=inits/init
 
 Keyword Names
     Keyword Name Should Be           0    Close All Connections
@@ -69,11 +69,11 @@ Keyword Source Info
     # This keyword is from the "main library".
     Keyword Name Should Be           0    Close All Connections
     Keyword Should Not Have Source   0
-    Keyword Lineno Should Be         0    574
+    Keyword Lineno Should Be         0    575
     # This keyword is from an external library component.
     Keyword Name Should Be           7    Read Until Prompt
     Keyword Should Not Have Source   7
-    Keyword Lineno Should Be         7    1261
+    Keyword Lineno Should Be         7    1262
 
 KwArgs and VarArgs
     Run Libdoc And Parse Output      ${TESTDATADIR}/KwArgs.py
