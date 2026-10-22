@@ -36,6 +36,9 @@ Union with str and TypedDict
 Union with item not liking isinstance
     Check Test Case    ${TESTNAME}
 
+Union with item failing with other exception than ValueError
+    Check Test Case    ${TESTNAME}
+
 Argument not matching union
     Check Test Case    ${TESTNAME}
 

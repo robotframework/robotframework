@@ -230,6 +230,9 @@ Invalid value on CLI
     Run Should Fail
     ...    -v "BAD_VALUE: int:bad" ${DATADIR}/misc/pass_and_fail.robot
     ...    Command line variable '\${BAD_VALUE: int}' got value 'bad' that cannot be converted to integer.
+    Run Should Fail
+    ...    -v "BAD_VALUE: timedelta:inf" ${DATADIR}/misc/pass_and_fail.robot
+    ...    Command line variable '\${BAD_VALUE: timedelta}' got value 'inf' that cannot be converted to timedelta: OverflowError: cannot convert float infinity to integer
 
 Invalid type on CLI
     Run Should Fail

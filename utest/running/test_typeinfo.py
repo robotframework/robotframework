@@ -368,6 +368,16 @@ class TestTypeInfo(unittest.TestCase):
             kind="FOR var",
         )
 
+    def test_failing_conversion_with_other_exception_than_value_error(self):
+        assert_raises_with_msg(
+            ValueError,
+            "Argument 't' got value 'inf' that cannot be converted to timedelta: "
+            "OverflowError: cannot convert float infinity to integer",
+            TypeInfo.from_type_hint(timedelta).convert,
+            "inf",
+            "t",
+        )
+
     def test_custom_converter(self):
         class Custom:
             def __init__(self, arg: int):

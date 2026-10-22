@@ -309,6 +309,8 @@ Invalid timedelta
     Timedelta            foobar                    error=Invalid time string 'foobar'.
     Timedelta            1 foo                     error=Invalid time string '1 foo'.
     Timedelta            01:02:03:04               error=Invalid time string '01:02:03:04'.
+    Timedelta            1e20                      error=OverflowError: *
+    Timedelta            inf                       error=OverflowError: cannot convert float infinity to integer
     Timedelta            ${LIST}                   arg_type=list
     Timedelta            ${NO_CLASS}               arg_type=NoClass
 
@@ -534,6 +536,7 @@ Invalid set
     Set                  {}                        error=Value is dictionary, not set.
     Set                  ooops                     error=Invalid expression.
     Set                  {{'not', 'hashable'}}     error=Evaluating expression failed: *
+    Set                  ({},)                     error=TypeError: *unhashable type: 'dict'*
     Set                  frozenset()               error=Invalid expression.
     Set                  ${{(c for c in 'xy')}}    arg_type=generator
     Set                  ${NONE}                   arg_type=None
