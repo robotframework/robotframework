@@ -3,47 +3,62 @@ Suite Setup       Run Tests    ${EMPTY}    keywords/private.robot
 Resource          atest_resource.robot
 
 *** Test Cases ***
-Valid Usage With Local Keyword
+Suite can call local private keyword
+    Length Should Be    ${SUITE.setup.body}    1
+
+Suite calling private resource keyword causes warning
+    Private Call Warning Should Be    private.Private Keyword In Resource
+    ...    ${SUITE.teardown[0]}    ${ERRORS[3]}
+    Length Should Be    ${SUITE.teardown.body}    2
+
+Test can call local public keyword
     ${tc}=    Check Test Case    ${TESTNAME}
     Length Should Be    ${tc[0].body}    1
 
-Invalid Usage With Local Keyword
-    ${tc}=    Check Test Case    ${TESTNAME}
-    Private Call Warning Should Be    Private Keyword    ${tc[0, 0]}    ${ERRORS[0]}
-    Length Should Be    ${tc[0].body}    2
-
-Valid Usage With Resource Keyword
+Test can call local private keyword
     ${tc}=    Check Test Case    ${TESTNAME}
     Length Should Be    ${tc[0].body}    1
 
-Invalid Usage With Resource Keyword
+Test can call public resource keyword
     ${tc}=    Check Test Case    ${TESTNAME}
-    Private Call Warning Should Be    private.Private Keyword In Resource    ${tc[0, 0]}    ${ERRORS[1]}
+    Length Should Be    ${tc[0].body}    1
+
+Test calling private resource keyword causes warning
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Private Call Warning Should Be    private.Private Keyword In Resource
+    ...    ${tc[0, 0]}    ${ERRORS[0]}
     Length Should Be    ${tc[0].body}    2
 
-Invalid Usage in Resource File
+Resource keyword calling private keyword in another resource causes warning
     ${tc}=    Check Test Case    ${TESTNAME}
-    Private Call Warning Should Be    private2.Private Keyword In Resource 2   ${tc[0, 0, 0]}    ${ERRORS[2]}
+    Private Call Warning Should Be    private2.Private Keyword In Resource 2
+    ...    ${tc[0, 0, 0]}    ${ERRORS[1]}
     Length Should Be    ${tc[0, 0].body}    2
 
-Local Private Keyword In Resource File Has Precedence Over Keywords In Another Resource
+Resource keyword calling private keyword in suite file causes warning
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Private Call Warning Should Be    Private Keyword In Suite File
+    ...    ${tc[0, 0, 0]}    ${ERRORS[2]}
+    Length Should Be    ${tc[0, 0].body}    2
+
+Local private keyword in resource has precedence over keywords in another resource
     ${tc}=    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc[0, 0, 0, 0]}    private.resource
     Check Log Message    ${tc[0, 1, 0, 0]}    private.resource
 
-Search Order Has Precedence Over Local Private Keyword In Resource File
+Search order has precedence over local private keyword in resource
     ${tc}=    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc[0, 0, 0, 0]}    private2.resource
 
-Imported Public Keyword Has Precedence Over Imported Private Keywords
+Imported public keyword has precedence over imported private keyword
     ${tc}=    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc[0, 0, 0]}       private2.resource
     Check Log Message    ${tc[1, 0, 0, 0]}    private2.resource
 
-If All Keywords Are Private Raise Multiple Keywords Found
+Raise multiple keywords error if all keywords are private
     Check Test Case    ${TESTNAME}
 
-If More Than Two Keywords Are Public Raise Multiple Keywords Found
+Raise multiple keywords error if more than one keyword is public
     Check Test Case    ${TESTNAME}
 
 *** Keywords ***

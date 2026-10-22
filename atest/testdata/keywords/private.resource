@@ -31,6 +31,9 @@ Use Imported Public Keyword Instead Instead Of Imported Private Keyword
 Call Private Keyword From Private 2 Resource
     Private Keyword In Resource 2
 
+Call Private Keyword From Suite File
+    Private Keyword In Suite File
+
 Private In One Resource And Public In Two
     [Tags]    robot:private
     Fail    Not executed

@@ -162,8 +162,13 @@ class _ExecutionContext:
             self.user_keywords.pop()
 
     def warn_on_invalid_private_call(self, handler):
-        parent = self.user_keywords[-1] if self.user_keywords else None
-        if not parent or parent.source != handler.source:
+        if self.user_keywords:
+            parent = self.user_keywords[-1]
+        elif self.test:
+            parent = self.test
+        else:
+            parent = self.suite
+        if parent.source != handler.source:
             self.warn(
                 f"Keyword '{handler.full_name}' is private and should only "
                 f"be called by keywords in the same file."
