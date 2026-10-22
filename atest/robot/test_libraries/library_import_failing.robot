@@ -50,6 +50,7 @@ Library Import Without Name
 
 Initializing Fails Due To Argument Conversion
     Error in file    9    test_libraries/library_import_failing.robot    11
+    ...    Resolving arguments to library 'libswithargs.Typed' failed:
     ...    ValueError: Argument 'integer' got value 'not integer' that cannot be converted to integer.
 
 Importing library with same name as Python built-in module

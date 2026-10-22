@@ -170,6 +170,10 @@ class ArgumentSpec(metaclass=SetterAwareType):
     ) -> "tuple[list, list]":
         if self.types or self.defaults:
             converter = ArgumentConverter(self, converters, dry_run, languages)
+            # TODO: Catch exceptions and re-raise them as DataErrors with some
+            #  context information. That avoids handling all exceptions in the
+            #  call site like was done when fixing
+            #  https://github.com/robotframework/robotframework/issues/5815
             positional, named = converter.convert(positional, named)
         return positional, named
 

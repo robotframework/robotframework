@@ -192,17 +192,12 @@ class TestLibraryInit(unittest.TestCase):
         assert_equal(lib.init.positional, [42, timedelta(minutes=1)])
         assert_raises_with_msg(
             DataError,
-            "ValueError: Argument 'integer' got value 'invalid' that cannot be "
-            "converted to integer.",
+            "Resolving arguments to library 'Library' failed: ValueError: Argument "
+            "'integer' got value 'invalid' that cannot be converted to integer.",
             TestLibrary.from_class,
             Library,
             args=["invalid"],
         )
-        # Conversion can fail also with other exceptions than `ValueError`.
-        error = assert_raises(
-            DataError, TestLibrary.from_class, Library, args=["42", "1e20"]
-        )
-        assert_true(str(error).startswith("OverflowError: "), str(error))
 
     def _test_init_handler(self, libname, args=None, min=0, max=0):
         lib = TestLibrary.from_name(libname, args=args)

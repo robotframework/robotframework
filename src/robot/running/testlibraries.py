@@ -382,11 +382,15 @@ class ClassLibrary(TestLibrary):
         init = LibraryInit.from_class(klass)
         library = cls(klass, init, name, real_name, source, logger)
         try:
+            # TODO: Make sure `resolve` can only raise DataErrors.
             positional, named = init.args.resolve(args, variables=variables)
         except DataError:
             raise
         except Exception:
-            raise DataError(get_error_message())
+            raise DataError(
+                f"Resolving arguments to library '{library.name}' failed: "
+                f"{get_error_message()}"
+            )
         init.positional, init.named = list(positional), dict(named)
         if create_keywords:
             library.create_keywords()
