@@ -116,14 +116,11 @@ def test_or_task(text: str, rpa: bool):
 
 
 def isatty(stream):
-    # first check if buffer was detached
-    if hasattr(stream, "buffer") and stream.buffer is None:
-        return False
     if not hasattr(stream, "isatty"):
         return False
     try:
         return stream.isatty()
-    except ValueError:  # Occurs if file is closed.
+    except ValueError:  # Occurs if stream is closed or its buffer is detached.
         return False
 
 
