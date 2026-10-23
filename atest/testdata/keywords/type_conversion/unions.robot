@@ -85,6 +85,12 @@ Union with item not liking isinstance
     42                 ${42}
     3.14               ${3.14}
 
+Union with item failing with other exception than ValueError
+    [Template]    Union of timedelta and float
+    1 minute           ${{datetime.timedelta(minutes=1)}}
+    1e20               ${1e20}
+    inf                ${{float('inf')}}
+
 Argument not matching union
     [Template]    Conversion Should Fail
     Union of int and float             not a number    type=integer or float
