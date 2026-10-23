@@ -46,6 +46,18 @@ class TestRobotAndRebotSettings(unittest.TestCase):
         assert_equal(RobotSettings({"test": "one"})["TestNames"], ["one"])
         assert_equal(RebotSettings({"exclude": "two"})["Exclude"], ["two"])
 
+    def test_max_error_lines_accepts_integer(self):
+        # https://github.com/robotframework/robotframework/issues/5113
+        # The programmatic API (robot.run/TestSuite.run) passes native types, so
+        # an int must be accepted like the equivalent string from the CLI.
+        assert_equal(RobotSettings({"maxerrorlines": 10}).max_error_lines, 10)
+        assert_equal(RobotSettings({"maxerrorlines": "15"}).max_error_lines, 15)
+        assert_equal(RobotSettings({"maxerrorlines": None}).max_error_lines, None)
+        assert_equal(RobotSettings({"maxerrorlines": "NONE"}).max_error_lines, None)
+        # Invalid values (int or string) still raise a clear error, not AttributeError.
+        self.assertRaises(DataError, RobotSettings, {"maxerrorlines": 5})
+        self.assertRaises(DataError, RobotSettings, {"maxerrorlines": "5"})
+
     def test_output_files(self):
         for name in (
             "Output.xml",
