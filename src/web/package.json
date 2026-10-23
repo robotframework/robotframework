@@ -21,7 +21,7 @@
     "typescript": "^5.4.4"
   },
   "dependencies": {
-    "handlebars": "^4.7.9",
+    "handlebars": "^4.7.10",
     "mark.js": "^8.11.1"
   }
 }
