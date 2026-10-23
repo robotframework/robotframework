@@ -34,6 +34,9 @@ Call Private Keyword From Private 2 Resource
 Call Private Keyword From Suite File
     Private Keyword In Suite File
 
+Call Private Embedded Keyword From Suite File
+    Private Keyword With An Argument
+
 Private In One Resource And Public In Two
     [Tags]    robot:private
     Fail    Not executed
