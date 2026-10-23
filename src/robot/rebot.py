@@ -38,6 +38,7 @@ if __name__ == "__main__" and "robot" not in sys.modules:
     set_pythonpath()
 
 from robot.conf import RebotSettings
+from robot.conf.arguments import RebotArgs
 from robot.errors import DataError
 from robot.output import LOGGER
 from robot.reporting import ResultWriter
@@ -288,7 +289,16 @@ Options
                           |  --name Regression Tests
                           |  # This is a comment line
                           |  output.xml
- -h -? --help             Print usage instructions.
+ --config path            Read configuration from this file only, disabling the
+                          automatic rebot.toml/robot.toml/pyproject.toml
+                          discovery.
+ --no-config              Do not read any configuration file.
+ --profile name *         Activate one or more configuration profiles defined
+                          in the configuration file. Glob patterns are
+                          supported.
+ --ignore-git             Keep searching for configuration files upwards even
+                          above the project's .git directory.
+ -h --help                Print usage instructions.
  --version                Print version information.
 
 Options that are marked with an asterisk (*) can be specified multiple times.
@@ -353,6 +363,7 @@ class Rebot(RobotFramework):
             arg_limits=(1,),
             env_options="REBOT_OPTIONS",
             logger=LOGGER,
+            config=RebotArgs,
         )
 
     def main(self, datasources, **options):

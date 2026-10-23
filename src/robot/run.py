@@ -39,6 +39,7 @@ if __name__ == "__main__" and "robot" not in sys.modules:
     set_pythonpath()
 
 from robot.conf import RobotSettings
+from robot.conf.arguments import RobotArgs
 from robot.errors import DataError
 from robot.model import ModelModifier
 from robot.output import librarylogger, LOGGER, pyloggingconf
@@ -71,6 +72,11 @@ Tests (or tasks in RPA terminology) are created in files typically having the
 `*.robot` extension. Files automatically create test (or task) suites and
 directories with these files create higher level suites. When Robot Framework
 is executed, paths to these files or directories are given to it as arguments.
+They can also be listed with `paths` in the configuration file (`robot.toml`
+or the `[tool.robot]` table of `pyproject.toml`). Relative paths there are
+relative to the configuration file. Paths given on the command line replace
+them. The same applies to `outputdir` and `pythonpath`, and to `variablefile`,
+`listener` and `prerunmodifier` values that exist relative to the file.
 
 By default Robot Framework creates an XML output file and a log and a report in
 HTML format, but this can be configured using various options listed below.
@@ -379,7 +385,15 @@ Options
                           |  path/to/test/directory/
                           Examples:
                           --argumentfile argfile.txt --argumentfile STDIN
- -h -? --help             Print usage instructions.
+ --config path            Read configuration from this file only, disabling the
+                          automatic robot.toml/pyproject.toml discovery.
+ --no-config              Do not read any configuration file.
+ --profile name *         Activate one or more configuration profiles defined
+                          in the configuration file. Glob patterns are
+                          supported.
+ --ignore-git             Keep searching for configuration files upwards even
+                          above the project's .git directory.
+ -h --help                Print usage instructions.
  --version                Print version information.
 
 Options that are marked with an asterisk (*) can be specified multiple times.
@@ -453,6 +467,7 @@ class RobotFramework(Application):
             arg_limits=(1,),
             env_options="ROBOT_OPTIONS",
             logger=LOGGER,
+            config=RobotArgs,
         )
 
     def main(self, datasources, **options):
