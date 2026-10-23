@@ -17,6 +17,7 @@ from collections.abc import Mapping, Sequence
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
+import re
 from typing import Any, Literal
 
 try:
@@ -30,8 +31,12 @@ from robot.utils import Secret
 def get_standard_type_doc(typ, doc_format):
     if typ is bytearray:
         typ = bytes
-    docs = _std_docs_markdown if doc_format.upper() == "MARKDOWN" else _std_docs_robot
-    return docs[typ]
+    doc_format = doc_format.upper()
+    docs = _std_docs_markdown if doc_format == "MARKDOWN" else _std_docs_robot
+    doc = docs[typ]
+    if doc_format == "REST":
+        doc = re.sub(r"\[(https?://[^|\]]+)\|([^\]]+)\]", r"`\2 <\1>`_", doc)
+    return doc
 
 
 _std_docs_markdown = {
