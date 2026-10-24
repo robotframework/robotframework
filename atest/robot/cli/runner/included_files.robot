@@ -2,6 +2,9 @@
 Test Template      Expected number of tests should be run
 Resource           atest_resource.robot
 
+*** Variables ***
+${MULTIPLE SOURCES}    ${DATADIR}/misc/suites/01__suite_with_prefix ${DATADIR}/misc/suites/subsuites
+
 *** Test Cases ***
 File name
     --parseinclude sample.robot                                          18
@@ -29,6 +32,17 @@ Non-standard files matching patterns with extension are parsed
     --parse-include *.rst                                                20
     --parse-include ${DATADIR}/parsing/**/*.rst                          20
     --parse-include ${DATADIR}/parsing/data_formats/rest                  1
+
+Multiple sources with matches only in some
+    [Template]    NONE
+    Run Tests    --parseinclude sub1.robot    ${MULTIPLE SOURCES}
+    Should Contain Tests    ${SUITE}    SubSuite1 First
+
+Multiple sources without matches
+    [Template]    NONE
+    ${result} =    Run Tests Without Processing Output    --parseinclude no.match    ${MULTIPLE SOURCES}
+    Should Be Equal    ${result.rc}    ${252}
+    Stderr Should Match Regexp    \\[ ERROR \\] Suite 'Suite With Prefix & Subsuites' contains no tests or tasks.${USAGE TIP}
 
 *** Keywords ***
 Expected number of tests should be run
