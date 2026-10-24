@@ -2,6 +2,7 @@ import re
 import unittest
 from os.path import abspath, dirname, join, normpath
 from pathlib import Path
+from uuid import UUID
 
 from robot.conf.settings import _BaseSettings, RebotSettings, RobotSettings
 from robot.errors import DataError
@@ -211,6 +212,23 @@ class TestRobotAndRebotSettings(unittest.TestCase):
 
     def _verify_invalid_log_level(self, input):
         self.assertRaises(DataError, RobotSettings, {"loglevel": input})
+
+
+class TestExecutionId(unittest.TestCase):
+
+    def test_default_is_generated_uuid(self):
+        # UUID(...) raises ValueError if the value is not a valid UUID.
+        UUID(RobotSettings().execution_id)
+
+    def test_can_be_given_from_command_line(self):
+        assert_equal(RobotSettings(executionid="my-id").execution_id, "my-id")
+
+    def test_is_cached(self):
+        settings = RobotSettings()
+        assert_equal(settings.execution_id, settings.execution_id)
+
+    def test_generated_ids_are_unique(self):
+        assert_true(RobotSettings().execution_id != RobotSettings().execution_id)
 
 
 if __name__ == "__main__":
