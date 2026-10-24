@@ -25,6 +25,9 @@ Task header with --norpa
     [Template]    Run and validate test cases
     --norpa       rpa/tasks                            Task    Another task    Defaults    Override
 
+Empty suite does not cause conflict
+    --runemptysuite    rpa/tasks parsing/notests       Task    Another task    Defaults    Override
+
 Conflicting headers cause error
     [Template]    Run and validate conflict
     rpa/tests.robot rpa/tasks    Rpa.Tests           Rpa.Tasks    tests    tasks
