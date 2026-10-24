@@ -1,5 +1,10 @@
+import os
+import tempfile
 import unittest
+from pathlib import Path
 
+from robot.parsing import get_model, ModelVisitor
+from robot.running import TestSuite
 from robot.running.builder.parsers import MarkdownParser
 from robot.utils.asserts import assert_equal
 
@@ -13,18 +18,30 @@ class FakeFileReader:
         return self._lines
 
 
+class TokenCollector(ModelVisitor):
+
+    def __init__(self):
+        self.tokens = []
+
+    def visit_Statement(self, node):
+        self.tokens.extend((t.value, t.lineno, t.col_offset) for t in node.tokens)
+
+
 class TestReadMarkdownData(unittest.TestCase):
 
     def assert_no_data(self, md):
         self._assert(md, "")
 
-    def assert_data(self, md, expected="data\n"):
-        self._assert(md, expected)
+    def assert_data(self, md, expected="data\n", offsets=None):
+        self._assert(md, expected, offsets)
 
-    def _assert(self, md, expected):
+    def _assert(self, md, expected, offsets=None):
         parser = MarkdownParser()
-        actual = parser._read_markdown_data(FakeFileReader(md))
-        assert_equal(actual, expected)
+        data, actual_offsets = parser._read_markdown_data(FakeFileReader(md))
+        lines = data.splitlines(keepends=True)
+        assert_equal(len(lines), len(md.splitlines()))
+        assert_equal("".join(line for line in lines if line.strip()), expected)
+        assert_equal(actual_offsets, offsets or {})
 
     def test_empty(self):
         self.assert_no_data("")
@@ -85,7 +102,7 @@ no data
 data 2
 ```
 """,
-            "data 1\n\ndata 2\n",
+            "data 1\ndata 2\n",
         )
 
     def test_text_outside_blocks_ignored(self):
@@ -114,7 +131,8 @@ data
                  ```robotframework
            data
      ```
-"""
+""",
+            offsets={3: 11},
         )
 
     def test_whitespace_before_language(self):
@@ -166,6 +184,7 @@ data
   ```robotframework
   left
       indent
+
           more indent
   ```
 """,
@@ -174,6 +193,7 @@ left
     indent
         more indent
 """,
+            offsets={4: 2, 5: 2, 7: 2},
         )
 
     def test_tilde_fence(self):
@@ -196,7 +216,7 @@ data
 ~~~
 ```
 """,
-            "```\n\n~~~\n",
+            "```\n~~~\n",
         )
 
     def test_longer_fence(self):
@@ -236,6 +256,60 @@ more?
 """,
             "data\n``\nmore?\n",
         )
+
+
+class TestLineAndColumnNumbers(unittest.TestCase):
+    path = Path(os.getenv("TEMPDIR") or tempfile.gettempdir(), "test_markdown.robot.md")
+    data = """\
+# Title
+
+Text.
+
+- List item:
+
+  ```robotframework
+  *** Test Cases ***
+  Test
+      Log    Hello!
+  ```
+
+```robot
+*** Keywords ***
+Keyword
+    No Operation
+```
+"""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.path.write_text(cls.data, encoding="UTF-8")
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.path.unlink()
+
+    def test_parsing_model(self):
+        model = MarkdownParser()._get_model(get_model, self.path)
+        collector = TokenCollector()
+        collector.visit(model)
+        assert_equal(
+            collector.tokens,
+            [
+                ("*** Test Cases ***", 8, 2),
+                ("Test", 9, 2),
+                ("Log", 10, 6),
+                ("Hello!", 10, 13),
+                ("*** Keywords ***", 14, 0),
+                ("Keyword", 15, 0),
+                ("No Operation", 16, 4),
+            ],
+        )
+
+    def test_running_model(self):
+        suite = TestSuite.from_file_system(self.path)
+        assert_equal(suite.tests[0].lineno, 9)
+        assert_equal(suite.tests[0].body[0].lineno, 10)
+        assert_equal(suite.resource.keywords[0].lineno, 15)
 
 
 if __name__ == "__main__":
