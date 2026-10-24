@@ -20,6 +20,14 @@ Time addition to date over DST boundary
     20151001 02:03:04.005      31 days            2015-11-01 02:03:04.005
     ${datetime(2015,10,25)}    ${timedelta(1)}    ${datetime(2015,10,26)}    result_format=datetime
 
+Calendar time addition to date should succeed
+    2024-01-31 12:34:56.789      1 month                     2024-02-29 12:34:56.789
+    2023-01-31                   1 month 1 day               2023-03-01 00:00:00.000
+    2024-02-29                   1 year                      2025-02-28 00:00:00.000
+    2023-11-30                   1 year 2 months 1 day       2025-01-31 00:00:00.000
+    2025-03-31                   - 1 month 1 day             2025-02-27 00:00:00.000
+    ${datetime(2024,1,31,12)}    1 month                     ${datetime(2024,2,29,12)}    result_format=datetime
+
 *** Keywords ***
 Addition Should Succeed
     [Arguments]    ${date}    ${time}    ${expected}     &{config}

@@ -2,7 +2,7 @@ import re
 import time
 import unittest
 import warnings
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 
 from robot.utils.asserts import (
     assert_equal, assert_not_none, assert_raises_with_msg, assert_true
@@ -117,6 +117,55 @@ class TestTime(unittest.TestCase):
             ("11w 5d 3h", 11 * 7 * 60 * 60 * 24 + 5 * 24 * 60 * 60 + 3 * 60 * 60),
         ]:
             assert_equal(timestr_to_secs(inp), exp, inp)
+
+    def test_timestr_to_secs_with_calendar_units_and_start_date(self):
+        for start, value, expected in [
+            (
+                datetime(2024, 1, 31, 12, 30),
+                "1 month",
+                datetime(2024, 2, 29, 12, 30),
+            ),
+            (
+                datetime(2025, 3, 31, 12, 30),
+                "- 1 month 1 day",
+                datetime(2025, 2, 27, 12, 30),
+            ),
+            (
+                datetime(2024, 2, 29, 12, 30),
+                "1 year 1 month 2 days",
+                datetime(2025, 3, 31, 12, 30),
+            ),
+            (
+                datetime(2023, 11, 30),
+                "1yr 2months 1day",
+                datetime(2025, 1, 31),
+            ),
+            (date(2024, 1, 31), "1 month", date(2024, 2, 29)),
+        ]:
+            expected = (expected - start).total_seconds()
+            assert_equal(timestr_to_secs(value, start_date=start), expected, value)
+
+    def test_calendar_units_require_start_date_and_integer_values(self):
+        for value in ["1 month", "2 years"]:
+            assert_raises_with_msg(
+                ValueError,
+                f"Invalid time string '{value}'.",
+                timestr_to_secs,
+                value,
+            )
+        for value in [
+            "1.5 months",
+            "1 year 2 years",
+            "1 month 2 months",
+            "1e100 months",
+        ]:
+            assert_raises_with_msg(
+                ValueError,
+                f"Invalid time string '{value}'.",
+                timestr_to_secs,
+                value,
+                start_date=datetime(2024, 1, 1),
+            )
 
     def test_timestr_to_secs_with_time_string_ns_accuracy(self):
         for input, expected in [
