@@ -489,18 +489,26 @@ class TestTime(unittest.TestCase):
             ("now - 1 day 100 seconds", -86500),
             ("now + 1day 10hours 1minute 10secs", 122470),
             ("NOW - 1D 10H 1MIN 10S", -122470),
+            ("now + 183 days", 15811200),
+            ("now - 183 days", -15811200),
         ]:
-            now = int(time.time())
+            # NOW
             parsed = parse_time(input)
-            expected = now + adjusted
-            if time.localtime(now).tm_isdst is not time.localtime(expected).tm_isdst:
-                dst_diff = time.timezone - time.altzone
-                expected += dst_diff if time.localtime(now).tm_isdst else -dst_diff
-            assert_true(expected - parsed < 0.1)
-            parsed = parse_time(input.upper().replace("NOW", "UtC"))
-            zone = time.altzone if time.localtime(now).tm_isdst else time.timezone
-            expected += zone
-            assert_true(expected - parsed < 0.1)
+            expected = self._adjust(int(time.time()), adjusted)
+            assert_true(expected - parsed < 0.1, f"{input}: {expected - parsed}")
+            # UTC
+            input = input.upper().replace("NOW", "UtC")
+            parsed = parse_time(input)
+            zone = time.altzone if time.localtime(expected).tm_isdst else time.timezone
+            expected = self._adjust(expected, zone)
+            assert_true(expected - parsed < 0.1, f"{input}: {expected - parsed}")
+
+    def _adjust(self, original, adjustment):
+        new = original + adjustment
+        if time.localtime(new).tm_isdst is not time.localtime(original).tm_isdst:
+            dst_diff = time.timezone - time.altzone
+            new += -dst_diff if time.localtime(new).tm_isdst else dst_diff
+        return new
 
     def test_get_time_with_zero(self):
         assert_equal(get_time("epoch", 0), 0)
