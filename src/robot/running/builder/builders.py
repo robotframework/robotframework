@@ -179,7 +179,8 @@ class TestSuiteBuilder:
             self.rpa,
         ).parse(structure)
         if not self.allow_empty_suite:
-            self._validate_not_empty(suite, multi_source=len(paths) > 1)
+            multi_source = len(paths) > 1 and not self.included_files
+            self._validate_not_empty(suite, multi_source=multi_source)
         suite.remove_empty_suites(preserve_direct_children=len(paths) > 1)
         return suite
 
