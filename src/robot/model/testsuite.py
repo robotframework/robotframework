@@ -238,11 +238,12 @@ class TestSuite(ModelObject, Generic[KW, TC]):
         if self.rpa is None:
             rpa = name = None
             for suite in self.suites:
-                suite.validate_execution_mode()
-                if rpa is None:
+                if suite.validate_execution_mode() is None:
+                    continue
+                elif rpa is None:
                     rpa = suite.rpa
                     name = suite.full_name
-                elif suite.rpa is not None and rpa is not suite.rpa:
+                elif rpa is not suite.rpa:
                     mode1, mode2 = ("tasks", "tests") if rpa else ("tests", "tasks")
                     raise DataError(
                         f"Conflicting execution modes: Suite '{name}' has {mode1} but "
