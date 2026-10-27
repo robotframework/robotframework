@@ -37,6 +37,7 @@ class XmlDocBuilder:
             doc_format=spec.get("format") or "ROBOT",
             source=spec.get("source"),
             lineno=self._get_lineno(spec),
+            metadata=self._parse_metadata(spec),
         )
         libdoc.inits = self._create_keywords(spec, "inits/init", libdoc.source)
         libdoc.keywords = self._create_keywords(spec, "keywords/kw", libdoc.source)
@@ -50,6 +51,14 @@ class XmlDocBuilder:
     def _get_lineno(self, elem):
         lineno = elem.get("lineno")
         return int(lineno) if lineno else None
+
+    def _parse_metadata(self, spec):
+        metadata = spec.find("metadata")
+        if metadata is None:
+            return None
+        return {
+            item.get("name"): item.get("value") for item in metadata.findall("item")
+        }
 
     def _parse_spec(self, path):
         if not os.path.isfile(path):

@@ -6,6 +6,7 @@
         <xs:sequence>
             <xs:element name="version" type="xs:string" />
             <xs:element name="doc" type="xs:string" />
+            <xs:element name="metadata" type="Metadata" minOccurs="0" />
             <xs:element name="tags" type="Tags" minOccurs="0" />
             <xs:element name="inits" type="Inits" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="keywords" type="Keywords" minOccurs="0" maxOccurs="unbounded" />
@@ -32,6 +33,15 @@
         <xs:sequence>
             <xs:element name="kw" type="Keyword" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Metadata">
+        <xs:sequence>
+            <xs:element name="item" type="MetadataItem" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="MetadataItem">
+        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="value" type="xs:string" use="required" />
     </xs:complexType>
     <xs:complexType name="Init">
         <xs:sequence>

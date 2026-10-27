@@ -39,6 +39,7 @@ class JsonDocBuilder:
             doc_format=spec["docFormat"],
             source=spec["source"],
             lineno=self._get_lineno(spec),
+            metadata=spec.get("metadata"),
         )
         libdoc.inits = [self._create_keyword(kw) for kw in spec["inits"]]
         libdoc.keywords = [self._create_keyword(kw) for kw in spec["keywords"]]

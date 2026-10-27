@@ -6,6 +6,7 @@ type Libdoc = {
   generated: string;
   type: string;
   scope: string;
+  metadata?: Record<string, string>;
   docFormat: string;
   source: string;
   lineno: number;

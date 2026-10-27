@@ -80,6 +80,9 @@
                 >{{version}}</td></tr>{{/if}}
             {{#if scope}}<tr><th>{{t "libScope"}}:</th><td
                 >{{scope}}</td></tr>{{/if}}
+            {{#each metadata}}<tr><th>{{@key}}:</th><td>{{metadataValue
+                    this
+                  }}</td></tr>{{/each}}
           </table>
           <div id="introduction-container">
             <h2 id="Introduction">{{t "intro"}}</h2>

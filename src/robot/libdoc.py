@@ -43,7 +43,10 @@ if __name__ == "__main__" and "robot" not in sys.modules:
 
 from robot.errors import DataError
 from robot.libdocpkg import (
-    ConsoleViewer, format_languages, LANGUAGES, LibraryDocumentation
+    ConsoleViewer,
+    format_languages,
+    LANGUAGES,
+    LibraryDocumentation,
 )
 from robot.utils import Application, seq2str
 
@@ -110,6 +113,12 @@ Options
  -n --name name           Sets the name of the documented library or resource.
  -v --version version     Sets the version of the documented library or
                           resource.
+    --metadata name:value *
+                          Sets metadata to be shown in the documentation.
+                          Metadata is given as `name:value` pairs and this
+                          option can be used multiple times. Values that are
+                          URLs are turned into links in HTML outputs.
+                          New in RF 7.6.
     --quiet               Do not print the path of the generated output file
                           to the console.
  -P --pythonpath path *   Additional locations where to search for libraries
@@ -206,6 +215,7 @@ class LibDoc(Application):
         specdocformat=None,
         theme=None,
         language=None,
+        metadata=None,
         pythonpath=None,
         quiet=False,
     ):
@@ -213,7 +223,9 @@ class LibDoc(Application):
             sys.path = pythonpath + sys.path
         lib_or_res, output = args[:2]
         docformat = self._get_docformat(docformat)
-        libdoc = LibraryDocumentation(lib_or_res, name, version, docformat)
+        libdoc = LibraryDocumentation(
+            lib_or_res, name, version, docformat, self._get_metadata(metadata)
+        )
         if ConsoleViewer.handles(output):
             ConsoleViewer(libdoc).view(output, *args[2:])
             return
@@ -248,6 +260,21 @@ class LibDoc(Application):
             docformat,
             ("ROBOT", "MARKDOWN", "TEXT", "HTML", "REST"),
         )
+
+    def _get_metadata(self, metadata):
+        if isinstance(metadata, dict):
+            return {str(name): str(value) for name, value in metadata.items()}
+        parsed = {}
+        for item in metadata or ():
+            name, sep, value = item.partition(":")
+            name, value = name.strip(), value.strip()
+            if not sep or not name or not value:
+                raise DataError(
+                    f"Invalid metadata '{item}'. Metadata must be given in "
+                    f"'name:value' format."
+                )
+            parsed[name] = value
+        return parsed
 
     def _get_format_and_specdocformat(self, format, specdocformat, output):
         extension = Path(output).suffix[1:]
@@ -322,6 +349,7 @@ def libdoc(
     outfile,
     name="",
     version="",
+    metadata=None,
     format=None,
     docformat=None,
     specdocformat=None,
@@ -334,6 +362,8 @@ def libdoc(
     :param outfile: Path to the file where to write outputs.
     :param name: Custom name to give to the documented library or resource.
     :param version: Version to give to the documented library or resource.
+    :param metadata: Metadata to give to the documented library or resource
+        as a dictionary of name-value pairs.
     :param format: Specifies whether to generate HTML, XML or JSON output.
         If this options is not used, the format is got from the extension of
         the output file. Possible values are ``'HTML'``, ``'XML'``, ``'JSON'``
@@ -364,6 +394,7 @@ def libdoc(
         outfile,
         name=name,
         version=version,
+        metadata=metadata,
         format=format,
         docformat=docformat,
         specdocformat=specdocformat,
