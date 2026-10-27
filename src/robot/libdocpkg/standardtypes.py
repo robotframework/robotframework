@@ -13,11 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import re
 from collections.abc import Mapping, Sequence
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
-import re
 from typing import Any, Literal
 
 try:
@@ -32,11 +32,16 @@ def get_standard_type_doc(typ, doc_format):
     if typ is bytearray:
         typ = bytes
     doc_format = doc_format.upper()
-    docs = _std_docs_markdown if doc_format == "MARKDOWN" else _std_docs_robot
-    doc = docs[typ]
+    if doc_format == "MARKDOWN":
+        return _std_docs_markdown[typ]
     if doc_format == "REST":
-        doc = re.sub(r"\[(https?://[^|\]]+)\|([^\]]+)\]", r"`\2 <\1>`_", doc)
-    return doc
+        return _robot_to_rest(_std_docs_robot[typ])
+    return _std_docs_robot[typ]
+
+
+def _robot_to_rest(doc):
+    # Except for links, used Robot formatting is compatible with reST.
+    return re.sub(r"\[\s*(https?://.+?)\s*\|\s*(.+?)\s*]", r"`\2 <\1>`__", doc)
 
 
 _std_docs_markdown = {
@@ -591,10 +596,12 @@ but exact matches have precedence over normalized matches.
 Encapsulates secret values to avoid them being shown in Robot Framework logs.
 
 The value is required to be
-[https://robot-framework.readthedocs.io/en/master/autodoc/robot.utils.html#robot.utils.secret.Secret|robot.api.types.Secret]
+[https://robot-framework.readthedocs.io/en/master/autodoc/robot.utils.html#robot.utils.secret.Secret
+|robot.api.types.Secret]
 object. These objects encapsulate confidential values so that they are not
 exposed in log files. How to create them is explained in the
-[https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#secret-variables|User Guide].
+[https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#secret-variables
+|User Guide].
 
 New in Robot Framework 7.4.
 """,
