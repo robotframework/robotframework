@@ -35,6 +35,7 @@ reST format
     Test Format in HTML    <em>bold</em> or &lt;b&gt;bold&lt;/b&gt; <a
     ...    --docformat rest
     ...    doc2=Link to <cite>Keyword</cite> or not?
+    ...    int_link=<a class="reference external" href="https://docs.python.org/library/functions.html#int">int</a>
     Should Contain    ${MODEL}[keywords][3][doc]
     ...    This link to <a href="#Keyword" title="&quot;Keyword&quot; keyword" class="name">Keyword</a>
     Should Contain    ${MODEL}[keywords][3][doc]
@@ -102,21 +103,23 @@ Format from JSON spec
 
 Compare HTML from LIBSPEC
     [Template]    NONE
-    Run Libdoc    -F ROBOT --format XML -s HTML ${TESTDATADIR}/DocFormat.py ${OUTXML}
-    Test Format In HTML    ${HTML DOC}
-    ...                    lib=${OUTXML}
+    Run Libdoc    --format LIBSPEC --docformat ROBOT ${TESTDATADIR}/DocFormat.py ${OUTXML}
+    Test Format In HTML    ${HTML DOC}    lib=${OUTXML}
 
 *** Keywords ***
 Test Format In HTML
     [Arguments]    ${doc}    ${cli}=    ${lib}=DocFormat.py
     ...    ${doc2}=Link to <a href="#Keyword" title="&quot;Keyword&quot; keyword" class="name">Keyword</a> or not?
-    ...    ${shortdoc}=*bold* or <b>bold</b> http://example.com
+    ...    ${shortdoc}=${RAWDOC}
+    ...    ${int_link}=<a href="https://docs.python.org/library/functions.html#int">int</a>
     ${lib} =    Join Path    ${TESTDATADIR}    ${lib}
     Run Libdoc And Parse Model From HTML    ${cli} ${lib}
     Should Contain     ${MODEL}[doc]                      ${doc}
     Should Contain     ${MODEL}[keywords][0][doc]         ${doc}
     Should Contain     ${MODEL}[keywords][1][doc]         ${doc2}
     Should Be Equal    ${MODEL}[keywords][0][shortdoc]    ${shortdoc}
+    Should Contain     ${MODEL}[typedocs][0][doc]         ${int_link}
+    Should Contain     ${MODEL}[typedocs][1][doc]         ${doc}
 
 Test Format In XML
     [Arguments]    ${expected}    ${format}    ${cli}=    ${lib}=DocFormat.py

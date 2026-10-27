@@ -1,10 +1,19 @@
+from enum import Enum
+
+
+class Toggle(Enum):
+    """*bold* or <b>bold</b> http://example.com"""
+    ON = "ON"
+    OFF = "OFF"
+
+
 class DocFormat:
     """Library to test documentation formatting.
 
     *bold* or <b>bold</b> http://example.com
     """
 
-    def keyword(self):
+    def keyword(self, std_type: int, user_type: Toggle):
         """*bold* or <b>bold</b> http://example.com"""
 
     def link(self):
