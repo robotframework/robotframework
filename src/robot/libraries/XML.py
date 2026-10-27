@@ -995,7 +995,7 @@ class XML:
         normalize_whitespace: bool = False,
         message: "str | None" = None,
     ):
-        """Verifies that the text of the specified element matches `expected`.
+        """Verifies that the text of the specified element matches `pattern`.
 
         Args:
             source: Path to an XML file, XML string or bytes, or a parsed element.
@@ -1153,7 +1153,7 @@ class XML:
         xpath: str = ".",
         message: "str | None" = None,
     ):
-        """Verifies that the specified attribute matches `expected`.
+        """Verifies that the specified attribute matches `pattern`.
 
         Args:
             source: Path to an XML file, XML string or bytes, or a parsed element.
