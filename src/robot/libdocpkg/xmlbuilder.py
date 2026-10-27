@@ -38,6 +38,7 @@ class XmlDocBuilder:
             source=spec.get("source"),
             lineno=self._get_lineno(spec),
         )
+        libdoc._from_spec = True
         libdoc.inits = self._create_keywords(spec, "inits/init", libdoc.source)
         libdoc.keywords = self._create_keywords(spec, "keywords/kw", libdoc.source)
         # RF >= 5 have 'typedocs', RF >= 4 have 'datatypes', older/custom may have neither.

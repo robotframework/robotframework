@@ -7,6 +7,9 @@ Test Template    Test Format in HTML
 ${EXAMPLE LINK}    <a href="http://example.com">http://example.com</a>
 ${RAW DOC}         *bold* or <b>bold</b> http://example.com
 ${HTML DOC}        <b>bold</b> or &lt;b&gt;bold&lt;/b&gt; ${EXAMPLE LINK}
+${MD DOC}          <p><em>bold</em> or <b>bold</b> ${EXAMPLE LINK}</p>
+${INXML}           ${OUTBASE}-2.xml
+${INJSON}          ${OUTBASE}-2.json
 
 *** Test Cases ***
 Robot format
@@ -21,9 +24,11 @@ HTML format
 Markdown format
     [Template]    NONE
     [Tags]    require-markdown
-    Test Format in HTML    <p><em>bold</em> or <b>bold</b> <a href="http://example.com">http://example.com</a></p>
+    Test Format in HTML    ${MD DOC}
     ...    --docformat markdown
     ...    doc2=<p>Link to <code>Keyword</code> or not?</p>
+    Should Contain    ${MODEL}[doc]
+    ...    Here is <span class="sb">`code`</span>.
     Should Contain    ${MODEL}[keywords][2][doc]
     ...    This link to <a href="#Keyword" title="&quot;Keyword&quot; keyword">Keyword</a>
     Should Contain    ${MODEL}[keywords][2][doc]
@@ -47,27 +52,27 @@ Format from Python library
 Format from CLI overrides format from library
     ${HTML DOC}    -F robot    DocFormatHtml.py
 
-Format in XML
+XML/RAW output
     [Template]    Test Format in XML
     ${RAW DOC}    TEXT     -F TEXT          DocFormat.py
     ${RAW DOC}    ROBOT    --docfor RoBoT   DocFormatHtml.py
     ${RAW DOC}    HTML     ${EMPTY}         DocFormatHtml.py
 
-Format in JSON RAW
+JSON/RAW output
     [Template]    Test Format in JSON
     [Tags]    require-jsonschema
     ${RAW DOC}    TEXT     -F TEXT --specdocformat rAw    DocFormat.py
     ${RAW DOC}    ROBOT    --docfor RoBoT -s RAW          DocFormatHtml.py
     ${RAW DOC}    HTML     -s raw                         DocFormatHtml.py
 
-Format in LIBSPEC
+XML/HTML output
     [Template]    Test Format in XML
     <p>${HTML DOC}</p>    HTML    --format xMl --specdocformat hTML    DocFormat.py
     <p>${HTML DOC}</p>    HTML    --format LiBSpec                     DocFormat.py
     <p>${HTML DOC}</p>    HTML    --docfor RoBoT -f XML -s HTML        DocFormatHtml.py
     <p>${HTML DOC}</p>    HTML    -F ROBOT --format xml -s html        DocFormat.py
 
-Format in JSON
+JSON/HTML output
     [Template]    Test Format in JSON
     [Tags]    require-jsonschema
     <p>${HTML DOC}</p>    HTML    --format jSoN --specdocformat hTML    DocFormat.py
@@ -75,36 +80,36 @@ Format in JSON
     <p>${HTML DOC}</p>    HTML    --docfor RoBoT -f JSON -s HTML        DocFormatHtml.py
     <p>${HTML DOC}</p>    HTML    -F ROBOT --format JSON -s html        DocFormat.py
 
-Format from XML spec
+XML/RAW input
     [Template]    NONE
-    Test Format In XML    ${RAW DOC}    HTML    -F HTML    lib=DocFormat.py
-    Copy File    ${OUTXML}    ${OUTBASE}-2.xml
-    Test Format In XML    ${RAW DOC}    HTML    lib=${OUTBASE}-2.xml
+    Test Format In XML     ${RAW DOC}     cli=-F ROBOT    format=ROBOT
+    Copy File              ${OUTXML}      ${INXML}
+    Test Format In XML     ${RAW DOC}     lib=${INXML}    format=ROBOT
+    Test Format In HTML    ${HTML DOC}    lib=${INXML}
 
-Format from JSON RAW spec
+JSON/RAW input
     [Template]    NONE
     [Tags]    require-jsonschema
-    Test Format In JSON    ${RAW DOC}    ROBOT    -F Robot -s RAW    lib=DocFormat.py
-    Copy File    ${OUTJSON}    ${OUTBASE}-2.json
-    Test Format In JSON    <p>${HTML DOC}</p>    HTML    lib=${OUTBASE}-2.json
+    Test Format In JSON    ${RAW DOC}            cli=-F Robot -s RAW    format=ROBOT
+    Copy File              ${OUTJSON}            ${INJSON}
+    Test Format In JSON    <p>${HTML DOC}</p>    lib=${INJSON}    format=HTML
+    Test Format In HTML    ${HTML DOC}           lib=${INJSON}
 
-Format from LIBSPEC spec
+XML/HTML input
     [Template]    NONE
-    Test Format In XML    <p>${HTML DOC}</p>    HTML    -F ROBOT --format XML -s HTML    lib=DocFormat.py
-    Copy File    ${OUTXML}    ${OUTBASE}-2.xml
-    Test Format In XML    <p>${HTML DOC}</p>    HTML    lib=${OUTBASE}-2.xml
+    Test Format In XML     ${MD DOC}        cli=-F MARKDOWN --format XML -s HTML    format=HTML
+    Copy File              ${OUTXML}        ${INXML}
+    Test Format In XML     ${MD DOC}        lib=${INXML}    format=HTML
+    Test Format In HTML    ${MD DOC}        lib=${INXML}    doc2=<p>Link to <code>Keyword</code> or not?</p>
+    Should Contain         ${MODEL}[doc]    Here is <span class="sb">`code`</span>.
 
-Format from JSON spec
+JSON/HTML input
     [Template]    NONE
     [Tags]    require-jsonschema
-    Test Format In JSON    <p>${HTML DOC}</p>    HTML    -F Robot    lib=DocFormat.py
-    Copy File    ${OUTJSON}    ${OUTBASE}-2.json
-    Test Format In JSON    <p>${HTML DOC}</p>    HTML    lib=${OUTBASE}-2.json
-
-Compare HTML from LIBSPEC
-    [Template]    NONE
-    Run Libdoc    --format LIBSPEC --docformat ROBOT ${TESTDATADIR}/DocFormat.py ${OUTXML}
-    Test Format In HTML    ${HTML DOC}    lib=${OUTXML}
+    Test Format In JSON    <p>${HTML DOC}</p>    cli=-F Robot     format=HTML
+    Copy File              ${OUTJSON}            ${INJSON}
+    Test Format In JSON    <p>${HTML DOC}</p>    lib=${INJSON}    format=HTML
+    Test Format In HTML    ${HTML DOC}           lib=${INJSON}
 
 *** Keywords ***
 Test Format In HTML
@@ -125,12 +130,12 @@ Test Format In XML
     [Arguments]    ${expected}    ${format}    ${cli}=    ${lib}=DocFormat.py
     ${lib} =    Join Path    ${TESTDATADIR}    ${lib}
     Run Libdoc And Parse Output     ${cli} ${lib}
-    Format should be    ${format}
+    Format Should Be    ${format}
     Keyword Doc Should Be    0    ${expected}
 
 Test Format In JSON
     [Arguments]    ${expected}   ${format}    ${cli}=    ${lib}=DocFormat.py
     ${lib} =    Join Path    ${TESTDATADIR}    ${lib}
     Run Libdoc And Parse Model From JSON     ${cli} ${lib}
-    Should Be Equal    ${MODEL}[docFormat]    ${format}
+    Should Be Equal    ${MODEL}[docFormat]           ${format}
     Should Be Equal    ${MODEL}[keywords][0][doc]    ${expected}

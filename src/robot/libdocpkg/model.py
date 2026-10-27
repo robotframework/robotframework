@@ -53,6 +53,7 @@ class LibraryDoc:
         self.inits = ()
         self.keywords = ()
         self.type_docs = ()
+        self._from_spec = False
 
     @setter
     def doc_format(self, format):
@@ -93,11 +94,9 @@ class LibraryDoc:
             LibdocWriter(format, theme, lang).write(self, outfile)
 
     def convert_docs_to_html(self):
-        formatter = DocFormatter(
-            self.keywords,
-            self.doc,
-            self.doc_format,
-        )
+        if self._from_spec and self.doc_format == "HTML":
+            return
+        formatter = DocFormatter(self.keywords, self.doc, self.doc_format)
         self.doc = formatter.html(self.doc)
         for item in self.inits + self.keywords:
             # If 'short_doc' is not set, it is generated automatically based on 'doc'

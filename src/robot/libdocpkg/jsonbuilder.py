@@ -40,6 +40,7 @@ class JsonDocBuilder:
             source=spec["source"],
             lineno=self._get_lineno(spec),
         )
+        libdoc._from_spec = True
         libdoc.inits = [self._create_keyword(kw) for kw in spec["inits"]]
         libdoc.keywords = [self._create_keyword(kw) for kw in spec["keywords"]]
         # RF >= 5 have 'typedocs', RF >= 4 have 'dataTypes', older/custom may have neither.

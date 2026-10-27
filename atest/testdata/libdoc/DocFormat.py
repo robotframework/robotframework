@@ -11,6 +11,10 @@ class DocFormat:
     """Library to test documentation formatting.
 
     *bold* or <b>bold</b> http://example.com
+
+    ```markdown
+    Here is `code`.
+    ```
     """
 
     def keyword(self, std_type: int, user_type: Toggle):
