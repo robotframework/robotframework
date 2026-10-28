@@ -196,6 +196,35 @@ left
             offsets={4: 2, 5: 2, 7: 2},
         )
 
+    def test_dedent_only_up_to_fence_indentation(self):
+        self.assert_data(
+            """
+  ```robotframework
+      indent
+    less indent
+data
+  ```
+""",
+            """\
+    indent
+  less indent
+data
+""",
+            offsets={3: 2, 4: 2},
+        )
+
+    def test_no_dedent_without_fence_indentation(self):
+        self.assert_data(
+            """
+```robotframework
+    spaces
+\ttab
+  \t mixed
+```
+""",
+            "    spaces\n\ttab\n  \t mixed\n",
+        )
+
     def test_tilde_fence(self):
         self.assert_data(
             """
@@ -278,6 +307,13 @@ Text.
 Keyword
     No Operation
 ```
+
+Keyword continues in another block.
+
+```robot
+    Log    Spaces
+\tLog    Tab
+```
 """
 
     @classmethod
@@ -302,6 +338,10 @@ Keyword
                 ("*** Keywords ***", 14, 0),
                 ("Keyword", 15, 0),
                 ("No Operation", 16, 4),
+                ("Log", 22, 4),
+                ("Spaces", 22, 11),
+                ("Log", 23, 1),
+                ("Tab", 23, 8),
             ],
         )
 
@@ -309,7 +349,10 @@ Keyword
         suite = TestSuite.from_file_system(self.path)
         assert_equal(suite.tests[0].lineno, 9)
         assert_equal(suite.tests[0].body[0].lineno, 10)
-        assert_equal(suite.resource.keywords[0].lineno, 15)
+        assert_equal(len(suite.resource.keywords), 1)
+        keyword = suite.resource.keywords[0]
+        assert_equal(keyword.lineno, 15)
+        assert_equal([step.lineno for step in keyword.body], [16, 22, 23])
 
 
 if __name__ == "__main__":

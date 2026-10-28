@@ -17,7 +17,7 @@ import re
 from abc import ABC
 from inspect import signature
 from pathlib import Path
-from typing import Callable, Iterator
+from typing import Callable
 
 from robot.conf import LanguagesLike
 from robot.errors import DataError
@@ -133,41 +133,33 @@ class MarkdownParser(RobotParser):
 
     def _read_markdown_data(self, mdfile: FileReader) -> "tuple[str, dict[int, int]]":
         # Lines outside code blocks are replaced with empty lines to preserve line
-        # numbers. Indentation removed from code blocks is returned as column offsets.
-        fence_open = re.compile(r"\s*(`{3,}|~{3,})\s*(\S+)")
+        # numbers. Like in CommonMark, indentation is removed from code blocks only
+        # up to the indentation of the opening fence. Removed indentation is returned
+        # as column offsets.
+        fence_open = re.compile(r"(\s*)(`{3,}|~{3,})\s*(\S+)")
         fence_close = None
-        all_lines = []
-        block = None
-        for line in mdfile.readlines():
-            if block is None:
-                all_lines.append(("\n", 0))
-                match = fence_open.match(line)
-                if match:
-                    fence, lang = match.groups()
-                    if lang.lower() in ("robotframework", "robot"):
-                        fence_close = re.compile(rf"\s*{fence[0]}{{{len(fence)},}}\s*")
-                        block = []
-            elif fence_close.fullmatch(line):
-                all_lines.extend(self._dedent(block))
-                all_lines.append(("\n", 0))
-                block = None
-            else:
-                block.append(line)
-        if block:
-            all_lines.extend(self._dedent(block))
         data = []
         offsets = {}
-        for lineno, (line, offset) in enumerate(all_lines, start=1):
-            data.append(line)
-            if offset:
-                offsets[lineno] = offset
+        for lineno, line in enumerate(mdfile.readlines(), start=1):
+            if fence_close is None:
+                data.append("\n")
+                match = fence_open.match(line)
+                if match:
+                    indent, fence, lang = match.groups()
+                    if lang.lower() in ("robotframework", "robot"):
+                        fence_close = re.compile(rf"\s*{fence[0]}{{{len(fence)},}}\s*")
+                        fence_indent = len(indent)
+            elif fence_close.fullmatch(line):
+                data.append("\n")
+                fence_close = None
+            elif line.strip():
+                offset = min(len(line) - len(line.lstrip()), fence_indent)
+                data.append(line[offset:])
+                if offset:
+                    offsets[lineno] = offset
+            else:
+                data.append(line)
         return "".join(data), offsets
-
-    def _dedent(self, block: "list[str]") -> "Iterator[tuple[str, int]]":
-        indents = [len(line) - len(line.lstrip()) for line in block if line.strip()]
-        margin = min(indents, default=0)
-        for line in block:
-            yield (line[margin:], margin) if line.strip() else (line, 0)
 
 
 class ColumnOffsetUpdater(ModelVisitor):
