@@ -16,7 +16,6 @@
 import re
 from abc import ABC
 from inspect import signature
-from os.path import commonprefix
 from pathlib import Path
 from typing import Callable, Iterator
 
@@ -137,11 +136,11 @@ class MarkdownParser(RobotParser):
         # numbers. Indentation removed from code blocks is returned as column offsets.
         fence_open = re.compile(r"\s*(`{3,}|~{3,})\s*(\S+)")
         fence_close = None
-        lines = []
+        all_lines = []
         block = None
         for line in mdfile.readlines():
             if block is None:
-                lines.append(("\n", 0))
+                all_lines.append(("\n", 0))
                 match = fence_open.match(line)
                 if match:
                     fence, lang = match.groups()
@@ -149,20 +148,24 @@ class MarkdownParser(RobotParser):
                         fence_close = re.compile(rf"\s*{fence[0]}{{{len(fence)},}}\s*")
                         block = []
             elif fence_close.fullmatch(line):
-                lines.extend(self._dedent(block))
-                lines.append(("\n", 0))
+                all_lines.extend(self._dedent(block))
+                all_lines.append(("\n", 0))
                 block = None
             else:
                 block.append(line)
         if block:
-            lines.extend(self._dedent(block))
-        data = "".join(line for line, _ in lines)
-        offsets = {n: offset for n, (_, offset) in enumerate(lines, start=1) if offset}
-        return data, offsets
+            all_lines.extend(self._dedent(block))
+        data = []
+        offsets = {}
+        for lineno, (line, offset) in enumerate(all_lines, start=1):
+            data.append(line)
+            if offset:
+                offsets[lineno] = offset
+        return "".join(data), offsets
 
     def _dedent(self, block: "list[str]") -> "Iterator[tuple[str, int]]":
-        prefix = commonprefix([line for line in block if line.strip()])
-        margin = len(prefix) - len(prefix.lstrip(" \t"))
+        indents = [len(line) - len(line.lstrip()) for line in block if line.strip()]
+        margin = min(indents, default=0)
         for line in block:
             yield (line[margin:], margin) if line.strip() else (line, 0)
 
