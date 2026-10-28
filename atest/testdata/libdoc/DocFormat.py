@@ -3,6 +3,7 @@ from enum import Enum
 
 class Toggle(Enum):
     """*bold* or <b>bold</b> http://example.com"""
+
     ON = "ON"
     OFF = "OFF"
 
