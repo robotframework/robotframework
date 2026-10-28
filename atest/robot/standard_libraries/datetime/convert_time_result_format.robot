@@ -18,6 +18,9 @@ Convert to timer
 Convert to timedelta
     Check Test Case    ${TESTNAME}
 
+Too large value for timedelta
+    Check Test Case    ${TESTNAME}
+
 Ignore millis
     Check Test Case    ${TESTNAME}
 

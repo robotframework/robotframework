@@ -37,6 +37,12 @@ Convert to timedelta
                       ${timedelta(2)}    TIMEdelta    ${timedelta(2)}
                       0.5                timedelta    ${timedelta(microseconds=500000)}
 
+Too large value for timedelta
+                      [Documentation]    FAIL
+                      ...    ValueError: 11574074074 days 1 hour 46 minutes 40 seconds cannot be represented \
+                      ...    as a timedelta object. Values must be between -999999999 and 999999999 days.
+                      1e15               timedelta
+
 Ignore millis         [Template]         Time conversion without millis should succeed
                       61.5               number       ${62}
                       61.5               verbose      1 minute 2 seconds
@@ -58,11 +64,11 @@ Number is float regardless are millis included or not
 Invalid format        [Documentation]    FAIL
                       ...    ValueError: Argument 'result_format' got value 'invalid' that cannot be \
                       ...    converted to 'number', 'verbose', 'compact', 'timer' or 'timedelta'.
-                      10s                invalid      0
+                      10s                invalid
 
 *** Keywords ***
 Time conversion should succeed
-    [Arguments]    ${input}    ${format}    ${expected}
+    [Arguments]    ${input}    ${format}    ${expected}=
     ${result} =    Convert Time    ${input}    ${format}
     Should Be Equal    ${result}    ${expected}
 

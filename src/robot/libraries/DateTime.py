@@ -842,7 +842,13 @@ class Time:
         return elapsed_time_to_string(seconds, include_millis=millis, seconds=True)
 
     def _convert_to_timedelta(self, seconds: float, _) -> datetime.timedelta:
-        return datetime.timedelta(seconds=seconds)
+        try:
+            return datetime.timedelta(seconds=seconds)
+        except OverflowError:
+            raise ValueError(
+                f"{secs_to_timestr(seconds)} cannot be represented as a timedelta "
+                f"object. Values must be between -999999999 and 999999999 days."
+            )
 
     def __add__(self, other: "Time") -> "Time":
         if isinstance(other, Time):
