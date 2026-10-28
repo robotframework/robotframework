@@ -41,6 +41,7 @@ class LibraryDoc:
         doc_format: DocFormat = "ROBOT",
         source: "str | Path | None" = None,
         lineno: "int | None" = None,
+        metadata: "dict[str, str] | None" = None,
     ):
         self.name = name
         self.doc = doc
@@ -48,6 +49,7 @@ class LibraryDoc:
         self.type = type
         self.scope = scope
         self.doc_format = doc_format
+        self.metadata = dict(metadata) if metadata else {}
         self.source = str(source) if isinstance(source, Path) else source
         self.lineno = lineno
         self.inits = ()
@@ -140,6 +142,8 @@ class LibraryDoc:
             ],
             "typedocs": [t.to_dictionary() for t in sorted(self.type_docs)],
         }
+        if self.metadata:
+            data["metadata"] = self.metadata
         if theme:
             data["theme"] = theme.lower()
         if lang:

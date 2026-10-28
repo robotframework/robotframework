@@ -27,7 +27,9 @@ RESOURCE_EXTENSIONS = ("resource", "robot", "txt", "tsv", "rst", "rest")
 XML_EXTENSIONS = ("xml", "libspec")
 
 
-def LibraryDocumentation(library_or_resource, name=None, version=None, doc_format=None):
+def LibraryDocumentation(
+    library_or_resource, name=None, version=None, doc_format=None, metadata=None
+):
     """Generate keyword documentation for the given library, resource or suite file.
 
     :param library_or_resource:
@@ -38,8 +40,13 @@ def LibraryDocumentation(library_or_resource, name=None, version=None, doc_forma
         Set version to the given value.
     :param doc_format:
         Set documentation format to the given value.
+    :param metadata:
+        Add or update metadata with the given name-value pairs.
     :return:
         :class:`~.model.LibraryDoc` instance.
+
+    Metadata is a dictionary of names and values, and it is shown in Libdoc
+    outputs similarly as version and scope.
 
     This factory method is the recommended API to generate keyword documentation
     programmatically. It should be imported via the :mod:`robot.libdoc` module.
@@ -58,6 +65,8 @@ def LibraryDocumentation(library_or_resource, name=None, version=None, doc_forma
         libdoc.name = name
     if version:
         libdoc.version = version
+    if metadata:
+        libdoc.metadata.update(metadata)
     return libdoc
 
 

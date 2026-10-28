@@ -135,6 +135,7 @@ def library(
     doc_format: "DocFormat | None" = None,
     listener: "Any | None" = None,
     auto_keywords: bool = False,
+    metadata: "dict[str, str] | None" = None,
 ) -> LibraryDecorator: ...
 
 
@@ -146,6 +147,7 @@ def library(
     doc_format: "DocFormat | None" = None,
     listener: "Any | None" = None,
     auto_keywords: bool = False,
+    metadata: "dict[str, str] | None" = None,
 ) -> "L | LibraryDecorator":
     """Class decorator to control keyword discovery and other library settings.
 
@@ -155,11 +157,12 @@ def library(
     become keywords. If that is not desired, automatic keyword discovery can be
     enabled by using ``auto_keywords=True``.
 
-    Arguments ``scope``, ``version``, ``converters``, ``doc_format`` and ``listener``
-    set library's scope, version, converters, documentation format and listener by
-    using class attributes ``ROBOT_LIBRARY_SCOPE``, ``ROBOT_LIBRARY_VERSION``,
-    ``ROBOT_LIBRARY_CONVERTERS``, ``ROBOT_LIBRARY_DOC_FORMAT`` and
-    ``ROBOT_LIBRARY_LISTENER``, respectively. These attributes are only set if
+    Arguments ``scope``, ``version``, ``converters``, ``doc_format``, ``listener``
+    and ``metadata`` set library's scope, version, converters, documentation format,
+    listener and metadata by using class attributes ``ROBOT_LIBRARY_SCOPE``,
+    ``ROBOT_LIBRARY_VERSION``, ``ROBOT_LIBRARY_CONVERTERS``,
+    ``ROBOT_LIBRARY_DOC_FORMAT``, ``ROBOT_LIBRARY_LISTENER`` and
+    ``ROBOT_LIBRARY_METADATA``, respectively. These attributes are only set if
     the related arguments are given, and they override possible existing attributes
     in the decorated class.
 
@@ -182,6 +185,7 @@ def library(
 
     The ``@library`` decorator is new in Robot Framework 3.2.
     The ``converters`` argument is new in Robot Framework 5.0.
+    The ``metadata`` argument is new in Robot Framework 7.6.
     """
     if isinstance(scope, type):
         return library()(scope)
@@ -197,6 +201,8 @@ def library(
             cls.ROBOT_LIBRARY_DOC_FORMAT = doc_format
         if listener is not None:
             cls.ROBOT_LIBRARY_LISTENER = listener
+        if metadata is not None:
+            cls.ROBOT_LIBRARY_METADATA = metadata
         cls.ROBOT_AUTO_KEYWORDS = auto_keywords
         return cls
 

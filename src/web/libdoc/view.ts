@@ -143,6 +143,15 @@ class View {
     Handlebars.registerHelper("or", function (a, b) {
       return a || b;
     });
+    Handlebars.registerHelper("metadataValue", function (value: string) {
+      const text = htmlEscape(String(value));
+      if (/^https?:\/\//i.test(String(value))) {
+        return new Handlebars.SafeString(
+          `<a href="${text}" rel="noopener noreferrer">${text}</a>`,
+        );
+      }
+      return new Handlebars.SafeString(text);
+    });
     Handlebars.registerHelper(
       "hasVisibleReturnType",
       function (returnType: ArgType | null | undefined) {

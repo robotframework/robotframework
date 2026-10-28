@@ -58,11 +58,17 @@ class TestLibrary(unittest.TestCase):
         self._validate_lib(lib, auto_keywords=False)
 
     def test_other_options(self):
-        @library("GLOBAL", version="v", doc_format="HTML", listener="xx")
+        @library(
+            "GLOBAL",
+            version="v",
+            doc_format="HTML",
+            listener="xx",
+            metadata={"a": "b"},
+        )
         class lib:
             pass
 
-        self._validate_lib(lib, "GLOBAL", "v", "HTML", "xx")
+        self._validate_lib(lib, "GLOBAL", "v", "HTML", "xx", metadata={"a": "b"})
 
     def test_override_class_level_attributes(self):
         @library(
@@ -71,15 +77,17 @@ class TestLibrary(unittest.TestCase):
             scope="GLOBAL",
             version="v",
             auto_keywords=True,
+            metadata={"a": "b"},
         )
         class lib:
             ROBOT_LIBRARY_SCOPE = "override"
             ROBOT_LIBRARY_VERSION = "override"
             ROBOT_LIBRARY_DOC_FORMAT = "override"
             ROBOT_LIBRARY_LISTENER = "override"
+            ROBOT_LIBRARY_METADATA = {"override": "value"}
             ROBOT_AUTO_KEYWORDS = "override"
 
-        self._validate_lib(lib, "GLOBAL", "v", "HTML", "xx", True)
+        self._validate_lib(lib, "GLOBAL", "v", "HTML", "xx", True, {"a": "b"})
 
     def _validate_lib(
         self,
@@ -89,12 +97,14 @@ class TestLibrary(unittest.TestCase):
         doc_format=None,
         listener=None,
         auto_keywords=False,
+        metadata=None,
     ):
         self._validate_attr(lib, "ROBOT_LIBRARY_SCOPE", scope)
         self._validate_attr(lib, "ROBOT_LIBRARY_VERSION", version)
         self._validate_attr(lib, "ROBOT_LIBRARY_DOC_FORMAT", doc_format)
         self._validate_attr(lib, "ROBOT_LIBRARY_LISTENER", listener)
         self._validate_attr(lib, "ROBOT_AUTO_KEYWORDS", auto_keywords)
+        self._validate_attr(lib, "ROBOT_LIBRARY_METADATA", metadata)
 
     def _validate_attr(self, lib, attr, value):
         if value is None:

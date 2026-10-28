@@ -29,6 +29,14 @@
     "scope": {
       "$ref": "#/definitions/LibraryScope"
     },
+    "metadata": {
+      "title": "Metadata",
+      "description": "Additional metadata shown in documentation.\n\nNames and values are free-form strings. Metadata is omitted when empty.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
     "docFormat": {
       "$ref": "#/definitions/DocumentationFormat"
     },

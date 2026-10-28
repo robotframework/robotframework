@@ -289,6 +289,30 @@ An example module using `__version__`:
         pass
 
 
+Library metadata
+~~~~~~~~~~~~~~~~
+
+Libraries can provide free-form metadata to be shown in the keyword documentation
+Libdoc_ generates. Metadata is read from the `ROBOT_LIBRARY_METADATA` attribute
+that must be a dictionary. When using the `@library` decorator, metadata can be
+given directly with the `metadata` argument:
+
+.. sourcecode:: python
+
+    from robot.api.deco import library
+
+
+    @library(metadata={'Homepage': 'https://example.com', 'License': 'Apache-2.0'})
+    class Example:
+        ...
+
+Metadata can also be set when running Libdoc_ with the `--metadata` option.
+Metadata given that way is merged with metadata read from the library, and
+values with the same name are overridden.
+
+.. note:: Library metadata is new in Robot Framework 7.6.
+
+
 Documentation format
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -348,12 +372,12 @@ For more information and examples see `Libraries as listeners`_ section.
 
 An easy way to configure libraries implemented as classes is using
 the `robot.api.deco.library` class decorator. It allows configuring library's
-scope__, version__, `custom argument converters`__, `documentation format`_
-and listener__ with optional arguments `scope`, `version`, `converter`,
-`doc_format` and `listener`, respectively. When these arguments are used, they
-set the matching `ROBOT_LIBRARY_SCOPE`, `ROBOT_LIBRARY_VERSION`,
-`ROBOT_LIBRARY_CONVERTERS`, `ROBOT_LIBRARY_DOC_FORMAT` and `ROBOT_LIBRARY_LISTENER`
-attributes automatically:
+scope__, version__, `custom argument converters`__, `documentation format`_,
+listener__ and `Library metadata`_ with optional arguments `scope`, `version`,
+`converter`, `doc_format`, `listener` and `metadata`, respectively. When these
+arguments are used, they set the matching `ROBOT_LIBRARY_SCOPE`,
+`ROBOT_LIBRARY_VERSION`, `ROBOT_LIBRARY_CONVERTERS`, `ROBOT_LIBRARY_DOC_FORMAT`,
+`ROBOT_LIBRARY_LISTENER` and `ROBOT_LIBRARY_METADATA` attributes automatically:
 
 .. sourcecode:: python
 
@@ -395,9 +419,10 @@ If needed, the automatic keyword discovery can be enabled by using the
         ...
 
 The `@library` decorator only sets class attributes `ROBOT_LIBRARY_SCOPE`,
-`ROBOT_LIBRARY_VERSION`, `ROBOT_LIBRARY_CONVERTERS`, `ROBOT_LIBRARY_DOC_FORMAT`
-and `ROBOT_LIBRARY_LISTENER` if the respective arguments `scope`, `version`,
-`converters`, `doc_format` and `listener` are used. The `ROBOT_AUTO_KEYWORDS`
+`ROBOT_LIBRARY_VERSION`, `ROBOT_LIBRARY_CONVERTERS`, `ROBOT_LIBRARY_DOC_FORMAT`,
+`ROBOT_LIBRARY_LISTENER` and `ROBOT_LIBRARY_METADATA` if the respective
+arguments `scope`, `version`, `converters`, `doc_format`, `listener` and
+`metadata` are used. The `ROBOT_AUTO_KEYWORDS`
 attribute is set always and its presence can be used as an indication that
 the `@library` decorator has been used. When attributes are set, they
 override possible existing class attributes.
@@ -407,9 +432,10 @@ even when a `library import refers only to a module containing it`__. This is do
 regardless does the class name match the module name or not.
 
 .. note:: The `@library` decorator is new in Robot Framework 3.2,
-          the `converters` argument is new in Robot Framework 5.0, and
+          the `converters` argument is new in Robot Framework 5.0,
           specifying that a class in an imported module should be used as
-          a library is new in Robot Framework 7.2.
+          a library is new in Robot Framework 7.2, and the `metadata` argument
+          is new in Robot Framework 7.6.
 
 __ `library scope`_
 __ `library version`_

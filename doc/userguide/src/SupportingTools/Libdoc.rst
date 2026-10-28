@@ -78,11 +78,21 @@ Options
   -V, --version <newversion>  Sets the version of the documented library or
                            resource. The default value for test libraries is
                            `defined in the source code`__.
+  --metadata <name:value>  Sets metadata to show in the documentation. Metadata
+                           is given as `name:value` pairs and this option can be
+                           used multiple times. Values that are URLs are turned
+                           into links in HTML outputs. New in Robot Framework
+                           7.6.
   -P, --pythonpath <path>  Additional locations where to search for libraries
                            and resources similarly as when `running tests`__.
   --quiet                  Do not print the path of the generated output file
                            to the console.
   -h, --help               Prints this help.
+
+Metadata can also be defined in the library itself using the
+`ROBOT_LIBRARY_METADATA` attribute or the `@library` decorator. Metadata given
+with `--metadata` is merged with it. See the `Library metadata`_ section for
+details.
 
 __ `Library version`_
 __ `Using --pythonpath option`_

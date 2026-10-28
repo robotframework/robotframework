@@ -1,9 +1,11 @@
+import json
 import sys
 import tempfile
 import unittest
 from io import StringIO
 
 from robot import libdoc
+from robot.errors import DataError
 from robot.utils.asserts import assert_equal
 
 
@@ -62,6 +64,61 @@ class TestLibdoc(unittest.TestCase):
                     data["returnDoc"],
                     f"{keyword.name}: return value has no documentation",
                 )
+
+    def test_metadata(self):
+        output = tempfile.mkstemp(suffix=".json")[1]
+        libdoc.libdoc("String", output, metadata={"URL": "https://example.com"})
+        with open(output, encoding="UTF-8") as f:
+            data = json.load(f)
+        assert_equal(data["metadata"], {"URL": "https://example.com"})
+
+    def test_metadata_with_cli(self):
+        output = tempfile.mkstemp(suffix=".json")[1]
+        libdoc.libdoc_cli(
+            ["--quiet", "--metadata", "URL:https://example.com", "String", output],
+            exit=False,
+        )
+        with open(output, encoding="UTF-8") as f:
+            data = json.load(f)
+        assert_equal(data["metadata"], {"URL": "https://example.com"})
+
+    def test_metadata_with_multiple_values(self):
+        output = tempfile.mkstemp(suffix=".json")[1]
+        libdoc.libdoc_cli(
+            [
+                "--quiet",
+                "--metadata",
+                "URL:https://example.com",
+                "--metadata",
+                "Source:https://github.com/example/lib",
+                "--metadata",
+                "URL:https://example.org",
+                "String",
+                output,
+            ],
+            exit=False,
+        )
+        with open(output, encoding="UTF-8") as f:
+            data = json.load(f)
+        assert_equal(
+            data["metadata"],
+            {"URL": "https://example.org", "Source": "https://github.com/example/lib"},
+        )
+
+    def test_metadata_is_omitted_when_not_used(self):
+        doc = libdoc.LibraryDocumentation("String")
+        assert doc.metadata == {}
+        assert "metadata" not in doc.to_dictionary()
+
+    def test_invalid_metadata(self):
+        for value in ["invalid", ":value", "name:"]:
+            with self.assertRaises(DataError) as context:
+                libdoc.LibDoc().main(["String", "output.html"], metadata=[value])
+            assert_equal(
+                context.exception.message,
+                f"Invalid metadata '{value}'. Metadata must be given in "
+                f"'name:value' format.",
+            )
 
 
 if __name__ == "__main__":

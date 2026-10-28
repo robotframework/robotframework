@@ -42,6 +42,11 @@ class LibdocXmlWriter:
         writer.start("keywordspec", attrs)
         writer.element("version", libdoc.version)
         writer.element("doc", libdoc.doc)
+        if libdoc.metadata:
+            writer.start("metadata")
+            for name, value in libdoc.metadata.items():
+                writer.element("item", attrs={"name": name, "value": value})
+            writer.end("metadata")
         self._write_tags(libdoc.all_tags, writer)
 
     def _add_source_info(self, attrs, item, lib_source=None):
