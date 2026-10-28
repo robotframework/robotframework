@@ -44,6 +44,7 @@ class LibraryDocBuilder:
             version=lib.version,
             scope=lib.scope.name,
             doc_format=self.doc_format or lib.doc_format or "ROBOT",
+            metadata=lib.metadata,
             source=lib.source,
             lineno=lib.lineno,
         )

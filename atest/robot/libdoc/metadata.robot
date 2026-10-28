@@ -35,6 +35,25 @@ Metadata value can contain colons
     ...    --metadata URL:https://example.com:8080/path ${TESTDATADIR}/module.py
     Should Be Equal    ${MODEL}[metadata][URL]    https://example.com:8080/path
 
+Library metadata
+    Run Libdoc And Parse Model From JSON    ${TESTDATADIR}/MetadataAttribute.py
+    Should Be Equal    ${MODEL}[metadata][Homepage]    https://example.com
+    Should Be Equal    ${MODEL}[metadata][License]    Apache-2.0
+
+Metadata from decorator
+    Run Libdoc And Parse Model From JSON    ${TESTDATADIR}/Metadata.py
+    Should Be Equal    ${MODEL}[metadata][Homepage]    https://example.com
+    Should Be Equal    ${MODEL}[metadata][License]    Apache-2.0
+
+CLI metadata is merged with library metadata
+    ${args}=    Catenate    --metadata Homepage:https://example.org
+    ...    --metadata Generated:yes
+    ...    ${TESTDATADIR}/MetadataAttribute.py
+    Run Libdoc And Parse Model From JSON    ${args}
+    Should Be Equal    ${MODEL}[metadata][Homepage]    https://example.org
+    Should Be Equal    ${MODEL}[metadata][License]    Apache-2.0
+    Should Be Equal    ${MODEL}[metadata][Generated]    yes
+
 Invalid metadata
     [Template]    Run libdoc and verify error
     --metadata invalid ${TESTDATADIR}/module.py ${OUT HTML}

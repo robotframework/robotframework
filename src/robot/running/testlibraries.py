@@ -136,6 +136,19 @@ class TestLibrary:
         return self._attr("ROBOT_LIBRARY_VERSION") or self._attr("__version__")
 
     @property
+    def metadata(self) -> "dict[str, str]":
+        metadata = getattr(self.code, "ROBOT_LIBRARY_METADATA", None)
+        if not metadata:
+            return {}
+        if not is_dict_like(metadata):
+            self.report_error(
+                f"Library metadata must be given as a dictionary, "
+                f"got {type_name(metadata)}."
+            )
+            return {}
+        return {str(name): str(value) for name, value in metadata.items()}
+
+    @property
     def lineno(self) -> int:
         return 1
 

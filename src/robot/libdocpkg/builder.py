@@ -41,7 +41,7 @@ def LibraryDocumentation(
     :param doc_format:
         Set documentation format to the given value.
     :param metadata:
-        Set metadata with the given name-value pairs.
+        Add or update metadata with the given name-value pairs.
     :return:
         :class:`~.model.LibraryDoc` instance.
 
@@ -66,7 +66,7 @@ def LibraryDocumentation(
     if version:
         libdoc.version = version
     if metadata:
-        libdoc.metadata = dict(metadata)
+        libdoc.metadata.update(metadata)
     return libdoc
 
 

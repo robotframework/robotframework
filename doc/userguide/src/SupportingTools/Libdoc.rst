@@ -89,6 +89,11 @@ Options
                            to the console.
   -h, --help               Prints this help.
 
+Metadata can also be defined in the library itself using the
+`ROBOT_LIBRARY_METADATA` attribute or the `@library` decorator. Metadata given
+with `--metadata` is merged with it. See the `Library metadata`_ section for
+details.
+
 __ `Library version`_
 __ `Using --pythonpath option`_
 
