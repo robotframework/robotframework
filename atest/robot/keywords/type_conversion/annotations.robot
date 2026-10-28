@@ -144,6 +144,11 @@ List
 Invalid list
     Check Test Case    ${TESTNAME}
 
+Too complex expression
+    [Documentation]    With PyPy, parsing fails with `RecursionError` depending on the stack depth.
+    [Tags]    no-pypy
+    Check Test Case    ${TESTNAME}
+
 Sequence (abc)
     Check Test Case    ${TESTNAME}
 

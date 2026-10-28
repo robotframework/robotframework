@@ -202,8 +202,9 @@ class TypeConverter:
     def _literal_eval(self, value, expected, name=None) -> object:
         try:
             value = literal_eval(value)
-        except (ValueError, SyntaxError):
-            # Original errors aren't too informative in these cases.
+        except (ValueError, SyntaxError, MemoryError):
+            # Original errors aren't too informative in these cases. `MemoryError`
+            # is raised if the expression is too complex to parse.
             raise ValueError("Invalid expression.")
         except TypeError as err:
             raise ValueError(f"Evaluating expression failed: {err}")

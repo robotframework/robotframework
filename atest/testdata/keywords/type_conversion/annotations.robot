@@ -434,6 +434,12 @@ Invalid list
     List                 ${NONE}                   arg_type=None
     List                 ${NO_CLASS}               arg_type=NoClass
 
+Too complex expression
+    [Documentation]    The value is so long that the error message is cut.
+    Run Keyword And Expect Error
+    ...    ValueError: Argument 'argument' got value '---*---1' that cannot be converted to list: Invalid expression.
+    ...    List    ${{'-' * 6000 + '1'}}
+
 Sequence (abc)
     Sequence             []                        []
     Sequence             ('\\x00', 1, 2, 'RF')     ('\\x00', 1, 2, 'RF')
