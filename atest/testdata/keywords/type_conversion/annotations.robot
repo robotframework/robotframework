@@ -114,6 +114,7 @@ Invalid float
     Float                foobar
     Float                ${LIST}                   arg_type=list
     Float                ${NO_CLASS}               arg_type=NoClass
+    Float                ${{10**400}}              arg_type=integer    error=OverflowError: int too large to convert to float
 
 Real (abc)
     Real                 1.5                       1.5
@@ -309,8 +310,6 @@ Invalid timedelta
     Timedelta            foobar                    error=Invalid time string 'foobar'.
     Timedelta            1 foo                     error=Invalid time string '1 foo'.
     Timedelta            01:02:03:04               error=Invalid time string '01:02:03:04'.
-    Timedelta            1e20                      error=OverflowError: *
-    Timedelta            inf                       error=OverflowError: cannot convert float infinity to integer
     Timedelta            ${LIST}                   arg_type=list
     Timedelta            ${NO_CLASS}               arg_type=NoClass
 

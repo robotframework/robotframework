@@ -90,7 +90,7 @@ def union_with_item_not_liking_isinstance(argument: Union[BadRational, int], exp
     assert_equal(argument, expected)
 
 
-def union_of_timedelta_and_float(argument: Union[timedelta, float], expected):
+def union_of_set_and_list(argument: Union[set, list], expected):
     assert_equal(argument, expected)
 
 

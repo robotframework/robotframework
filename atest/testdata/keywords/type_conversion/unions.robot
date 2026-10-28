@@ -86,10 +86,10 @@ Union with item not liking isinstance
     3.14               ${3.14}
 
 Union with item failing with other exception than ValueError
-    [Template]    Union of timedelta and float
-    1 minute           ${{datetime.timedelta(minutes=1)}}
-    1e20               ${1e20}
-    inf                ${{float('inf')}}
+    [Template]    Union of set and list
+    \[1, 2]             ${{ {1, 2} }}
+    \[[1], [2]]         ${{ [[1], [2]] }}
+    ${{ ([1], [2]) }}   ${{ [[1], [2]] }}
 
 Argument not matching union
     [Template]    Conversion Should Fail

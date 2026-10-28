@@ -147,7 +147,7 @@ class TypeConverter:
             raise
         except Exception:
             # Converters should raise `ValueError`, but, for example, `set()` can
-            # raise `TypeError` and `timedelta()` can raise `OverflowError`.
+            # raise `TypeError` and `float()` can raise `OverflowError`.
             message = get_error_message()
             return self._handle_error(value, name, kind, ValueError(message))
 

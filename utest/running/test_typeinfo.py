@@ -371,11 +371,11 @@ class TestTypeInfo(unittest.TestCase):
     def test_failing_conversion_with_other_exception_than_value_error(self):
         assert_raises_with_msg(
             ValueError,
-            "Argument 't' got value 'inf' that cannot be converted to timedelta: "
-            "OverflowError: cannot convert float infinity to integer",
-            TypeInfo.from_type_hint(timedelta).convert,
-            "inf",
-            "t",
+            f"Argument 'f' got value '{10**400}' (integer) that cannot be converted "
+            f"to float: OverflowError: int too large to convert to float",
+            TypeInfo.from_type_hint(float).convert,
+            10**400,
+            "f",
         )
 
     def test_custom_converter(self):

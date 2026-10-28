@@ -230,9 +230,10 @@ Invalid value on CLI
     Run Should Fail
     ...    -v "BAD_VALUE: int:bad" ${DATADIR}/misc/pass_and_fail.robot
     ...    Command line variable '\${BAD_VALUE: int}' got value 'bad' that cannot be converted to integer.
+    VAR    ${big}    1${{'0' * 400}}
     Run Should Fail
-    ...    -v "BAD_VALUE: timedelta:inf" ${DATADIR}/misc/pass_and_fail.robot
-    ...    Command line variable '\${BAD_VALUE: timedelta}' got value 'inf' that cannot be converted to timedelta: OverflowError: cannot convert float infinity to integer
+    ...    -v "BAD_VALUE: list[float]:[${big}]" ${DATADIR}/misc/pass_and_fail.robot
+    ...    Command line variable '\${BAD_VALUE: list[float]}' got value '[${big}]' that cannot be converted to list[float]: Item '0' got value '${big}' (integer) that cannot be converted to float: OverflowError: int too large to convert to float
 
 Invalid type on CLI
     Run Should Fail
