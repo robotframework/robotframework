@@ -196,6 +196,21 @@ left
             offsets={4: 2, 5: 2, 7: 2},
         )
 
+    def test_dedent_with_tabs(self):
+        self.assert_data(
+            """
+- An example:
+\t```robotframework
+\tleft
+\t\tindent
+
+\t\t\tmore indent
+\t```
+""",
+            "left\n\tindent\n\t\tmore indent\n",
+            offsets={4: 1, 5: 1, 7: 1},
+        )
+
     def test_dedent_only_up_to_fence_indentation(self):
         self.assert_data(
             """
@@ -302,6 +317,12 @@ Text.
       Log    Hello!
   ```
 
+- Another list item:
+
+  ```robotframework
+      Log    Again!
+  ```
+
 ```robot
 *** Keywords ***
 Keyword
@@ -335,24 +356,28 @@ Keyword continues in another block.
                 ("Test", 9, 2),
                 ("Log", 10, 6),
                 ("Hello!", 10, 13),
-                ("*** Keywords ***", 14, 0),
-                ("Keyword", 15, 0),
-                ("No Operation", 16, 4),
-                ("Log", 22, 4),
-                ("Spaces", 22, 11),
-                ("Log", 23, 1),
-                ("Tab", 23, 8),
+                ("Log", 16, 6),
+                ("Again!", 16, 13),
+                ("*** Keywords ***", 20, 0),
+                ("Keyword", 21, 0),
+                ("No Operation", 22, 4),
+                ("Log", 28, 4),
+                ("Spaces", 28, 11),
+                ("Log", 29, 1),
+                ("Tab", 29, 8),
             ],
         )
 
     def test_running_model(self):
         suite = TestSuite.from_file_system(self.path)
-        assert_equal(suite.tests[0].lineno, 9)
-        assert_equal(suite.tests[0].body[0].lineno, 10)
+        assert_equal(len(suite.tests), 1)
+        test = suite.tests[0]
+        assert_equal(test.lineno, 9)
+        assert_equal([step.lineno for step in test.body], [10, 16])
         assert_equal(len(suite.resource.keywords), 1)
         keyword = suite.resource.keywords[0]
-        assert_equal(keyword.lineno, 15)
-        assert_equal([step.lineno for step in keyword.body], [16, 22, 23])
+        assert_equal(keyword.lineno, 21)
+        assert_equal([step.lineno for step in keyword.body], [22, 28, 29])
 
 
 if __name__ == "__main__":
