@@ -340,11 +340,16 @@ All content outside such blocks is ignored. The parser follows the CommonMark_
 specification for fenced code blocks, which means that the opening and closing
 fences must match and the closing fence must be at least as long as the
 opening one. If a code block is not closed properly, the rest of the file
-will be considered as part of the code block itself. If the opening fence
-is indented, for example, because the code block is inside a list item,
-the same amount of indentation is removed from lines inside the block.
-Other indentation is preserved, which allows continuing a test or a keyword
-from an earlier code block.
+will be considered as part of the code block itself.
+
+If the opening fence is indented, for example, because the code block is
+inside a list item, the same amount of indentation is removed from lines
+inside the block. Other indentation is preserved, which allows continuing
+a test or a keyword from an earlier code block. Indented code blocks should
+therefore be indented consistently, so that all lines in them start with
+exactly the same spaces or tabs as the opening fence. If a line has less
+indentation, or uses tabs instead of spaces or vice versa, removing the
+indentation can change how the data is parsed.
 
 .. sourcecode:: markdown
 
