@@ -29,6 +29,7 @@ if TYPE_CHECKING:
     from .model import KeywordDoc
 
 try:
+    from docutils import __version_info__ as docutils_version
     from docutils.core import publish_parts
 except ImportError:
 
@@ -181,10 +182,11 @@ class DocToHtml:
         return self._handle_backtick_links(doc)
 
     def _format_rest(self, doc: str) -> str:
+        writer = "writer" if docutils_version >= (0, 22) else "writer_name"
         parts = publish_parts(
             doc,
-            writer_name="html",
             settings_overrides={"syntax_highlight": "short"},
+            **{writer: "html"},
         )
         return self._handle_backtick_links(parts["html_body"])
 
