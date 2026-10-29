@@ -169,7 +169,7 @@ Long Error Messages
     Run Tests    ${EMPTY}    core/long_suite_setup_and_teardown_errors.robot
     ${setup} =    Evaluate    'setup\\n' * 20
     ${teardown} =    Evaluate    'teardown\\n' * 20
-    ${explanation} =    Set Variable    [ Message content over the limit has been removed. ]\n
+    ${explanation} =    Set Variable    [ Message over the limit removed, see the log file for full output. ]\n
     ${error} =    Catenate    SEPARATOR=\n
     ...    Suite setup failed:
     ...    ${setup}${SPACE * 4}${explanation}${setup}

@@ -3,7 +3,7 @@ Suite Setup       Long Error    setup
 Suite Teardown    Long Error    teardown
 
 *** Variables ***
-${CUT}            \\[ Message content over the limit has been removed\\. \\]
+${CUT}            \\[ Message over the limit removed, see the log file for full output\\. \\]
 
 *** Test Cases ***
 Test
