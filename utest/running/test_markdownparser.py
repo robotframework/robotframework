@@ -240,6 +240,75 @@ data
             "    spaces\n\ttab\n  \t mixed\n",
         )
 
+    def test_test_continued_in_list_items(self):
+        self.assert_data(
+            """
+1. First step:
+
+   ```robotframework
+   *** Test Cases ***
+   Example
+       Log    Step 1
+   ```
+
+2. Second step:
+
+   ```robotframework
+       Log    Step 2
+   ```
+
+3. Third step:
+
+   ```robotframework
+       Log    Step 3
+   ```
+""",
+            """\
+*** Test Cases ***
+Example
+    Log    Step 1
+    Log    Step 2
+    Log    Step 3
+""",
+            offsets={5: 3, 6: 3, 7: 3, 13: 3, 19: 3},
+        )
+
+    def test_test_steps_in_list_items(self):
+        self.assert_data(
+            """
+```robotframework
+*** Test Cases ***
+Example
+```
+
+1. First step:
+
+   ```robotframework
+       Log    Step 1
+   ```
+
+2. Second step:
+
+   ```robotframework
+       Log    Step 2
+   ```
+
+3. Third step:
+
+   ```robotframework
+       Log    Step 3
+   ```
+""",
+            """\
+*** Test Cases ***
+Example
+    Log    Step 1
+    Log    Step 2
+    Log    Step 3
+""",
+            offsets={10: 3, 16: 3, 22: 3},
+        )
+
     def test_tilde_fence(self):
         self.assert_data(
             """
