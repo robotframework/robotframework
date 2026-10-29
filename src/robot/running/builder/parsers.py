@@ -132,16 +132,15 @@ class MarkdownParser(RobotParser):
         return model
 
     def _read_markdown_data(self, mdfile: FileReader) -> "tuple[str, dict[int, int]]":
-        # Lines outside code blocks are replaced with empty lines to preserve line
-        # numbers. Like in CommonMark, indentation is removed from code blocks only
-        # up to the indentation of the opening fence. Removed indentation is returned
-        # as column offsets.
         fence_open = re.compile(r"(\s*)(`{3,}|~{3,})\s*(\S+)")
         fence_close = None
+        fence_indent = 0
         data = []
         offsets = {}
         for lineno, line in enumerate(mdfile.readlines(), start=1):
             if fence_close is None:
+                # Lines outside code blocks are replaced with empty lines to
+                # preserve line numbers.
                 data.append("\n")
                 match = fence_open.match(line)
                 if match:
