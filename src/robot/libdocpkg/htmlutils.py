@@ -39,6 +39,26 @@ except ImportError:
         )
 
 
+def _writer_kwarg() -> dict:
+    """Keyword docutils accepts for the HTML writer.
+
+    Docutils 0.22 merged ``writer_name`` into ``writer`` (deprecating the
+    former; it will be removed in Docutils 2.0), while older versions only
+    accept ``writer_name``. Robot Framework pins no docutils version, so the
+    supported signature is detected once at import time. The ImportError stub
+    above takes ``*args, **kwargs``, which resolves to the legacy keyword but
+    is never actually called.
+    """
+    from inspect import signature
+
+    if "writer" in signature(publish_parts).parameters:
+        return {"writer": "html"}
+    return {"writer_name": "html"}
+
+
+_WRITER_KWARG = _writer_kwarg()
+
+
 Targets = Dict[str, "tuple[str, str]"]
 TargetTriplet = Iterable["tuple[str, str, str]"]
 
@@ -183,7 +203,7 @@ class DocToHtml:
     def _format_rest(self, doc: str) -> str:
         parts = publish_parts(
             doc,
-            writer_name="html",
+            **_WRITER_KWARG,
             settings_overrides={"syntax_highlight": "short"},
         )
         return self._handle_backtick_links(parts["html_body"])
