@@ -568,6 +568,29 @@ class conversion:
             ["invalid"],
         )
 
+    def test_argument_conversion_failing_with_other_exception_than_value_error(self):
+        path = create_temp_file(
+            "conversion_error.py",
+            extra_content="""
+from typing import List
+
+class conversion_error:
+    def __init__(self, arg: List[float]):
+        self.arg = arg
+""",
+        )
+        big = 10**400
+        assert_raises_with_msg(
+            DataError,
+            f"Importing xxx '{path}' failed: "
+            f"Argument 'arg' got value '[{big}]' that cannot be converted to "
+            f"List[float]: Item '0' got value '{big}' (integer) that cannot be "
+            f"converted to float: OverflowError: int too large to convert to float",
+            Importer("XXX").import_class_or_module,
+            path,
+            [f"[{big}]"],
+        )
+
     def test_modules_do_not_take_arguments(self):
         path = create_temp_file("no_args_allowed.py")
         assert_raises_with_msg(

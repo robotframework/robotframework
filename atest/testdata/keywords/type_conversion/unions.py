@@ -90,6 +90,10 @@ def union_with_item_not_liking_isinstance(argument: Union[BadRational, int], exp
     assert_equal(argument, expected)
 
 
+def union_of_set_and_list(argument: Union[set, list], expected):
+    assert_equal(argument, expected)
+
+
 def union_with_multiple_types(
     argument: Union[int, float, None, date, timedelta],
     expected=object(),

@@ -114,6 +114,7 @@ Invalid float
     Float                foobar
     Float                ${LIST}                   arg_type=list
     Float                ${NO_CLASS}               arg_type=NoClass
+    Float                ${{10**400}}              arg_type=integer    error=OverflowError: int too large to convert to float
 
 Real (abc)
     Real                 1.5                       1.5
@@ -433,6 +434,12 @@ Invalid list
     List                 ${NONE}                   arg_type=None
     List                 ${NO_CLASS}               arg_type=NoClass
 
+Too complex expression
+    [Documentation]    The value is so long that the error message is cut.
+    Run Keyword And Expect Error
+    ...    ValueError: Argument 'argument' got value '---*---1' that cannot be converted to list: Invalid expression.
+    ...    List    ${{'-' * 6000 + '1'}}
+
 Sequence (abc)
     Sequence             []                        []
     Sequence             ('\\x00', 1, 2, 'RF')     ('\\x00', 1, 2, 'RF')
@@ -534,6 +541,7 @@ Invalid set
     Set                  {}                        error=Value is dictionary, not set.
     Set                  ooops                     error=Invalid expression.
     Set                  {{'not', 'hashable'}}     error=Evaluating expression failed: *
+    Set                  ({},)                     error=TypeError: *unhashable type: 'dict'*
     Set                  frozenset()               error=Invalid expression.
     Set                  ${{(c for c in 'xy')}}    arg_type=generator
     Set                  ${NONE}                   arg_type=None

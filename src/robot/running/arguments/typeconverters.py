@@ -141,6 +141,15 @@ class TypeConverter:
             return self._string_convert(value)
         except ValueError as error:
             return self._handle_error(value, name, kind, error)
+        except RecursionError:
+            # Deeply nested values with recursive types can exceed the recursion
+            # limit. That is not a conversion error and must not be hidden.
+            raise
+        except Exception:
+            # Converters should raise `ValueError`, but, for example, `set()` can
+            # raise `TypeError` and `float()` can raise `OverflowError`.
+            message = get_error_message()
+            return self._handle_error(value, name, kind, ValueError(message))
 
     def no_conversion_needed(self, value: object) -> bool:
         try:
@@ -193,8 +202,9 @@ class TypeConverter:
     def _literal_eval(self, value, expected, name=None) -> object:
         try:
             value = literal_eval(value)
-        except (ValueError, SyntaxError):
-            # Original errors aren't too informative in these cases.
+        except (ValueError, SyntaxError, MemoryError):
+            # Original errors aren't too informative in these cases. `MemoryError`
+            # is raised if the expression is too complex to parse.
             raise ValueError("Invalid expression.")
         except TypeError as err:
             raise ValueError(f"Evaluating expression failed: {err}")

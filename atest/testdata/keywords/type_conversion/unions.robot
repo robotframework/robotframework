@@ -85,6 +85,12 @@ Union with item not liking isinstance
     42                 ${42}
     3.14               ${3.14}
 
+Union with item failing with other exception than ValueError
+    [Template]    Union of set and list
+    \[1, 2]             ${{ {1, 2} }}
+    \[[1], [2]]         ${{ [[1], [2]] }}
+    ${{ ([1], [2]) }}   ${{ [[1], [2]] }}
+
 Argument not matching union
     [Template]    Conversion Should Fail
     Union of int and float             not a number    type=integer or float
