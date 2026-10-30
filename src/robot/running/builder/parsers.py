@@ -17,11 +17,12 @@ import re
 from abc import ABC
 from inspect import signature
 from pathlib import Path
-from textwrap import dedent
+from typing import Callable
 
 from robot.conf import LanguagesLike
 from robot.errors import DataError
 from robot.parsing import File, get_init_model, get_model, get_resource_model
+from robot.parsing.model import ModelVisitor, Statement
 from robot.utils import FileReader, get_error_message, type_name
 
 from ..model import TestSuite
@@ -54,23 +55,11 @@ class RobotParser(Parser):
         self.process_curdir = process_curdir
 
     def parse_suite_file(self, source: Path, defaults: TestDefaults) -> TestSuite:
-        model = get_model(
-            self._get_source(source),
-            data_only=True,
-            curdir=self._get_curdir(source),
-            lang=self.lang,
-        )
-        model.source = source
+        model = self._get_model(get_model, source)
         return self.parse_model(model, defaults)
 
     def parse_init_file(self, source: Path, defaults: TestDefaults) -> TestSuite:
-        model = get_init_model(
-            self._get_source(source),
-            data_only=True,
-            curdir=self._get_curdir(source),
-            lang=self.lang,
-        )
-        model.source = source
+        model = self._get_model(get_init_model, source)
         suite = TestSuite(
             name=TestSuite.name_from_source(source.parent),
             source=source.parent,
@@ -89,6 +78,16 @@ class RobotParser(Parser):
         SuiteBuilder(suite, FileSettings(defaults)).build(model)
         return suite
 
+    def _get_model(self, model_getter: Callable[..., File], source: Path) -> File:
+        model = model_getter(
+            self._get_source(source),
+            data_only=True,
+            curdir=self._get_curdir(source),
+            lang=self.lang,
+        )
+        model.source = source
+        return model
+
     def _get_curdir(self, source: Path) -> "str | None":
         return str(source.parent).replace("\\", "\\\\") if self.process_curdir else None
 
@@ -96,13 +95,7 @@ class RobotParser(Parser):
         return source
 
     def parse_resource_file(self, source: Path) -> ResourceFile:
-        model = get_resource_model(
-            self._get_source(source),
-            data_only=True,
-            curdir=self._get_curdir(source),
-            lang=self.lang,
-        )
-        model.source = source
+        model = self._get_model(get_resource_model, source)
         return self.parse_resource_model(model)
 
     def parse_resource_model(self, model: File) -> ResourceFile:
@@ -124,31 +117,58 @@ class RestParser(RobotParser):
 class MarkdownParser(RobotParser):
     extensions = (".robot.md", ".md", ".markdown")
 
-    def _get_source(self, source: Path) -> str:
+    def _get_model(self, model_getter: Callable[..., File], source: Path) -> File:
         with FileReader(source) as reader:
-            return self._read_markdown_data(reader)
+            data, offsets = self._read_markdown_data(reader)
+        model = model_getter(
+            data,
+            data_only=True,
+            curdir=self._get_curdir(source),
+            lang=self.lang,
+        )
+        model.source = source
+        if offsets:
+            ColumnOffsetUpdater(offsets).visit(model)
+        return model
 
-    def _read_markdown_data(self, mdfile: FileReader) -> str:
-        fence_open = re.compile(r"\s*(`{3,}|~{3,})\s*(\S+)")
+    def _read_markdown_data(self, mdfile: FileReader) -> "tuple[str, dict[int, int]]":
+        fence_open = re.compile(r"(\s*)(`{3,}|~{3,})\s*(\S+)")
         fence_close = None
-        blocks = []
-        block = None
-        for line in mdfile.readlines():
-            if block is None:
+        fence_indent = 0
+        data = []
+        offsets = {}
+        for lineno, line in enumerate(mdfile.readlines(), start=1):
+            if fence_close is None:
+                # Lines outside code blocks are replaced with empty lines to
+                # preserve line numbers.
+                data.append("\n")
                 match = fence_open.match(line)
                 if match:
-                    fence, lang = match.groups()
+                    indent, fence, lang = match.groups()
                     if lang.lower() in ("robotframework", "robot"):
                         fence_close = re.compile(rf"\s*{fence[0]}{{{len(fence)},}}\s*")
-                        block = []
+                        fence_indent = len(indent)
             elif fence_close.fullmatch(line):
-                blocks.append(block)
-                block = None
+                data.append("\n")
+                fence_close = None
+            elif line.strip():
+                offset = min(len(line) - len(line.lstrip()), fence_indent)
+                data.append(line[offset:])
+                if offset:
+                    offsets[lineno] = offset
             else:
-                block.append(line)
-        if block:
-            blocks.append(block)
-        return "\n".join(dedent("".join(blk)) for blk in blocks)
+                data.append(line)
+        return "".join(data), offsets
+
+
+class ColumnOffsetUpdater(ModelVisitor):
+
+    def __init__(self, offsets: "dict[int, int]"):
+        self.offsets = offsets
+
+    def visit_Statement(self, node: Statement):
+        for token in node.tokens:
+            token.col_offset += self.offsets.get(token.lineno, 0)
 
 
 class JsonParser(Parser):
