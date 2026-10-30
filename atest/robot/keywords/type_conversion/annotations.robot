@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    keywords/type_conversion/annotations.robot
+Suite Setup      Run Tests    --max-error-lines NONE    keywords/type_conversion/annotations.robot
 Resource         atest_resource.robot
 
 *** Test Cases ***
@@ -144,11 +144,6 @@ List
 Invalid list
     Check Test Case    ${TESTNAME}
 
-Too complex expression
-    [Documentation]    With PyPy, parsing fails with `RecursionError` depending on the stack depth.
-    [Tags]    no-pypy
-    Check Test Case    ${TESTNAME}
-
 Sequence (abc)
     Check Test Case    ${TESTNAME}
 
@@ -195,6 +190,11 @@ Frozenset
     Check Test Case    ${TESTNAME}
 
 Invalid frozenset
+    Check Test Case    ${TESTNAME}
+
+Too complex expression
+    [Documentation]    PyPY doesn't fail for MemoryError like CPython.
+    [Tags]    no-pypy
     Check Test Case    ${TESTNAME}
 
 Unknown types are not converted

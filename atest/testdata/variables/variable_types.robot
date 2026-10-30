@@ -15,6 +15,7 @@ ${NONE_TYPE: None}                      None
 &{DICT_3: list[int]}                    10=[3, 2]    20=[1, 0]
 ${NO_TYPE}                              42
 ${BAD_VALUE: int}                       not int
+${BAD_VALUE_2: float}                   ${{10**400}}
 ${BAD_TYPE: hahaa}                      1
 @{BAD_LIST_VALUE: int}                  1    hahaa
 @{BAD_LIST_TYPE: xxxxx}                 k    a    l    a

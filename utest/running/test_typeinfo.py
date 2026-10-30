@@ -20,7 +20,8 @@ except ImportError:
 
 from robot.errors import DataError
 from robot.running.arguments.typeinfo import TYPE_NAMES, TypeInfo
-from robot.utils.asserts import assert_equal, assert_raises_with_msg
+from robot.utils import PYPY
+from robot.utils.asserts import assert_equal, assert_raises, assert_raises_with_msg
 
 
 def assert_info(info: TypeInfo, name, type=None, nested=None):
@@ -378,15 +379,18 @@ class TestTypeInfo(unittest.TestCase):
             "f",
         )
 
+    @unittest.skipIf(PYPY, "PyPy doesn't fail for MemoryError")
     def test_failing_conversion_with_too_complex_expression(self):
         expr = "-" * 6000 + "1"
-        assert_raises_with_msg(
+        error = assert_raises(
             ValueError,
-            f"Argument 'x' got value '{expr}' that cannot be converted "
-            f"to list[int]: Invalid expression.",
             TypeInfo.from_type_hint("list[int]").convert,
             expr,
             "x",
+        )
+        assert str(error).startswith(
+            f"Argument 'x' got value '{expr}' that cannot be converted to list[int]: "
+            f"MemoryError"
         )
 
     def test_custom_converter(self):

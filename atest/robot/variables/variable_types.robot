@@ -21,44 +21,48 @@ Variable section: Dictionary
 Variable section: With invalid values or types
     Check Test Case    ${TESTNAME}
 
-Variable section: Invalid syntax
+Variable section: Unrecognized type
     Error In File
-    ...    3    variables/variable_types.robot    18
+    ...    3    variables/variable_types.robot    19
     ...    Setting variable '\${BAD_TYPE: hahaa}' failed:
     ...    Invalid variable '\${BAD_TYPE: hahaa}':
     ...    Unrecognized type 'hahaa'.
     Error In File
-    ...    4    variables/variable_types.robot    20
+    ...    4    variables/variable_types.robot    21
     ...    Setting variable '\@{BAD_LIST_TYPE: xxxxx}' failed:
     ...    Invalid variable '\@{BAD_LIST_TYPE: xxxxx}':
     ...    Unrecognized type 'xxxxx'.
     Error In File
-    ...    5    variables/variable_types.robot    22
+    ...    5    variables/variable_types.robot    23
     ...    Setting variable '\&{BAD_DICT_TYPE: aa=bb}' failed:
     ...    Invalid variable '\&{BAD_DICT_TYPE: aa=bb}':
     ...    Unrecognized type 'aa'.
+
+Variable section: Broken type
     Error In File
-    ...    6    variables/variable_types.robot    23
+    ...    6    variables/variable_types.robot    24
     ...    Setting variable '\&{INVALID_DICT_TYPE1: int=list[int}' failed:
     ...    Invalid variable '\&{INVALID_DICT_TYPE1: int=list[int}':
     ...    Parsing type 'dict[int, list[int]' failed:
     ...    Error at end: Closing ']' missing.
     ...    pattern=False
     Error In File
-    ...    7    variables/variable_types.robot    24
+    ...    7    variables/variable_types.robot    25
     ...    Setting variable '\&{INVALID_DICT_TYPE2: int=listint]}' failed:
     ...    Invalid variable '\&{INVALID_DICT_TYPE2: int=listint]}':
     ...    Parsing type 'dict[int, listint]]' failed:
     ...    Error at index 18: Extra content after 'dict[int, listint]'.
     ...    pattern=False
+
+Variable section: Conversion error
     Error In File
-    ...    8    variables/variable_types.robot    21
+    ...    8    variables/variable_types.robot    22
     ...    Setting variable '\&{BAD_DICT_VALUE: str=int}' failed:
     ...    Value '{'x': 'a', 'y': 'b'}' (DotDict) cannot be converted to dict[str, int]:
     ...    Item 'x' got value 'a' that cannot be converted to integer.
     ...    pattern=False
     Error In File
-    ...    9    variables/variable_types.robot    19
+    ...    9    variables/variable_types.robot    20
     ...    Setting variable '\@{BAD_LIST_VALUE: int}' failed:
     ...    Value '['1', 'hahaa']' (list) cannot be converted to list[int]:
     ...    Item '1' got value 'hahaa' that cannot be converted to integer.
@@ -68,6 +72,11 @@ Variable section: Invalid syntax
     ...    Setting variable '\${BAD_VALUE: int}' failed:
     ...    Value 'not int' cannot be converted to integer.
     ...    pattern=False
+    Error In File
+    ...    11    variables/variable_types.robot    18
+    ...    Setting variable '\${BAD_VALUE_2: float}' failed:
+    ...    Value '${10**400}' (integer) cannot be converted to float:
+    ...    OverflowError: *
 
 VAR syntax
     Check Test Case    ${TESTNAME}
@@ -151,7 +160,7 @@ User keyword: Invalid value
 User keyword: Invalid type
     Check Test Case    ${TESTNAME}
     Error In File
-    ...    0    variables/variable_types.robot    481
+    ...    0    variables/variable_types.robot    482
     ...    Creating keyword 'Bad type' failed:
     ...    Invalid argument specification: Invalid argument '\${arg: bad}':
     ...    Unrecognized type 'bad'.
@@ -159,7 +168,7 @@ User keyword: Invalid type
 User keyword: Invalid assignment with kwargs k_type=v_type declaration
     Check Test Case    ${TESTNAME}
     Error In File
-    ...    1    variables/variable_types.robot    485
+    ...    1    variables/variable_types.robot    486
     ...    Creating keyword 'Kwargs does not support key=value type syntax' failed:
     ...    Invalid argument specification: Invalid argument '\&{kwargs: int=float}':
     ...    Unrecognized type 'int=float'.
@@ -182,7 +191,7 @@ Embedded arguments: Invalid value from variable
 Embedded arguments: Invalid type
     Check Test Case    ${TESTNAME}
     Error In File
-    ...    2    variables/variable_types.robot    505
+    ...    2    variables/variable_types.robot    506
     ...    Creating keyword 'Embedded invalid type \${x: invalid}' failed:
     ...    Invalid embedded argument '\${x: invalid}':
     ...    Unrecognized type 'invalid'.
@@ -230,7 +239,7 @@ Invalid value on CLI
     Run Should Fail
     ...    -v "BAD_VALUE: int:bad" ${DATADIR}/misc/pass_and_fail.robot
     ...    Command line variable '\${BAD_VALUE: int}' got value 'bad' that cannot be converted to integer.
-    VAR    ${big}    1${{'0' * 400}}
+    VAR    ${big: int}    1e400
     Run Should Fail
     ...    -v "BAD_VALUE: list[float]:[${big}]" ${DATADIR}/misc/pass_and_fail.robot
     ...    Command line variable '\${BAD_VALUE: list[float]}' got value '[${big}]' that cannot be converted to list[float]: Item '0' got value '${big}' (integer) that cannot be converted to float: OverflowError: int too large to convert to float

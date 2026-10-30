@@ -23,7 +23,7 @@ from enum import Enum
 from numbers import Integral, Real
 from os import PathLike
 from pathlib import Path, PurePath
-from typing import Any, Literal, TYPE_CHECKING, Union
+from typing import Any, Literal, NoReturn, TYPE_CHECKING, Union
 
 from robot.conf import Languages
 from robot.libraries.DateTime import convert_date, convert_time
@@ -58,12 +58,14 @@ class TypeConverter:
         type_info: "TypeInfo",
         custom_converters: "CustomArgumentConverters | None" = None,
         languages: "Languages | None" = None,
+        reraise_fatal: bool = False,
     ):
         self.type_info = type_info
         self.custom_converters = custom_converters
         self.languages = languages
         self.nested = self._get_nested(type_info, custom_converters, languages)
         self.type_name = self._get_type_name()
+        self.reraise_fatal = reraise_fatal
 
     def _get_nested(
         self,
@@ -74,7 +76,7 @@ class TypeConverter:
         if not type_info.nested:
             return None
         return [
-            self.converter_for(info, custom_converters, languages)
+            self.converter_for(info, custom_converters, languages, reraise_fatal=True)
             for info in type_info.nested
         ]
 
@@ -105,6 +107,7 @@ class TypeConverter:
         type_info: "TypeInfo",
         custom_converters: "CustomArgumentConverters | None" = None,
         languages: "Languages | None" = None,
+        reraise_fatal: bool = False,
     ) -> "TypeConverter":
         if type_info.type is None:
             return UnknownConverter(type_info)
@@ -113,11 +116,11 @@ class TypeConverter:
             if info:
                 return CustomConverter(type_info, info, languages)
         if type_info.type in cls._converters:
-            conv_class = cls._converters[type_info.type]
-            return conv_class(type_info, custom_converters, languages)
+            converter = cls._converters[type_info.type]
+            return converter(type_info, custom_converters, languages, reraise_fatal)
         for converter in cls._converters.values():
             if converter.handles(type_info):
-                return converter(type_info, custom_converters, languages)
+                return converter(type_info, custom_converters, languages, reraise_fatal)
         return UnknownConverter(type_info)
 
     @classmethod
@@ -140,16 +143,18 @@ class TypeConverter:
                 return self._non_string_convert(value)
             return self._string_convert(value)
         except ValueError as error:
-            return self._handle_error(value, name, kind, error)
-        except RecursionError:
-            # Deeply nested values with recursive types can exceed the recursion
-            # limit. That is not a conversion error and must not be hidden.
-            raise
-        except Exception:
-            # Converters should raise `ValueError`, but, for example, `set()` can
-            # raise `TypeError` and `float()` can raise `OverflowError`.
-            message = get_error_message()
-            return self._handle_error(value, name, kind, ValueError(message))
+            self._handle_error(value, name, kind, error)
+        except (RecursionError, MemoryError) as error:
+            # Deeply nested or complex values may exceed recursion or memory limits.
+            # These errors are considered more severe than normal conversion failures,
+            # and we let them pass through if they occur with nested converters.
+            # That avoids hiding errors if other converters can handle values.
+            if self.reraise_fatal:
+                raise
+            self._handle_error(value, name, kind, error)
+        except Exception as error:
+            # Converters should only raise ValueErrors, but others may slip through.
+            self._handle_error(value, name, kind, error)
 
     def no_conversion_needed(self, value: object) -> bool:
         try:
@@ -187,11 +192,17 @@ class TypeConverter:
     def _convert(self, value) -> object:
         raise NotImplementedError
 
-    def _handle_error(self, value, name, kind, error=None):
+    def _handle_error(self, value, name, kind, error=None) -> NoReturn:
         typ = "" if isinstance(value, str) else f" ({type_name(value)})"
         value = safe_str(value)
         kind = kind.capitalize() if kind.islower() else kind
-        ending = f": {error}" if (error and error.args) else "."
+        if error is None:
+            ending = "."
+        elif isinstance(error, ValueError):
+            ending = f": {error}" if error.args else "."
+        else:
+            err_name = type_name(error)
+            ending = f": {err_name}: {error}" if error.args else f": {err_name}"
         cannot_be_converted = f"cannot be converted to {self.type_name}{ending}"
         if name is None:
             raise ValueError(f"{kind} '{value}'{typ} {cannot_be_converted}")
@@ -202,9 +213,8 @@ class TypeConverter:
     def _literal_eval(self, value, expected, name=None) -> object:
         try:
             value = literal_eval(value)
-        except (ValueError, SyntaxError, MemoryError):
-            # Original errors aren't too informative in these cases. `MemoryError`
-            # is raised if the expression is too complex to parse.
+        except (ValueError, SyntaxError):
+            # Original errors aren't too informative in these cases.
             raise ValueError("Invalid expression.")
         except TypeError as err:
             raise ValueError(f"Evaluating expression failed: {err}")
@@ -641,8 +651,9 @@ class TypedDictConverter(TypeConverter):
         custom_converters: "CustomArgumentConverters | None",
         languages: "Languages | None",
     ) -> "dict[str, TypeConverter]":
+        converter_for = self.converter_for
         return {
-            name: self.converter_for(info, custom_converters, languages)
+            name: converter_for(info, custom_converters, languages, reraise_fatal=True)
             for name, info in type_info.annotations.items()
         }
 
@@ -862,9 +873,10 @@ class LiteralConverter(TypeConverter):
         type_info: "TypeInfo",
         custom_converters: "CustomArgumentConverters | None" = None,
         languages: "Languages | None" = None,
+        reraise_fatal: bool = False,
     ) -> TypeConverter:
         info = type(type_info)(type_info.name, type(type_info.type))
-        return super().converter_for(info, custom_converters, languages)
+        return super().converter_for(info, custom_converters, languages, reraise_fatal)
 
     @classmethod
     def handles(cls, type_info: "TypeInfo") -> bool:
@@ -937,7 +949,7 @@ class RecursiveConverter(TypeConverter):
         from .typeinfo import TypeInfo
 
         info = TypeInfo.from_type_hint(self.type_info.nested[0])
-        converter = TypeConverter.converter_for(info)
+        converter = TypeConverter.converter_for(info, reraise_fatal=True)
         return converter.convert(value)
 
 
@@ -967,12 +979,7 @@ class CustomConverter(TypeConverter):
         return not self.value_types or isinstance(value, self.value_types)
 
     def _convert(self, value):
-        try:
-            return self.converter_info.convert(value)
-        except ValueError:
-            raise
-        except Exception:
-            raise ValueError(get_error_message())
+        return self.converter_info.convert(value)
 
 
 class UnknownConverter(TypeConverter):

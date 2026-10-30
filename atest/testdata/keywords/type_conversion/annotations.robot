@@ -434,12 +434,6 @@ Invalid list
     List                 ${NONE}                   arg_type=None
     List                 ${NO_CLASS}               arg_type=NoClass
 
-Too complex expression
-    [Documentation]    The value is so long that the error message is cut.
-    Run Keyword And Expect Error
-    ...    ValueError: Argument 'argument' got value '---*---1' that cannot be converted to list: Invalid expression.
-    ...    List    ${{'-' * 6000 + '1'}}
-
 Sequence (abc)
     Sequence             []                        []
     Sequence             ('\\x00', 1, 2, 'RF')     ('\\x00', 1, 2, 'RF')
@@ -592,6 +586,13 @@ Invalid frozenset
     Frozenset            ooops                     error=Invalid expression.
     Frozenset            {{'not', 'hashable'}}     error=Evaluating expression failed: *
     Frozenset            ${NO_CLASS}               arg_type=NoClass
+
+Too complex expression
+    [Tags]               no-pypy
+    [Template]           Conversion Should Fail
+    Dictionary           ${{'-' * 6000}}           error=MemoryError     except_type=START
+    List                 ${{200 * '[1,' + '2' + ', 3]' * 200}}
+    ...                                            error=MemoryError     except_type=START
 
 Unknown types are not converted
     Unknown              foo                       'foo'

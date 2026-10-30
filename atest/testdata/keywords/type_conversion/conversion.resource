@@ -3,15 +3,21 @@ ${CUSTOM}         ${{type('Custom', (), {})()}}
 
 *** Keywords ***
 Conversion Should Fail
-    [Arguments]    ${kw}    @{args}    ${error}=    ${type}=${kw.lower()}    ${arg_type}=    &{kwargs}
+    [Arguments]    ${kw}    @{args}
+    ...    ${error}=
+    ...    ${type}=${kw.lower()}
+    ...    ${arg_name}=argument
+    ...    ${arg_type}=
+    ...    ${except_type}=${{'GLOB' if '*' in $error else 'LITERAL'}}
+    ...    &{kwargs}
     ${arg} =    Evaluate    (list($args) + list($kwargs.values()))[0]
-    ${message} =    Catenate
+    VAR    ${message}
     ...     ValueError:
-    ...     Argument 'argument' got value '${arg}'${{" (${arg_type})" if $arg_type else ""}}
+    ...     Argument '${arg_name}' got value '${arg}'${{" (${arg_type})" if $arg_type else ""}}
     ...     that cannot be converted to ${type}${{": ${error}" if $error else "."}}
     TRY
         Run Keyword    ${kw}    @{args}    &{kwargs}
-    EXCEPT    ${message}    type=${{'GLOB' if '*' in $error else 'LITERAL'}}
+    EXCEPT    ${message}    type=${except_type}
         No Operation
     EXCEPT    AS    ${err}
         Fail    Expected error\n\n \ ${message}\n\nbut got\n\n \ ${err}
