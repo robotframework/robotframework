@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import math
 import re
 import time
 import warnings
@@ -177,6 +178,8 @@ def secs_to_timestr(secs: "int | float | timedelta", compact=False) -> str:
     """
     if isinstance(secs, timedelta):
         secs = secs.total_seconds()
+    if not math.isfinite(secs):
+        raise ValueError(f"Cannot convert '{secs}' to time string.")
     return _SecsToTimestrHelper(secs, compact).get_value()
 
 
@@ -515,6 +518,8 @@ def elapsed_time_to_string(
             "Use 'seconds=True' to change the behavior already now and to avoid this "
             "warning. Alternatively pass the elapsed time as a 'timedelta'."
         )
+    if not math.isfinite(elapsed):
+        raise ValueError(f"Cannot convert '{elapsed}' to time string.")
     prefix = ""
     if elapsed < 0:
         prefix = "-"

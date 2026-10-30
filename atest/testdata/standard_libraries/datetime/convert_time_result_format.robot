@@ -43,6 +43,13 @@ Too large value for timedelta
                       ...    as a timedelta object. Values must be between -999999999 and 999999999 days.
                       1e15               timedelta
 
+Inf and NaN           [Template]         Time conversion should fail
+                      inf                verbose      ValueError: Cannot convert 'inf' to time string.
+                      -INF               compact      ValueError: Cannot convert '-inf' to time string.
+                      nan                timer        ValueError: Cannot convert 'nan' to time string.
+                      inf                timedelta    ValueError: *
+                      NaN                timedelta    ValueError: *
+
 Ignore millis         [Template]         Time conversion without millis should succeed
                       61.5               number       ${62}
                       61.5               verbose      1 minute 2 seconds
@@ -77,7 +84,13 @@ Time conversion without millis should succeed
     ${result} =    Convert Time    ${input}    ${format}    exclude_millis=Yes
     Should Be Equal    ${result}    ${expected}
 
+Time conversion should fail
+    [Arguments]    ${input}    ${format}    ${error}
+    Run Keyword And Expect Error
+    ...    ${error}
+    ...    Convert Time    ${input}    ${format}
+
 Number format should be
     [Arguments]    ${input}    ${expected}    ${millis}
     ${result} =    Convert Time    ${input}    result_format=number    exclude_millis=${millis}
-    Should Be Equal As Strings    ${result}    ${expected}
+    Should Be Equal    ${result}    ${expected}    types=str

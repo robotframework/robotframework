@@ -193,7 +193,7 @@ class TestTime(unittest.TestCase):
         assert_equal(timestr_to_secs(str(secs), round_to=None), secs)
 
     def test_timestr_to_secs_with_invalid(self):
-        for inv in [
+        for invalid in [
             "",
             "foo",
             "foo days",
@@ -208,9 +208,9 @@ class TestTime(unittest.TestCase):
         ]:
             assert_raises_with_msg(
                 ValueError,
-                f"Invalid time string '{inv}'.",
+                f"Invalid time string '{invalid}'.",
                 timestr_to_secs,
-                inv,
+                invalid,
             )
 
     def test_secs_to_timestr(self):
@@ -249,6 +249,18 @@ class TestTime(unittest.TestCase):
             assert_equal(secs_to_timestr(inp, compact=True), compact, inp)
             assert_equal(secs_to_timestr(inp), verbose, inp)
             assert_equal(secs_to_timestr(timedelta(seconds=inp)), verbose, inp)
+
+    def test_secs_to_timestr_with_invalid(self):
+        for invalid in [
+            float("-inf"),
+            float("nan"),
+        ]:
+            assert_raises_with_msg(
+                ValueError,
+                f"Cannot convert '{invalid}' to time string.",
+                secs_to_timestr,
+                invalid,
+        )
 
     def test_format_time(self):
         timetuple = (2005, 11, 2, 14, 23, 12, 123)
@@ -428,6 +440,19 @@ class TestTime(unittest.TestCase):
             "Robot Framework 8.0. Use 'seconds=True' to change the behavior "
             "already now and to avoid this warning. Alternatively pass "
             "the elapsed time as a 'timedelta'.",
+        )
+
+    def test_elapsed_time_to_string_with_invalid(self):
+        for invalid in [
+            float("-inf"),
+            float("nan"),
+        ]:
+            assert_raises_with_msg(
+                ValueError,
+                f"Cannot convert '{invalid}' to time string.",
+                elapsed_time_to_string,
+                invalid,
+                seconds=True,
         )
 
     def test_parse_timestamp(self):

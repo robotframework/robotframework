@@ -21,6 +21,9 @@ Convert to timedelta
 Too large value for timedelta
     Check Test Case    ${TESTNAME}
 
+Inf and NaN
+    Check Test Case    ${TESTNAME}
+
 Ignore millis
     Check Test Case    ${TESTNAME}
 
