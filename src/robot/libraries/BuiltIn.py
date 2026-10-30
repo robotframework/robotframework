@@ -1699,7 +1699,7 @@ class _Verify(_BuiltInBase):
             Should Contain Any    ${list}    @{items}    msg=Custom message    values=False
         ```
 
-        Automatically converting `item` to bytes, bytes normalization support and
+        Automatically converting `items` to bytes, bytes normalization support and
         recursive normalization with collections are new in Robot Framework 7.4.
         """
         values = self._deprecate_no_values(values)
@@ -1775,7 +1775,7 @@ class _Verify(_BuiltInBase):
             Should Not Contain Any    ${list}    @{items}    msg=Custom message    values=False
         ```
 
-        Automatically converting `item` to bytes, bytes normalization support and
+        Automatically converting `items` to bytes, bytes normalization support and
         recursive normalization with collections are new in Robot Framework 7.4.
         """
         values = self._deprecate_no_values(values)
@@ -1825,10 +1825,10 @@ class _Verify(_BuiltInBase):
             strip_spaces: How to optionally strip spaces.
             collapse_spaces: If true, spaces are collapsed.
 
-        Works with lists, strings all objects that [Get Count] works with.
+        Works with lists, strings and all objects that [Get Count] works with.
 
         See the [Controlling failure messages] section for information about
-        overriding the default failure message with `msg` and `values` arguments.
+        overriding the default failure message with the `msg` argument.
 
         The [String and bytes normalization] section explains how `ignore_case`,
         `strip_spaces` and `collapse_spaces` can be used for normalizing
@@ -2301,7 +2301,7 @@ class _Variables(_BuiltInBase):
 
     @run_keyword_variant(resolve=0)
     def variable_should_exist(self, name: str, message: "str | None" = None):
-        r"""Fails the given variable does not exist in the current scope.
+        r"""Fails if the given variable does not exist in the current scope.
 
         Args:
             name: The variable name.
@@ -2312,9 +2312,9 @@ class _Variables(_BuiltInBase):
         For the reasons explained in the [Using variables with keywords creating
         or accessing variables] section, using the escaped format is recommended.
 
-        The default error message can be overridden with the `msg` argument.
+        The default error message can be overridden with the `message` argument.
         Notice that it must be given positionally like `A message` and not
-        using the named-argument syntax like `msg=A message`.
+        using the named-argument syntax like `message=A message`.
 
         See also [Variable Should Not Exist] and [Keyword Should Exist].
         """
@@ -2341,9 +2341,9 @@ class _Variables(_BuiltInBase):
         For the reasons explained in the [Using variables with keywords creating
         or accessing variables] section, using the escaped format is recommended.
 
-        The default error message can be overridden with the `msg` argument.
+        The default error message can be overridden with the `message` argument.
         Notice that it must be given positionally like `A message` and not
-        using the named-argument syntax like `msg=A message`.
+        using the named-argument syntax like `message=A message`.
 
         See also [Variable Should Exist] and [Keyword Should Exist].
         """
