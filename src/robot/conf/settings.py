@@ -185,7 +185,7 @@ class _BaseSettings:
         return collect.level, show.level
 
     def _process_max_error_lines(self, value):
-        if not value or value.upper() == "NONE":
+        if not value or (isinstance(value, str) and value.upper() == "NONE"):
             return None
         value = self._convert_to_integer("MaxErrorLines", value)
         if value < 10:
