@@ -260,7 +260,7 @@ class TestTime(unittest.TestCase):
                 f"Cannot convert '{invalid}' to time string.",
                 secs_to_timestr,
                 invalid,
-        )
+            )
 
     def test_format_time(self):
         timetuple = (2005, 11, 2, 14, 23, 12, 123)
@@ -453,7 +453,7 @@ class TestTime(unittest.TestCase):
                 elapsed_time_to_string,
                 invalid,
                 seconds=True,
-        )
+            )
 
     def test_parse_timestamp(self):
         for timestamp in [
