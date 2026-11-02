@@ -19,17 +19,18 @@ If you have pip_ installed, just run
 
    pip install --upgrade robotframework
 
-to install the latest available release or use
+to install the latest available stable release or use
 
 ::
 
-   pip install robotframework==7.5
+   pip install "robotframework<7.5"
 
-to install exactly this version. Alternatively you can download the package
-from PyPI_ and install it manually. For more details and other installation
-approaches, see the `installation instructions`_.
+to install the latest release in the Robot Framework 7.5.x series. Alternatively
+you can download the package from PyPI_ and install it manually. For more
+details and other installation approaches, see the `installation instructions`_.
 
 Robot Framework 7.5 was released on Monday September 14, 2026.
+It was superseded by `Robot Framework 7.5.1`_ on Monday November 2, 2026.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
@@ -366,10 +367,9 @@ Various features have been deprecated:
   `Testdoc <https://github.com/MarvKler/robotframework-testdoc>`__ should be
   used instead.
 
-- The Telnet library has been deprecated and will be replaced by an external
-  library (`#5786`_). See issue `#3537`_ for the reasoning and for the future
-  plans. Community help would be appreciated with setting up and maintaining
-  the new project.
+- The Telnet library has been deprecated (`#5786`_). The new external
+  `TelnetLibrary <https://github.com/MarketSquare/robotframework-telnet-library>`_
+  should be used instead.
 
 - Boolean operators used with tag patterns need to be separated from tags more
   clearly and usages like `XORY` are deprecated (`#5657`_). Operators can be
@@ -407,7 +407,6 @@ Various features have been deprecated:
 Acknowledgements
 ================
 
-
 Robot Framework is developed with support from the Robot Framework Foundation
 and its 80+ member organizations. Join the journey — support the project by
 `joining the Foundation <Robot Framework Foundation_>`_.
@@ -417,7 +416,7 @@ Robot Framework 7.5 team funded by the foundation consisted of `Pekka Klärck`_ 
 only responsible for some Libdoc related fixes. In addition to work done by them,
 the community has provided some awesome contributions:
 
-- `Tatu Aalto <https://github.com/aaltat>`__ worked with Pekka to implement
+- `Tatu Aalto <https://github.com/aaltat>`_ worked with Pekka to implement
   support to document keyword arguments, return values and exceptions (`#5604`_),
   added Markdown output support to Libdoc (`#5749`_) and helped with several
   other Libdoc enhancements as well (`#5728`_, `#5733`_, `#5754`_, `#5755`_,
@@ -757,3 +756,165 @@ Altogether 55 issues. View on the `issue tracker <https://github.com/robotframew
 .. _#5639: https://github.com/robotframework/robotframework/issues/5639
 .. _#5653: https://github.com/robotframework/robotframework/issues/5653
 .. _#5763: https://github.com/robotframework/robotframework/issues/5763
+
+Bug fix releases
+================
+
+The following bug fix releases fix issues in Robot Framework 7.5. These
+releases should not contain any backwards incompatible changes and code
+changes are kept in minimum in general.
+
+Robot Framework 7.5.1
+---------------------
+
+Robot Framework 7.5.1 fixes some regressions in Robot Framework 7.5 and various
+bugs affecting also earlier releases. It should not contain any backwards
+incompatible changes, but it deprecates automatically converting Markdown
+library documentation to HTML in spec files (`#5809`_).
+
+Acknowledgements
+~~~~~~~~~~~~~~~~
+
+Robot Framework is developed with support from the Robot Framework Foundation
+and its 80+ member organizations. Join the journey — support the project by
+`joining the Foundation <Robot Framework Foundation_>`_.
+
+Robot Framework 7.5.1 team funded by the foundation consisted of `Pekka Klärck`_.
+The following community members provided valuable contributions:
+
+- `Daniel Biehl <https://github.com/d-biehl>`_ fixed multiple issues:
+
+  - Severe problems with argument conversion (`#5815`_, `#5819`_)
+  - Wrong line numbers when Robot Framework data is embedded to Markdown files (`#5801`_)
+  - Problems with `--parse-include` and `--run-empty-suite` when execution multiple
+    data sources (`#5826`_, `#5827`_)
+
+- `Tatu Aalto`_ enhanced Libdoc HTML output styles (`#5805`_).
+
+- `Wiktor Mówiński <https://github.com/wiktormowinski>`_ enhanced the
+  Telnet library deprecation notice (`#5786`_) so that it links to the new external
+  TelnetLibrary_ they have published (`#5811`_).
+
+- `Jay <https://github.com/jay23606>`_ fixed links in standard type documentation
+  when using reStructuredText (`#5822`_).
+
+- `Lim Jooyoung <https://github.com/mmporong>`_ fixed invalid argument names,
+  typos, and various other similar problems in standard library documentation (`#5835`_).
+
+- `Anthony Imad <https://github.com/Anthounn>`_ enhanced the error message when
+  converting Markdown documentation to HTML fails due to optional dependencies
+  not being installed (`#5799`_)-
+
+Full list of fixes and enhancements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. list-table::
+    :header-rows: 1
+
+    * - ID
+      - Type
+      - Priority
+      - Summary
+    * - `#5789`_
+      - bug
+      - critical
+      - Type aliases with list of types in values crash execution
+    * - `#5794`_
+      - bug
+      - critical
+      - Performance regression in `Grep File`
+    * - `#5815`_
+      - bug
+      - critical
+      - Execution crashes if library import argument cannot be converted
+    * - `#5801`_
+      - bug
+      - high
+      - Tests in Markdown files get line numbers relative to the code blocks, not to the file
+    * - `#5819`_
+      - bug
+      - high
+      - Argument conversion failing unexpectedly causes bad error messages with keywords and crashes elsewhere (e.g. with listeners)
+    * - `#5826`_
+      - bug
+      - high
+      - `--parseinclude` with multiple data sources fails with "Suite '...' contains no tests or tasks"
+    * - `#5807`_
+      - bug
+      - medium
+      - Tests should be able to call local private keywords without warnings
+    * - `#5810`_
+      - bug
+      - medium
+      - Libdoc: Local Markdown reference targets cannot be used in argument, return or exception documentation
+    * - `#5822`_
+      - bug
+      - medium
+      - Libdoc: Documentation of standard types is not shown correctly when using reStructuredText, HTML or plain text documentation formats
+    * - `#5825`_
+      - bug
+      - medium
+      - `isatty` utility does not handle streams with detached buffers correctly with Python 3.14.9 and 3.15.1
+    * - `#5827`_
+      - bug
+      - medium
+      - Empty data source causes wrong "Conflicting execution modes" error
+    * - `#5832`_
+      - bug
+      - medium
+      - Libdoc: Backticks in spec files with HTML docs are processed incorrectly
+    * - `#5835`_
+      - bug
+      - medium
+      - Incorrect argument names, typos and other such problems in standard library documentation
+    * - `#5805`_
+      - feature
+      - medium
+      - Libdoc style enhancements
+    * - `#5809`_
+      - feature
+      - medium
+      - Libdoc: Deprecate converting Markdown to HTML in spec files by default (`deprecation`)
+    * - `#5811`_
+      - feature
+      - medium
+      - Update Telnet deprecation note to point to the new standalone library
+    * - `#5788`_
+      - bug
+      - low
+      - Document in RF 7.5 release notes that generating standard library docs requires installing `markdown`
+    * - `#5834`_
+      - bug
+      - low
+      - DateTime: Conversion to `timedelta` fails with bad error message if values are too large
+    * - `#5838`_
+      - bug
+      - low
+      - Libdoc: Deprecation warning with reStructuredText when using docutis 0.22 or newer
+    * - `#5799`_
+      - feature
+      - low
+      - Enhance error messages when converting Markdown or reStructuredText to HTML fails due to optional dependencies not being installed
+
+Altogether 20 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av7.5.1>`__.
+
+.. _#5789: https://github.com/robotframework/robotframework/issues/5789
+.. _#5794: https://github.com/robotframework/robotframework/issues/5794
+.. _#5815: https://github.com/robotframework/robotframework/issues/5815
+.. _#5801: https://github.com/robotframework/robotframework/issues/5801
+.. _#5819: https://github.com/robotframework/robotframework/issues/5819
+.. _#5826: https://github.com/robotframework/robotframework/issues/5826
+.. _#5788: https://github.com/robotframework/robotframework/issues/5788
+.. _#5807: https://github.com/robotframework/robotframework/issues/5807
+.. _#5810: https://github.com/robotframework/robotframework/issues/5810
+.. _#5822: https://github.com/robotframework/robotframework/issues/5822
+.. _#5825: https://github.com/robotframework/robotframework/issues/5825
+.. _#5827: https://github.com/robotframework/robotframework/issues/5827
+.. _#5832: https://github.com/robotframework/robotframework/issues/5832
+.. _#5835: https://github.com/robotframework/robotframework/issues/5835
+.. _#5805: https://github.com/robotframework/robotframework/issues/5805
+.. _#5809: https://github.com/robotframework/robotframework/issues/5809
+.. _#5811: https://github.com/robotframework/robotframework/issues/5811
+.. _#5834: https://github.com/robotframework/robotframework/issues/5834
+.. _#5838: https://github.com/robotframework/robotframework/issues/5838
+.. _#5799: https://github.com/robotframework/robotframework/issues/5799
