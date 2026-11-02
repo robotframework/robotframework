@@ -767,10 +767,10 @@ changes are kept in minimum in general.
 Robot Framework 7.5.1
 ---------------------
 
-Robot Framework 7.5.1 fixes some regressions in `Robot Framework 7.5 <#>`_ and
-various bugs affecting also earlier releases. It should not contain any backwards
-incompatible changes, but it deprecates automatically converting Markdown
-library documentation to HTML in spec files (`#5809`_).
+Robot Framework 7.5.1 fixes some regressions in `Robot Framework 7.5 <#>`_
+as well as various issues affecting also earlier releases. It should not
+contain any backwards incompatible changes, but it deprecates automatically
+converting Markdown library documentation to HTML in spec files (`#5809`_).
 
 Acknowledgements
 ~~~~~~~~~~~~~~~~
