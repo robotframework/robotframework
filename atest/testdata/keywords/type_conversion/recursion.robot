@@ -16,3 +16,8 @@ Recursion error
     ...    arg_name=data    arg_type=list
     ...    type=dict[str, JSON], list[JSON], string, integer, float, boolean or None
     ...    error=RecursionError:    except_type=START
+
+Nested recursion error
+    Conversion Should Fail    Validate Nested    [[1]]
+    ...    arg_name=data    type=Nested
+    ...    error=Item '0' got value '[1]' (list) that cannot be converted to Nested: Item '0' got value '1' (integer) that cannot be converted to Nested.

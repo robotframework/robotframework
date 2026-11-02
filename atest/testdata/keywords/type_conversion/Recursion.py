@@ -1,4 +1,5 @@
 type JSON = dict[str, JSON] | list[JSON] | str | int | float | bool | None
+type Nested = list[Nested]
 
 
 def create_nested_list(depth: int) -> list:
@@ -14,3 +15,7 @@ def validate_list(data: JSON):
         data = data[0]
     if data != 1:
         raise AssertionError(f"Expected leaf value to be 1, got {data!r}.")
+
+
+def validate_nested(data: Nested):
+    print(data)

@@ -19,6 +19,7 @@ from datetime import date, datetime, timedelta
 from decimal import Decimal
 from enum import Enum
 from pathlib import Path
+from threading import local
 from typing import Any, ForwardRef, get_args, get_origin, get_type_hints, Literal, Union
 
 # Standard get_args and get_origin handle at least Annotated wrong in Python 3.8.
@@ -52,10 +53,9 @@ else:
 if sys.version_info >= (3, 12):
     from typing import TypeAliasType
 
-    from .typealiasresolver import RecursiveAlias, resolve_type_alias
+    from .typealiasresolver import resolve_type_alias
 else:
     TypeAliasType = type("TypeAliasType", (), {})
-    RecursiveAlias = type("RecursiveAlias", (), {})
     resolve_type_alias = lambda alias: alias
 
 
@@ -69,7 +69,7 @@ from robot.variables import search_variable, VariableMatch
 
 from ..context import EXECUTION_CONTEXTS
 from .customconverters import CustomArgumentConverters
-from .typeconverters import TypeConverter
+from .typeconverters import RecursiveAlias, TypeConverter
 
 TYPE_NAMES = {
     "...": Ellipsis,
@@ -248,6 +248,8 @@ class TypeInfo(metaclass=SetterAwareType):
         if isinstance(hint, ForwardRef):
             hint = hint.__forward_arg__
         if isinstance(hint, typeddict_types):
+            if hint in TypedDictInfo._resolving.types:
+                return TypeInfo(hint.__name__, RecursiveAlias, [hint], alias)
             return TypedDictInfo(hint.__name__, hint, alias=alias)
         origin = get_origin(hint)
         if origin:
@@ -492,11 +494,22 @@ class TypeInfo(metaclass=SetterAwareType):
         return self.name is not None
 
 
+class ResolvingTypedDicts(local):
+    """TypedDicts being resolved in the current thread.
+
+    Used for detecting recursive TypedDicts.
+    """
+
+    def __init__(self):
+        self.types = set()
+
+
 class TypedDictInfo(TypeInfo):
     """Represents ``TypedDict`` used as an argument."""
 
     is_typed_dict = True
     __slots__ = ("annotations", "required")
+    _resolving = ResolvingTypedDicts()
 
     def __init__(self, name: str, type: Any, alias: "str | None" = None):
         super().__init__(name, type, alias=alias)
@@ -505,9 +518,13 @@ class TypedDictInfo(TypeInfo):
         self.required = getattr(type, "__required_keys__", frozenset())
         if sys.version_info < (3, 11):
             self._handle_typing_extensions_required_and_not_required(type_hints)
-        self.annotations = {
-            name: TypeInfo.from_type_hint(hint) for name, hint in type_hints.items()
-        }
+        self._resolving.types.add(type)
+        try:
+            self.annotations = {
+                name: TypeInfo.from_type_hint(hint) for name, hint in type_hints.items()
+            }
+        finally:
+            self._resolving.types.remove(type)
 
     def _get_type_hints(self, type) -> "dict[str, Any]":
         try:

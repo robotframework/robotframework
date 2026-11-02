@@ -9,3 +9,6 @@ Valid recursion
 
 Recursion error
     Check Test Case    ${TESTNAME}
+
+Nested recursion error
+    Check Test Case    ${TESTNAME}
