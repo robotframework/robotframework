@@ -2,8 +2,8 @@
   "specversion": 4,
   "name": "Dialogs",
   "doc": "A library providing dialogs for interacting with users.\n\n`Dialogs` is Robot Framework's standard library that provides means\nfor pausing the test or task execution and getting input from users.\n\nLong lines in the provided messages are wrapped automatically. If you want\nto wrap lines manually, you can add newlines using the `\\n` character\nsequence.",
-  "version": "7.5",
-  "generated": "2026-09-14T13:26:10+00:00",
+  "version": "7.5.1",
+  "generated": "2026-11-02T21:36:30+00:00",
   "type": "LIBRARY",
   "scope": "GLOBAL",
   "docFormat": "MARKDOWN",
@@ -128,7 +128,13 @@
           "repr": "default: str | int | None = None"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "str",
+        "typedoc": "string",
+        "nested": [],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "The value selected by the user.",
       "raises": {
         "RuntimeError": "If the user presses `Cancel`."
@@ -173,7 +179,21 @@
           "repr": "*values: str"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "list",
+        "typedoc": "list",
+        "nested": [
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "The values selected by the user as a list. Empty if nothing was selected.",
       "raises": {
         "RuntimeError": "If the user presses `Cancel`."
@@ -302,6 +322,18 @@
       "accepts": [
         "string",
         "float"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "list",
+      "doc": "Strings must be Python [list] or [tuple] literals. They are converted using the\n[ast.literal_eval] function and possible tuples are converted further to lists.\nThey can contain any values `ast.literal_eval` supports, including lists and\nother collections.\n\nIf the argument is a list, it is used without conversion. Tuples and other\nsequences are converted to lists.\n\nIf the type has nested types like `list[int]`, items are converted to those\ntypes automatically.\n\nExamples: `['one', 'two']`, `[('one', 1), ('two', 2)]`\n\nSupport to convert nested types is new in Robot Framework 6.0. Support for tuple\nliterals is new in Robot Framework 7.4.\n\n[list]: https://docs.python.org/library/stdtypes.html#list\n[tuple]: https://docs.python.org/library/stdtypes.html#tuple\n[ast.literal_eval]: https://docs.python.org/library/stdtypes.html#ast.literal_eval\n",
+      "usages": [
+        "Get Selections From User"
+      ],
+      "accepts": [
+        "string",
+        "Sequence"
       ]
     },
     {

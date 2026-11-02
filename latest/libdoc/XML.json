@@ -2,8 +2,8 @@
   "specversion": 4,
   "name": "XML",
   "doc": "Robot Framework library for verifying and modifying XML documents.\n\nAs the name implies, *XML* is a library for verifying contents of XML files.\nIn practice, it is a pretty thin wrapper on top of Python's\n[ElementTree XML API].\n\nThe library has the following main usages:\n\n- Parsing an XML file, or a string containing XML, into an XML element\n  structure and finding certain elements from it for further analysis\n  (e.g. [Parse XML] and [Get Element] keywords).\n- Getting text or attributes of elements\n  (e.g. [Get Element Text] and [Get Element Attribute]).\n- Directly verifying text, attributes, or whole elements\n  (e.g [Element Text Should Be] and [Elements Should Be Equal]).\n- Modifying XML and saving it (e.g. [Set Element Text], [Add Element]\n  and [Save XML]).\n\n### Table of contents\n\n%TOC%\n\n# Parsing XML\n\nXML can be parsed into an element structure using [Parse XML] keyword.\nThe XML to be parsed can be specified using a path to an XML file or as\na string or bytes that contain XML directly. The keyword returns the root\nelement of the structure, which then contains other elements as its\nchildren and their children. Possible comments and processing instructions\nin the source XML are removed.\n\nXML is not validated during parsing even if it has a schema defined. How\npossible doctype elements are handled otherwise depends on the used XML\nmodule and on the platform. The standard ElementTree strips doctypes\naltogether, but when [using lxml] they are preserved when XML is saved.\n\nThe element structure returned by [Parse XML], as well as elements\nreturned by keywords such as [Get Element], can be used as the `source`\nargument with other keywords. In addition to an already parsed XML\nstructure, other keywords also accept paths to XML files and strings\ncontaining XML similarly as [Parse XML]. Notice that keywords that modify\nXML do not write those changes back to disk even if the source would be\ngiven as a path to a file. Changes must always be saved explicitly using\n[Save XML] keyword.\n\nWhen the source is given as a path to a file, the forward slash character\n(`/`) can be used as the path separator regardless the operating system.\nOn Windows also the backslash works, but in the data it needs to be\nescaped by doubling it (`\\\\`). Using the built-in variable `${/}`\nnaturally works too.\n\n# Using lxml\n\nBy default, this library uses Python's standard [ElementTree] module for\nparsing XML, but it can be configured to use [lxml] module instead when\n[importing] the library. The resulting element structure has same API\nregardless which module is used for parsing.\n\nThe main benefits of using lxml is that it supports richer xpath syntax\nthan the standard ElementTree and enables using [Evaluate Xpath] keyword.\nIt also preserves the doctype and possible namespace prefixes saving XML.\n\n# Example\n\nThe following simple example demonstrates parsing XML and verifying its\ncontents. How to use xpath expressions to find elements and what attributes\nthe returned elements contain are discussed, with more examples, in\n[Finding elements with xpath] and [Element attributes] sections.\n\nIn this example, as well as in many other examples in this documentation,\n`${XML}` refers to the following example XML document. In practice `${XML}`\ncould either be a path to an XML file or it could contain the XML itself.\n\n```xml\n<example>\n    <first id=\"1\">text</first>\n    <second id=\"2\">\n        <child />\n    </second>\n    <third>\n        <child>more text</child>\n        <second id=\"child\" />\n        <child>\n            <grandchild />\n        </child>\n    </third>\n    <html>\n        <p>\n            Text with <b>bold</b> and <i>italics</i>.\n        </p>\n    </html>\n</example>\n```\n\n```robotframework\n*** Settings ***\nLibrary         XML    use_xml=True\n\n*** Test Cases ***\nExample\n    ${root} =    Parse XML    ${XML}\n    Should Be Equal    ${root.tag}    example\n    ${first} =    Get Element    ${root}    first\n    Should Be Equal    ${first.text}    text\n    Element Text Should Be    ${first}    text\n    Element Attribute Should Be    ${first}    id    1\n    Element Attribute Should Be    ${root}     id    1    xpath=first\n    Element Attribute Should Be    ${XML}      id    1    xpath=first\n```\n\nNotice that in the example three last lines are equivalent. Which one to\nuse in practice depends on which other elements you need to get or verify.\nIf you only need to do one verification, using the last line alone would\nsuffice. If more verifications are needed, parsing the XML with [Parse XML]\nonly once would be more efficient.\n\n# Finding elements with xpath\n\nElementTree, and thus also this library, supports finding elements using\nxpath expressions. ElementTree does not, however, support the full xpath\nstandard. The supported xpath syntax is explained below and\n[ElementTree documentation] provides more details. In the examples\n`${XML}` refers to the same XML structure as in the earlier example.\n\nIf lxml support is enabled when [importing] the library, the whole\n[xpath 1.0 standard] is supported. That includes everything listed below\nbut also a lot of other useful constructs.\n\n## Tag names\n\nWhen just a single tag name is used, xpath matches all direct child\nelements that have that tag name.\n\n```robotframework\n*** Test Cases ***\nTag names\n    ${elem} =    Get Element    ${XML}    third\n    Should Be Equal    ${elem.tag}    third\n    @{children} =    Get Elements    ${elem}    child\n    Length Should Be    ${children}    2\n```\n\n## Paths\n\nPaths are created by combining tag names with a forward slash (`/`). For\nexample, `parent/child` matches all `child` elements under `parent`\nelement. Notice that if there are multiple `parent` elements that all\nhave `child` elements, `parent/child` xpath will match all these\n`child` elements.\n\n```robotframework\n*** Test Cases ***\nPaths\n    ${elem} =    Get Element    ${XML}    second/child\n    Should Be Equal    ${elem.tag}    child\n    ${elem} =    Get Element    ${XML}    third/child/grandchild\n    Should Be Equal    ${elem.tag}    grandchild\n```\n\n## Wildcards\n\nAn asterisk (`*`) can be used in paths instead of a tag name to denote\nany element.\n\n```robotframework\n*** Test Cases ***\nWildcards\n    @{children} =    Get Elements    ${XML}    */child\n    Length Should Be    ${children}    3\n```\n\n## Current element\n\nThe current element is denoted with a dot (`.`). Normally the current\nelement is implicit and does not need to be included in the xpath.\n\n## Parent element\n\nThe parent element of another element is denoted with two dots (`..`).\nNotice that it is not possible to refer to the parent of the current\nelement.\n\n```robotframework\n*** Test Cases ***\nParent element\n    ${elem} =    Get Element    ${XML}    */second/..\n    Should Be Equal    ${elem.tag}    third\n```\n\n## Search all sub elements\n\nTwo forward slashes (`//`) mean that all sub elements, not only the\ndirect children, are searched. If the search is started from the current\nelement, an explicit dot is required.\n\n```robotframework\n*** Test Cases ***\nSearch all sub elements\n    @{elements} =    Get Elements    ${XML}    .//second\n    Length Should Be    ${elements}    2\n    ${b} =    Get Element    ${XML}    html//b\n    Should Be Equal    ${b.text}    bold\n```\n\n## Predicates\n\nPredicates allow selecting elements using also other criteria than tag\nnames, for example, attributes or position. They are specified after the\nnormal tag name or path using syntax `path[predicate]`. The path can have\nwildcards and other special syntax explained earlier. What predicates\nthe standard ElementTree supports is explained in the table below.\n\n|    Predicate    |                    Matches                            |          Example          |\n| --------------- | ------------------------------------------------------| ------------------------- |\n| `@attr`         | Elements with attribute `attr`.                       | `second[@id]`             |\n| `@attr=\"value\"` | Elements with attribute `attr` having value `value`.  | `*[@id=\"2\"]`              |\n| `position`      | Elements at the specified position.                   | `third/child[1]`          |\n| `tag`           | Elements with a child element named `tag`.            | `third/child[grandchild]` |\n\n`position` can be an integer starting from 1, expression `last()`, or\na relative expression like `last() - 1`.\n\nPredicates can also be stacked like `path[predicate1][predicate2]`.\nA limitation is that possible position predicate must always be first.\n\n# Element attributes\n\nAll keywords returning elements, such as [Parse XML], and [Get Element],\nreturn ElementTree's [Element objects]. These elements can be used as\ninputs for other keywords, but they also contain several useful attributes\nthat can be accessed directly using the extended variable syntax.\n\nThe attributes that are both useful and convenient to use in the data\nare explained below. Other attributes, including methods, can also\nbe accessed, but that is typically better to do in custom libraries than\ndirectly in the data.\n\nThe examples use the same `${XML}` structure as the earlier examples.\n\n## tag\n\nThe tag of the element.\n\n```robotframework\n*** Test Cases ***\nTag\n    ${root} =    Parse XML    ${XML}\n    Should Be Equal    ${root.tag}    example\n```\n\n## text\n\nThe text that the element contains or Python `None` if the element has no\ntext. Notice that the text *does not* contain texts of possible child\nelements nor text after or between children. Notice also that in XML\nwhitespace is significant, so the text contains also possible indentation\nand newlines. To get also text of the possible children, optionally\nwhitespace normalized, use [Get Element Text] keyword.\n\n```robotframework\n*** Test Cases ***\nText\n    ${1st} =    Get Element    ${XML}    first\n    Should Be Equal    ${1st.text}    text\n    ${2nd} =    Get Element    ${XML}    second/child\n    Should Be Equal    ${2nd.text}    ${NONE}\n    ${p} =    Get Element    ${XML}    html/p\n    Should Be Equal    ${p.text}    \\n${SPACE*12}Text with${SPACE}\n```\n\n## tail\n\nThe text after the element before the next opening or closing tag. Python\n`None` if the element has no tail. Similarly as with `text`, also\n`tail` contains possible indentation and newlines.\n\n```robotframework\n*** Test Cases ***\nTail\n    ${b} =    Get Element    ${XML}    html/p/b\n    Should Be Equal    ${b.tail}    ${SPACE}and${SPACE}\n```\n\n## attrib\n\nA Python dictionary containing attributes of the element.\n\n```robotframework\n*** Test Cases ***\nAttrib\n    ${2nd} =    Get Element    ${XML}    second\n    Should Be Equal    ${2nd.attrib['id']}    2\n    ${3rd} =    Get Element    ${XML}    third\n    Should Be Empty    ${3rd.attrib}\n```\n\n# Handling XML namespaces\n\nElementTree and lxml handle possible namespaces in XML documents by adding\nthe namespace URI to tag names in so-called Clark Notation. That is\ninconvenient especially with xpaths, and by default this library strips\nthose namespaces away and moves them to `xmlns` attribute instead. That\ncan be avoided by passing `keep_clark_notation` argument to [Parse XML]\nkeyword. Alternatively [Parse XML] supports stripping namespace information\naltogether by using `strip_namespaces` argument. The pros and cons of\ndifferent approaches are discussed in more detail below.\n\n## How ElementTree handles namespaces\n\nIf an XML document has namespaces, ElementTree adds namespace information\nto tag names in [Clark Notation] (e.g. `{http://ns.uri}tag`) and removes\noriginal `xmlns` attributes. This is done both with default namespaces\nand with namespaces with a prefix. How it works in practice is illustrated\nby the following example, where the `${NS}` variable contains this XML\ndocument:\n\n```xml\n<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"\n                xmlns=\"http://www.w3.org/1999/xhtml\">\n    <xsl:template match=\"/\">\n        <html></html>\n    </xsl:template>\n</xsl:stylesheet>\n```\n\n```robotframework\n*** Test Cases ***\nUsing Clark notation\n    ${root} =    Parse XML    ${NS}    keep_clark_notation=True\n    Should Be Equal    ${root.tag}    {http://www.w3.org/1999/XSL/Transform}stylesheet\n    Element Should Exist    ${root}    {http://www.w3.org/1999/XSL/Transform}template/{http://www.w3.org/1999/xhtml}html\n    Should Be Empty    ${root.attrib}\n```\n\nAs you can see, including the namespace URI in tag names makes xpaths\nreally long and complex.\n\nIf you save the XML, ElementTree moves namespace information back to\n`xmlns` attributes. Unfortunately it does not restore the original\nprefixes and you get something like this:\n\n```xml\n<ns0:stylesheet xmlns:ns0=\"http://www.w3.org/1999/XSL/Transform\">\n    <ns0:template match=\"/\">\n        <ns1:html xmlns:ns1=\"http://www.w3.org/1999/xhtml\"></ns1:html>\n    </ns0:template>\n</ns0:stylesheet>\n```\n\nThe resulting output is semantically same as the original, but mangling\nprefixes like this may still not be desirable. Notice also that the actual\noutput depends also on the ElementTree version.\n\n## Default namespace handling\n\nBecause the way ElementTree handles namespaces makes xpaths so complicated,\nthis library, by default, strips namespaces from tag names and moves that\ninformation back to `xmlns` attributes. How this works in practice is\nshown by the example below, where `${NS}` variable contains the same XML\ndocument as in the previous example.\n\n```robotframework\n*** Test Cases ***\nDefault namespace handling\n    ${root} =    Parse XML    ${NS}\n    Should Be Equal    ${root.tag}    stylesheet\n    Element Should Exist    ${root}    template/html\n    Element Attribute Should Be    ${root}    xmlns    http://www.w3.org/1999/XSL/Transform\n    Element Attribute Should Be    ${root}    xmlns    http://www.w3.org/1999/xhtml    xpath=template/html\n```\n\nNow that tags do not contain namespace information, xpaths are simple again.\n\nA minor limitation of this approach is that namespace prefixes are lost.\nAs a result the saved output is not exactly same as the original one in\nthis case either:\n\n```xml\n<stylesheet xmlns=\"http://www.w3.org/1999/XSL/Transform\">\n    <template match=\"/\">\n        <html xmlns=\"http://www.w3.org/1999/xhtml\"/>\n    </template>\n</stylesheet>\n```\n\nThis output is semantically same as the original as well. If the original XML\nhad only default namespaces, the output would also look identical.\n\n## Namespaces when using lxml\n\nThis library handles namespaces same way both when [using lxml] and when\nnot using it. There are, however, differences how lxml internally handles\nnamespaces compared to the standard ElementTree. The main difference is\nthat lxml stores information about namespace prefixes, and they are thus\npreserved if XML is saved. Another visible difference is that lxml includes\nnamespace information in child elements got with [Get Element] if the\nparent element has namespaces.\n\n## Stripping namespaces altogether\n\nBecause namespaces often add unnecessary complexity, [Parse XML] supports\nstripping them altogether by using `strip_namespaces=True`. When this\noption is enabled, namespaces are not shown anywhere nor are they included\nif XML is saved.\n\n## Attribute namespaces\n\nAttributes in XML documents are, by default, in the same namespaces as\nthe element they belong to. It is possible to use different namespaces\nby using prefixes, but this is pretty rare.\n\nIf an attribute has a namespace prefix, ElementTree will replace it with\nClark Notation the same way it handles elements. Because stripping\nnamespaces from attributes could cause attribute conflicts, this library\ndoes not handle attribute namespaces at all. The following example thus\nworks the same way regardless how namespaces are handled.\n\n```robotframework\n*** Test Cases ***\nAttribute namespaces\n    ${root} =    Parse XML    <root id=\"1\" ns:id=\"2\" xmlns:ns=\"http://my.ns\"/>\n    Element Attribute Should Be    ${root}    id    1\n    Element Attribute Should Be    ${root}    {http://my.ns}id    2\n```\n\n## Pattern matching\n\nSome keywords, for example [Elements Should Match], support so called\n[glob patterns] where:\n\n|  Wildcard  |                    Description                         |\n| ---------- | ------------------------------------------------------ |\n| `*`        | Matches any string, even an empty string.              |\n| `?`        | Matches any single character.                          |\n| `[chars]`  | Matches one character in the bracket.                  |\n| `[!chars]` | Matches one character not in the bracket.              |\n| `[a-z]`    | Matches one character in the range in the bracket.     |\n| `[!a-z]`   | Matches one character not in the range in the bracket. |\n\nUnlike with glob patterns normally, path separator characters `/` and\n`\\` and the newline character `\\n` are matches by the above\nwildcards.\n\n[ElementTree XML API]: http://docs.python.org/library/xml.etree.elementtree.html \"ElementTree XML API\"\n[ElementTree]: http://docs.python.org/library/xml.etree.elementtree.html \"ElementTree\"\n[lxml]: http://lxml.de \"lxml\"\n[ElementTree documentation]: https://docs.python.org/library/xml.etree.elementtree.html#xpath-support \"ElementTree documentation\"\n[xpath 1.0 standard]: http://www.w3.org/TR/xpath/ \"xpath 1.0 standard\"\n[Element objects]: http://docs.python.org/library/xml.etree.elementtree.html#element-objects \"Element objects\"\n[Clark Notation]: http://www.jclark.com/xml/xmlns.htm \"Clark Notation\"\n[glob patterns]: http://en.wikipedia.org/wiki/Glob_(programming) \"glob patterns\"",
-  "version": "7.5",
-  "generated": "2026-09-14T13:26:11+00:00",
+  "version": "7.5.1",
+  "generated": "2026-11-02T21:36:31+00:00",
   "type": "LIBRARY",
   "scope": "GLOBAL",
   "docFormat": "MARKDOWN",
@@ -122,7 +122,13 @@
           "repr": "xpath: str = ."
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Element",
+        "typedoc": "Element",
+        "nested": [],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "The root of the modified XML structure.",
       "raises": {},
       "tags": [],
@@ -362,8 +368,8 @@
     },
     {
       "name": "Element Attribute Should Match",
-      "doc": "Verifies that the specified attribute matches `expected`.\n\nThis keyword works exactly like [Element Attribute Should Be] except\nthat the expected value can be given as a pattern that the attribute of\nthe element must match.\n\nPattern matching is similar as matching files in a shell with\n`*`, `?` and `[chars]` acting as wildcards. See the\n[Pattern matching] section for more information.\n\nExamples using the `${XML}` structure from the [Example] section:\n\n```robotframework\n*** Test Cases ***\nElement attribute should match\n    Element Attribute Should Match    ${XML}    id    ?    xpath=first\n    Element Attribute Should Match    ${XML}    id    c*d    xpath=third/second\n```",
-      "shortdoc": "Verifies that the specified attribute matches `expected`.",
+      "doc": "Verifies that the specified attribute matches `pattern`.\n\nThis keyword works exactly like [Element Attribute Should Be] except\nthat the expected value can be given as a pattern that the attribute of\nthe element must match.\n\nPattern matching is similar as matching files in a shell with\n`*`, `?` and `[chars]` acting as wildcards. See the\n[Pattern matching] section for more information.\n\nExamples using the `${XML}` structure from the [Example] section:\n\n```robotframework\n*** Test Cases ***\nElement attribute should match\n    Element Attribute Should Match    ${XML}    id    ?    xpath=first\n    Element Attribute Should Match    ${XML}    id    c*d    xpath=third/second\n```",
+      "shortdoc": "Verifies that the specified attribute matches `pattern`.",
       "args": [
         {
           "name": "source",
@@ -802,8 +808,8 @@
     },
     {
       "name": "Element Text Should Match",
-      "doc": "Verifies that the text of the specified element matches `expected`.\n\nThis keyword works exactly like [Element Text Should Be] except that\nthe expected value can be given as a pattern that the text of the\nelement must match.\n\nPattern matching is similar as matching files in a shell with\n`*`, `?` and `[chars]` acting as wildcards. See the\n[Pattern matching] section for more information.\n\nExamples using the `${XML}` structure from the [Example] section:\n\n```robotframework\n*** Test Cases ***\nElement text should match\n    Element Text Should Match    ${XML}    t???    xpath=first\n    ${paragraph} =    Get Element    ${XML}    xpath=html/p\n    Element Text Should Match    ${paragraph}    Text with * and *.    normalize_whitespace=True\n```",
-      "shortdoc": "Verifies that the text of the specified element matches `expected`.",
+      "doc": "Verifies that the text of the specified element matches `pattern`.\n\nThis keyword works exactly like [Element Text Should Be] except that\nthe expected value can be given as a pattern that the text of the\nelement must match.\n\nPattern matching is similar as matching files in a shell with\n`*`, `?` and `[chars]` acting as wildcards. See the\n[Pattern matching] section for more information.\n\nExamples using the `${XML}` structure from the [Example] section:\n\n```robotframework\n*** Test Cases ***\nElement text should match\n    Element Text Should Match    ${XML}    t???    xpath=first\n    ${paragraph} =    Get Element    ${XML}    xpath=html/p\n    Element Text Should Match    ${paragraph}    Text with * and *.    normalize_whitespace=True\n```",
+      "shortdoc": "Verifies that the text of the specified element matches `pattern`.",
       "args": [
         {
           "name": "source",
@@ -969,7 +975,28 @@
           "repr": "encoding: str | None = None"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "bytes",
+            "typedoc": "bytes",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "String or bytes representation of the element.",
       "raises": {},
       "tags": [],
@@ -1254,7 +1281,21 @@
           "repr": "xpath: str = ."
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "list",
+        "typedoc": "list",
+        "nested": [
+          {
+            "name": "Element",
+            "typedoc": "Element",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "A list of direct child elements.",
       "raises": {},
       "tags": [],
@@ -1366,34 +1407,40 @@
           "name": "default",
           "doc": "Value returned if the attribute does not exist.",
           "type": {
-            "name": "Union",
-            "typedoc": null,
-            "nested": [
-              {
-                "name": "object",
-                "typedoc": "object",
-                "nested": [],
-                "union": false,
-                "alias": null
-              },
-              {
-                "name": "None",
-                "typedoc": "None",
-                "nested": [],
-                "union": false,
-                "alias": null
-              }
-            ],
-            "union": true,
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false,
             "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "default: object | None = None"
+          "repr": "default: object = None"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "The attribute value, or ``default`` if the attribute is missing.",
       "raises": {},
       "tags": [],
@@ -1436,7 +1483,28 @@
           "repr": "xpath: str = ."
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "dict",
+        "typedoc": "dictionary",
+        "nested": [
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "A dictionary of all attributes of the element.",
       "raises": {},
       "tags": [],
@@ -1592,7 +1660,21 @@
           "repr": "xpath: str"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "list",
+        "typedoc": "list",
+        "nested": [
+          {
+            "name": "Element",
+            "typedoc": "Element",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "A list of matching elements. An empty list if none match.",
       "raises": {},
       "tags": [],
@@ -1650,7 +1732,21 @@
           "repr": "normalize_whitespace: bool = False"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "list",
+        "typedoc": "list",
+        "nested": [
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "A list of texts of the matched elements.",
       "raises": {},
       "tags": [],
@@ -2488,7 +2584,13 @@
           "repr": "xpath: str = ."
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Element",
+        "typedoc": "Element",
+        "nested": [],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "The root of the modified XML structure.",
       "raises": {},
       "tags": [],
@@ -2734,7 +2836,13 @@
           "repr": "xpath: str = ."
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Element",
+        "typedoc": "Element",
+        "nested": [],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "The root of the modified XML structure.",
       "raises": {},
       "tags": [],
@@ -2768,13 +2876,42 @@
       ]
     },
     {
+      "type": "Standard",
+      "name": "bytes",
+      "doc": "Strings are converted to bytes so that each Unicode code point below 256 is\ndirectly mapped to a matching byte. Higher code points are not allowed.\nRobot Framework's `\\xHH` escape syntax is convenient with bytes having\nnon-printable values.\n\nExamples: `good`, `hyv\u00e4` (same as `hyv\\xE4`), `\\x00` (the null byte)\n\nIntegers and sequences of integers are converted to matching bytes directly.\nThey must be in range 0-255.\n\nExamples: `0` (converted to the null byte), `[82, 70]` (converted to `RF`)\n\nSupport for integers and sequences of integers is new in Robot Framework 7.4.\n",
+      "usages": [
+        "Element To String"
+      ],
+      "accepts": [
+        "string",
+        "bytearray",
+        "Sequence",
+        "integer"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "dictionary",
+      "doc": "Strings must be Python [dictionary] literals. They are converted to actual\ndictionaries using the [ast.literal_eval] function. They can contain any values\n`ast.literal_eval` supports, including dictionaries and other collections.\n\nAny mapping is accepted and converted to a `dict`.\n\nIf the type has nested types like `dict[str, int]`, items are converted to those\ntypes automatically. This in new in Robot Framework 6.0.\n\nExamples: `{'a': 1, 'b': 2}`, `{'key': 1, 'nested': {'key': 2}}`\n\n[dictionary]: https://docs.python.org/library/stdtypes.html#dict\n[ast.literal_eval]: https://docs.python.org/library/stdtypes.html#ast.literal_eval\n",
+      "usages": [
+        "Get Element Attributes"
+      ],
+      "accepts": [
+        "string",
+        "Mapping"
+      ]
+    },
+    {
       "type": "Custom",
       "name": "Element",
       "doc": "A parsed XML element.\n\nRepresented as an ElementTree [Element] object. Can be used as a\n`source` argument with keywords modifying or validating XML elements.\nor validating XML elements. In addition to that, attributes like `text`\ncan be accessed using the extended variable syntax like `${elem.text}`\ndirectly.\n\n```robotframework\n*** Test Cases ***\nExample\n    # Get element as a return value:\n    ${elem} =    Parse XML    ${CURDIR}/example.xml\n    # Use element as an argument with other keywords:\n    ${child} =    Get Element    ${elem}    expath=child\n    # Access element attributes:\n    Log    ${elem.text}\n```\n\n[Element]: https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element \"API docs\"",
       "usages": [
+        "Add Element",
         "Clear Element",
         "Copy Element",
+        "Get Child Elements",
         "Get Element",
+        "Get Elements",
         "Parse Xml",
         "Remove Element",
         "Remove Element Attribute",
@@ -2784,8 +2921,10 @@
         "Remove Elements Attributes",
         "Set Element Attribute",
         "Set Element Tag",
+        "Set Element Text",
         "Set Elements Attribute",
-        "Set Elements Tag"
+        "Set Elements Tag",
+        "Set Elements Text"
       ],
       "accepts": []
     },
@@ -2800,6 +2939,20 @@
       "accepts": [
         "string",
         "float"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "list",
+      "doc": "Strings must be Python [list] or [tuple] literals. They are converted using the\n[ast.literal_eval] function and possible tuples are converted further to lists.\nThey can contain any values `ast.literal_eval` supports, including lists and\nother collections.\n\nIf the argument is a list, it is used without conversion. Tuples and other\nsequences are converted to lists.\n\nIf the type has nested types like `list[int]`, items are converted to those\ntypes automatically.\n\nExamples: `['one', 'two']`, `[('one', 1), ('two', 2)]`\n\nSupport to convert nested types is new in Robot Framework 6.0. Support for tuple\nliterals is new in Robot Framework 7.4.\n\n[list]: https://docs.python.org/library/stdtypes.html#list\n[tuple]: https://docs.python.org/library/stdtypes.html#tuple\n[ast.literal_eval]: https://docs.python.org/library/stdtypes.html#ast.literal_eval\n",
+      "usages": [
+        "Get Child Elements",
+        "Get Elements",
+        "Get Elements Texts"
+      ],
+      "accepts": [
+        "string",
+        "Sequence"
       ]
     },
     {
@@ -2827,7 +2980,6 @@
         "Element Text Should Be",
         "Element Text Should Match",
         "Element To String",
-        "Get Element Attribute",
         "Set Element Text",
         "Set Elements Text"
       ],

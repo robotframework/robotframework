@@ -2,8 +2,8 @@
   "specversion": 4,
   "name": "String",
   "doc": "A library for string manipulation and verification.\n\n`String` is Robot Framework's standard library for manipulating\nstrings (e.g. [Replace String Using Regexp], [Split To Lines]) and\nverifying their contents (e.g. [Should Be String]).\n\nIn addition to strings, most of the keywords work also with bytes.\nBytes support was heavily enhanced in Robot Framework 7.4.\n\nFollowing keywords from the [BuiltIn] library can also be used with strings\nand bytes:\n\n- `Get Length`\n- `Length Should Be`\n- `Should (Not) Be Empty`\n- `Should (Not) Be Equal (As Strings/Integers/Numbers)`\n- `Should (Not) Match (Regexp)`\n- `Should (Not) Contain`\n- `Should (Not) Start With`\n- `Should (Not) End With`\n- `Convert To String`\n- `Convert To Bytes`\n\n[BuiltIn]: https://robotframework.org/robotframework/latest/libraries/BuiltIn.html",
-  "version": "7.5",
-  "generated": "2026-09-14T13:26:10+00:00",
+  "version": "7.5.1",
+  "generated": "2026-11-02T21:36:30+00:00",
   "type": "LIBRARY",
   "scope": "GLOBAL",
   "docFormat": "MARKDOWN",
@@ -48,7 +48,28 @@
           "repr": "string: str | bytes"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "bytes",
+            "typedoc": "bytes",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "The input converted to lower case.",
       "raises": {},
       "tags": [],
@@ -158,7 +179,28 @@
           "repr": "exclude: str | bytes | list[str | bytes] | None = None"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "bytes",
+            "typedoc": "bytes",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "The input converted to title case.",
       "raises": {},
       "tags": [],
@@ -201,7 +243,28 @@
           "repr": "string: str | bytes"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "bytes",
+            "typedoc": "bytes",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "The input converted to upper case.",
       "raises": {},
       "tags": [],
@@ -402,7 +465,28 @@
           "repr": "marker: str | bytes"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "bytes",
+            "typedoc": "bytes",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "The part of the string before the first `marker`.",
       "raises": {},
       "tags": [],
@@ -475,7 +559,28 @@
           "repr": "marker: str | bytes"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "bytes",
+            "typedoc": "bytes",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "The part of the string after the last `marker`.",
       "raises": {},
       "tags": [],
@@ -557,7 +662,28 @@
           "repr": "**named: object"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "bytes",
+            "typedoc": "bytes",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "The formatted string or bytes.",
       "raises": {},
       "tags": [],
@@ -615,7 +741,13 @@
           "repr": "chars: str = [LETTERS][NUMBERS]"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "str",
+        "typedoc": "string",
+        "nested": [],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "The generated random string.",
       "raises": {},
       "tags": [],
@@ -673,7 +805,28 @@
           "repr": "line_number: int"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "bytes",
+            "typedoc": "bytes",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "The specified line without the newline character.",
       "raises": {},
       "tags": [],
@@ -716,7 +869,13 @@
           "repr": "string: str | bytes"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "int",
+        "typedoc": "integer",
+        "nested": [],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "The number of lines.",
       "raises": {},
       "tags": [],
@@ -834,7 +993,28 @@
           "repr": "ignore_case: bool = False"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "bytes",
+            "typedoc": "bytes",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "Matching lines joined with newlines.",
       "raises": {},
       "tags": [],
@@ -952,7 +1132,28 @@
           "repr": "ignore_case: bool = False"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "bytes",
+            "typedoc": "bytes",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "Matching lines joined with newlines.",
       "raises": {},
       "tags": [],
@@ -1070,7 +1271,28 @@
           "repr": "flags: str | None = None"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "bytes",
+            "typedoc": "bytes",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "Matching lines joined with newlines.",
       "raises": {},
       "tags": [],
@@ -1203,7 +1425,104 @@
           "repr": "flags: str | None = None"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "list",
+            "typedoc": "list",
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false,
+                "alias": null
+              }
+            ],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "list",
+            "typedoc": "list",
+            "nested": [
+              {
+                "name": "tuple",
+                "typedoc": "tuple",
+                "nested": [
+                  {
+                    "name": "str",
+                    "typedoc": "string",
+                    "nested": [],
+                    "union": false,
+                    "alias": null
+                  },
+                  {
+                    "name": "...",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false,
+                    "alias": null
+                  }
+                ],
+                "union": false,
+                "alias": null
+              }
+            ],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "list",
+            "typedoc": "list",
+            "nested": [
+              {
+                "name": "bytes",
+                "typedoc": "bytes",
+                "nested": [],
+                "union": false,
+                "alias": null
+              }
+            ],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "list",
+            "typedoc": "list",
+            "nested": [
+              {
+                "name": "tuple",
+                "typedoc": "tuple",
+                "nested": [
+                  {
+                    "name": "bytes",
+                    "typedoc": "bytes",
+                    "nested": [],
+                    "union": false,
+                    "alias": null
+                  },
+                  {
+                    "name": "...",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false,
+                    "alias": null
+                  }
+                ],
+                "union": false,
+                "alias": null
+              }
+            ],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "A list of matches, group contents, or tuples of group contents.",
       "raises": {},
       "tags": [],
@@ -1336,7 +1655,28 @@
           "repr": "end: int | Literal[''] | None = None"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "bytes",
+            "typedoc": "bytes",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "The requested substring.",
       "raises": {},
       "tags": [],
@@ -1409,7 +1749,28 @@
           "repr": "*removables: str | bytes"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "bytes",
+            "typedoc": "bytes",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "The modified string or bytes.",
       "raises": {},
       "tags": [],
@@ -1512,7 +1873,28 @@
           "repr": "flags: str | None = None"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "bytes",
+            "typedoc": "bytes",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "The modified string or bytes.",
       "raises": {},
       "tags": [],
@@ -1630,7 +2012,28 @@
           "repr": "count: int = -1"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "bytes",
+            "typedoc": "bytes",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "The modified string or bytes.",
       "raises": {},
       "tags": [],
@@ -1778,7 +2181,28 @@
           "repr": "flags: str | None = None"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "bytes",
+            "typedoc": "bytes",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "The modified string or bytes.",
       "raises": {},
       "tags": [],
@@ -2391,7 +2815,44 @@
           "repr": "max_split: int = -1"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "list",
+            "typedoc": "list",
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false,
+                "alias": null
+              }
+            ],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "list",
+            "typedoc": "list",
+            "nested": [
+              {
+                "name": "bytes",
+                "typedoc": "bytes",
+                "nested": [],
+                "union": false,
+                "alias": null
+              }
+            ],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "A list of split parts.",
       "raises": {},
       "tags": [],
@@ -2486,7 +2947,44 @@
           "repr": "max_split: int = -1"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "list",
+            "typedoc": "list",
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false,
+                "alias": null
+              }
+            ],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "list",
+            "typedoc": "list",
+            "nested": [
+              {
+                "name": "bytes",
+                "typedoc": "bytes",
+                "nested": [],
+                "union": false,
+                "alias": null
+              }
+            ],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "A list of split parts.",
       "raises": {},
       "tags": [],
@@ -2529,7 +3027,44 @@
           "repr": "string: str | bytes"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "list",
+            "typedoc": "list",
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false,
+                "alias": null
+              }
+            ],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "list",
+            "typedoc": "list",
+            "nested": [
+              {
+                "name": "bytes",
+                "typedoc": "bytes",
+                "nested": [],
+                "union": false,
+                "alias": null
+              }
+            ],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "A list of single-character strings or bytes.",
       "raises": {},
       "tags": [],
@@ -2662,7 +3197,44 @@
           "repr": "end: int | Literal[''] | None = None"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "list",
+            "typedoc": "list",
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false,
+                "alias": null
+              }
+            ],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "list",
+            "typedoc": "list",
+            "nested": [
+              {
+                "name": "bytes",
+                "typedoc": "bytes",
+                "nested": [],
+                "union": false,
+                "alias": null
+              }
+            ],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "A list of lines.",
       "raises": {},
       "tags": [],
@@ -2786,7 +3358,28 @@
           "repr": "characters: str | bytes | None = None"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "bytes",
+            "typedoc": "bytes",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "The stripped string or bytes.",
       "raises": {},
       "tags": [],
@@ -2858,6 +3451,7 @@
       "usages": [
         "Generate Random String",
         "Get Line",
+        "Get Line Count",
         "Get Regexp Matches",
         "Get Substring",
         "Replace String",
@@ -2877,7 +3471,12 @@
       "doc": "Strings must be Python [list] or [tuple] literals. They are converted using the\n[ast.literal_eval] function and possible tuples are converted further to lists.\nThey can contain any values `ast.literal_eval` supports, including lists and\nother collections.\n\nIf the argument is a list, it is used without conversion. Tuples and other\nsequences are converted to lists.\n\nIf the type has nested types like `list[int]`, items are converted to those\ntypes automatically.\n\nExamples: `['one', 'two']`, `[('one', 1), ('two', 2)]`\n\nSupport to convert nested types is new in Robot Framework 6.0. Support for tuple\nliterals is new in Robot Framework 7.4.\n\n[list]: https://docs.python.org/library/stdtypes.html#list\n[tuple]: https://docs.python.org/library/stdtypes.html#tuple\n[ast.literal_eval]: https://docs.python.org/library/stdtypes.html#ast.literal_eval\n",
       "usages": [
         "Convert To Title Case",
-        "Should Be Title Case"
+        "Get Regexp Matches",
+        "Should Be Title Case",
+        "Split String",
+        "Split String From Right",
+        "Split String To Characters",
+        "Split To Lines"
       ],
       "accepts": [
         "string",
@@ -2981,6 +3580,18 @@
       ],
       "accepts": [
         "Any"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "tuple",
+      "doc": "Strings must be Python [tuple] or [list] literals. They are converted using the\n[ast.literal_eval] function and possible lists are converted further to tuples.\nThey can contain any values `ast.literal_eval` supports, including lists and\nother collections.\n\nIf the argument is a tuple, it is used without conversion. Lists and other\nsequences are converted to tuples.\n\nIf the type has nested types like `tuple[str, int]`, items are converted to\nthose types automatically.\n\nExamples: `('one', 'two')`, `[('one', 1), ('two', 2)]`\n\nSupport to convert nested types is new in Robot Framework 6.0. Support for list\nliterals is new in Robot Framework 7.4.\n\n[list]: https://docs.python.org/library/stdtypes.html#list\n[tuple]: https://docs.python.org/library/stdtypes.html#tuple\n[ast.literal_eval]: https://docs.python.org/library/stdtypes.html#ast.literal_eval\n",
+      "usages": [
+        "Get Regexp Matches"
+      ],
+      "accepts": [
+        "string",
+        "Sequence"
       ]
     }
   ]

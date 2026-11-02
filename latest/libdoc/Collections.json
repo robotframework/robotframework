@@ -2,8 +2,8 @@
   "specversion": 4,
   "name": "Collections",
   "doc": "A library providing keywords for handling lists and dictionaries.\n\n`Collections` is Robot Framework's standard library that provides a\nset of keywords for handling Python lists and dictionaries. This\nlibrary has keywords, for example, for modifying and getting\nvalues from lists and dictionaries (e.g. [Append To List],\n[Get From Dictionary]) and for verifying their contents (e.g.\n[Lists Should Be Equal], [Dictionary Should Contain Value]).\n\n### Table of contents\n\n%TOC%\n\n# Related keywords in BuiltIn\n\nFollowing keywords in the [BuiltIn] library can also be used with\nlists and dictionaries:\n\n|         Keyword Name         | Applicable With |\n| ---------------------------- | --------------- |\n| `Create List`                | lists           |\n| `Create Dictionary`          | dicts           |\n| `Get Length`                 | both            |\n| `Length Should Be`           | both            |\n| `Should Be Empty`            | both            |\n| `Should Not Be Empty`        | both            |\n| `Should Contain`             | both            |\n| `Should Not Contain`         | both            |\n| `Should Contain X Times`     | lists           |\n| `Should Not Contain X Times` | lists           |\n| `Get Count`                  | lists           |\n\n# Using with list-like and dictionary-like objects\n\nList related keywords can in general be used with tuples and other sequences,\nnot only with `list` objects. List keywords that validate something typically\neven work with sets and mappings (with mappings they look only at keys).\nIf keywords that modify lists are used with immutable sequences such as tuples,\nvalues are automatically converted to lists. In such cases the original value\nobviously is not mutated, but these keywords also return the modified value\nand that can be used instead.\n\nDictionary related keywords also generally work with any mapping, not only\nwith `dict` objects. If keywords that modify dictionaries are used with\nimmutable mappings, values are automatically converted to dictionaries.\nOriginal values cannot be modified in these cases either, but modified values\nare returned and can be used instead.\n\nWhat values each keyword actually accepts can be seen from argument types\nand keyword documentation.\n\nReturning values from keywords that modify lists or dictionaries is new\nin Robot Framework 7.4. With earlier version these keywords could only\nbe used with mutable values.\n\n# Ignore case\n\nVarious keywords support ignoring case in comparisons by using the optional\n`ignore_case` argument. Case-insensitivity can be enabled by using\n`ignore_case=True` and it works recursively.\n\nWith dictionaries, it is also possible to use special values `KEYS` and\n`VALUES` to normalize only keys or values, respectively. These options\nthemselves are case-insensitive and also singular forms `KEY` and\n`VALUE` are supported.\n\nIf a dictionary contains keys that normalize to the same value, e.g.\n`{'a': 1, 'A': 2}`, normalizing keys causes an error.\n\nExamples:\n\n```robotframework\n*** Test Cases ***\nIgnore case\n    VAR    @{list1}    abc    DEF\n    VAR    @{list2}    ABC    def\n    Lists Should Be Equal    ${list1}    ${list2}    ignore_case=True\n\nIgnore key/value case\n    VAR    &{dict1}    a=x    b=y    c=z\n    VAR    &{dict2}    A=x    B=y    C=z\n    VAR    &{dict3}    a=X    b=Y    c=Z\n    Dictionaries Should Be Equal    ${dict1}    ${dict2}    ignore_case=KEYS\n    Dictionaries Should Be Equal    ${dict1}    ${dict3}    ignore_case=VALUES\n    Dictionaries Should Be Equal    ${dict1}    ${dict3}    ignore_case=True\n```\n\nNotice that some keywords accept also an older `case_insensitive` argument\nin addition to `ignore_case`. The latter is new in Robot Framework 7.0 and\nshould be used unless there is a need to support older versions. The old\nargument is considered deprecated and will eventually be removed.\n\nStarting from Robot Framework 7.4, case-insensitivity works also with\nbytes, not only with strings.\n\n<!---  Markdown comment to hide library import that eases testing examples.\n       Can be removed if a separate example with the import is added.\n\n```robotframework\n*** Settings ***\nLibrary          Collections\n```\n--->\n\n[BuiltIn]: https://robotframework.org/robotframework/latest/libraries/BuiltIn.html\n[String]: https://robotframework.org/robotframework/latest/libraries/String.html\n[#5762]: https://github.com/robotframework/robotframework/issues/5762",
-  "version": "7.5",
-  "generated": "2026-09-14T13:26:09+00:00",
+  "version": "7.5.1",
+  "generated": "2026-11-02T21:36:30+00:00",
   "type": "LIBRARY",
   "scope": "GLOBAL",
   "docFormat": "MARKDOWN",
@@ -364,7 +364,13 @@
           "repr": "end: int | None = None"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "int",
+        "typedoc": "integer",
+        "nested": [],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "The number of occurrences.",
       "raises": {},
       "tags": [],
@@ -1436,7 +1442,36 @@
           "repr": "sort_keys: bool = True"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "list",
+        "typedoc": "list",
+        "nested": [
+          {
+            "name": "tuple",
+            "typedoc": "tuple",
+            "nested": [
+              {
+                "name": "object",
+                "typedoc": "object",
+                "nested": [],
+                "union": false,
+                "alias": null
+              },
+              {
+                "name": "object",
+                "typedoc": "object",
+                "nested": [],
+                "union": false,
+                "alias": null
+              }
+            ],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "Dictionary items as a flat list.",
       "raises": {},
       "tags": [],
@@ -1479,7 +1514,21 @@
           "repr": "sort_keys: bool = True"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "list",
+        "typedoc": "list",
+        "nested": [
+          {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "Dictionary keys as a list.",
       "raises": {},
       "tags": [],
@@ -1522,7 +1571,21 @@
           "repr": "sort_keys: bool = True"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "list",
+        "typedoc": "list",
+        "nested": [
+          {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "Dictionary values as a list.",
       "raises": {},
       "tags": [],
@@ -1748,7 +1811,13 @@
           "repr": "end: int | None = None"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "int",
+        "typedoc": "integer",
+        "nested": [],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "The index of the value, or `-1` if not found.",
       "raises": {},
       "tags": [],
@@ -1903,7 +1972,13 @@
           "repr": "ignore_whitespace: bool = False"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "int",
+        "typedoc": "integer",
+        "nested": [],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "The number of matches.",
       "raises": {},
       "tags": [],
@@ -2058,7 +2133,21 @@
           "repr": "ignore_whitespace: bool = False"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "list",
+        "typedoc": "list",
+        "nested": [
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "A list containing matching items.",
       "raises": {},
       "tags": [],
@@ -2154,7 +2243,13 @@
           "repr": "end: int | None = None"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Sequence",
+        "typedoc": "Sequence",
+        "nested": [],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "The requested slice.",
       "raises": {},
       "tags": [],
@@ -3997,6 +4092,7 @@
         "Count Values In List",
         "Get From List",
         "Get Index From List",
+        "Get Match Count",
         "Get Slice From List",
         "Insert Into List",
         "Lists Should Be Equal",
@@ -4015,6 +4111,10 @@
       "usages": [
         "Combine Lists",
         "Convert To List",
+        "Get Dictionary Items",
+        "Get Dictionary Keys",
+        "Get Dictionary Values",
+        "Get Matches",
         "Remove Duplicates"
       ],
       "accepts": [
@@ -4123,6 +4223,9 @@
         "Dictionary Should Contain Value",
         "Dictionary Should Not Contain Key",
         "Dictionary Should Not Contain Value",
+        "Get Dictionary Items",
+        "Get Dictionary Keys",
+        "Get Dictionary Values",
         "Get From Dictionary",
         "Get From List",
         "Get Index From List",
@@ -4221,6 +4324,18 @@
       ],
       "accepts": [
         "Any"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "tuple",
+      "doc": "Strings must be Python [tuple] or [list] literals. They are converted using the\n[ast.literal_eval] function and possible lists are converted further to tuples.\nThey can contain any values `ast.literal_eval` supports, including lists and\nother collections.\n\nIf the argument is a tuple, it is used without conversion. Lists and other\nsequences are converted to tuples.\n\nIf the type has nested types like `tuple[str, int]`, items are converted to\nthose types automatically.\n\nExamples: `('one', 'two')`, `[('one', 1), ('two', 2)]`\n\nSupport to convert nested types is new in Robot Framework 6.0. Support for list\nliterals is new in Robot Framework 7.4.\n\n[list]: https://docs.python.org/library/stdtypes.html#list\n[tuple]: https://docs.python.org/library/stdtypes.html#tuple\n[ast.literal_eval]: https://docs.python.org/library/stdtypes.html#ast.literal_eval\n",
+      "usages": [
+        "Get Dictionary Items"
+      ],
+      "accepts": [
+        "string",
+        "Sequence"
       ]
     }
   ]

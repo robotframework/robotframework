@@ -2,8 +2,8 @@
   "specversion": 4,
   "name": "BuiltIn",
   "doc": "An always available standard library with often needed keywords.\n\n`BuiltIn` is Robot Framework's standard library that provides a set\nof often needed generic keywords. It is imported automatically and\nthus always available. The provided keywords can be used, for example,\nfor verifications (e.g. [Should Be Equal], [Should Contain]),\nconversions (e.g. [Convert To Integer]) and for various other purposes\n(e.g. [Log], [Sleep], [Run Keyword If], [Set Global Variable]).\n\n### Table of contents\n\n%TOC%\n\n# Controlling failure messages\n\n## Overriding default error message\n\nVarious validation keywords accept `msg` and `values` arguments that\ncan be used to override keyword specific default failure messages.\n\n- If `msg` is given and `values` gets a true value (default),\n  the failure message is `<msg>: <default-message>`.\n- If `msg` is given and `values` gets a false value, the message\n  is simply `<msg>`.\n\nExamples:\n```robotframework\n*** Test Cases ***\nDefault error message\n    [Documentation]    Fails with \"x != y\".\n    Should Be Equal    x    y\n\nCustom error message\n    [Documentation]    Fails with \"Message: x != y\".\n    Should Be Equal    x    y    Message\n\nCustom error message without values\n    [Documentation]    Fails with \"Message\".\n    Should Be Equal    x    y    Message    values=False\n```\n\n## HTML messages\n\nIt is possible to use HTML formatting in failure messages by prefixing\nmessages with `*HTML*`. Notice that this is not limited to the BuiltIn\nlibrary, but works with any error message.\n\nExample:\n```robotframework\n*** Test Cases ***\nHTML message\n    Fail   *HTML* <b>Message</b>\n```\n\n# String and bytes normalization\n\nVarious validation keywords accept `ignore_case`, `strip_spaces` and\n`collapse_spaces` arguments that make it possible to normalize strings\nand bytes before comparison. They are all `False` by default, which means\nthat no normalization is done, but they can be individually enabled:\n\n- If `ignore_case` is given a true value, comparison is case-insensitive.\n-  If `strip_spaces` is given a value `LEADING` or `TRAILING`\n   (case-insensitive), leading or trailing spaces, respectively, are removed\n   before comparison. This includes all white space characters such as\n   newlines and tabs.\n- If `strip_spaces` is given any other true value, both leading and trailing\n  spaces are removed.\n- If `collapse_spaces` is given a true value, white space characters are\n  normalized to ASCII spaces and consecutive spaces are collapsed into\n  a single space.\n\nIf validated items are collections like lists or dictionaries, string and bytes\nnormalization is done recursively.\n\nSupport for bytes normalization and recursive normalization with collections\nare new in Robot Framework 7.4.\n\n# String representations\n\nSeveral keywords log values and report errors explicitly or implicitly.\nBy default, these messages use human-readable string representation, which\nmeans that strings like `Hello` and numbers like `42` are shown as-is.\nMost of the time this is the desired behavior, but there are some problems\nas well:\n\n- It is not possible to see difference between different objects that\n  have the same string representation like string `42` and integer `42`.\n  [Should Be Equal] and some other keywords add the type information to\n  the error message in these cases, though.\n\n- Non-printable characters such as the null byte are not visible.\n\n- Trailing whitespace is not visible.\n\n- Different newlines (`\\r\\n` on Windows, `\\n` elsewhere) cannot\n  be separated from each others.\n\n- There are several Unicode characters that are different but look the\n  same. One example is the Latin `a` (`\\u0061`) and the Cyrillic\n  `\u0430` (`\\u0430`). Error messages like `a != \u0430` are not very helpful.\n\n- Some Unicode characters can be represented using [different forms][NFC].\n  For example, `\u00e4` can be represented either as a single code point\n  `\\u00e4` or using two combined code points `\\u0061` and `\\u0308`.\n  Such forms are considered canonically equivalent, but strings\n  containing them are not considered equal when compared in Python. Error\n  messages like `\u00e4 != \u00e4` are not that helpful either.\n\n- Containers such as lists and dictionaries are formatted into a single\n  line making it hard to see individual items they contain.\n\nTo overcome the above problems, some keywords such as [Log] and\n[Should Be Equal] have an optional `formatter` argument that can be\nused to configure the string representation. The supported values are\n`str` (default), `repr`, and `ascii` that work similarly as\n[Python built-in functions](https://docs.python.org/library/functions.html)\nwith same names. More detailed semantics are explained below.\n\n## str\n\nUse the human-readable string representation. Equivalent to using\n[str()](https://docs.python.org/3/library/functions.html#func-str) in Python.\nThis is the default.\n\n## repr\n\nUse the machine-readable string representation. Similar to using\n[repr()](https://docs.python.org/3/library/functions.html#repr) in Python,\nwhich means that strings like `Hello` are logged like `'Hello'`, newlines\nand non-printable characters are escaped like `\\n` and `\\x00`, and so on.\nNon-ASCII characters are shown as-is like `\u00e4`.\n\nIn this mode bigger lists, dictionaries and other collections are\npretty-printed so that there is one item per row.\n\n## ascii\n\nSame as using [ascii()](https://docs.python.org/3/library/functions.html#ascii)\nin Python. Similar to using `repr` explained above, but with the following\ndifferences:\n\n- Non-ASCII characters are escaped like `\\xe4` instead of\n  showing them as-is like `\u00e4`. This makes it easier to see differences\n  between Unicode characters that are not equal but look the same.\n- Collections are not pretty-printed.\n\n# Evaluating expressions\n\nMany keywords, such as [Evaluate], [Run Keyword If] and [Should Be True],\naccept an expression that is evaluated in Python.\n\n## Evaluation namespace\n\nExpressions are evaluated using Python's\n[eval](https://docs.python.org/library/functions.html#eval) function so\nthat all Python built-ins like `len()` and `int()` are available.\nIn addition to that, all unrecognized variables are considered to be\nmodules that are automatically imported. It is possible to use all\navailable Python modules, including the standard modules and the installed\nthird party modules.\n\nExamples:\n```robotframework\n*** Test Cases ***\nEvaluating expressions\n    Should Be True    len('${result}') > 3\n    Run Keyword If    os.sep == '/'    Non-Windows Keyword\n    ${version} =      Evaluate    robot.__version__\n```\n\n[Evaluate] also allows configuring the execution namespace with a custom\nnamespace and with custom modules to be imported. The latter functionality\nis useful in special cases where the automatic module import does not work\nsuch as when using nested modules like `rootmod.submod` or list\ncomprehensions. See the documentation of the [Evaluate] keyword for mode\ndetails.\n\n## Variables in expressions\n\nWhen a variable is used in the expressing using the normal `${variable}`\nsyntax, its value is replaced before the expression is evaluated. This\nmeans that the value used in the expression will be the string\nrepresentation of the variable value, not the variable value itself.\nThis is not a problem with numbers and other objects that have a string\nrepresentation that can be evaluated directly, but with other objects\nthe behavior depends on the string representation. Most importantly,\nstrings must always be quoted, and if they can contain newlines, they must\nbe triple quoted.\n\nExamples:\n```robotframework\n*** Test Cases ***\nNormal variables\n    Should Be True    ${rc} < 10\n    Run Keyword If    '${status}' == 'PASS'        Log    Passed\n    Run Keyword If    'FAIL' in '''${output}'''    Log    Output contains FAIL\n```\n\nActual variables values are also available in the evaluation namespace.\nThey can be accessed using special variable syntax without the curly\nbraces like `$variable`. These variables should never be quoted.\n\nExamples:\n```robotframework\n*** Test Cases ***\nSpecial variable syntax\n    Should Be True    $rc < 10\n    Run Keyword If    $status == 'PASS'    Log    Passed\n    Run Keyword If    'FAIL' in $output    Log    Output contains FAIL\n    Should Be True    len($result) > 1 and $result[1] == 'OK'\n    Should Be True    $result is not None\n```\n\nUsing the `$variable` syntax slows down expression evaluation a little.\nThis should not typically matter, but should be taken into account if\ncomplex expressions are evaluated often and there are strict time constrains.\n\nNotice that instead of creating complicated expressions, it is often better\nto move the logic into a library. That eases maintenance and can also\nenhance execution speed.\n\n# Using variables with keywords creating or accessing variables\n\nThis library has special keywords [Set Global Variable], [Set Suite Variable],\n[Set Test Variable] and [Set Local Variable] for creating variables in\ndifferent scopes. These keywords take the variable name and its value as\narguments. The name can be given using the normal `${variable}` syntax or\nin escaped format either like `$variable` or `\\${variable}`. For example,\nthese are typically equivalent and create new suite level variable\n`${name}` with value `value`:\n\n```robotframework\n*** Test Cases ***\nNormal variable syntax\n    Set Suite Variable    ${name}     value\n\nEscaped by removing curly braces\n    Set Suite Variable    $name       value\n\nEscaped with backslash\n    Set Suite Variable    \\${name}    value\n```\n\nA problem with using the normal `${variable}` syntax is that these\nkeywords cannot easily know is the idea to create a variable with exactly\nthat name or does that variable actually contain the name of the variable\nto create. If the variable does not initially exist, it will always be\ncreated. If it exists and its value is a variable name either in the normal\nor in the escaped syntax, variable with *that* name is created instead.\nFor example, if `${name}` variable would exist and contain value\n`$example`, the earlier examples would have created different variables.\n\nBecause the behavior when using the normal `${variable}` syntax depends\non the possible existing value of the variable, it is highly recommended\nto use the escaped `$variable` or `\\${variable}` format instead.\n\nThis same problem occurs also with special keywords for accessing variables\n[Get Variable Value], [Variable Should Exist] and [Variable Should Not Exist].\n\nNotice that the [VAR syntax] introduced in Robot Framework 7.0 can be used\nto create local variables as well as variables in different scopes.\nIt thus unifies creating variables, and it also avoids all the problems\ndiscussed above. It is recommended to use that syntax instead of the\n`Set Global/Suite/Test/Local Variable` keywords whenever possible.\n\n# Pattern matching\n\nMany keywords accept arguments as either glob or regular expression patterns.\n\n## Glob patterns\n\nSome keywords, for example [Should Match], support so called\n[glob patterns](https://en.wikipedia.org/wiki/Glob_(programming) \"Wikipedia\")\nthat support the following wildcard characters and character sequences.\n\n|  Pattern   |                   Explanation                            |\n| ---------- | -------------------------------------------------------- |\n| `*`        | Matches any string, even an empty string.                |\n| `?`        | Matches any single character.                            |\n| `[chars]`  | Matches one character in the bracket.                    |\n| `[!chars]` | Matches one character not in the bracket.                |\n| `[a-z]`    | Matches one character from the range in the bracket.     |\n| `[!a-z]`   | Matches one character not from the range in the bracket. |\n\nUnlike with glob patterns normally, path separator characters `/` and\n`\\` and the newline character `\\n` are matched by the above wildcards.\n\n## Regular expressions\n\nSome keywords, for example [Should Match Regexp], support\n[regular expressions](https://en.wikipedia.org/wiki/Regular_expression \"Wikipedia\")\nthat are more powerful but also more complicated that glob patterns.\nThe regular expression support is implemented using Python's\n[re](https://docs.python.org/library/re.html) module and its documentation\nshould be consulted for more information about the syntax.\n\nBecause the backslash character (`\\`) is an escape character in\nRobot Framework test data, possible backslash characters in regular\nexpressions need to be escaped with another backslash like `\\\\d\\\\w+`.\nStrings that may contain special characters but should be handled\nas literal strings, can be escaped with the [Regexp Escape] keyword.\n\n# Multiline string comparison\n\n[Should Be Equal] and [Should Be Equal As Strings] report the failures using\n[unified diff format](https://en.wikipedia.org/wiki/Diff_utility#Unified_format\n\"Wikipedia\") if both strings have more than two lines.\n\nExample:\n```robotframework\n*** Test Cases ***\nMultiline diff\n    VAR    ${first}\n    ...    Not in second\n    ...    Same\n    ...    Differs\n    ...    Same\n    ...    separator=\\n\n    VAR    ${second}\n    ...    Same\n    ...    Differs2\n    ...    Same\n    ...    separator=\\n\n    Should Be Equal    ${first}    ${second}\n```\n\nResults in the following error message:\n\n```\nMultiline strings are different:\n--- first\n+++ second\n@@ -1,4 +1,3 @@\n-Not in second\nSame\n-Differs\n+Differs2\nSame\n```\n\n[DateTime]: https://robotframework.org/robotframework/latest/libraries/DateTime.html\n[search path]: https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#module-search-path\n[VAR syntax]: https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#var-syntax\n[IF/ELSE syntax]: https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#if-else-syntax\n[TRY/EXCEPT syntax]: https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#try-except-syntax\n[BREAK statement]: https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#loop-control-using-break-and-continue\n[CONTINUE statement]: https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#loop-control-using-break-and-continue\n[RETURN statement]: https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#using-return-statement\n[NFC]: https://en.wikipedia.org/wiki/Unicode_equivalence",
-  "version": "7.5",
-  "generated": "2026-09-14T13:26:09+00:00",
+  "version": "7.5.1",
+  "generated": "2026-11-02T21:36:30+00:00",
   "type": "LIBRARY",
   "scope": "GLOBAL",
   "docFormat": "MARKDOWN",
@@ -304,7 +304,13 @@
           "repr": "length: int | None = None"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "str",
+        "typedoc": "string",
+        "nested": [],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "The converted binary string.",
       "raises": {},
       "tags": [],
@@ -549,7 +555,13 @@
           "repr": "lowercase: bool = False"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "str",
+        "typedoc": "string",
+        "nested": [],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "The converted hexadecimal string.",
       "raises": {},
       "tags": [],
@@ -607,7 +619,13 @@
           "repr": "base: int | None = None"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "int",
+        "typedoc": "integer",
+        "nested": [],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "The converted integer.",
       "raises": {},
       "tags": [],
@@ -665,7 +683,13 @@
           "repr": "precision: int | None = None"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "float",
+        "typedoc": "float",
+        "nested": [],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "The converted floating point number.",
       "raises": {},
       "tags": [],
@@ -783,7 +807,13 @@
           "repr": "length: int | None = None"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "str",
+        "typedoc": "string",
+        "nested": [],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "The converted octal string.",
       "raises": {},
       "tags": [],
@@ -973,7 +1003,13 @@
           "repr": "namespace: Mapping | None = None"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "object",
+        "typedoc": "object",
+        "nested": [],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "The result of the evaluated expression.",
       "raises": {},
       "tags": [],
@@ -1255,7 +1291,43 @@
           "repr": "all: bool = False"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "dict",
+            "typedoc": "dictionary",
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false,
+                "alias": null
+              },
+              {
+                "name": "object",
+                "typedoc": "object",
+                "nested": [],
+                "union": false,
+                "alias": null
+              }
+            ],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "The requested library instance or dictionary of instances.",
       "raises": {},
       "tags": [],
@@ -1327,7 +1399,43 @@
           "repr": "time_: int | float | str | datetime = NOW"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "int",
+            "typedoc": "integer",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "list",
+            "typedoc": "list",
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false,
+                "alias": null
+              }
+            ],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "The requested time value.",
       "raises": {},
       "tags": [],
@@ -1358,31 +1466,16 @@
           "name": "default",
           "doc": "The default value to return if the variable does not exist.",
           "type": {
-            "name": "Union",
-            "typedoc": null,
-            "nested": [
-              {
-                "name": "object",
-                "typedoc": "object",
-                "nested": [],
-                "union": false,
-                "alias": null
-              },
-              {
-                "name": "None",
-                "typedoc": "None",
-                "nested": [],
-                "union": false,
-                "alias": null
-              }
-            ],
-            "union": true,
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false,
             "alias": null
           },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "default: object | None = None"
+          "repr": "default: object = None"
         }
       ],
       "returnType": {
@@ -2262,7 +2355,58 @@
           "repr": "*strings: str | bytes"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "bytes",
+            "typedoc": "bytes",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "list",
+            "typedoc": "list",
+            "nested": [
+              {
+                "name": "Union",
+                "typedoc": null,
+                "nested": [
+                  {
+                    "name": "str",
+                    "typedoc": "string",
+                    "nested": [],
+                    "union": false,
+                    "alias": null
+                  },
+                  {
+                    "name": "bytes",
+                    "typedoc": "bytes",
+                    "nested": [],
+                    "union": false,
+                    "alias": null
+                  }
+                ],
+                "union": true,
+                "alias": null
+              }
+            ],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "The escaped string, or a list of escaped strings if the keyword\nwas called with multiple strings.",
       "raises": {},
       "tags": [],
@@ -2435,7 +2579,28 @@
           "repr": "text: str"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "The text with variables replaced. If the text contains only a single\nvariable, its value is returned as-is, and it can be any object.\nOtherwise, this keyword always returns a string.",
       "raises": {},
       "tags": [],
@@ -2808,7 +2973,43 @@
           "repr": "*args: KeywordArgument"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "tuple",
+        "typedoc": "tuple",
+        "nested": [
+          {
+            "name": "Literal",
+            "typedoc": "Literal",
+            "nested": [
+              {
+                "name": "'PASS'",
+                "typedoc": null,
+                "nested": [],
+                "union": false,
+                "alias": null
+              },
+              {
+                "name": "'FAIL'",
+                "typedoc": null,
+                "nested": [],
+                "union": false,
+                "alias": null
+              }
+            ],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "If keyword succeeds, returns string `PASS` and the keyword return\nvalue. If the keyword fails, returns string `FAIL` and the error\nmessage.",
       "raises": {},
       "tags": [],
@@ -3037,7 +3238,43 @@
           "repr": "*args: KeywordArgument"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "tuple",
+        "typedoc": "tuple",
+        "nested": [
+          {
+            "name": "Literal",
+            "typedoc": "Literal",
+            "nested": [
+              {
+                "name": "'PASS'",
+                "typedoc": null,
+                "nested": [],
+                "union": false,
+                "alias": null
+              },
+              {
+                "name": "'FAIL'",
+                "typedoc": null,
+                "nested": [],
+                "union": false,
+                "alias": null
+              }
+            ],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "If keyword succeeds, returns string `PASS` and the keyword return\nvalue. If the keyword fails, returns string `FAIL` and the error\nmessage.",
       "raises": {},
       "tags": [],
@@ -3495,14 +3732,14 @@
             "nested": [
               {
                 "name": "KeywordName",
-                "typedoc": null,
+                "typedoc": "KeywordName",
                 "nested": [],
                 "union": false,
                 "alias": null
               },
               {
                 "name": "KeywordArgument",
-                "typedoc": null,
+                "typedoc": "KeywordArgument",
                 "nested": [],
                 "union": false,
                 "alias": null
@@ -3597,7 +3834,28 @@
           "repr": "*search_order: str"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "tuple",
+        "typedoc": "tuple",
+        "nested": [
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "...",
+            "typedoc": null,
+            "nested": [],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": false,
+        "alias": null
+      },
       "returnDoc": "The previous search order.",
       "raises": {},
       "tags": [],
@@ -4404,7 +4662,36 @@
           "repr": "*values: object"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "list",
+            "typedoc": "list",
+            "nested": [
+              {
+                "name": "object",
+                "typedoc": "object",
+                "nested": [],
+                "union": false,
+                "alias": null
+              }
+            ],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "The value or values to assign.",
       "raises": {},
       "tags": [],
@@ -5446,7 +5733,7 @@
     },
     {
       "name": "Should Contain Any",
-      "doc": "Fails if the `container` does not contain any of the `items`.\n\nWorks with lists, dictionaries, strings, bytes and anything that\nsupports Python's `in` operator.\n\nSee the [Controlling failure messages] section for information about\noverriding the default failure message with `msg` and `values` arguments.\n\nThe [String and bytes normalization] section explains how `ignore_case`,\n`strip_spaces` and `collapse_spaces` can be used for normalizing\nvalues before comparison.\n\nAll configuration arguments must be given using the `name=value` syntax\nafter all `items`.\n\nIf `container` is bytes, `items` are automatically converted to bytes\nas well.\n\nExamples:\n```robotframework\n*** Test Cases ***\nShould contain any\n    Should Contain Any    ${string}    substring 1    substring 2\n    Should Contain Any    ${list}    item 1    item 2    item 3\n    Should Contain Any    ${list}    item 1    item 2    item 3    ignore_case=True\n    Should Contain Any    ${list}    @{items}    msg=Custom message    values=False\n```\n\nAutomatically converting `item` to bytes, bytes normalization support and\nrecursive normalization with collections are new in Robot Framework 7.4.",
+      "doc": "Fails if the `container` does not contain any of the `items`.\n\nWorks with lists, dictionaries, strings, bytes and anything that\nsupports Python's `in` operator.\n\nSee the [Controlling failure messages] section for information about\noverriding the default failure message with `msg` and `values` arguments.\n\nThe [String and bytes normalization] section explains how `ignore_case`,\n`strip_spaces` and `collapse_spaces` can be used for normalizing\nvalues before comparison.\n\nAll configuration arguments must be given using the `name=value` syntax\nafter all `items`.\n\nIf `container` is bytes, `items` are automatically converted to bytes\nas well.\n\nExamples:\n```robotframework\n*** Test Cases ***\nShould contain any\n    Should Contain Any    ${string}    substring 1    substring 2\n    Should Contain Any    ${list}    item 1    item 2    item 3\n    Should Contain Any    ${list}    item 1    item 2    item 3    ignore_case=True\n    Should Contain Any    ${list}    @{items}    msg=Custom message    values=False\n```\n\nAutomatically converting `items` to bytes, bytes normalization support and\nrecursive normalization with collections are new in Robot Framework 7.4.",
       "shortdoc": "Fails if the `container` does not contain any of the `items`.",
       "args": [
         {
@@ -5609,7 +5896,7 @@
     },
     {
       "name": "Should Contain X Times",
-      "doc": "Fails if the `container` does not contain the `item` `count` times.\n\nWorks with lists, strings all objects that [Get Count] works with.\n\nSee the [Controlling failure messages] section for information about\noverriding the default failure message with `msg` and `values` arguments.\n\nThe [String and bytes normalization] section explains how `ignore_case`,\n`strip_spaces` and `collapse_spaces` can be used for normalizing\nvalues before comparison.\n\nIf `container` is bytes, `item` is automatically converted to bytes as well.\n\nExamples:\n```robotframework\n*** Test Cases ***\nShould contain x times\n    Should Contain X Times    ${output}    hello    count=2\n    Should Contain X Times    ${list}    item    3    ignore_case=True\n```\n\nAutomatically converting `item` to bytes, bytes normalization support and\nrecursive normalization with collections are new in Robot Framework 7.4.",
+      "doc": "Fails if the `container` does not contain the `item` `count` times.\n\nWorks with lists, strings and all objects that [Get Count] works with.\n\nSee the [Controlling failure messages] section for information about\noverriding the default failure message with the `msg` argument.\n\nThe [String and bytes normalization] section explains how `ignore_case`,\n`strip_spaces` and `collapse_spaces` can be used for normalizing\nvalues before comparison.\n\nIf `container` is bytes, `item` is automatically converted to bytes as well.\n\nExamples:\n```robotframework\n*** Test Cases ***\nShould contain x times\n    Should Contain X Times    ${output}    hello    count=2\n    Should Contain X Times    ${list}    item    3    ignore_case=True\n```\n\nAutomatically converting `item` to bytes, bytes normalization support and\nrecursive normalization with collections are new in Robot Framework 7.4.",
       "shortdoc": "Fails if the `container` does not contain the `item` `count` times.",
       "args": [
         {
@@ -6237,7 +6524,58 @@
           "repr": "flags: str | None = None"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "bytes",
+            "typedoc": "bytes",
+            "nested": [],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "list",
+            "typedoc": "list",
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false,
+                "alias": null
+              }
+            ],
+            "union": false,
+            "alias": null
+          },
+          {
+            "name": "list",
+            "typedoc": "list",
+            "nested": [
+              {
+                "name": "bytes",
+                "typedoc": "bytes",
+                "nested": [],
+                "union": false,
+                "alias": null
+              }
+            ],
+            "union": false,
+            "alias": null
+          }
+        ],
+        "union": true,
+        "alias": null
+      },
       "returnDoc": "The portion of the string that matched the pattern. If the pattern\nhas groups like `ID: (.*)`, the return value is a list where the first\nitem is the full match and subsequent items are the captured groups.",
       "raises": {},
       "tags": [],
@@ -7072,7 +7410,7 @@
     },
     {
       "name": "Should Not Contain Any",
-      "doc": "Fails if the `container` contains one or more of the `items`.\n\nWorks with lists, dictionaries, strings, bytes and anything that\nsupports Python's `in` operator.\n\nSee the [Controlling failure messages] section for information about\noverriding the default failure message with `msg` and `values` arguments.\n\nThe [String and bytes normalization] section explains how `ignore_case`,\n`strip_spaces` and `collapse_spaces` can be used for normalizing\nvalues before comparison.\n\nAll configuration arguments must be given using `name=value` syntax\nafter all `items`.\n\nIf `container` is bytes, `items` are automatically converted to bytes\nas well.\n\nExamples:\n```robotframework\n*** Test Cases ***\nShould not contain any\n    Should Not Contain Any    ${string}    substring 1    substring 2\n    Should Not Contain Any    ${list}    item 1    item 2    item 3\n    Should Not Contain Any    ${list}    item 1    item 2    item 3    ignore_case=True\n    Should Not Contain Any    ${list}    @{items}    msg=Custom message    values=False\n```\n\nAutomatically converting `item` to bytes, bytes normalization support and\nrecursive normalization with collections are new in Robot Framework 7.4.",
+      "doc": "Fails if the `container` contains one or more of the `items`.\n\nWorks with lists, dictionaries, strings, bytes and anything that\nsupports Python's `in` operator.\n\nSee the [Controlling failure messages] section for information about\noverriding the default failure message with `msg` and `values` arguments.\n\nThe [String and bytes normalization] section explains how `ignore_case`,\n`strip_spaces` and `collapse_spaces` can be used for normalizing\nvalues before comparison.\n\nAll configuration arguments must be given using `name=value` syntax\nafter all `items`.\n\nIf `container` is bytes, `items` are automatically converted to bytes\nas well.\n\nExamples:\n```robotframework\n*** Test Cases ***\nShould not contain any\n    Should Not Contain Any    ${string}    substring 1    substring 2\n    Should Not Contain Any    ${list}    item 1    item 2    item 3\n    Should Not Contain Any    ${list}    item 1    item 2    item 3    ignore_case=True\n    Should Not Contain Any    ${list}    @{items}    msg=Custom message    values=False\n```\n\nAutomatically converting `items` to bytes, bytes normalization support and\nrecursive normalization with collections are new in Robot Framework 7.4.",
       "shortdoc": "Fails if the `container` contains one or more of the `items`.",
       "args": [
         {
@@ -8239,8 +8577,8 @@
     },
     {
       "name": "Variable Should Exist",
-      "doc": "Fails the given variable does not exist in the current scope.\n\nThe name of the variable can be given either as a normal variable name\nlike `${name}` or in escaped format like `$name` or `\\${name}`.\nFor the reasons explained in the [Using variables with keywords creating\nor accessing variables] section, using the escaped format is recommended.\n\nThe default error message can be overridden with the `msg` argument.\nNotice that it must be given positionally like `A message` and not\nusing the named-argument syntax like `msg=A message`.\n\nSee also [Variable Should Not Exist] and [Keyword Should Exist].",
-      "shortdoc": "Fails the given variable does not exist in the current scope.",
+      "doc": "Fails if the given variable does not exist in the current scope.\n\nThe name of the variable can be given either as a normal variable name\nlike `${name}` or in escaped format like `$name` or `\\${name}`.\nFor the reasons explained in the [Using variables with keywords creating\nor accessing variables] section, using the escaped format is recommended.\n\nThe default error message can be overridden with the `message` argument.\nNotice that it must be given positionally like `A message` and not\nusing the named-argument syntax like `message=A message`.\n\nSee also [Variable Should Not Exist] and [Keyword Should Exist].",
+      "shortdoc": "Fails if the given variable does not exist in the current scope.",
       "args": [
         {
           "name": "name",
@@ -8297,7 +8635,7 @@
     },
     {
       "name": "Variable Should Not Exist",
-      "doc": "Fails if the given variable exists within the current scope.\n\nThe name of the variable can be given either as a normal variable name\nlike `${name}` or in escaped format like `$name` or `\\${name}`.\nFor the reasons explained in the [Using variables with keywords creating\nor accessing variables] section, using the escaped format is recommended.\n\nThe default error message can be overridden with the `msg` argument.\nNotice that it must be given positionally like `A message` and not\nusing the named-argument syntax like `msg=A message`.\n\nSee also [Variable Should Exist] and [Keyword Should Exist].",
+      "doc": "Fails if the given variable exists within the current scope.\n\nThe name of the variable can be given either as a normal variable name\nlike `${name}` or in escaped format like `$name` or `\\${name}`.\nFor the reasons explained in the [Using variables with keywords creating\nor accessing variables] section, using the escaped format is recommended.\n\nThe default error message can be overridden with the `message` argument.\nNotice that it must be given positionally like `A message` and not\nusing the named-argument syntax like `message=A message`.\n\nSee also [Variable Should Exist] and [Keyword Should Exist].",
       "shortdoc": "Fails if the given variable exists within the current scope.",
       "args": [
         {
@@ -8569,6 +8907,18 @@
       ]
     },
     {
+      "type": "Standard",
+      "name": "dictionary",
+      "doc": "Strings must be Python [dictionary] literals. They are converted to actual\ndictionaries using the [ast.literal_eval] function. They can contain any values\n`ast.literal_eval` supports, including dictionaries and other collections.\n\nAny mapping is accepted and converted to a `dict`.\n\nIf the type has nested types like `dict[str, int]`, items are converted to those\ntypes automatically. This in new in Robot Framework 6.0.\n\nExamples: `{'a': 1, 'b': 2}`, `{'key': 1, 'nested': {'key': 2}}`\n\n[dictionary]: https://docs.python.org/library/stdtypes.html#dict\n[ast.literal_eval]: https://docs.python.org/library/stdtypes.html#ast.literal_eval\n",
+      "usages": [
+        "Get Library Instance"
+      ],
+      "accepts": [
+        "string",
+        "Mapping"
+      ]
+    },
+    {
       "type": "Custom",
       "name": "Expression",
       "doc": "An expression evaluated in Python.\n\nExpressions are evaluated using Python's\n[eval](https://docs.python.org/library/functions.html#eval) function so\nthat all Python built-ins like `len()` and `int()` are available.\nIn addition to that, all unrecognized variables are considered to be\nmodules that are automatically imported. It is possible to use all\navailable Python modules, including the standard modules and the installed\nthird party modules.\n\nExamples:\n```robotframework\n*** Test Cases ***\nEvaluating expressions\n    Should Be True    len(\"${result}\") > 3\n    Run Keyword If    os.sep == \"/\"    Non-Windows Keyword\n    ${version} =      Evaluate    robot.__version__\n```\n\nWhen a variable is used in the expressing using the normal `${variable}`\nsyntax, its value is replaced before the expression is evaluated. This\nmeans that the value used in the expression will be the string\nrepresentation of the variable value, not the variable value itself.\nThis is not a problem with numbers and other objects that have a string\nrepresentation that can be evaluated directly, but with other objects\nthe behavior depends on the string representation. Most importantly,\nstrings must always be quoted, and if they can contain newlines, they must\nbe triple quoted.\n\nExamples:\n```robotframework\n*** Test Cases ***\nUsing normal variables\n    Should Be True    ${rc} < 10\n    Run Keyword If    '${status}' == 'PASS'        Log    Passed\n    Run Keyword If    'FAIL' in '''${output}'''    Log    Output contains FAIL\n```\n\nActual variables values are also available in the evaluation namespace.\nThey can be accessed using special variable syntax without the curly\nbraces like `$variable`. These variables should never be quoted.\n\nExamples:\n```robotframework\n*** Test Cases ***\nSpecial variable syntax\n    Should Be True    $rc < 10\n    Run Keyword If    $status == 'PASS'    Log    Passed\n    Run Keyword If    'FAIL' in $output    Log    Output contains FAIL\n    Should Be True    len($result) > 1 and $result[1] == 'OK'\n    Should Be True    $result is not None\n```",
@@ -8593,6 +8943,7 @@
       "name": "float",
       "doc": "Conversion is done using Python's [float] built-in function.\n\nSpaces and underscores can be used as visual separators for digit grouping purposes.\n\nExamples: `3.14`, `2.9979e8`, `10 000.000 01`\n\n[float]: https://docs.python.org/library/functions.html#float\n",
       "usages": [
+        "Convert To Number",
         "Get Time"
       ],
       "accepts": [
@@ -8648,6 +8999,7 @@
         "Run Keyword If Test Passed",
         "Run Keyword If Timeout Occurred",
         "Run Keyword Unless",
+        "Run Keywords",
         "Wait Until Keyword Succeeds"
       ],
       "accepts": []
@@ -8674,6 +9026,7 @@
         "Run Keyword If Test Passed",
         "Run Keyword If Timeout Occurred",
         "Run Keyword Unless",
+        "Run Keywords",
         "Wait Until Keyword Succeeds"
       ],
       "accepts": []
@@ -8683,7 +9036,11 @@
       "name": "list",
       "doc": "Strings must be Python [list] or [tuple] literals. They are converted using the\n[ast.literal_eval] function and possible tuples are converted further to lists.\nThey can contain any values `ast.literal_eval` supports, including lists and\nother collections.\n\nIf the argument is a list, it is used without conversion. Tuples and other\nsequences are converted to lists.\n\nIf the type has nested types like `list[int]`, items are converted to those\ntypes automatically.\n\nExamples: `['one', 'two']`, `[('one', 1), ('two', 2)]`\n\nSupport to convert nested types is new in Robot Framework 6.0. Support for tuple\nliterals is new in Robot Framework 7.4.\n\n[list]: https://docs.python.org/library/stdtypes.html#list\n[tuple]: https://docs.python.org/library/stdtypes.html#tuple\n[ast.literal_eval]: https://docs.python.org/library/stdtypes.html#ast.literal_eval\n",
       "usages": [
-        "Create List"
+        "Create List",
+        "Get Time",
+        "Regexp Escape",
+        "Set Variable",
+        "Should Match Regexp"
       ],
       "accepts": [
         "string",
@@ -8700,6 +9057,8 @@
         "Log To Console",
         "Log Variables",
         "Reset Log Level",
+        "Run Keyword And Ignore Error",
+        "Run Keyword And Warn On Failure",
         "Set Log Level",
         "Should Be Equal",
         "Should Be Equal As Strings",
@@ -8747,7 +9106,6 @@
         "Fail",
         "Fatal Error",
         "Get Library Instance",
-        "Get Variable Value",
         "Keyword Should Exist",
         "Length Should Be",
         "Log",
@@ -8802,7 +9160,9 @@
         "Convert To String",
         "Create Dictionary",
         "Create List",
+        "Evaluate",
         "Get Count",
+        "Get Library Instance",
         "Get Variable Value",
         "Import Library",
         "Import Variables",
@@ -8810,11 +9170,14 @@
         "Log Many",
         "Log To Console",
         "Reload Library",
+        "Replace Variables",
         "Return From Keyword",
         "Return From Keyword If",
         "Run Keyword",
         "Run Keyword And Continue On Failure",
         "Run Keyword And Expect Error",
+        "Run Keyword And Ignore Error",
+        "Run Keyword And Warn On Failure",
         "Run Keyword If",
         "Run Keyword If All Tests Passed",
         "Run Keyword If Any Tests Failed",
@@ -8940,6 +9303,20 @@
         "string",
         "integer",
         "float"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "tuple",
+      "doc": "Strings must be Python [tuple] or [list] literals. They are converted using the\n[ast.literal_eval] function and possible lists are converted further to tuples.\nThey can contain any values `ast.literal_eval` supports, including lists and\nother collections.\n\nIf the argument is a tuple, it is used without conversion. Lists and other\nsequences are converted to tuples.\n\nIf the type has nested types like `tuple[str, int]`, items are converted to\nthose types automatically.\n\nExamples: `('one', 'two')`, `[('one', 1), ('two', 2)]`\n\nSupport to convert nested types is new in Robot Framework 6.0. Support for list\nliterals is new in Robot Framework 7.4.\n\n[list]: https://docs.python.org/library/stdtypes.html#list\n[tuple]: https://docs.python.org/library/stdtypes.html#tuple\n[ast.literal_eval]: https://docs.python.org/library/stdtypes.html#ast.literal_eval\n",
+      "usages": [
+        "Run Keyword And Ignore Error",
+        "Run Keyword And Warn On Failure",
+        "Set Library Search Order"
+      ],
+      "accepts": [
+        "string",
+        "Sequence"
       ]
     }
   ]
