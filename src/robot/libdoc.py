@@ -77,21 +77,20 @@ Options
                           Specifies whether to generate an HTML output for
                           humans, a machine readable spec file in XML or JSON
                           format, or a Markdown file. The LIBSPEC format means
-                          XML spec with documentations converted to HTML. The
-                          default format is got from the output file
-                          extension. MARKDOWN is new in RF 7.5.
- -s --specdocformat RAW|HTML
+                          XML spec with documentations converted to HTML,
+                          except for Markdown documentation. The default
+                          format is got from the output file extension.
+                          MARKDOWN is new in RF 7.5.
+ -s --specdocformat AUTO|RAW|HTML
                           Specifies the documentation format used with XML and
                           JSON spec files. RAW means preserving the original
                           documentation format and HTML means converting
-                          documentation to HTML. The default is RAW with XML
-                          spec files and HTML with JSON specs and when using
-                          the special LIBSPEC format. Not applicable with HTML
-                          or MARKDOWN outputs.
-                          NOTE: Markdown documentation will not be converted to
-                          HTML by default, regardless the spec format, starting
-                          from RF 7.6. Use `-s HTML` if you want to preserve
-                          the current behavior.
+                          documentation to HTML. The default AUTO means
+                          preserving Markdown documentation regardless the
+                          spec format and otherwise converting documentation
+                          to HTML with JSON specs and when using the special
+                          LIBSPEC format. Not applicable with HTML or MARKDOWN
+                          outputs. AUTO is new in RF 7.6.
  -F --docformat ROBOT|MARKDOWN|HTML|TEXT|REST
                           Specifies the source documentation format. Possible
                           values are Robot Framework's documentation format,
@@ -227,11 +226,7 @@ class LibDoc(Application):
             raise DataError(
                 "The --language option is not applicable with MARKDOWN outputs."
             )
-        if (
-            format == "HTML"
-            or specdocformat == "HTML"
-            or (format in ("JSON", "LIBSPEC") and specdocformat != "RAW")
-        ):
+        if self._convert_docs_to_html(format, specdocformat, libdoc.doc_format):
             libdoc.convert_docs_to_html()
         libdoc.save(
             output,
@@ -262,14 +257,23 @@ class LibDoc(Application):
         specdocformat = self._validate(
             "Spec doc format",
             specdocformat,
-            ("RAW", "HTML"),
+            ("AUTO", "RAW", "HTML"),
         )
-        if format in ("HTML", "MARKDOWN") and specdocformat:
-            raise DataError(
-                "The --specdocformat option is only applicable with XML, JSON "
-                "and LIBSPEC outputs."
-            )
-        return format, specdocformat
+        if format in ("HTML", "MARKDOWN"):
+            if specdocformat:
+                raise DataError(
+                    "The --specdocformat option is only applicable with XML, JSON "
+                    "and LIBSPEC outputs."
+                )
+            return format, None
+        return format, specdocformat or "AUTO"
+
+    def _convert_docs_to_html(self, format, specdocformat, docformat):
+        if format == "HTML" or specdocformat == "HTML":
+            return True
+        if specdocformat == "AUTO":
+            return format in ("JSON", "LIBSPEC") and docformat != "MARKDOWN"
+        return False
 
     def _validate(self, kind, value, valid, allow_none=True):
         if value:
@@ -344,8 +348,10 @@ def libdoc(
         is ``'ROBOT'``.
     :param specdocformat: Specifies whether the keyword documentation in spec
         files is converted to HTML regardless of the original documentation
-        format. Possible values are ``'HTML'`` (convert to HTML) and ``'RAW'``
-        (use original format). The default depends on the output format.
+        format. Possible values are ``'HTML'`` (convert to HTML), ``'RAW'``
+        (use original format) and ``'AUTO'`` (default). With ``'AUTO'``,
+        Markdown documentation is preserved and other formats are converted
+        to HTML with JSON and LIBSPEC outputs. ``'AUTO'`` is new in RF 7.6.
     :param quiet: When true, the path of the generated output file is not
         printed the console.
 
