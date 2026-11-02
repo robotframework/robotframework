@@ -767,19 +767,18 @@ changes are kept in minimum in general.
 Robot Framework 7.5.1
 ---------------------
 
-Robot Framework 7.5.1 fixes some regressions in Robot Framework 7.5 and various
-bugs affecting also earlier releases. It should not contain any backwards
+Robot Framework 7.5.1 fixes some regressions in `Robot Framework 7.5 <#>`_ and
+various bugs affecting also earlier releases. It should not contain any backwards
 incompatible changes, but it deprecates automatically converting Markdown
 library documentation to HTML in spec files (`#5809`_).
 
 Acknowledgements
 ~~~~~~~~~~~~~~~~
 
-Robot Framework is developed with support from the Robot Framework Foundation
-and its 80+ member organizations. Join the journey — support the project by
-`joining the Foundation <Robot Framework Foundation_>`_.
+Robot Framework is developed with support from the `Robot Framework Foundation`_
+and its 80+ member organizations. Robot Framework 7.5.1 team funded by the
+foundation consisted of `Pekka Klärck`_.
 
-Robot Framework 7.5.1 team funded by the foundation consisted of `Pekka Klärck`_.
 The following community members provided valuable contributions:
 
 - `Daniel Biehl <https://github.com/d-biehl>`_ fixed multiple issues:
