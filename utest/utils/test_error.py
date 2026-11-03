@@ -91,6 +91,36 @@ class TestGetErrorDetails(unittest.TestCase):
             err.__traceback__ = None
             assert_equal(ErrorDetails(err).traceback, format_traceback(no_tb=True))
 
+    def test_chaining_with_cycle(self):
+        try:
+            try:
+                raise ValueError("boom")
+            except ValueError as error:
+                raise error from error
+        except ValueError as err:
+            assert_equal(ErrorDetails(err).traceback, format_traceback())
+
+    def test_chaining_with_mutual_cycle(self):
+        # A cause whose own context points back to the error is what asyncio
+        # creates when the same error is raised again while it is handled.
+        cause = ConnectionError("reset")
+        error = RuntimeError("handshake")
+        error.__cause__ = cause
+        cause.__context__ = error
+        try:
+            raise error
+        except RuntimeError as err:
+            assert_equal(ErrorDetails(err).traceback, format_traceback())
+
+    def test_very_long_chaining(self):
+        errors = [ValueError(str(i)) for i in range(1500)]
+        for context, error in zip(errors, errors[1:]):
+            error.__context__ = context
+        try:
+            raise errors[-1]
+        except ValueError as err:
+            assert_equal(ErrorDetails(err).traceback, format_traceback())
+
 
 class TestRemoveRobotEntriesFromTraceback(unittest.TestCase):
 
