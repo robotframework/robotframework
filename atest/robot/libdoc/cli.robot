@@ -9,7 +9,10 @@ Default format is got from output file extension
     String ${OUTMARKDOWN}        MARKDOWN     String    path=${OUTMARKDOWN}
 
 '*.libspec' extension creates XML file with HTML docs
-    String ${OUTBASE}.libspec    LIBSPEC     String    path=${OUTBASE}.libspec
+    ${TESTDATADIR}/DocFormat.py ${OUTBASE}.libspec    LIBSPEC    DocFormat    path=${OUTBASE}.libspec
+
+'*.libspec' extension preserves Markdown docs
+    String ${OUTBASE}.libspec    LIBSPEC     String    path=${OUTBASE}.libspec    docformat=MARKDOWN
 
 Using --format overrides output file extension
     -f XmL ${TESTDATADIR}/resource.resource ${OUTHTML}    XML         resource
@@ -22,6 +25,9 @@ Using --specdocformat to specify doc format in output
     --format XML --specdocformat HTML String ${OUTXML}             LIBSPEC    String      path=${OUTXML}
     --format XML --specdocformat RAW String ${OUTBASE}.libspec     XML        String      path=${OUTBASE}.libspec    docformat=MARKDOWN
     --format XML --specdocformat HTML String ${OUTBASE}.libspec    LIBSPEC    String      path=${OUTBASE}.libspec
+    --format XML --specdocformat AUTO String ${OUTXML}             XML        String      path=${OUTXML}    docformat=MARKDOWN
+    --specdocformat auto String ${OUTBASE}.libspec                 LIBSPEC    String      path=${OUTBASE}.libspec    docformat=MARKDOWN
+    -s AUTO ${TESTDATADIR}/DocFormat.py ${OUTBASE}.libspec         LIBSPEC    DocFormat   path=${OUTBASE}.libspec
 
 Library arguments
     ${TESTDATADIR}/LibraryArguments.py::required::true ${OUTHTML}    HTML    LibraryArguments

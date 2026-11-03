@@ -48,15 +48,17 @@ Options
                            Specifies whether to generate an HTML output for humans,
                            a machine readable spec file in XML or JSON format, or
                            a Markdown file. The `libspec` format means XML spec with
-                           documentations converted to HTML. The default format is got
+                           documentations converted to HTML, except for Markdown
+                           documentation. The default format is got
                            from the output file extension. The `markdown` format is new
                            in Robot Framework 7.5.
-  -s, --specdocformat <raw|html>
+  -s, --specdocformat <auto|raw|html>
                            Specifies the `documentation format in spec files`_.
                            `raw` means preserving the original documentation format
                            and `html` means converting documentation to HTML.
-                           Notice that the default behavior with Markdown will
-                           change in Robot Framework 7.6.
+                           The default `auto` preserves Markdown documentation and
+                           otherwise depends on the spec format. The `auto` value
+                           is new in Robot Framework 7.6.
   -F, --docformat <robot|markdown|html|text|rest>
                            Specifies the source documentation format. Possible
                            values are Robot Framework's documentation format,
@@ -220,8 +222,9 @@ are omitted if getting them from the library fails for whatever reason.
 
 Libdoc automatically uses the XML format if the output file extension is
 :file:`*.xml` or :file:`*.libspec`. When using the special :file:`*.libspec`
-extension, Libdoc automatically enables the options `-f XML -s HTML` which means
-creating an XML output file where keyword documentation is converted to HTML.
+extension, Libdoc creates an XML output file where keyword documentation is
+converted to HTML unless it is in Markdown format. See the
+`Documentation format in spec files`_ section for more details.
 If needed, the format can be explicitly set with the :option:`--format` option.
 
 ::
@@ -254,7 +257,7 @@ readable format.
 Similar to XML spec files the JSON spec files contain all information and
 can also be used as input to Libdoc. From that format any other output format
 can be created. By default the library documentation strings are converted
-to HTML format within the JSON output file.
+to HTML format within the JSON output file unless they are in Markdown format.
 
 The exact JSON spec file format is documented with an `JSON schema`__
 at https://github.com/robotframework/robotframework/tree/master/doc/schema.
@@ -269,14 +272,17 @@ When generating XML or JSON spec files, Libdoc can either preserve the original
 documentation as-is or convert it to HTML. This can be controlled by using
 the :option:`--specdocformat (-s)` with values `raw` or `html`, respectively.
 
-By default, Libdoc converts documentation to HTML when generating JSON spec files
-and when generating XML spec files with the special :file:`*.libspec` extension.
+By default, or when :option:`--specdocformat` is given value `auto`, Libdoc
+preserves Markdown documentation regardless the spec format. Documentation in
+other formats is converted to HTML when generating JSON spec files and when
+generating XML spec files with the special :file:`*.libspec` extension.
 When generating XML spec files with the :file:`*.xml` extension, the original
-documentation format is preserved.
+documentation format is always preserved.
 
-The plan is to change the default behavior in Robot Framework 7.6 so that Markdown
-documentation is not converted to HTML regardless the spec format. If you want to
-preserve the current functionality, use `--specdocformat html` explicitly.
+.. note:: Prior to Robot Framework 7.6, Markdown documentation was converted to
+          HTML by default with JSON and :file:`*.libspec` spec files similarly as
+          documentation in other formats. Use `--specdocformat html` explicitly
+          to preserve that behavior.
 
 Libdoc Markdown documentation
 '''''''''''''''''''''''''''''

@@ -1,3 +1,4 @@
+import json
 import sys
 import tempfile
 import unittest
@@ -35,6 +36,18 @@ class TestLibdoc(unittest.TestCase):
         assert_equal(sys.stdout.getvalue().strip(), output)
         with open(output, encoding="UTF-8") as f:
             assert 'name="String"' in f.read()
+
+    def test_specdocformat(self):
+        output = tempfile.mkstemp(suffix=".json")[1]
+        for specdocformat, expected in [
+            (None, "MARKDOWN"),
+            ("auto", "MARKDOWN"),
+            ("RAW", "MARKDOWN"),
+            ("html", "HTML"),
+        ]:
+            libdoc.libdoc("String", output, specdocformat=specdocformat, quiet=True)
+            with open(output, encoding="UTF-8") as f:
+                assert_equal(json.load(f)["docFormat"], expected)
 
     def test_quiet(self):
         output = tempfile.mkstemp(suffix=".html")[1]
