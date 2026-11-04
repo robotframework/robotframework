@@ -248,6 +248,15 @@ class LoggerApi:
     def imported(self, import_type: str, name: str, attrs):
         pass
 
+    def start_library_import(self, importer: "running.Import"):
+        pass
+
+    def start_resource_import(self, importer: "running.Import"):
+        pass
+
+    def start_variables_import(self, importer: "running.Import"):
+        pass
+
     def library_import(
         self,
         library: "running.TestLibrary",

@@ -420,6 +420,18 @@ class Logger(AbstractLogger):
         for logger in self.end_loggers:
             logger.end_error(data, result)
 
+    def start_library_import(self, importer):
+        for logger in self.start_loggers:
+            logger.start_library_import(importer)
+
+    def start_resource_import(self, importer):
+        for logger in self.start_loggers:
+            logger.start_resource_import(importer)
+
+    def start_variables_import(self, importer):
+        for logger in self.start_loggers:
+            logger.start_variables_import(importer)
+
     def library_import(self, library, importer):
         for logger in self:
             logger.library_import(library, importer)

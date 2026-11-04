@@ -133,11 +133,19 @@ def split_args_from_name_or_path(name):
     The separator can be either colon ``:`` or semicolon ``;``. If both are used,
     the first one is considered to be the separator.
     """
-    if os.path.exists(name):
-        return os.path.abspath(name), []
     if isinstance(name, Path):
         name = str(name)
     index = _get_arg_separator_index_from_name_or_path(name)
+    windows_path_with_args = (
+        os.sep == "\\"
+        and len(name) > 2
+        and name[1] == ":"
+        and name[2:3] in ("/", "\\")
+        and index > 1
+        and name[index] == ":"
+    )
+    if os.path.exists(name) and not windows_path_with_args:
+        return os.path.abspath(name), []
     if index == -1:
         return name, []
     args = name[index + 1 :].split(name[index])
