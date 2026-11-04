@@ -44,11 +44,11 @@ Too large value for timedelta
                       1e15               timedelta
 
 Inf and NaN           [Template]         Time conversion should fail
-                      inf                verbose      ValueError: Cannot convert 'inf' to time string.
-                      -INF               compact      ValueError: Cannot convert '-inf' to time string.
-                      nan                timer        ValueError: Cannot convert 'nan' to time string.
-                      inf                timedelta    ValueError: *
-                      NaN                timedelta    ValueError: *
+                      inf                verbose      ValueError: Time value 'inf' is not finite.
+                      -INF               compact      ValueError: Time value '-INF' is not finite.
+                      nan                timer        ValueError: Time value 'nan' is not finite.
+                      inf                timedelta    ValueError: Time value 'inf' is not finite.
+                      NaN                timedelta    ValueError: Time value 'NaN' is not finite.
 
 Ignore millis         [Template]         Time conversion without millis should succeed
                       61.5               number       ${62}
