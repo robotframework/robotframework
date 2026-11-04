@@ -46,8 +46,15 @@ you can simply run::
 
     pip install robotframework
 
+On Debian and Debian-based systems Robot Framework is officially packaged as
+robotframework__ and can be installed with::
+
+    sudo apt install python3-robot
+
 For more detailed installation instructions, including installing Python, see
 `<INSTALL.rst>`__.
+
+__ https://tracker.debian.org/pkg/robotframework
 
 Robot Framework requires Python 3.8 or newer and runs also on `PyPy <http://pypy.org>`_.
 The latest version that supports Python 3.6 and 3.7 is `Robot Framework 6.1.1`__.

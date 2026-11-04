@@ -252,6 +252,28 @@ __ PyPI_
     # Uninstall
     pip uninstall robotframework
 
+Installing using a distribution package manager
+-----------------------------------------------
+
+Some Linux distributions package Robot Framework themselves. On Debian and
+Debian-based systems it is officially packaged as robotframework__ and can be
+installed with:
+
+.. code:: bash
+
+   sudo apt install python3-robot
+
+The package provides the `robot`, `rebot` and `libdoc` commands as well as the
+`robot` Python module, and no separate pip_ installation is needed.
+
+Distribution packages are maintained independently of the releases on PyPI_ and
+may lag behind them. If you need a newer version than your distribution
+provides, install Robot Framework with pip_ instead, preferably into a
+`virtual environment <virtual environments_>`__ so that it does not interfere
+with the packages provided by the distribution.
+
+__ https://tracker.debian.org/pkg/robotframework
+
 Installing from source
 ----------------------
 
