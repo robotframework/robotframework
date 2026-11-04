@@ -136,6 +136,10 @@ Settings
       - {lang.test_tags_setting}
     * - Task Tags
       - {lang.task_tags_setting}
+    * - Test Metadata
+      - {lang.test_metadata_setting}
+    * - Task Metadata
+      - {lang.task_metadata_setting}
     * - Keyword Tags
       - {lang.keyword_tags_setting}
     * - Tags

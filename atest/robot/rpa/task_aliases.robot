@@ -11,6 +11,7 @@ Defaults
     Check log message        ${tc[0, 1]}          Using default settings
     Check log message        ${tc.teardown[0]}    Also teardown has an alias!!
     Should be equal          ${tc.timeout}        1 minute 10 seconds
+    Should be equal          ${tc.metadata}[Owner]    Task Team
 
 Override
     ${tc} =    Check Test Tags    ${TESTNAME}    task    tags    own
@@ -29,7 +30,7 @@ Invalid task timeout
 
 Task aliases are included in setting recommendations
     Error In File
-    ...    0    rpa/task_aliases.robot    7
+    ...    0    rpa/task_aliases.robot    8
     ...    SEPARATOR=\n
     ...    Non-existing setting 'Tesk Setup'. Did you mean:
     ...    ${SPACE*4}Test Setup
@@ -41,6 +42,7 @@ Task settings are not allowed in resource file
     2    3    Task Teardown
     3    4    Task Template
     4    5    Task Timeout
+    5    6    Task Metadata
 
 In init file
     Run Tests    --loglevel DEBUG    rpa/tasks
@@ -50,6 +52,7 @@ In init file
     Check timeout message    ${tc[0, 0]}          1 minute 10 seconds
     Check log message        ${tc.teardown[0]}    Also teardown has an alias!!
     Should be equal          ${tc.timeout}        1 minute 10 seconds
+    Should be equal          ${tc.metadata}[Owner]    Task Team
     ${tc} =    Check Test Tags    Override    file tag    task    tags    own
     Check log message        ${tc.setup[0]}       Overriding setup
     Check log message        ${tc.teardown[0]}    Overriding teardown as well

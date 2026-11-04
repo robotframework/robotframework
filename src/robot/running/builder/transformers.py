@@ -81,6 +81,9 @@ class SettingsBuilder(ModelVisitor):
                 )
         self.settings.test_tags = node.values
 
+    def visit_TestMetadata(self, node):
+        self.settings.test_metadata.set(node.name, node.value)
+
     def visit_KeywordTags(self, node):
         self.settings.keyword_tags = node.values
 
@@ -282,6 +285,7 @@ class TestCaseBuilder(BodyBuilder):
             tags=settings.test_tags,
             timeout=settings.test_timeout,
             template=settings.test_template,
+            metadata=settings.test_metadata,
             lineno=node.lineno,
         )
         if settings.test_setup:
@@ -320,7 +324,7 @@ class TestCaseBuilder(BodyBuilder):
         self.model.doc = node.value
 
     def visit_Metadata(self, node):
-        self.model.metadata[node.name] = node.value
+        self.model.metadata.set(node.name, node.value)
 
     def visit_Setup(self, node):
         self.model.setup.config(name=node.name, args=node.args, lineno=node.lineno)

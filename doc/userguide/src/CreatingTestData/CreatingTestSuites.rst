@@ -98,16 +98,20 @@ initialization files is explained below.
    Specified tags are unconditionally set to all tests in all suite files
    this directory contains, recursively. New in Robot Framework 6.1. The
    deprecated `Force Tags`:setting: needs to be used with older versions.
+`Test Metadata`:setting:
+   Specified `free test metadata`_ is set to all tests in all suite files this
+   directory contains, recursively. Unlike tags, individual items can be
+   overridden and also removed on a lower level. New in Robot Framework 7.6.
 `Test Setup`:setting:, `Test Teardown`:setting:, `Test Timeout`:setting:
    Set the default value for test setup/teardown or test timeout to all test
    cases this directory contains. Can be overridden on lower level.
    Notice that keywords used as setups and teardowns must be available in
    test case files where tests using them are. Defining keywords in the
    initialization file itself is not enough.
-`Task Setup`:setting:, `Task Teardown`:setting:, `Task Tags`:setting:, `Task Timeout`:setting:
-   Aliases for `Test Setup`:setting:, `Test Teardown`:setting:, `Test Tags`:setting:
-   and `Test Timeout`:setting:, respectively, that can be used when
-   `creating tasks`_, not tests.
+`Task Setup`:setting:, `Task Teardown`:setting:, `Task Tags`:setting:, `Task Timeout`:setting:, `Task Metadata`:setting:
+   Aliases for `Test Setup`:setting:, `Test Teardown`:setting:, `Test Tags`:setting:,
+   `Test Timeout`:setting: and `Test Metadata`:setting:, respectively, that can be
+   used when `creating tasks`_, not tests.
 `Test Template`:setting:, `Default Tags`:setting:
    Not supported in initialization files.
 

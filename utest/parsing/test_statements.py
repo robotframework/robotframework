@@ -7,8 +7,8 @@ from robot.parsing.model.statements import (
     IfHeader, InlineIfHeader, KeywordCall, KeywordName, KeywordTags, LibraryImport,
     Metadata, ResourceImport, ReturnSetting, ReturnStatement, SectionHeader, Setup,
     Statement, SuiteSetup, SuiteTeardown, Tags, Teardown, Template, TemplateArguments,
-    TestCaseName, TestSetup, TestTags, TestTeardown, TestTemplate, TestTimeout, Timeout,
-    TryHeader, Var, Variable, VariablesImport, WhileHeader
+    TestCaseName, TestMetadata, TestSetup, TestTags, TestTeardown, TestTemplate,
+    TestTimeout, Timeout, TryHeader, Var, Variable, VariablesImport, WhileHeader
 )
 from robot.utils import type_name
 from robot.utils.asserts import assert_equal, assert_true
@@ -473,6 +473,33 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         ]
         assert_created_statement(
             tokens, Metadata, name="Key", value="First line\nSecond line"
+        )
+
+    def test_TestMetadata(self):
+        tokens = [
+            Token(Token.TEST_METADATA, "Test Metadata"),
+            Token(Token.SEPARATOR, "    "),
+            Token(Token.NAME, "Key"),
+            Token(Token.SEPARATOR, "    "),
+            Token(Token.ARGUMENT, "Value"),
+            Token(Token.EOL, "\n"),
+        ]
+        assert_created_statement(tokens, TestMetadata, name="Key", value="Value")
+
+        tokens = [
+            Token(Token.TEST_METADATA, "Test Metadata"),
+            Token(Token.SEPARATOR, "    "),
+            Token(Token.NAME, "Key"),
+            Token(Token.SEPARATOR, "    "),
+            Token(Token.ARGUMENT, "First line"),
+            Token(Token.EOL, "\n"),
+            Token(Token.CONTINUATION),
+            Token(Token.SEPARATOR, "    "),
+            Token(Token.ARGUMENT, "Second line"),
+            Token(Token.EOL, "\n"),
+        ]
+        assert_created_statement(
+            tokens, TestMetadata, name="Key", value="First line\nSecond line"
         )
 
     def test_Tags(self):

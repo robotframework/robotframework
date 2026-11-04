@@ -206,6 +206,7 @@ Statements:
 - :class:`~robot.parsing.model.statements.VariablesImport`
 - :class:`~robot.parsing.model.statements.Documentation`
 - :class:`~robot.parsing.model.statements.Metadata`
+- :class:`~robot.parsing.model.statements.TestMetadata`
 - :class:`~robot.parsing.model.statements.ForceTags`
 - :class:`~robot.parsing.model.statements.DefaultTags`
 - :class:`~robot.parsing.model.statements.SuiteName`
@@ -547,6 +548,7 @@ from robot.parsing.model.statements import (
     Template as Template,
     TemplateArguments as TemplateArguments,
     TestCaseName as TestCaseName,
+    TestMetadata as TestMetadata,
     TestSetup as TestSetup,
     TestTags as TestTags,
     TestTeardown as TestTeardown,

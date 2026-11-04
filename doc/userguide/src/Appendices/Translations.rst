@@ -97,6 +97,10 @@ Settings
       - علامات الاختبار
     * - Task Tags
       - علامات المهمة
+    * - Test Metadata
+      -
+    * - Task Metadata
+      -
     * - Keyword Tags
       - علامات الأوامر
     * - Tags
@@ -224,6 +228,10 @@ Settings
       - Етикети за тестове
     * - Task Tags
       - Етикети за задачи
+    * - Test Metadata
+      -
+    * - Task Metadata
+      -
     * - Keyword Tags
       - Етикети за ключови думи
     * - Tags
@@ -351,6 +359,10 @@ Settings
       - Test Tagovi
     * - Task Tags
       - Task Tagovi
+    * - Test Metadata
+      -
+    * - Task Metadata
+      -
     * - Keyword Tags
       - Keyword Tagovi
     * - Tags
@@ -478,6 +490,10 @@ Settings
       - Štítky testů
     * - Task Tags
       - Štítky úloh
+    * - Test Metadata
+      -
+    * - Task Metadata
+      -
     * - Keyword Tags
       - Štítky klíčových slov
     * - Tags
@@ -605,6 +621,10 @@ Settings
       - Testmarker
     * - Task Tags
       - Aufgabenmarker
+    * - Test Metadata
+      -
+    * - Task Metadata
+      -
     * - Keyword Tags
       - Schlüsselwortmarker
     * - Tags
@@ -732,6 +752,10 @@ Settings
       - Etiquetas de la prueba
     * - Task Tags
       - Etiquetas de las tareas
+    * - Test Metadata
+      -
+    * - Task Metadata
+      -
     * - Keyword Tags
       - Etiquetas de palabras clave
     * - Tags
@@ -859,6 +883,10 @@ Settings
       - Testin Tunnisteet
     * - Task Tags
       - Tehtävän Tunnisteet
+    * - Test Metadata
+      -
+    * - Task Metadata
+      -
     * - Keyword Tags
       - Avainsanan Tunnisteet
     * - Tags
@@ -1011,6 +1039,10 @@ Settings
       - Étiquette de test
     * - Task Tags
       - Étiquette de tâche
+    * - Test Metadata
+      -
+    * - Task Metadata
+      -
     * - Keyword Tags
       - Etiquette de mot-clé
     * - Tags
@@ -1154,6 +1186,10 @@ Settings
       - जाँचका उपनाम
     * - Task Tags
       - कार्यका उपनाम
+    * - Test Metadata
+      -
+    * - Task Metadata
+      -
     * - Keyword Tags
       - कुंजीशब्द का उपनाम
     * - Tags
@@ -1281,6 +1317,10 @@ Settings
       - Tag Del Test
     * - Task Tags
       - Tag Attività
+    * - Test Metadata
+      -
+    * - Task Metadata
+      -
     * - Keyword Tags
       - Tag Parola Chiave
     * - Tags
@@ -1410,6 +1450,10 @@ Settings
       - テスト タグ
     * - Task Tags
       - タスク タグ
+    * - Test Metadata
+      -
+    * - Task Metadata
+      -
     * - Keyword Tags
       - キーワード タグ
     * - Tags
@@ -1539,6 +1583,10 @@ Settings
       - 테스트 태그
     * - Task Tags
       - 작업 태그
+    * - Test Metadata
+      -
+    * - Task Metadata
+      -
     * - Keyword Tags
       - 키워드 태그
     * - Tags
@@ -1666,6 +1714,10 @@ Settings
       - Testlabels
     * - Task Tags
       - Taaklabels
+    * - Test Metadata
+      -
+    * - Task Metadata
+      -
     * - Keyword Tags
       - Actiewoordlabels
     * - Tags
@@ -1793,6 +1845,10 @@ Settings
       - Znaczniki Testu
     * - Task Tags
       - Znaczniki Zadania
+    * - Test Metadata
+      -
+    * - Task Metadata
+      -
     * - Keyword Tags
       - Znaczniki Słowa Kluczowego
     * - Tags
@@ -1920,6 +1976,10 @@ Settings
       - Etiquetas de Testes
     * - Task Tags
       - Etiquetas de Tarefas
+    * - Test Metadata
+      -
+    * - Task Metadata
+      -
     * - Keyword Tags
       - Etiquetas de Palavras-Chave
     * - Tags
@@ -2047,6 +2107,10 @@ Settings
       - Test Tags
     * - Task Tags
       - Task Tags
+    * - Test Metadata
+      -
+    * - Task Metadata
+      -
     * - Keyword Tags
       - Keyword Tags
     * - Tags
@@ -2174,6 +2238,10 @@ Settings
       - Taguri De Test
     * - Task Tags
       - Etichete activitate
+    * - Test Metadata
+      -
+    * - Task Metadata
+      -
     * - Keyword Tags
       - Etichete metode
     * - Tags
@@ -2301,6 +2369,10 @@ Settings
       - Теги тестов
     * - Task Tags
       - Метки заданий
+    * - Test Metadata
+      -
+    * - Task Metadata
+      -
     * - Keyword Tags
       - Метки ключевых слов
     * - Tags
@@ -2428,6 +2500,10 @@ Settings
       - Test taggar
     * - Task Tags
       - Arbetsuppgift taggar
+    * - Test Metadata
+      -
+    * - Task Metadata
+      -
     * - Keyword Tags
       - Nyckelord taggar
     * - Tags
@@ -2555,6 +2631,10 @@ Settings
       - กลุ่มของการทดสอบ
     * - Task Tags
       - กลุ่มของงาน
+    * - Test Metadata
+      -
+    * - Task Metadata
+      -
     * - Keyword Tags
       - กลุ่มของคำสั่งเพิ่มเติม
     * - Tags
@@ -2682,6 +2762,10 @@ Settings
       - Test Etiketleri
     * - Task Tags
       - Görev Etiketleri
+    * - Test Metadata
+      -
+    * - Task Metadata
+      -
     * - Keyword Tags
       - Anahtar Kelime Etiketleri
     * - Tags
@@ -2809,6 +2893,10 @@ Settings
       - Тестові теги
     * - Task Tags
       - Теги завдань
+    * - Test Metadata
+      -
+    * - Task Metadata
+      -
     * - Keyword Tags
       - Теги ключових слів
     * - Tags
@@ -2938,6 +3026,10 @@ Settings
       - Các nhãn kịch bản kiểm thử
     * - Task Tags
       - Các nhãn nhiệm vụ
+    * - Test Metadata
+      -
+    * - Task Metadata
+      -
     * - Keyword Tags
       - Các từ khóa nhãn
     * - Tags
@@ -3065,6 +3157,10 @@ Settings
       - 用例标签
     * - Task Tags
       - 任务标签
+    * - Test Metadata
+      -
+    * - Task Metadata
+      -
     * - Keyword Tags
       - 关键字标签
     * - Tags
@@ -3192,6 +3288,10 @@ Settings
       - 測試標籤
     * - Task Tags
       - 任務標籤
+    * - Test Metadata
+      -
+    * - Task Metadata
+      -
     * - Keyword Tags
       - 關鍵字標籤
     * - Tags

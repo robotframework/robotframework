@@ -282,6 +282,8 @@ class Language:
     task_timeout_setting: "str | None" = None
     test_tags_setting: "str | None" = None
     task_tags_setting: "str | None" = None
+    test_metadata_setting: "str | None" = None
+    task_metadata_setting: "str | None" = None
     keyword_tags_setting: "str | None" = None
     tags_setting: "str | None" = None
     setup_setting: "str | None" = None
@@ -378,6 +380,8 @@ class Language:
             self.task_timeout_setting: En.task_timeout_setting,
             self.test_tags_setting: En.test_tags_setting,
             self.task_tags_setting: En.task_tags_setting,
+            self.test_metadata_setting: En.test_metadata_setting,
+            self.task_metadata_setting: En.task_metadata_setting,
             self.keyword_tags_setting: En.keyword_tags_setting,
             self.tags_setting: En.tags_setting,
             self.setup_setting: En.setup_setting,
@@ -431,6 +435,8 @@ class En(Language):
     task_timeout_setting = "Task Timeout"
     test_tags_setting = "Test Tags"
     task_tags_setting = "Task Tags"
+    test_metadata_setting = "Test Metadata"
+    task_metadata_setting = "Task Metadata"
     keyword_tags_setting = "Keyword Tags"
     setup_setting = "Setup"
     teardown_setting = "Teardown"

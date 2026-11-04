@@ -13,8 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from typing import TypedDict
+
+from robot.model import Metadata
 
 from ..model import TestCase
 
@@ -55,12 +57,14 @@ class TestDefaults:
         teardown: "FixtureDict | None" = None,
         tags: "Sequence[str]" = (),
         timeout: "str | None" = None,
+        metadata: "Mapping[str, str] | None" = None,
     ):
         self.parent = parent
         self.setup = setup
         self.teardown = teardown
         self.tags = tags
         self.timeout = timeout
+        self.metadata = metadata
 
     @property
     def setup(self) -> "FixtureDict | None":
@@ -116,14 +120,32 @@ class TestDefaults:
     def timeout(self, timeout: "str | None"):
         self._timeout = timeout
 
+    @property
+    def metadata(self) -> Metadata:
+        """Default metadata, including metadata inherited from the parent.
+
+        Can be set also using a mapping. New in Robot Framework 7.6.
+        """
+        return self._metadata
+
+    @metadata.setter
+    def metadata(self, metadata: "Mapping[str, str] | None"):
+        self._metadata = Metadata(self.parent.metadata if self.parent else None)
+        if metadata:
+            self._metadata.update(metadata)
+
     def set_to(self, test: TestCase):
         """Sets defaults to the given test.
 
-        Tags are always added to the test. Setup, teardown and timeout are
-        set only if the test does not have them set initially.
+        Tags are always added to the test. Metadata is added only for names the
+        test does not have. Setup, teardown and timeout are set only if the test
+        does not have them set initially.
         """
         if self.tags:
             test.tags += self.tags
+        for name, value in self.metadata.items():
+            if name not in test.metadata:
+                test.metadata[name] = value
         if self.setup and not test.has_setup:
             test.setup.config(**self.setup)
         if self.teardown and not test.has_teardown:
@@ -141,6 +163,7 @@ class FileSettings:
         self.test_tags = ()
         self.test_timeout = None
         self.test_template = None
+        self._test_metadata = Metadata(self.test_defaults.metadata)
         self.default_tags = ()
         self.keyword_tags = ()
 
@@ -175,6 +198,10 @@ class FileSettings:
     @test_timeout.setter
     def test_timeout(self, timeout: "str | None"):
         self._test_timeout = timeout
+
+    @property
+    def test_metadata(self) -> Metadata:
+        return self._test_metadata
 
     @property
     def test_template(self) -> "str | None":
@@ -218,3 +245,7 @@ class InitFileSettings(FileSettings):
     @FileSettings.test_timeout.setter
     def test_timeout(self, timeout: "str | None"):
         self.test_defaults.timeout = timeout
+
+    @property
+    def test_metadata(self) -> Metadata:
+        return self.test_defaults.metadata

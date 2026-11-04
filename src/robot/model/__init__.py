@@ -53,6 +53,7 @@ from .fixture import create_fixture as create_fixture
 from .itemlist import ItemList as ItemList
 from .keyword import Keyword as Keyword
 from .message import Message as Message, MessageLevel as MessageLevel
+from .metadata import Metadata as Metadata
 from .modelobject import DataDict as DataDict, ModelObject as ModelObject
 from .modifier import ModelModifier as ModelModifier
 from .statistics import Statistics as Statistics
