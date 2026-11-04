@@ -118,6 +118,12 @@ Options
  -M --metadata name:value *  Set metadata of the top level suite. Value can
                           contain formatting and be read from a file similarly
                           as --doc. Example: --metadata Version:1.2
+    --executionid id      Unique ID for the current execution. By default a
+                          random UUID is generated. The ID is available during
+                          execution as the automatic variable ${EXECUTION ID}
+                          and is set as metadata `Execution ID` of the top level
+                          suite so that it is visible in logs and reports and
+                          stored in the output file.
  -G --settag tag *        Sets given tag(s) to all executed tests.
  -t --test name *         Select tests by name or by long name containing also
                           parent suite name like `Parent.Test`. Name is case
@@ -485,6 +491,11 @@ class RobotFramework(Application):
             )
             suite.visit(modifier)
         suite.configure(**settings.suite_config)
+        # Expose the execution ID as top level suite metadata so that it is
+        # visible in logs and reports and stored in the output file. An explicit
+        # `--metadata` with the same name (set above) takes precedence.
+        if "Execution ID" not in suite.metadata:
+            suite.metadata["Execution ID"] = settings.execution_id
         settings.rpa = suite.validate_execution_mode()
         with pyloggingconf.robot_handler_enabled(settings.log_level):
             old_max_error_lines = text.MAX_ERROR_LINES
