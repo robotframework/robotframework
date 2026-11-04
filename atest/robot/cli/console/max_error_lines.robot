@@ -3,7 +3,7 @@ Documentation     Testing that long error messages over a set limit are truncate
 Resource          atest_resource.robot
 
 *** Variables ***
-${EXPLANATION}    \n${SPACE*4}\[ Message content over the limit has been removed. \]\n
+${EXPLANATION}    \n${SPACE*4}\[ Message over the limit removed, see the log file for full output. \]\n
 ${3DOTS}          \\.\\.\\.
 
 *** Test Cases ***
