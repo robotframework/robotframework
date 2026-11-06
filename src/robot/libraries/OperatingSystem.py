@@ -1836,8 +1836,5 @@ class OperatingSystem:
         paths = tuple(f'<a href="file://{p}">{p}</a>' for p in paths)
         self._log(msg % paths, "HTML")
 
-    def _warn(self, msg: str):
-        self._log(msg, "WARN")
-
     def _log(self, msg: str, level: logger.LogLevel):
         logger.write(msg, level)
