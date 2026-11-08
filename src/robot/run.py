@@ -281,8 +281,8 @@ Options
                                    `?` and `[]` wildcards. Tags and patterns
                                    can also be combined together with `AND`,
                                    `OR`, and `NOT` operators.
-                                   Examples: --removekeywords foo
-                                             --removekeywords fooANDbar*
+                                   Examples: --removekeywords tag:foo
+                                             --removekeywords tag:fooANDbar*
     --flattenkeywords for|while|iteration|name:<pattern>|tag:<pattern> *
                           Flattens matching keywords in the generated log file.
                           Matching keywords get all log messages from their
