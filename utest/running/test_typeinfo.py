@@ -18,6 +18,7 @@ try:
 except ImportError:
     from typing_extensions import TypeForm
 
+from robot.api.types import KeywordArgument, KeywordName, Secret
 from robot.errors import DataError
 from robot.running.arguments.typeinfo import TYPE_NAMES, TypeInfo
 from robot.utils import PYPY
@@ -69,6 +70,9 @@ class TestTypeInfo(unittest.TestCase):
             ("set", set),
             ("frozenset", frozenset),
             ("union", Union),
+            ("secret", Secret),
+            ("keywordname", KeywordName),
+            ("keywordargument", KeywordArgument),
         ]:
             nested = () if expected is Union else None
             assert_info(TypeInfo(name), name, expected, nested)

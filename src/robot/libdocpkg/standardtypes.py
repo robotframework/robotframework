@@ -26,6 +26,7 @@ except ImportError:  # Python < 3.10
     NoneType = type(None)
 
 from robot.utils import Secret
+from robot.utils.types import KeywordArgument
 
 
 def get_standard_type_doc(typ, doc_format):
@@ -50,6 +51,10 @@ Any value is accepted. No conversion is done.
 """,
     object: """\
 Any value is accepted. No conversion is done.
+""",
+    KeywordArgument: """\
+Argument of a keyword executed by another keyword. Any value is accepted.
+No conversion is done.
 """,
     bool: """\
 Strings `TRUE`, `YES`, `ON`, `1` and possible localization specific "true strings"
@@ -340,6 +345,10 @@ Any value is accepted. No conversion is done.
 """,
     object: """\
 Any value is accepted. No conversion is done.
+""",
+    KeywordArgument: """\
+Argument of a keyword executed by another keyword. Any value is accepted.
+No conversion is done.
 """,
     bool: """\
 Strings ``TRUE``, ``YES``, ``ON``, ``1`` and possible localization specific "true

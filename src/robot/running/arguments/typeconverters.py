@@ -30,6 +30,7 @@ from robot.libraries.DateTime import convert_date, convert_time
 from robot.utils import (
     eq, get_error_message, plural_or_not as s, safe_str, Secret, seq2str, type_name
 )
+from robot.utils.types import KeywordArgument
 
 if sys.version_info >= (3, 12):
     from .typealiasresolver import RecursiveAlias
@@ -306,6 +307,13 @@ class AnyConverter(TypeConverter):
 class ObjectConverter(AnyConverter):
     type = object
     type_name = "object"
+    value_types = (Any,)
+
+
+@TypeConverter.register
+class KeywordArgumentConverter(AnyConverter):
+    type = KeywordArgument
+    type_name = "KeywordArgument"
     value_types = (Any,)
 
 
