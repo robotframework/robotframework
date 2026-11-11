@@ -23,7 +23,7 @@ to install the latest available stable release or use
 
 ::
 
-   pip install "robotframework<7.5"
+   pip install --upgrade "robotframework<7.6"
 
 to install the latest release in the Robot Framework 7.5.x series. Alternatively
 you can download the package from PyPI_ and install it manually. For more
