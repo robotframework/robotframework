@@ -18,6 +18,7 @@ import re
 import time
 from collections.abc import Collection, Mapping, Sequence, Sized
 from datetime import datetime, timedelta
+from numbers import Number
 from typing import Any, Callable, Iterator, Literal, NoReturn
 
 from robot.api import logger, SkipExecution
@@ -207,6 +208,23 @@ class _BuiltInBase:
         number = self._convert_to_number_without_precision(item)
         if precision is not None:
             number = float(round(number, precision))
+        return number
+
+    def _convert_to_number_with_type(
+        self,
+        item: object,
+        precision: "int | None",
+        type: Any,
+    ) -> Number:
+        info = TypeInfo.from_type_hint(type)
+        number = info.convert(item, kind="Value")
+        if not isinstance(number, Number):
+            raise TypeError(
+                f"Converting to type '{info}' did not return a number "
+                f"but {type_name(number)}."
+            )
+        if precision is not None:
+            number = round(number, precision)  # type: ignore
         return number
 
     def _convert_to_number_without_precision(self, item: object) -> float:
@@ -440,15 +458,23 @@ class _Converter(_BuiltInBase):
             ret = ret.rjust(length, "0")
         return prefix + ret
 
-    def convert_to_number(self, item: object, precision: "int | None" = None) -> float:
-        """Converts the given item to a floating point number.
+    def convert_to_number(
+        self,
+        item: object,
+        precision: "int | None" = None,
+        type: "Any | None" = None,
+        # TODO: 'Any' -> 'TypeForm' with 'type' once PEP 747 lands.
+    ) -> Number:
+        """Converts the given item to a number.
 
         Args:
             item: The value to convert.
             precision: If given, the number is rounded to this precision.
+            type: The type of the returned number. By default, a floating
+              point number is returned.
 
         Returns:
-            The converted floating point number.
+            The converted number. A floating point number by default.
 
         If the optional `precision` is positive or zero, the returned number
         is rounded to that number of decimal digits. Negative precision means
@@ -480,14 +506,36 @@ class _Converter(_BuiltInBase):
         - https://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition/
 
         If you want to avoid possible problems with floating point numbers,
-        you can implement custom keywords using Python's
-        [decimal](http://docs.python.org/library/decimal.html) or
-        [fractions](http://docs.python.org/library/fractions.html) modules.
+        you can use the `type` argument to get, for example, a
+        [Decimal](https://docs.python.org/library/decimal.html) instead.
+        Conversion is done using the [automatic argument conversion][1],
+        and all number types it supports, such as `Decimal`, `int` and
+        `float`, can be used. Also unions like `int | Decimal` are supported.
+        The type can be given as a string or as an actual type, and it is
+        an error if the conversion does not result in a number. Notice
+        that the conversion rules can differ slightly from the ones used
+        by default. For example, `type=float` does not support base
+        prefixes like `0x`. If `precision` is used with `type`, rounding
+        preserves the type.
+
+        ```robotframework
+        *** Test Cases ***
+        Convert to number with type
+            ${num} =    Convert To Number    0.1       type=Decimal          # Decimal('0.1')
+            ${num} =    Convert To Number    42.512    1    type=Decimal     # Decimal('42.5')
+            ${num} =    Convert To Number    42        type=int | Decimal    # 42
+        ```
 
         If you need an integer number, use [Convert To Integer] instead.
+
+        The `type` argument is new in Robot Framework 7.6.
+
+        [1]: https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#supported-conversions
         """
         self._log_types(item)
-        return self._convert_to_number(item, precision)
+        if not type:
+            return self._convert_to_number(item, precision)
+        return self._convert_to_number_with_type(item, precision, type)
 
     def convert_to_string(self, item: object) -> str:
         """Converts the given item to a Unicode string.
