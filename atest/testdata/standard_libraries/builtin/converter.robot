@@ -115,6 +115,42 @@ Convert To Number With Precision
     9.1      -1          10
     1         invalid    This fails!
 
+Convert To Number With Type
+    [Template]    Test Convert To Number With Type
+    0.1        Decimal                 Decimal('0.1')
+    1_000.5    decimal                 Decimal('1000.5')
+    ${1.5}     Decimal                 Decimal('1.5')
+    ${42}      Decimal                 Decimal('42')
+    42         int                     42
+    0x10       int                     16
+    1E6        float                   1000000.0
+    42         int | Decimal           42
+    4.2        int | Decimal           Decimal('4.2')
+    1.5        ${{decimal.Decimal}}    Decimal('1.5')
+    1.5        ${None}                 1.5
+    1.5        ${EMPTY}                1.5
+
+Convert To Number With Type And Precision
+    [Template]    Test Convert To Number With Type And Precision
+    42.512    1     Decimal    Decimal('42.5')
+    42.512    0     Decimal    Decimal('43')
+    42.512    -1    Decimal    Decimal('4E+1')
+    1.25      1     Decimal    Decimal('1.2')
+    1.25      1     float      1.2
+    42        -1    int        40
+
+Convert To Number With Type When Conversion Fails
+    [Documentation]    FAIL ValueError: Value 'invalid' cannot be converted to decimal.
+    Convert To Number    invalid    type=Decimal
+
+Convert To Number With Non-Number Type
+    [Documentation]    FAIL TypeError: Converting to type 'str' did not return a number but string.
+    Convert To Number    42    type=str
+
+Convert To Number With Unrecognized Type
+    [Documentation]    FAIL TypeError: Unrecognized type 'bad'.
+    Convert To Number    42    type=bad
+
 Numeric conversions with long types
     [Template]    Numeric conversions with long types
     # 0x8000000000000000 == sys.maxint+1 on 64bit machines
@@ -205,6 +241,16 @@ Test Convert To Number With Precision
     [Arguments]    ${item}    ${precision}    ${exp}
     ${act} =    Convert To Number    ${item}    ${precision}
     Should Be True    round(${act}, 6) == ${exp}
+
+Test Convert To Number With Type
+    [Arguments]    ${item}    ${type}    ${exp}
+    ${act} =    Convert To Number    ${item}    type=${type}
+    Should Be Equal    ${{repr($act)}}    ${exp}
+
+Test Convert To Number With Type And Precision
+    [Arguments]    ${item}    ${precision}    ${type}    ${exp}
+    ${act} =    Convert To Number    ${item}    ${precision}    ${type}
+    Should Be Equal    ${{repr($act)}}    ${exp}
 
 Numeric conversions with long types
     [Arguments]    ${keyword}    ${input}    ${expected}
