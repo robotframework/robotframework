@@ -146,7 +146,7 @@ from .robottypes import (
 )
 from .secret import Secret as Secret
 from .setter import setter as setter, SetterAwareType as SetterAwareType
-from .sortable import Sortable as Sortable
+from .sortable import safe_sort_key as safe_sort_key, Sortable as Sortable
 from .text import (
     cut_assign_value as cut_assign_value,
     cut_long_message as cut_long_message,

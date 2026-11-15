@@ -220,6 +220,9 @@ Lists Should be equal with Ignore Case and Order
 Ignore Order Is Recursive
     Check Test Case    ${TEST NAME}
 
+Ignore Order With Unsortable Items
+    Check Test Case    ${TEST NAME}
+
 List Should Contain Sub List
     Check Test Case    ${TEST NAME}
 

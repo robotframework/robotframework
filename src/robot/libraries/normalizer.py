@@ -17,7 +17,7 @@ import re
 from collections.abc import Mapping, Sequence
 from typing import Any, Literal, Union
 
-from robot.utils import is_dict_like, is_list_like
+from robot.utils import is_dict_like, is_list_like, safe_sort_key
 
 IgnoreCase = Union[Literal["KEY", "KEYS", "VALUE", "VALUES"], bool]
 StripSpaces = Union[Literal["LEADING", "TRAILING"], bool]
@@ -94,7 +94,10 @@ class Normalizer:
         cls = type(value)
         value_list = [self.normalize(v) for v in value]
         if self.ignore_order:
-            value_list = sorted(value_list)
+            try:
+                value_list = sorted(value_list)
+            except TypeError:
+                value_list = sorted(value_list, key=safe_sort_key)
         return self._try_to_preserve_type(value_list, cls)
 
     def _try_to_preserve_type(self, value: Any, cls: type) -> Any:
