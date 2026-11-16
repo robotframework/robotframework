@@ -246,6 +246,7 @@ class GlobalVariables(Variables):
             ("${LOG_FILE}", str(settings.log or "NONE")),
             ("${DEBUG_FILE}", str(settings.debug_file or "NONE")),
             ("${LOG_LEVEL}", settings.log_level),
+            ("${EXECUTION_ID}", settings.execution_id),
             ("${PREV_TEST_NAME}", ""),
             ("${PREV_TEST_STATUS}", ""),
             ("${PREV_TEST_MESSAGE}", ""),

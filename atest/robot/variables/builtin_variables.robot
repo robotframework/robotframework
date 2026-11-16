@@ -53,3 +53,6 @@ $CURDIR
 
 \${LOG LEVEL}
     Check Test Case    ${TESTNAME}
+
+\${EXECUTION ID}
+    Check Test Case    ${TESTNAME}
