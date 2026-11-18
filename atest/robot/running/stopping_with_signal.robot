@@ -26,6 +26,10 @@ One Signal Should Stop Test Execution Gracefully When Run Keyword Is Used
     Start And Send Signal    run_keyword.robot    One SIGINT
     Check Test Cases Have Failed Correctly
 
+One Signal Should Stop Test Execution Gracefully When WUKS Is Used
+    Start And Send Signal    wuks.robot    One SIGINT
+    Check Test Cases Have Failed Correctly
+
 One Signal Should Stop Test Execution Gracefully When Test Timeout Is Used
     Start And Send Signal    test_timeout.robot    One SIGINT
     Check Test Cases Have Failed Correctly
@@ -132,7 +136,8 @@ Start Run
 
 Check Test Cases Have Failed Correctly
     Process Output    ${OUTFILE}
-    Check Test Tags    Test
+    ${tc} =    Check Test Tags    Test
+    Should Be True    ${tc.elapsed_time.total_seconds()} < 1
     Check Test Tags    Test2    robot:exit
 
 Check Tests Have Been Forced To Shutdown

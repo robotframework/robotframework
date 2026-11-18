@@ -25,7 +25,7 @@ class _StopSignalMonitor:
 
     def __init__(self):
         self._signal_count = 0
-        self._running_keyword = False
+        self._running_keyword = 0
         self._orig_sigint = None
         self._orig_sigterm = None
 
@@ -80,12 +80,12 @@ class _StopSignalMonitor:
             )
 
     def start_running_keyword(self, in_teardown):
-        self._running_keyword = True
+        self._running_keyword += 1
         if self._signal_count and not in_teardown:
             self._stop_execution_gracefully()
 
     def stop_running_keyword(self):
-        self._running_keyword = False
+        self._running_keyword -= 1
 
 
 STOP_SIGNAL_MONITOR = _StopSignalMonitor()
