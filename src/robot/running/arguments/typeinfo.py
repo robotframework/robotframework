@@ -65,6 +65,7 @@ from robot.utils import (
     NOT_SET, plural_or_not as s, Secret, setter, SetterAwareType, type_name, type_repr,
     typeddict_types
 )
+from robot.utils.types import KeywordArgument, KeywordName
 from robot.variables import search_variable, VariableMatch
 
 from ..context import EXECUTION_CONTEXTS
@@ -106,6 +107,8 @@ TYPE_NAMES = {
     "union": Union,
     "literal": Literal,
     "secret": Secret,
+    "keywordname": KeywordName,
+    "keywordargument": KeywordArgument,
 }
 LITERAL_TYPES = (int, str, bytes, bool, Enum, type(None))
 

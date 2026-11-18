@@ -236,6 +236,14 @@ User keyword: Default value
     Default as string
     Default as string    ${42}
 
+User keyword: KeywordName and KeywordArgument
+    VAR    ${name: KeywordName}    Should Be Equal
+    VAR    @{args: KeywordArgument}    ${1}    ${1}
+    Should be equal    ${name}    Should Be Equal    type=str
+    Should be equal    ${args}    [1, 1]    type=list[int]
+    Run keyword with types    ${name}    @{args}
+    Run keyword with types    Should Be Equal    ${1}    ${1}
+
 User keyword: Invalid default value 1
     [Documentation]    FAIL
     ...    ValueError: Default value for argument 'arg' got value 'invalid' that cannot be converted to integer.
@@ -473,6 +481,12 @@ Default as string
     [Arguments]    ${arg: str}=${42}
     Should be equal    ${arg}    42    type=str
     RETURN    ${arg}
+
+Run keyword with types
+    [Arguments]    ${name: KeywordName}    @{args: KeywordArgument}
+    Should be equal    ${name}    Should Be Equal    type=str
+    Should be equal    ${args}    [1, 1]    type=list[int]
+    Run keyword    ${name}    @{args}
 
 Invalid default
     [Arguments]    ${arg: int}=invalid

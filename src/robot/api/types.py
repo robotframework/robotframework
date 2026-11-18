@@ -26,11 +26,6 @@ New in Robot Framework 7.4.
 """
 
 from robot.utils.secret import Secret as Secret
-
-
-class KeywordName(str):
-    """Name of a keyword executed by another keyword."""
-
-
-class KeywordArgument:
-    """Argument of a keyword executed by another keyword."""
+from robot.utils.types import (
+    KeywordArgument as KeywordArgument, KeywordName as KeywordName
+)
