@@ -35,6 +35,21 @@ Convert To Number
 Convert To Number With Precision
     Check Test Case    ${TEST NAME}
 
+Convert To Number With Type
+    Check Test Case    ${TEST NAME}
+
+Convert To Number With Type And Precision
+    Check Test Case    ${TEST NAME}
+
+Convert To Number With Type When Conversion Fails
+    Check Test Case    ${TEST NAME}
+
+Convert To Number With Non-Number Type
+    Check Test Case    ${TEST NAME}
+
+Convert To Number With Unrecognized Type
+    Check Test Case    ${TEST NAME}
+
 Numeric conversions with long types
     Check Test Case    ${TEST NAME}
 
