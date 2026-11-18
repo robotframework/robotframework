@@ -10,6 +10,7 @@ from resources.runningtestcase import RunningTestCase
 
 from robot.model import BodyItem
 from robot.running import TestSuite, TestSuiteBuilder
+from robot.utils import text
 from robot.utils.asserts import assert_equal
 
 CURDIR = dirname(abspath(__file__))
@@ -379,6 +380,37 @@ class TestListeners(RunningTestCase):
         self._clear_outputs()
         suite.run(output=None, log=None, report=None)
         self._assert_outputs([("[from listener 1]", 0), ("[listener close]", 0)])
+
+
+class TestMaxErrorLines(unittest.TestCase):
+    """https://github.com/robotframework/robotframework/issues/5113"""
+
+    error = "\n".join(f"error line {i}" for i in range(60))
+
+    def _run(self, **options):
+        suite = TestSuite(name="Suite")
+        suite.tests.create(name="Test").body.create_keyword("Fail", args=[self.error])
+        return run(suite, **options).tests[0].message
+
+    def test_default_limit_is_used_by_default(self):
+        assert_equal(len(self._run().splitlines()), text.MAX_ERROR_LINES + 1)
+
+    def test_configured_limit_is_used(self):
+        assert_equal(len(self._run(maxerrorlines=10).splitlines()), 11)
+        assert_equal(len(self._run(maxerrorlines="10").splitlines()), 11)
+        assert_equal(self._run(maxerrorlines=999), self.error)
+        assert_equal(self._run(maxerrorlines="999"), self.error)
+
+    def test_limit_can_be_disabled(self):
+        assert_equal(self._run(maxerrorlines=None), self.error)
+        assert_equal(self._run(maxerrorlines="NONE"), self.error)
+
+    def test_global_value_is_restored(self):
+        original = text.MAX_ERROR_LINES
+        self._run(maxerrorlines=10)
+        assert_equal(text.MAX_ERROR_LINES, original)
+        self._run(maxerrorlines=None)
+        assert_equal(text.MAX_ERROR_LINES, original)
 
 
 if __name__ == "__main__":
