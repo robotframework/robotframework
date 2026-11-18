@@ -138,6 +138,8 @@ class Normalizer:
     def __bool__(self) -> bool:
         return bool(
             self.ignore_case
+            or self.ignore_key_case
+            or self.ignore_value_case
             or self.strip_leading_spaces
             or self.strip_trailing_spaces
             or self.collapse_spaces

@@ -126,6 +126,19 @@ NO VALUES is deprecated
     ${DX}    ${{{'a': 'x', 'b': 'y', 'C': 3, 4: 'e', 'ss': 'strasse', 'list': ['A', 'B'], ('a', 'b'): 'tuple', 'dict': {'A': 'X', 'B': 'Y'}}}}
     ...                ignore_case=yes!
 
+`ignore_case=KEYS` is recursive
+    Dictionaries Should Be Equal    ${{{'A': {'B': 'Value'}}}}
+    ...                             ${{{'a': {'b': 'Value'}}}}    ignore_case=KEYS
+    Dictionaries Should Be Equal    ${{{'A': [{'B': 'Value'}]}}}
+    ...                             ${{{'a': [{'b': 'Value'}]}}}    ignore_case=KEYS
+
+`ignore_case=KEYS` does not ignore nested values
+    [Documentation]    FAIL
+    ...    Following keys have different values:
+    ...    Key a: {'b': 'Value'} != {'b': 'value'}
+    Dictionaries Should Be Equal    ${{{'A': {'B': 'Value'}}}}
+    ...                             ${{{'a': {'b': 'value'}}}}    ignore_case=KEYS
+
 `ignore_case` with ´ignore_keys`
     [Documentation]    FAIL
     ...    Following keys missing from first dictionary: 'C'
