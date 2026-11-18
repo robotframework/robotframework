@@ -139,6 +139,21 @@ NO VALUES is deprecated
     Dictionaries Should Be Equal    ${{{'A': {'B': 'Value'}}}}
     ...                             ${{{'a': {'b': 'value'}}}}    ignore_case=KEYS
 
+`ignore_case` preserves hashable keys
+    Dictionaries Should Be Equal    ${{{collections.namedtuple('Pair', 'x y')(1, 2): 'Value'}}}
+    ...                             ${{{collections.namedtuple('Pair', 'x y')(1, 2): 'value'}}}    ignore_case=VALUES
+    Dictionaries Should Be Equal    ${{{range(2): 'Value'}}}
+    ...                             ${{{range(2): 'value'}}}    ignore_case=VALUES
+    Dictionaries Should Be Equal    ${{{collections.namedtuple('Pair', 'x y')('A', 'B'): 'Value'}}}
+    ...                             ${{{collections.namedtuple('Pair', 'x y')('a', 'b'): 'value'}}}    ignore_case=True
+
+`ignore_case=KEYS` preserves value types
+    [Documentation]    FAIL
+    ...    Following keys have different values:
+    ...    Key item: range(0, 2) != [0, 1]
+    Dictionaries Should Be Equal    ${{{'item': range(2)}}}
+    ...                             ${{{'item': [0, 1]}}}    ignore_case=KEYS
+
 `ignore_case` with ´ignore_keys`
     [Documentation]    FAIL
     ...    Following keys missing from first dictionary: 'C'

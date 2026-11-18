@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 import re
-from collections.abc import Mapping, Sequence
+from collections.abc import Hashable, Mapping, Sequence
 from typing import Any, Literal, Union
 
 from robot.utils import is_dict_like, is_list_like
@@ -95,12 +95,29 @@ class Normalizer:
         value_list = [self.normalize(v) for v in value]
         if self.ignore_order:
             value_list = sorted(value_list)
+        if self._is_unchanged(value_list, value):
+            return value
         return self._try_to_preserve_type(value_list, cls)
+
+    def _is_unchanged(self, normalized: list, original: Any) -> bool:
+        # Returning the original value keeps hashable containers such as
+        # namedtuples and ranges usable as dictionary keys. Iterators are
+        # already consumed and cannot be returned.
+        return (
+            isinstance(original, Hashable)
+            and isinstance(original, Sequence)
+            and all(
+                n is o or (type(n) is type(o) and n == o)
+                for n, o in zip(normalized, original)
+            )
+        )
 
     def _try_to_preserve_type(self, value: Any, cls: type) -> Any:
         # Try to preserve original type. Most importantly, preserve tuples to
         # allow using them as dictionary keys.
         try:
+            if issubclass(cls, tuple) and hasattr(cls, "_make"):
+                return cls._make(value)  # namedtuple
             return cls(value)
         except TypeError:
             return value

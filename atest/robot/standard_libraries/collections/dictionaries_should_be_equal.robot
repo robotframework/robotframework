@@ -70,6 +70,12 @@ NO VALUES is deprecated
 `ignore_case=KEYS` does not ignore nested values
     Check Test Case    ${TESTNAME}
 
+`ignore_case` preserves hashable keys
+    Check Test Case    ${TESTNAME}
+
+`ignore_case=KEYS` preserves value types
+    Check Test Case    ${TESTNAME}
+
 `ignore_case` with ´ignore_keys`
     Check Test Case    ${TESTNAME}
 
