@@ -80,6 +80,27 @@ JSON/HTML output
     <p>${HTML DOC}</p>    HTML    --docfor RoBoT -f JSON -s HTML        DocFormatHtml.py
     <p>${HTML DOC}</p>    HTML    -F ROBOT --format JSON -s html        DocFormat.py
 
+XML/AUTO output
+    [Template]    Test Format in XML
+    ${RAW DOC}    ROBOT       -s AUTO                      DocFormat.py
+    ${RAW DOC}    HTML        --specdocformat auto         DocFormatHtml.py
+    ${RAW DOC}    MARKDOWN    -F MARKDOWN -s AUTO          DocFormat.py
+
+LIBSPEC/AUTO output
+    [Template]    Test Format in XML
+    <p>${HTML DOC}</p>    HTML        --format LIBSPEC -s AUTO          DocFormat.py
+    ${RAW DOC}            HTML        --format LIBSPEC                  DocFormatHtml.py
+    ${RAW DOC}            MARKDOWN    --format LIBSPEC -F MARKDOWN      DocFormat.py
+    ${RAW DOC}            MARKDOWN    -f LIBSPEC -F markdown -s auto    DocFormat.py
+
+JSON/AUTO output
+    [Template]    Test Format in JSON
+    [Tags]    require-jsonschema
+    <p>${HTML DOC}</p>    HTML        -s AUTO                          DocFormat.py
+    ${RAW DOC}            HTML        --specdocformat auto             DocFormatHtml.py
+    ${RAW DOC}            MARKDOWN    -F MARKDOWN                      DocFormat.py
+    ${RAW DOC}            MARKDOWN    --docformat markdown -s AUTO     DocFormat.py
+
 XML/RAW input
     [Template]    NONE
     Test Format In XML     ${RAW DOC}     cli=-F ROBOT    format=ROBOT

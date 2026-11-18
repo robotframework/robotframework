@@ -22,7 +22,7 @@ XML as input
     Validate XML Spec With Raw Docs
 
 Python to JSON with HTML docs
-    Run Libdoc And Parse Model From JSON    ${LIBRARY}
+    Run Libdoc And Parse Model From JSON    --spec-doc-format HTML ${LIBRARY}
     Validate JSON Spec With HTML Docs
 
 Python to JSON with raw docs
@@ -30,9 +30,13 @@ Python to JSON with raw docs
     Validate JSON Spec With Raw Docs
     [Teardown]    Copy File    ${OUTJSON}    ${INJSON}
 
+Python to JSON preserves Markdown docs by default
+    Run Libdoc And Parse Model From JSON    ${LIBRARY}
+    Validate JSON Spec With Raw Docs
+
 JSON as input
     [Setup]    File Should Exist    ${INJSON}
-    Run Libdoc And Parse Model From JSON    ${INJSON}
+    Run Libdoc And Parse Model From JSON    --spec-doc-format HTML ${INJSON}
     Validate JSON Spec With HTML Docs
 
 Dynamic library as input

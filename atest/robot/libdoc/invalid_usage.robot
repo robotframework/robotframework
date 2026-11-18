@@ -24,8 +24,8 @@ Invalid format
     BuiltIn BuiltIn                                   Format must be 'HTML', 'XML', 'JSON', 'LIBSPEC' or 'MARKDOWN', got ''.
 
 Invalid specdocformat
-    -s XXX BuiltIn ${OUT HTML}                        Spec doc format must be 'RAW' or 'HTML', got 'XXX'.
-    --specdocformat MARKDOWN BuiltIn ${OUT HTML}      Spec doc format must be 'RAW' or 'HTML', got 'MARKDOWN'.
+    -s XXX BuiltIn ${OUT HTML}                        Spec doc format must be 'AUTO', 'RAW' or 'HTML', got 'XXX'.
+    --specdocformat MARKDOWN BuiltIn ${OUT HTML}      Spec doc format must be 'AUTO', 'RAW' or 'HTML', got 'MARKDOWN'.
 
 Invalid specdocformat for HTML output format
     --specdocformat HTML BuiltIn ${OUT HTML}          The --specdocformat option is only applicable with XML, JSON and LIBSPEC outputs.
