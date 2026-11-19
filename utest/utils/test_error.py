@@ -84,6 +84,15 @@ class TestGetErrorDetails(unittest.TestCase):
         except ValueError as err:
             assert_equal(ErrorDetails(err).traceback, format_traceback())
 
+    def test_cause_cycle(self):
+        try:
+            try:
+                raise ValueError("boom")
+            except ValueError as err:
+                raise err from err
+        except Exception as err:
+            assert_equal(ErrorDetails(err).traceback, format_traceback())
+
     def test_cause_without_traceback(self):
         try:
             raise ValueError("err") from TypeError("cause")

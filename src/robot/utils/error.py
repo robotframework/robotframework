@@ -90,14 +90,18 @@ class ErrorDetails:
         return "".join(lines).rstrip()
 
     def _remove_robot_traces(self, error):
-        tb = error.__traceback__
-        while tb and self._is_robot_traceback(tb):
-            tb = tb.tb_next
-        error.__traceback__ = tb
-        if error.__context__:
-            self._remove_robot_traces(error.__context__)
-        if error.__cause__:
-            self._remove_robot_traces(error.__cause__)
+        seen = set()
+        pending = [error]
+        while pending:
+            current = pending.pop()
+            if current is None or id(current) in seen:
+                continue
+            seen.add(id(current))
+            tb = current.__traceback__
+            while tb and self._is_robot_traceback(tb):
+                tb = tb.tb_next
+            current.__traceback__ = tb
+            pending += [current.__context__, current.__cause__]
 
     def _is_robot_traceback(self, tb):
         module = tb.tb_frame.f_globals.get("__name__")
