@@ -95,21 +95,19 @@ class Normalizer:
         value_list = [self.normalize(v) for v in value]
         if self.ignore_order:
             value_list = sorted(value_list)
-        if self._is_unchanged(value_list, value):
+        elif self._is_unchanged(value_list, value):
             return value
         return self._try_to_preserve_type(value_list, cls)
 
     def _is_unchanged(self, normalized: list, original: Any) -> bool:
         # Returning the original value keeps hashable containers such as
         # namedtuples and ranges usable as dictionary keys. Iterators are
-        # already consumed and cannot be returned.
+        # already consumed and cannot be returned. Items are compared by
+        # identity because equality can hide normalization changes.
         return (
             isinstance(original, Hashable)
             and isinstance(original, Sequence)
-            and all(
-                n is o or (type(n) is type(o) and n == o)
-                for n, o in zip(normalized, original)
-            )
+            and all(n is o for n, o in zip(normalized, original))
         )
 
     def _try_to_preserve_type(self, value: Any, cls: type) -> Any:

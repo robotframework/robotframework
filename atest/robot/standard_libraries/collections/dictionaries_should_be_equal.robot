@@ -76,6 +76,9 @@ NO VALUES is deprecated
 `ignore_case=KEYS` preserves value types
     Check Test Case    ${TESTNAME}
 
+`ignore_case` normalizes mappings inside tuples
+    Check Test Case    ${TESTNAME}
+
 `ignore_case` with ´ignore_keys`
     Check Test Case    ${TESTNAME}
 
@@ -83,6 +86,9 @@ NO VALUES is deprecated
     Check Test Case    ${TESTNAME}
 
 `ignore_value_order` set to True
+    Check Test Case    ${TESTNAME}
+
+`ignore_value_order` with ranges
     Check Test Case    ${TESTNAME}
 
 `ignore_value_order` set to False and dictionaries have lists in different order
