@@ -34,7 +34,7 @@ When Time Is Seconds After Epoch
 When Time Is Seconds After Epoch As String
     ${secs after epoch} =    Get Timestamp From Date    2007    4    27    9    14    27
     ${secs after epoch} =    Convert To String    ${secs after epoch}
-    ${converted date string} =    Get Time    time_=${secs after epoch}
+    ${converted date string} =    Get Time    time=${secs after epoch}
     Should Be Equal    ${converted date string}    2007-04-27 09:14:27
 
 When Time Is Timestamp
@@ -76,10 +76,10 @@ When Time Is UTC +- Something
 DST is handled correctly when adding or substracting time
     FOR    ${i}    IN    91    183    274
         WHILE    True
-            ${now}=      Get Time   time_=now
-            ${past}=     Get Time   time_=now - ${i}day
-            ${future}=   Get Time   time_=now + ${i}day
-            ${now2}=     Get Time   time_=now
+            ${now}=      Get Time   time=now
+            ${past}=     Get Time   time=now - ${i}day
+            ${future}=   Get Time   time=now + ${i}day
+            ${now2}=     Get Time   time=now
             # Make sure seconds did not change between Get Time calls.
             IF    '${now}' == '${now2}'    BREAK
         END
