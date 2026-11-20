@@ -90,14 +90,24 @@ class ErrorDetails:
         return "".join(lines).rstrip()
 
     def _remove_robot_traces(self, error):
-        tb = error.__traceback__
-        while tb and self._is_robot_traceback(tb):
-            tb = tb.tb_next
-        error.__traceback__ = tb
-        if error.__context__:
-            self._remove_robot_traces(error.__context__)
-        if error.__cause__:
-            self._remove_robot_traces(error.__cause__)
+        # Exceptions can form a cycle via __cause__ and __context__ and their
+        # chains can also be arbitrarily long, so traverse them iteratively and
+        # only visit each error once. See issue #5842.
+        seen = []
+        errors = [error]
+        while errors:
+            error = errors.pop()
+            if any(error is seen_error for seen_error in seen):
+                continue
+            seen.append(error)
+            tb = error.__traceback__
+            while tb and self._is_robot_traceback(tb):
+                tb = tb.tb_next
+            error.__traceback__ = tb
+            if error.__context__:
+                errors.append(error.__context__)
+            if error.__cause__:
+                errors.append(error.__cause__)
 
     def _is_robot_traceback(self, tb):
         module = tb.tb_frame.f_globals.get("__name__")
