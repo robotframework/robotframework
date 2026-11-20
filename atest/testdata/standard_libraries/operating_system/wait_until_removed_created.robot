@@ -77,6 +77,12 @@ None disables remove timeout
     Create File              ${FILE}
     Wait Until Removed       ${FILE}    timeout=None
 
+Zero remove timeout
+    [Documentation]    FAIL '${FILE}' was not removed in 0 seconds.
+    [Timeout]          1 s
+    Create File              ${FILE}
+    Wait Until Removed       ${FILE}    0
+
 Invalid remove timeout
     [Documentation]    FAIL ValueError: Argument 'timeout' got value 'invalid' that cannot be converted to timedelta or None.
     Wait Until Removed       non-existing    invalid
@@ -131,6 +137,11 @@ None disables create timeout
     ...                FAIL    Test timeout 100 milliseconds exceeded.
     [Timeout]          0.1 s
     Wait Until Created       ${FILE}    timeout=None
+
+Zero create timeout
+    [Documentation]    FAIL '${FILE}' was not created in 0 seconds.
+    [Timeout]          1 s
+    Wait Until Created       ${FILE}    0
 
 Invalid create timeout
     [Documentation]    FAIL ValueError: Argument 'timeout' got value 'invalid' that cannot be converted to timedelta or None.

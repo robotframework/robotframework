@@ -30,6 +30,9 @@ Wait removal when using `pathlib.Path`
 None disables remove timeout
     Check Test Case    ${TESTNAME}
 
+Zero remove timeout
+    Check Test Case    ${TESTNAME}
+
 Invalid remove timeout
     Check Test Case    ${TESTNAME}
 
@@ -58,6 +61,9 @@ Wait creation when using `pathlib.Path`
     Check Test Case    ${TESTNAME}
 
 None disables create timeout
+    Check Test Case    ${TESTNAME}
+
+Zero create timeout
     Check Test Case    ${TESTNAME}
 
 Invalid create timeout

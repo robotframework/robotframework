@@ -566,10 +566,11 @@ class OperatingSystem:
             Wait Until Removed    ${path}    timeout=None
         ```
 
-        Disabling timeout using `None` is new in Robot Framework 7.4.
+        Disabling timeout using `None` is new in Robot Framework 7.4. In Robot
+        Framework 7.4 and 7.5 using `0` incorrectly disabled the timeout as well.
         """
         path = self._absnorm(path)
-        timeout = timeout.total_seconds() if timeout else -1
+        timeout = timeout.total_seconds() if timeout is not None else -1
         maxtime = time.time() + timeout
         while self._glob(path):
             if timeout >= 0 and time.time() > maxtime:
@@ -607,10 +608,11 @@ class OperatingSystem:
             Wait Until Created    ${path}    timeout=None
         ```
 
-        Disabling timeout using `None` is new in Robot Framework 7.4.
+        Disabling timeout using `None` is new in Robot Framework 7.4. In Robot
+        Framework 7.4 and 7.5 using `0` incorrectly disabled the timeout as well.
         """
         path = self._absnorm(path)
-        timeout = timeout.total_seconds() if timeout else -1
+        timeout = timeout.total_seconds() if timeout is not None else -1
         maxtime = time.time() + timeout
         while not self._glob(path):
             if timeout >= 0 and time.time() > maxtime:
