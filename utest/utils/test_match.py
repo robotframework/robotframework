@@ -33,6 +33,16 @@ class TestMatcher(unittest.TestCase):
         assert matcher.match("--Foo")
         assert not matcher.match("foo")
 
+    def test_caseless_regexp_escapes_keep_their_meaning(self):
+        assert Matcher(r"\D+", regexp=True).match("abc")
+        assert not Matcher(r"\D+", regexp=True).match("123")
+        assert Matcher(r"\S+", regexp=True, spaceless=False).match("abc")
+        assert not Matcher(r"\S+", regexp=True, spaceless=False).match(" ")
+        assert not Matcher(r"\W", regexp=True).match("x")
+        assert Matcher(r"(?P<X>a)(?P=X)", regexp=True).match("AA")
+        assert Matcher("[A-Z]+", regexp=True).match("abc")
+        assert Matcher("straße", regexp=True).match("STRASSE")
+
     def test_matches_with_string(self):
         for pattern in [
             "abc",
