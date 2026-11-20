@@ -48,7 +48,19 @@ class Matcher:
             self._normalize = lambda s: normalize(s, ignore, caseless, spaceless)
         else:
             self._normalize = lambda s: s
-        self._regexp = self._compile(self._normalize(pattern), regexp=regexp)
+        if regexp and caseless:
+            pattern = normalize(pattern, caseless=False, spaceless=spaceless)
+            pattern = self._casefold_regexp(pattern)
+            ignore = [i.casefold() for i in ignore]
+            pattern = normalize(pattern, ignore, caseless=False, spaceless=False)
+        else:
+            pattern = self._normalize(pattern)
+        self._regexp = self._compile(pattern, regexp=regexp)
+
+    def _casefold_regexp(self, pattern: str) -> str:
+        # Escapes like `\D` and the `(?P` group syntax must keep their case.
+        parts = re.split(r"(\\.|\(\?P)", pattern, flags=re.DOTALL)
+        return "".join(p if i % 2 else p.casefold() for i, p in enumerate(parts))
 
     def _compile(self, pattern: str, regexp: bool = False) -> "re.Pattern[str]":
         if not regexp:
