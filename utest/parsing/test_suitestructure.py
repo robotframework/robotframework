@@ -1,7 +1,8 @@
+import tempfile
 import unittest
 from pathlib import Path
 
-from robot.parsing.suitestructure import IncludedFiles
+from robot.parsing.suitestructure import IncludedFiles, SuiteStructureBuilder
 from robot.utils.asserts import assert_equal
 
 
@@ -56,6 +57,62 @@ class TestIncludedFiles(unittest.TestCase):
         assert_equal(IncludedFiles(patterns).match(path), match)
         if pattern:
             assert_equal(IncludedFiles(["no", "match", pattern]).match(path), match)
+
+
+class TestSuiteStructureBuilder(unittest.TestCase):
+
+    def test_is_init_file(self):
+        builder = SuiteStructureBuilder()
+        with tempfile.TemporaryDirectory() as td:
+            temp_dir = Path(td)
+            for name in (
+                "__init__.robot",
+                "__init__.robot.md",
+                "__init__.robot.rst",
+                "__init__.rbt",
+                "__INIT__.ROBOT",
+                "__INIT__.ROBOT.MD",
+                "__INIT__.ROBOT.RST",
+            ):
+                file_path = temp_dir / name
+                file_path.touch()
+                assert_equal(
+                    builder._is_init_file(file_path),
+                    True,
+                    f"Expected {name} to be init file",
+                )
+
+            for name in (
+                "__init__.md",
+                "__init__.rst",
+                "__init__.txt",
+                "test.robot",
+                "__init__.foo.robot",
+                "not__init__.robot",
+            ):
+                file_path = temp_dir / name
+                file_path.touch()
+                assert_equal(
+                    builder._is_init_file(file_path),
+                    False,
+                    f"Expected {name} not to be init file",
+                )
+
+    def test_is_init_file_with_custom_extensions(self):
+        builder = SuiteStructureBuilder(extensions=[".custom.md", ".txt"])
+        with tempfile.TemporaryDirectory() as td:
+            temp_dir = Path(td)
+            init_custom = temp_dir / "__init__.custom.md"
+            init_custom.touch()
+            assert_equal(builder._is_init_file(init_custom), True)
+
+            init_txt = temp_dir / "__init__.txt"
+            init_txt.touch()
+            assert_equal(builder._is_init_file(init_txt), True)
+
+            init_robot = temp_dir / "__init__.robot"
+            init_robot.touch()
+            assert_equal(builder._is_init_file(init_robot), False)
 
 
 if __name__ == "__main__":

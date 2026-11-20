@@ -158,8 +158,8 @@ class SuiteStructureBuilder:
 
     def _is_init_file(self, path: Path) -> bool:
         return (
-            path.stem.lower() == "__init__"
-            and self.extensions.match(path)
+            self.extensions.match(path)
+            and path.name.lower() == f"__init__.{self.extensions.get_extension(path)}"
             and path.is_file()
         )
 
