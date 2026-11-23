@@ -70,6 +70,15 @@ NO VALUES is deprecated
 `ignore_case=KEYS` does not ignore nested values
     Check Test Case    ${TESTNAME}
 
+`ignore_case` preserves hashable keys
+    Check Test Case    ${TESTNAME}
+
+`ignore_case=KEYS` preserves value types
+    Check Test Case    ${TESTNAME}
+
+`ignore_case` normalizes mappings inside tuples
+    Check Test Case    ${TESTNAME}
+
 `ignore_case` with ´ignore_keys`
     Check Test Case    ${TESTNAME}
 
@@ -77,6 +86,9 @@ NO VALUES is deprecated
     Check Test Case    ${TESTNAME}
 
 `ignore_value_order` set to True
+    Check Test Case    ${TESTNAME}
+
+`ignore_value_order` does not sort ranges
     Check Test Case    ${TESTNAME}
 
 `ignore_value_order` set to False and dictionaries have lists in different order

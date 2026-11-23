@@ -64,7 +64,9 @@ class Normalizer:
             if mapping_to_list:
                 return self.normalize_list(list(value))
             return self.normalize_dict(value)
-        if is_list_like(value):
+        # Ranges only contain integers that cannot be normalized. Returning
+        # them as-is keeps them usable as dictionary keys.
+        if is_list_like(value) and not isinstance(value, range):
             return self.normalize_list(value)
         return value
 
@@ -101,6 +103,8 @@ class Normalizer:
         # Try to preserve original type. Most importantly, preserve tuples to
         # allow using them as dictionary keys.
         try:
+            if issubclass(cls, tuple) and hasattr(cls, "_make"):
+                return cls._make(value)  # namedtuple
             return cls(value)
         except TypeError:
             return value

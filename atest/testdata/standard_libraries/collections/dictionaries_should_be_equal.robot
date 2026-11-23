@@ -139,6 +139,28 @@ NO VALUES is deprecated
     Dictionaries Should Be Equal    ${{{'A': {'B': 'Value'}}}}
     ...                             ${{{'a': {'b': 'value'}}}}    ignore_case=KEYS
 
+`ignore_case` preserves hashable keys
+    Dictionaries Should Be Equal    ${{{collections.namedtuple('Pair', 'x y')(1, 2): 'Value'}}}
+    ...                             ${{{collections.namedtuple('Pair', 'x y')(1, 2): 'value'}}}    ignore_case=VALUES
+    Dictionaries Should Be Equal    ${{{range(2): 'Value'}}}
+    ...                             ${{{range(2): 'value'}}}    ignore_case=VALUES
+    Dictionaries Should Be Equal    ${{{range(1000, 1002): 'Value'}}}
+    ...                             ${{{range(1000, 1002): 'value'}}}    ignore_case=VALUES
+    Dictionaries Should Be Equal    ${{{collections.namedtuple('Pair', 'x y')('A', 'B'): 'Value'}}}
+    ...                             ${{{collections.namedtuple('Pair', 'x y')('a', 'b'): 'value'}}}    ignore_case=True
+
+`ignore_case=KEYS` preserves value types
+    [Documentation]    FAIL
+    ...    Following keys have different values:
+    ...    Key a: range(0, 2) != [0, 1]
+    ...    Key b: range(1000, 1002) != [1000, 1001]
+    Dictionaries Should Be Equal    ${{{'a': range(2), 'b': range(1000, 1002)}}}
+    ...                             ${{{'a': [0, 1], 'b': [1000, 1001]}}}    ignore_case=KEYS
+
+`ignore_case` normalizes mappings inside tuples
+    Dictionaries Should Be Equal    ${{{'item': (collections.Counter({'A': 0}),)}}}
+    ...                             ${{{'item': ({'a': 0},)}}}    ignore_case=True
+
 `ignore_case` with ´ignore_keys`
     [Documentation]    FAIL
     ...    Following keys missing from first dictionary: 'C'
@@ -160,6 +182,15 @@ NO VALUES is deprecated
 
 `ignore_value_order` set to True
     Dictionaries Should Be Equal    ${D10A}    ${D10B}    ignore_value_order=True
+
+`ignore_value_order` does not sort ranges
+    [Documentation]    FAIL
+    ...    Following keys have different values:
+    ...    Key item: range(0, 2) != range(1, -1, -1)
+    Dictionaries Should Be Equal    ${{{'item': range(1000, 1002)}}}
+    ...                             ${{{'item': range(1000, 1002)}}}    ignore_value_order=True
+    Dictionaries Should Be Equal    ${{{'item': range(2)}}}
+    ...                             ${{{'item': range(1, -1, -1)}}}    ignore_value_order=True
 
 `ignore_value_order` set to False and dictionaries have lists in different order
     [Documentation]    FAIL
