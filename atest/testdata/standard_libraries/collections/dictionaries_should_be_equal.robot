@@ -144,15 +144,18 @@ NO VALUES is deprecated
     ...                             ${{{collections.namedtuple('Pair', 'x y')(1, 2): 'value'}}}    ignore_case=VALUES
     Dictionaries Should Be Equal    ${{{range(2): 'Value'}}}
     ...                             ${{{range(2): 'value'}}}    ignore_case=VALUES
+    Dictionaries Should Be Equal    ${{{range(1000, 1002): 'Value'}}}
+    ...                             ${{{range(1000, 1002): 'value'}}}    ignore_case=VALUES
     Dictionaries Should Be Equal    ${{{collections.namedtuple('Pair', 'x y')('A', 'B'): 'Value'}}}
     ...                             ${{{collections.namedtuple('Pair', 'x y')('a', 'b'): 'value'}}}    ignore_case=True
 
 `ignore_case=KEYS` preserves value types
     [Documentation]    FAIL
     ...    Following keys have different values:
-    ...    Key item: range(0, 2) != [0, 1]
-    Dictionaries Should Be Equal    ${{{'item': range(2)}}}
-    ...                             ${{{'item': [0, 1]}}}    ignore_case=KEYS
+    ...    Key a: range(0, 2) != [0, 1]
+    ...    Key b: range(1000, 1002) != [1000, 1001]
+    Dictionaries Should Be Equal    ${{{'a': range(2), 'b': range(1000, 1002)}}}
+    ...                             ${{{'a': [0, 1], 'b': [1000, 1001]}}}    ignore_case=KEYS
 
 `ignore_case` normalizes mappings inside tuples
     Dictionaries Should Be Equal    ${{{'item': (collections.Counter({'A': 0}),)}}}
@@ -180,7 +183,12 @@ NO VALUES is deprecated
 `ignore_value_order` set to True
     Dictionaries Should Be Equal    ${D10A}    ${D10B}    ignore_value_order=True
 
-`ignore_value_order` with ranges
+`ignore_value_order` does not sort ranges
+    [Documentation]    FAIL
+    ...    Following keys have different values:
+    ...    Key item: range(0, 2) != range(1, -1, -1)
+    Dictionaries Should Be Equal    ${{{'item': range(1000, 1002)}}}
+    ...                             ${{{'item': range(1000, 1002)}}}    ignore_value_order=True
     Dictionaries Should Be Equal    ${{{'item': range(2)}}}
     ...                             ${{{'item': range(1, -1, -1)}}}    ignore_value_order=True
 

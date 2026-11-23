@@ -88,7 +88,7 @@ NO VALUES is deprecated
 `ignore_value_order` set to True
     Check Test Case    ${TESTNAME}
 
-`ignore_value_order` with ranges
+`ignore_value_order` does not sort ranges
     Check Test Case    ${TESTNAME}
 
 `ignore_value_order` set to False and dictionaries have lists in different order
