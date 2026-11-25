@@ -23,7 +23,7 @@ If you have `pip <http://pip-installer.org>`_ installed, just run
 `pip install --pre --upgrade robotframework` to install or upgrade to the latest
 version or use `pip install robotframework==3.0a2` to install exactly
 this version.  For more details and other installation approaches, see
-`installation instructions <../../INSTALL.rst>`_.
+`installation instructions <../../INSTALL.md>`_.
 
 Separate Windows installers are not created and the plan is not to create them 
 even for final releases in the future. The standalone jar distribution can be 

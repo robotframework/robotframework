@@ -50,7 +50,7 @@ was released on Tuesday October 11, 2022.
 .. _robotframework-users: http://groups.google.com/group/robotframework-users
 .. _Robot Framework Slack: http://slack.robotframework.org/
 .. _Slack: http://slack.robotframework.org/
-.. _installation instructions: ../../INSTALL.rst
+.. _installation instructions: ../../INSTALL.md
 
 .. contents::
    :depth: 2

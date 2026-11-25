@@ -188,19 +188,10 @@ def _get_version():
     return namespace['get_version']()
 
 def _copy_installation_instructions():
-    source = os.path.join(CURDIR, '..', '..', 'INSTALL.rst')
-    target = os.path.join(CURDIR, 'src', 'GettingStarted', 'INSTALL.rst')
-    include = True
-    with open(source, encoding="utf-8") as source_file:
-        with open(target, 'w', encoding="utf-8") as target_file:
-            for line in source_file:
-                if 'START USER GUIDE IGNORE' in line:
-                    include = False
-                if include:
-                    target_file.write(line)
-                if 'END USER GUIDE IGNORE' in line:
-                    include = True
-    return target
+    # Installation instructions are maintained in INSTALL.md at the project
+    # root. The User Guide still uses reStructuredText, so it includes the
+    # tracked RST copy below until the guide is migrated to MyST.
+    return os.path.join(CURDIR, 'src', 'GettingStarted', 'INSTALL.rst')
 
 
 #

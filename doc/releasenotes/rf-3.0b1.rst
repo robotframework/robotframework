@@ -25,7 +25,7 @@ version or use `pip install robotframework==3.0b1` to install exactly
 this version. Alternatively you can download the source distribution from
 `PyPI <https://pypi.python.org/pypi/robotframework>`_ and install it manually.
 For more details and other installation approaches, see the `installation
-instructions <../../INSTALL.rst>`_.
+instructions <../../INSTALL.md>`_.
 
 Separate Windows installers are not created and the plan is not to create them 
 even for final releases in the future. The standalone jar distribution can be 

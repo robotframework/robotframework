@@ -42,7 +42,7 @@ Robot Framework 7.4 beta 1 was released on Tuesday October 7, 2025.
 .. _issue tracker: https://github.com/robotframework/robotframework/issues
 .. _Slack: http://slack.robotframework.org
 .. _Robot Framework Slack: Slack_
-.. _installation instructions: ../../INSTALL.rst
+.. _installation instructions: ../../INSTALL.md
 
 .. contents::
    :depth: 2

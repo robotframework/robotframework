@@ -39,7 +39,7 @@ It has been superseded by `Robot Framework 7.1.1 <rf-7.1.1.rst>`_
 .. _robotframework-users: http://groups.google.com/group/robotframework-users
 .. _Slack: http://slack.robotframework.org
 .. _Robot Framework Slack: Slack_
-.. _installation instructions: ../../INSTALL.rst
+.. _installation instructions: ../../INSTALL.md
 .. _Robot Framework 7.0: rf-7.0.rst
 
 .. contents::

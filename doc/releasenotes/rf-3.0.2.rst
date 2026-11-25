@@ -20,7 +20,7 @@ release or use `pip install robotframework==3.0.2` to install exactly
 this version. Alternatively you can download the source distribution from
 `PyPI <https://pypi.python.org/pypi/robotframework>`_ and install it manually.
 For more details and other installation approaches, see the `installation
-instructions <../../INSTALL.rst>`_.
+instructions <../../INSTALL.md>`_.
 
 Robot Framework 3.0.2 was released on Monday February 13, 2017.
 

@@ -35,7 +35,7 @@ by running::
     python setup.py install
 
 For more details, including installing Python, Jython and IronPython, see
-the `installation instructions <../../INSTALL.rst>`_.
+the `installation instructions <../../INSTALL.md>`_.
 
 The standalone JAR distribution with Jython 2.7 is available at `Maven central
 <http://search.maven.org/#search%7Cga%7C1%7Ca%3Arobotframework>`_.

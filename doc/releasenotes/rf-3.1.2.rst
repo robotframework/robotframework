@@ -39,7 +39,7 @@ Robot Framework 3.1.2 was released on Friday May 24, 2019.
 .. _issue tracker: https://github.com/robotframework/robotframework/issues
 .. _robotframework-users: http://groups.google.com/group/robotframework-users
 .. _Robot Framework Slack: https://robotframework-slack-invite.herokuapp.com
-.. _installation instructions: ../../INSTALL.rst
+.. _installation instructions: ../../INSTALL.md
 .. _#3076: https://github.com/robotframework/robotframework/issues/3076
 
 .. contents::

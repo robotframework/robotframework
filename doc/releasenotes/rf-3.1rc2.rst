@@ -45,7 +45,7 @@ The target date for the final release is December 6, 2018.
 .. _issue tracker: https://github.com/robotframework/robotframework/issues
 .. _robotframework-users: http://groups.google.com/group/robotframework-users
 .. _Robot Framework Slack: https://robotframework-slack-invite.herokuapp.com
-.. _installation instructions: ../../INSTALL.rst
+.. _installation instructions: ../../INSTALL.md
 __ https://github.com/robotframework/robotframework/issues/3015
 
 .. contents::

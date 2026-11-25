@@ -33,7 +33,7 @@ version or use `pip install robotframework==2.9.1` to install exactly
 this version.
 
 For more details and other installation approaches, see the
-`full installation instructions <../../INSTALL.rst>`_.
+`full installation instructions <../../INSTALL.md>`_.
 
 Most important fixes
 ====================

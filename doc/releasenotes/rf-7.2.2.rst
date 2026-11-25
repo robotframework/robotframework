@@ -39,7 +39,7 @@ Robot Framework 7.2.2 was released on Friday February 7, 2025.
 .. _robotframework-users: http://groups.google.com/group/robotframework-users
 .. _Slack: http://slack.robotframework.org
 .. _Robot Framework Slack: Slack_
-.. _installation instructions: ../../INSTALL.rst
+.. _installation instructions: ../../INSTALL.md
 
 .. contents::
    :depth: 2

@@ -21,7 +21,7 @@ and possible bugs submitted to the `issue tracker`_.
 .. _issue tracker: https://github.com/robotframework/robotframework/issues
 .. _Slack: http://slack.robotframework.org
 .. _Robot Framework Slack: Slack_
-.. _installation instructions: ../../INSTALL.rst
+.. _installation instructions: ../../INSTALL.md
 
 .. contents::
    :depth: 2

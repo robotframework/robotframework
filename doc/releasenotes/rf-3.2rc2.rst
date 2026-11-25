@@ -49,7 +49,7 @@ problems, the final release is planned for Monday April 27, 2020.
 .. _issue tracker: https://github.com/robotframework/robotframework/issues
 .. _robotframework-users: http://groups.google.com/group/robotframework-users
 .. _Robot Framework Slack: https://robotframework-slack-invite.herokuapp.com
-.. _installation instructions: ../../INSTALL.rst
+.. _installation instructions: ../../INSTALL.md
 .. _GitHub release page: https://github.com/robotframework/robotframework/releases/tag/v3.2rc1
 
 
