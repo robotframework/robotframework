@@ -94,6 +94,7 @@ class Namespace:
         return owner, owner.lineno
 
     def _import_resource(self, import_, overwrite=False):
+        LOGGER.start_resource_import(import_)
         path = self._resolve_name(import_)
         self._validate_not_importing_init_file(path)
         if overwrite or path not in self._kw_store.resources:
@@ -119,6 +120,7 @@ class Namespace:
         self._import_variables(import_, overwrite=overwrite)
 
     def _import_variables(self, import_, overwrite=False):
+        LOGGER.start_variables_import(import_)
         path = self._resolve_name(import_)
         args = self._resolve_args(import_)
         if overwrite or (path, args) not in self._imported_variable_files:
@@ -140,6 +142,8 @@ class Namespace:
         self._import_library(import_)
 
     def _import_library(self, import_, notify=True):
+        if notify:
+            LOGGER.start_library_import(import_)
         name = self._resolve_name(import_)
         lib = IMPORTER.import_library(name, import_.args, import_.alias, self.variables)
         if lib.name in self._kw_store.libraries:

@@ -267,6 +267,9 @@ class ListenerV3Facade(ListenerFacade):
         self._log_message = get("log_message")
         self.message = get("message")
         # Imports
+        self.start_library_import = get("start_library_import")
+        self.start_resource_import = get("start_resource_import")
+        self.start_variables_import = get("start_variables_import")
         self.library_import = get("library_import")
         self.resource_import = get("resource_import")
         self.variables_import = get("variables_import")
