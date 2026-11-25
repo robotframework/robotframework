@@ -1,5 +1,5 @@
 # Requirements needed for development and for building releases.
-# See BUILD.rst for details about the latter
+# See BUILD.md for details about the latter
 invoke >= 0.20
 rellu >= 0.7, < 2
 setuptools > 75
