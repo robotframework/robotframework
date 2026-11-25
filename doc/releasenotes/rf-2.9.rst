@@ -236,7 +236,7 @@ Contribution guidelines
 
 We have written guidelines helping to submit issue and contribute code
 (`#1805`_). A link to them appears when submitting and issue or creating
-a pull request, and `CONTRIBUTING.rst <../../CONTRIBUTING.rst>`__ is also
+a pull request, and `CONTRIBUTING.md <../../CONTRIBUTING.md>`__ is also
 directly available. We plan to enhance the guidelines in the future, so all
 kind of comments and enhancement ideas are highly appreciated.
 

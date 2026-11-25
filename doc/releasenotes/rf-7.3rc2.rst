@@ -277,7 +277,7 @@ __ https://docs.astral.sh/ruff/
 __ https://black.readthedocs.io/en/stable/
 __ https://pycqa.github.io/isort/
 __ https://www.pyinvoke.org/
-__ https://github.com/robotframework/robotframework/blob/master/CONTRIBUTING.rst
+__ https://github.com/robotframework/robotframework/blob/master/CONTRIBUTING.md
 
 Backwards incompatible changes
 ==============================
