@@ -20,7 +20,7 @@ If you have `pip <http://pip-installer.org>`_ installed, just run
 `pip install --upgrade --pre robotframework` to install or upgrade to the latest
 version or use `pip install robotframework==3.0a1` to install exactly
 this version.  For more details and other installation approaches, see
-`installation instructions <../../INSTALL.rst>`_.
+`installation instructions <../../INSTALL.md>`_.
 
 Robot Framework 3.0 alpha 1 was released on Thursday November 19, 2015.
 

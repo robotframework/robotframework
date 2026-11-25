@@ -47,7 +47,7 @@ you can simply run::
     pip install robotframework
 
 For more detailed installation instructions, including installing Python, see
-`<INSTALL.rst>`__.
+`<INSTALL.md>`__.
 
 Robot Framework requires Python 3.8 or newer and runs also on `PyPy <http://pypy.org>`_.
 The latest version that supports Python 3.6 and 3.7 is `Robot Framework 6.1.1`__.

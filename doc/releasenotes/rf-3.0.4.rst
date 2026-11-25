@@ -37,7 +37,7 @@ Robot Framework 3.0.4 was released on Wednesday April 25, 2018.
 .. _issue tracker: https://github.com/robotframework/robotframework/issues
 .. _robotframework-users: http://groups.google.com/group/robotframework-users
 .. _Robot Framework Slack: https://robotframework-slack-invite.herokuapp.com
-.. _installation instructions: ../../INSTALL.rst
+.. _installation instructions: ../../INSTALL.md
 
 List of fixed issues
 ====================

@@ -30,7 +30,7 @@
 
 .. include:: GettingStarted/Introduction.rst
 .. include:: GettingStarted/CopyrightAndLicense.rst
-.. INSTALL.rst is copied from project root by ug2html.py
+.. INSTALL.rst is a tracked copy of the root INSTALL.md
 .. include:: GettingStarted/INSTALL.rst
 .. include:: GettingStarted/Demonstration.rst
 

@@ -43,7 +43,7 @@ Robot Framework 7.5 beta 1 was released on Friday July 17, 2026.
 .. _robotframework-users: http://groups.google.com/group/robotframework-users
 .. _Slack: http://slack.robotframework.org
 .. _Robot Framework Slack: Slack_
-.. _installation instructions: ../../INSTALL.rst
+.. _installation instructions: ../../INSTALL.md
 .. _Markdown: https://en.wikipedia.org/wiki/Markdown
 .. _Google Style: https://google.github.io/styleguide/pyguide.html#s3.8.3-functions-and-methods
 

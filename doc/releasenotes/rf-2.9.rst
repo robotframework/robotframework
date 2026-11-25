@@ -25,7 +25,7 @@ If you have `pip <http://pip-installer.org>`_ installed, just run
 `pip install --upgrade robotframework` to install or upgrade to the latest
 version or use `pip install robotframework==2.9` to install exactly this
 version. For more details and other installation approaches, see
-`installation instructions <../../INSTALL.rst>`_.
+`installation instructions <../../INSTALL.md>`_.
 
 Robot Framework 2.9 was released on Friday July 31, 2015.
 

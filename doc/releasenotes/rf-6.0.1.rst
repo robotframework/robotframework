@@ -41,7 +41,7 @@ It was superseded by `Robot Framework 6.0.2 <rf-6.0.2.rst>`_
 .. _robotframework-users: http://groups.google.com/group/robotframework-users
 .. _Slack: http://slack.robotframework.org
 .. _Robot Framework Slack: Slack_
-.. _installation instructions: ../../INSTALL.rst
+.. _installation instructions: ../../INSTALL.md
 
 Full list of fixes and enhancements
 ===================================
