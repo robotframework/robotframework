@@ -110,12 +110,14 @@ Validate Directory Suite
         IF    ${init}
             Should Have Tags    ${test}            tag from init
             Should Be Equal     ${test.timeout}    42 seconds
+            Should Be Equal     ${test.metadata}[Metadata]    from init
             IF    '${test.name}' != 'Empty'
                 Check Log Message    ${test.setup[0]}       setup from init
                 Check Log Message    ${test.teardown[0]}    teardown from init
             END
         ELSE
             Should Not Be True    ${test.tags}
+            Should Not Be True    ${test.metadata}
             Should Not Be True    ${test.timeout}
             Should Not Be True    ${test.setup}
             Should Not Be True    ${test.teardown}

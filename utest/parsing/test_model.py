@@ -236,6 +236,35 @@ class TestSaveModel(unittest.TestCase):
             assert_raises_with_msg(TypeError, message, get_model(f).save)
 
 
+class TestSaveMetadataSettings(unittest.TestCase):
+    path = Path(os.getenv("TEMPDIR") or tempfile.gettempdir(), "test_metadata.robot")
+
+    def tearDown(self):
+        if self.path.exists():
+            self.path.unlink()
+
+    def test_metadata_settings_are_saved_unmodified(self):
+        data = """\
+*** Settings ***
+Metadata          Suite         Suite metadata
+Test Metadata     Owner         QA Team
+Task Metadata     Multi         Value in
+...                             multiple rows
+Test Metadata     -Owner
+
+*** Test Cases ***
+Example
+    [Metadata]    Issue    4409
+    [Metadata]    -Owner
+    No Operation
+"""
+        self.path.write_text(data, encoding="UTF-8")
+        model = get_model(self.path)
+        self.path.unlink()
+        model.save()
+        assert_equal(self.path.read_text(encoding="UTF-8"), data)
+
+
 class TestForLoop(unittest.TestCase):
 
     def test_valid(self):

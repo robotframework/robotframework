@@ -41,6 +41,48 @@ class TestMetadata(unittest.TestCase):
         assert_equal(md["number"], "1.0")
         assert_equal(md["setdefault"], "99")
 
+    def test_set(self):
+        md = Metadata()
+        md.set("Owner", "QA Team")
+        assert_equal(dict(md), {"Owner": "QA Team"})
+        md.set("Owner", "Dev Team")
+        assert_equal(dict(md), {"Owner": "Dev Team"})
+        md.set("Empty")
+        assert_equal(dict(md), {"Owner": "Dev Team", "Empty": ""})
+
+    def test_set_removes_using_hyphen(self):
+        md = Metadata({"Owner": "QA Team", "Priority": "Normal"})
+        md.set("-Owner")
+        assert_equal(dict(md), {"Priority": "Normal"})
+
+    def test_set_removal_is_normalized(self):
+        md = Metadata({"Owner": "QA Team"})
+        md.set("-o_w n e r")
+        assert_equal(dict(md), {})
+
+    def test_set_removing_non_existing_is_no_operation(self):
+        md = Metadata({"Owner": "QA Team"})
+        md.set("-Nonex")
+        assert_equal(dict(md), {"Owner": "QA Team"})
+
+    def test_set_does_not_support_patterns(self):
+        md = Metadata({"Priority": "Normal"})
+        md.set("-Priorit*")
+        assert_equal(dict(md), {"Priority": "Normal"})
+
+    def test_set_with_escaped_hyphen_is_not_removal(self):
+        md = Metadata({"Owner": "QA Team"})
+        md.set("\\-Owner", "literal")
+        assert_equal(dict(md), {"Owner": "QA Team", "\\-Owner": "literal"})
+
+    def test_set_removal_resets_name_spelling(self):
+        md = Metadata({"Owner": "QA Team"})
+        md.set("owner", "Dev Team")
+        assert_equal(dict(md), {"Owner": "Dev Team"})
+        md.set("-OWNER")
+        md.set("owner", "New Team")
+        assert_equal(dict(md), {"owner": "New Team"})
+
 
 if __name__ == "__main__":
     unittest.main()

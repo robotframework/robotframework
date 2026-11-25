@@ -124,6 +124,9 @@ test case specific settings listed earlier.
 `Test Tags`:setting:
    Tags_ all tests in the suite will get in addition to their possible own tags.
 
+`Test Metadata`:setting:
+   The default `free test metadata`_ all tests in the suite will get.
+
 `Test Template`:setting:
    The default `template keyword`_ to use.
 
@@ -615,6 +618,80 @@ It is also stored in `output files`_ and is available to `listeners`_
 and other tools that process execution results.
 
 .. note:: Test case metadata is new in Robot Framework 7.5.
+
+.. note:: Starting from Robot Framework 7.6, a name starting with a hyphen removes
+          `default test metadata`_ instead of being used as a literal name. Use the
+          escaping_ syntax like `\-Owner` if a literal name starting with a hyphen
+          is needed.
+
+Default test metadata
+~~~~~~~~~~~~~~~~~~~~~
+
+Metadata that is common to several tests can be specified once using the
+:setting:`Test Metadata` setting in the Settings section. Tests get that
+metadata automatically, and the :setting:`[Metadata]` setting can then be used
+to add new items, to override values of existing items, and to remove items
+altogether.
+
+If :setting:`Test Metadata` is used in a `suite initialization file`_, it
+applies to all tests in all child suites, recursively. Metadata from different
+levels is combined so that items with different names are all preserved and
+items with the same name are overridden by the nearest level. In other words,
+the precedence from highest to lowest is :setting:`[Metadata]` in the test,
+:setting:`Test Metadata` in the suite file, :setting:`Test Metadata` in the
+nearest initialization file, and :setting:`Test Metadata` in a parent
+initialization file.
+
+An item inherited from a higher level can be removed by prefixing its name with
+a hyphen. This works both with :setting:`[Metadata]` and with
+:setting:`Test Metadata`, so a lower level initialization file can remove an
+item set by a parent. Removing an item that does not exist does nothing.
+A value must not be given when removing an item, and doing so is an error.
+
+.. sourcecode:: robotframework
+
+   *** Settings ***
+   Test Metadata    Owner       QA Team
+   Test Metadata    Priority    Normal
+
+   *** Test Cases ***
+   Use defaults
+       [Documentation]    Metadata is `Owner: QA Team` and `Priority: Normal`.
+       No Operation
+
+   Override metadata
+       [Documentation]    Metadata is `Owner: QA Team` and `Priority: Critical`.
+       [Metadata]    Priority    Critical
+       No Operation
+
+   Add new metadata
+       [Documentation]    Metadata is `Owner: QA Team`, `Priority: Normal` and `Issue: 4409`.
+       [Metadata]    Issue    4409
+       No Operation
+
+   Remove metadata
+       [Documentation]    Metadata is only `Priority: Normal`.
+       [Metadata]    -Owner
+       No Operation
+
+Metadata names are compared case-insensitively and ignoring spaces and
+underscores, so `[Metadata]    -owner` above would work the same way as
+`[Metadata]    -Owner`. Unlike when `removing tags`__, patterns are *not*
+supported, so `-Owner*` removes only an item whose name is literally `Owner*`.
+There is also no separate syntax for removing all metadata.
+
+If there is a need to use a metadata name that starts with a hyphen, it is
+possible to use the escaped__ format like `\-Owner`. Notice that if a name
+comes from a variable_, it is never considered to use the removal syntax even
+if its value would start with a hyphen.
+
+When `creating tasks`_ instead of tests, the setting can also be used with the
+alias :setting:`Task Metadata`.
+
+__ `test case tags`_
+__ escaping_
+
+.. note:: The :setting:`Test Metadata` setting is new in Robot Framework 7.6.
 
 .. _test case tags:
 

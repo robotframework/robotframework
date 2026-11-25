@@ -26,6 +26,7 @@ class Settings(ABC):
     aliases: "dict[str, str]" = {}
     multi_use = (
         "Metadata",
+        "Test Metadata",
         "Library",
         "Resource",
         "Variables",
@@ -40,6 +41,7 @@ class Settings(ABC):
     )
     name_and_arguments = (
         "Metadata",
+        "Test Metadata",
         "Suite Setup",
         "Suite Teardown",
         "Test Setup",
@@ -54,6 +56,7 @@ class Settings(ABC):
     name_arguments_and_with_name = (
         "Library",
     )  # fmt: skip
+    removable: "tuple[str, ...]" = ()
 
     def __init__(self, languages: Languages):
         self.settings: dict[str, list[Token] | None] = dict.fromkeys(self.names)
@@ -86,6 +89,15 @@ class Settings(ABC):
         if name in self.single_value and len(statement) > 2:
             raise ValueError(
                 f"Setting '{orig}' accepts only one value, got {len(statement) - 1}."
+            )
+        if (
+            name in self.removable
+            and len(statement) > 2
+            and statement[1].value.startswith("-")
+        ):
+            raise ValueError(
+                f"Setting '{orig}' does not accept a value when removing metadata "
+                f"using the '-name' syntax, got {len(statement) - 2}."
             )
 
     def _get_non_existing_setting_message(self, name: str, normalized: str) -> str:
@@ -167,6 +179,7 @@ class SuiteFileSettings(FileSettings):
         "Test Template",
         "Test Timeout",
         "Test Tags",
+        "Test Metadata",
         "Default Tags",
         "Keyword Tags",
         "Library",
@@ -180,7 +193,9 @@ class SuiteFileSettings(FileSettings):
         "Task Teardown": "Test Teardown",
         "Task Template": "Test Template",
         "Task Timeout": "Test Timeout",
+        "Task Metadata": "Test Metadata",
     }
+    removable = ("Test Metadata",)
 
     def _not_valid_here(self, name: str) -> str:
         return f"Setting '{name}' is not allowed in suite file."
@@ -197,6 +212,7 @@ class InitFileSettings(FileSettings):
         "Test Teardown",
         "Test Timeout",
         "Test Tags",
+        "Test Metadata",
         "Keyword Tags",
         "Library",
         "Resource",
@@ -208,7 +224,9 @@ class InitFileSettings(FileSettings):
         "Task Setup": "Test Setup",
         "Task Teardown": "Test Teardown",
         "Task Timeout": "Test Timeout",
+        "Task Metadata": "Test Metadata",
     }
+    removable = ("Test Metadata",)
 
     def _not_valid_here(self, name: str) -> str:
         return f"Setting '{name}' is not allowed in suite initialization file."
@@ -237,6 +255,7 @@ class TestCaseSettings(Settings):
         "Template",
         "Timeout",
     )
+    removable = ("Metadata",)
 
     def __init__(self, parent: SuiteFileSettings):
         super().__init__(parent.languages)
