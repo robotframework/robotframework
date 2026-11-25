@@ -231,7 +231,7 @@ Telnet tests
 ------------
 
 Running telnet tests requires some extra setup. Instructions how to run them
-can be found from `<testdata/standard_libraries/telnet/README.rst>`_.
+can be found from `<testdata/standard_libraries/telnet/README.md>`_.
 If you don't want to run an unprotected telnet server on your machine, you can
 always skip these tests by excluding tests with a tag `telnet` or `no-ci`.
 
