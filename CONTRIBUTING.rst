@@ -534,4 +534,4 @@ Unit tests
 ''''''''''
 
 Unit tests are great for testing internal logic and should be added when
-appropriate. For more details see `<utest/README.rst>`_.
+appropriate. For more details see `<utest/README.md>`_.

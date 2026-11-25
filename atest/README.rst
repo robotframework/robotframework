@@ -31,7 +31,7 @@ Directory contents
 
 `<testresources/>`_
     Contains resources needed by test cases in the `testdata` folder.
-    Some of these resources are also used by `unit tests <../utest/README.rst>`_.
+    Some of these resources are also used by `unit tests <../utest/README.md>`_.
 
 `<results/>`_
     The place for test execution results. This directory is generated when
