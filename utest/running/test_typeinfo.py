@@ -3,6 +3,7 @@ from collections.abc import Callable, Mapping, Sequence
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
+from threading import Thread
 from typing import (
     Any, Dict, Generic, get_args, List, Literal, Set, Tuple, TypedDict, TypeVar, Union
 )
@@ -19,7 +20,7 @@ except ImportError:
     from typing_extensions import TypeForm
 
 from robot.errors import DataError
-from robot.running.arguments.typeinfo import TYPE_NAMES, TypeInfo
+from robot.running.arguments.typeinfo import TYPE_NAMES, TypedDictInfo, TypeInfo
 from robot.utils import PYPY
 from robot.utils.asserts import assert_equal, assert_raises, assert_raises_with_msg
 
@@ -301,6 +302,37 @@ class TestTypeInfo(unittest.TestCase):
             "${x: int=float}",
         )
 
+    def test_recursive_typed_dict(self):
+        info = TypeInfo.from_type_hint(RecursiveTypedDict)
+        children = info.annotations["children"]
+        assert_equal(str(children), "List[RecursiveTypedDict]")
+        assert_equal(children.nested[0].name, "RecursiveTypedDict")
+        assert_equal(children.nested[0].is_recursive, True)
+
+    def test_mutually_recursive_typed_dicts(self):
+        info = TypeInfo.from_type_hint(ParentTypedDict)
+        child = info.annotations["children"].nested[0]
+        assert_equal(child.name, "ChildTypedDict")
+        assert_equal(child.is_typed_dict, True)
+        parent = child.annotations["parents"].nested[0]
+        assert_equal(parent.name, "ParentTypedDict")
+        assert_equal(parent.is_recursive, True)
+
+    def test_recursive_typed_dict_detection_is_thread_specific(self):
+        resolving = TypedDictInfo._resolving.types
+        resolving.add(RecursiveTypedDict)
+        try:
+            infos = []
+            thread = Thread(
+                target=lambda: infos.append(TypeInfo.from_type_hint(RecursiveTypedDict))
+            )
+            thread.start()
+            thread.join()
+            assert_equal(infos[0].is_typed_dict, True)
+            assert_equal(TypeInfo.from_type_hint(RecursiveTypedDict).is_recursive, True)
+        finally:
+            resolving.remove(RecursiveTypedDict)
+
     def test_non_type(self):
         for item in 42, object(), set(), b"hello":
             assert_info(TypeInfo.from_type_hint(item), str(item))
@@ -336,6 +368,31 @@ class TestTypeInfo(unittest.TestCase):
         assert_equal(TypeInfo.from_type_hint("list[int]").convert("[4, 2]"), [4, 2])
         assert_equal(
             TypeInfo.from_type_hint('Literal["Dog", "Cat"]').convert("dog"), "Dog"
+        )
+
+    def test_conversion_with_recursive_typed_dict(self):
+        info = TypeInfo.from_type_hint(RecursiveTypedDict)
+        value = "{'value': '1', 'children': [{'value': '2', 'children': []}]}"
+        expected = {"value": 1, "children": [{"value": 2, "children": []}]}
+        assert_equal(info.convert(value), expected)
+        info = TypeInfo.from_type_hint(ParentTypedDict)
+        value = "{'value': '1', 'children': [{'value': '2', 'parents': []}]}"
+        expected = {"value": 1, "children": [{"value": 2, "parents": []}]}
+        assert_equal(info.convert(value), expected)
+
+    def test_failing_conversion_with_recursive_typed_dict(self):
+        info = TypeInfo.from_type_hint(RecursiveTypedDict)
+        value = "{'value': 1, 'children': [{'value': 'bad', 'children': []}]}"
+        assert_raises_with_msg(
+            ValueError,
+            f"Argument '{value}' cannot be converted to RecursiveTypedDict: "
+            f"Item 'children' got value '[{{'value': 'bad', 'children': []}}]' "
+            f"(list) that cannot be converted to List[RecursiveTypedDict]: "
+            f"Item '0' got value '{{'value': 'bad', 'children': []}}' "
+            f"(dictionary) that cannot be converted to RecursiveTypedDict: "
+            f"Item 'value' got value 'bad' that cannot be converted to integer.",
+            info.convert,
+            value,
         )
 
     def test_no_conversion_needed_with_literal(self):
@@ -424,6 +481,22 @@ class TestTypeInfo(unittest.TestCase):
             custom_converters={Custom: "bad"},
         )
 
+    def test_custom_converters_and_languages_with_recursive_typed_dict(self):
+        info = TypeInfo.from_type_hint(RecursiveTypedDictWithCustom)
+        value = {
+            "custom": "1",
+            "flag": "kyllä",
+            "children": [{"custom": "2", "flag": "ei", "children": []}],
+        }
+        result = info.convert(
+            value, custom_converters={Custom: Custom}, languages="Finnish"
+        )
+        child = result["children"][0]
+        assert_equal(result["custom"].value, 1)
+        assert_equal(result["flag"], True)
+        assert_equal(child["custom"].value, 2)
+        assert_equal(child["flag"], False)
+
     def test_language_config(self):
         info = TypeInfo.from_type_hint(bool)
         assert_equal(info.convert("kyllä", languages="Finnish"), True)
@@ -480,6 +553,33 @@ class Unknown:
 class TypedDictWithUnknown(TypedDict):
     x: int
     y: Unknown
+
+
+class RecursiveTypedDict(TypedDict):
+    value: int
+    children: List["RecursiveTypedDict"]
+
+
+class ParentTypedDict(TypedDict):
+    value: int
+    children: List["ChildTypedDict"]
+
+
+class ChildTypedDict(TypedDict):
+    value: int
+    parents: List[ParentTypedDict]
+
+
+class Custom:
+
+    def __init__(self, value):
+        self.value = int(value)
+
+
+class RecursiveTypedDictWithCustom(TypedDict):
+    custom: Custom
+    flag: bool
+    children: List["RecursiveTypedDictWithCustom"]
 
 
 if __name__ == "__main__":

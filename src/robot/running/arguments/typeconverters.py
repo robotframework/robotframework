@@ -935,22 +935,29 @@ class SecretConverter(TypeConverter):
 @TypeConverter.register
 class RecursiveConverter(TypeConverter):
     type = RecursiveAlias
+    _converter = None
 
     def _get_type_name(self) -> str:
         return self.type_info.name
 
-    def _handles_value(self, value):
-        return True
-
     def _get_nested(self, type_info, custom_converters, languages):
         return None
 
-    def _convert(self, value):
-        from .typeinfo import TypeInfo
+    @property
+    def converter(self) -> TypeConverter:
+        # Created only when needed to avoid infinite recursion.
+        if self._converter is None:
+            from .typeinfo import TypeInfo
 
-        info = TypeInfo.from_type_hint(self.type_info.nested[0])
-        converter = TypeConverter.converter_for(info, reraise_fatal=True)
-        return converter.convert(value)
+            info = TypeInfo.from_type_hint(self.type_info.nested[0])
+            info.alias = str(self.type_info)
+            self._converter = self.converter_for(
+                info, self.custom_converters, self._languages, reraise_fatal=True
+            )
+        return self._converter
+
+    def convert(self, value, name=None, kind="Argument"):
+        return self.converter.convert(value, name, kind)
 
 
 class CustomConverter(TypeConverter):
