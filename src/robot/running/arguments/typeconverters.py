@@ -574,9 +574,6 @@ class ListConverter(SequenceConverter):
     type = list
     type_name = "list"
 
-    def _must_make_immutable(self):
-        return False
-
     def _string_convert(self, value):
         value = self._literal_eval(value, Sequence, name="list")
         return self._convert(list(value))
@@ -762,9 +759,6 @@ class MappingConverter(TypeConverter):
 class DictionaryConverter(MappingConverter):
     type = dict
     type_name = "dictionary"
-
-    def _must_make_immutable(self):
-        return False
 
     def _string_convert(self, value):
         return self._convert(self._literal_eval(value, dict))
