@@ -20,7 +20,7 @@ If you already have [Python](http://python.org) with [pip](https://pip.pypa.io) 
 
     pip install robotframework
 
-For more detailed installation instructions, including installing Python, see [INSTALL.rst](INSTALL.rst).
+For more detailed installation instructions, including installing Python, see [INSTALL.md](INSTALL.md).
 
 Robot Framework requires Python 3.8 or newer and runs also on [PyPy](http://pypy.org). The latest version that supports Python 3.6 and 3.7 is [Robot Framework 6.1.1](https://github.com/robotframework/robotframework/tree/v6.1.1#readme). If you need to use Python 2, [Jython](http://jython.org) or [IronPython](http://ironpython.net), you can use [Robot Framework 4.1.3](https://github.com/robotframework/robotframework/tree/v4.1.3#readme).
 
@@ -76,7 +76,7 @@ Run `robot --help` and `rebot --help` for more information about the command lin
 
 ## Contributing
 
-Interested to contribute to Robot Framework? Great! In that case it is a good start by looking at the [CONTRIBUTING.rst](CONTRIBUTING.rst). If you do not already have an issue you would like to work on, you can check issues with [good new issue](https://github.com/robotframework/robotframework/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) and [help wanted](https://github.com/robotframework/robotframework/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) labels.
+Interested to contribute to Robot Framework? Great! In that case it is a good start by looking at the [CONTRIBUTING.md](CONTRIBUTING.md). If you do not already have an issue you would like to work on, you can check issues with [good new issue](https://github.com/robotframework/robotframework/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) and [help wanted](https://github.com/robotframework/robotframework/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) labels.
 
 Remember also that there are many other tools and libraries in the wider [Robot Framework ecosystem](http://robotframework.org) that you can contribute to!
 

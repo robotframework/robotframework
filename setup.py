@@ -11,8 +11,8 @@ with open(join(dirname(abspath(__file__)), "README.md")) as f:
     LONG_DESCRIPTION = f.read()
     base_url = "https://github.com/robotframework/robotframework/blob/master"
     for text in ("INSTALL", "CONTRIBUTING"):
-        search = f"]({text}.rst)"
-        replace = f"]({base_url}/{text}.rst)"
+        search = f"]({text}.md)"
+        replace = f"]({base_url}/{text}.md)"
         if search not in LONG_DESCRIPTION:
             raise RuntimeError(f"{search} not found from README.md")
         LONG_DESCRIPTION = LONG_DESCRIPTION.replace(search, replace)
