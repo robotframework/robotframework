@@ -224,7 +224,7 @@ class TestInvalidImportPath(unittest.TestCase):
         )
 
     def test_invalid_format(self):
-        path = CURDIR / "../../README.rst"
+        path = CURDIR / "../../README.md"
         assert_raises_with_msg(
             DataError,
             f"Importing '{path}' failed: Not a valid file or directory to import.",

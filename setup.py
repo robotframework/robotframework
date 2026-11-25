@@ -7,14 +7,14 @@ from setuptools import find_packages, setup
 # Version number typically updated by running `invoke set-version <version>`.
 # Run `invoke --help set-version` or see tasks.py for details.
 VERSION = "7.5.1.dev1"
-with open(join(dirname(abspath(__file__)), "README.rst")) as f:
+with open(join(dirname(abspath(__file__)), "README.md")) as f:
     LONG_DESCRIPTION = f.read()
     base_url = "https://github.com/robotframework/robotframework/blob/master"
     for text in ("INSTALL", "CONTRIBUTING"):
-        search = f"`<{text}.rst>`__"
-        replace = f"`{text}.rst <{base_url}/{text}.rst>`__"
+        search = f"]({text}.rst)"
+        replace = f"]({base_url}/{text}.rst)"
         if search not in LONG_DESCRIPTION:
-            raise RuntimeError(f"{search} not found from README.rst")
+            raise RuntimeError(f"{search} not found from README.md")
         LONG_DESCRIPTION = LONG_DESCRIPTION.replace(search, replace)
 CLASSIFIERS = """
 Development Status :: 5 - Production/Stable
@@ -68,7 +68,7 @@ setup(
     license="Apache License 2.0",
     description=DESCRIPTION,
     long_description=LONG_DESCRIPTION,
-    long_description_content_type="text/x-rst",
+    long_description_content_type="text/markdown",
     keywords=KEYWORDS,
     platforms="any",
     python_requires=">=3.8",
