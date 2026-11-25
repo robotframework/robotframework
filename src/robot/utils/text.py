@@ -27,7 +27,7 @@ from .unic import safe_str
 MAX_ERROR_LINES = 40
 MAX_ASSIGN_LENGTH = 200
 _MAX_ERROR_LINE_LENGTH = 78
-_ERROR_CUT_EXPLN = "    [ Message content over the limit has been removed. ]"
+_ERROR_CUT_EXPLN = "    [ Message over the limit removed, see the log file for full output. ]"
 
 
 def cut_long_message(msg):
