@@ -64,7 +64,7 @@ This release has been sponsored by the `Robot Framework Foundation`__ and
 would not have been possible with this scope otherwise. Big thanks for all
 the member companies of the foundation for your support!
 
-There have also been several great `contributions <../../CONTRIBUTING.rst>`_
+There have also been several great `contributions <../../CONTRIBUTING.md>`_
 by the community:
 
 - Anton Nikitin implemented `Should (Not) Contain Any` keywords  (`#2120`_)
