@@ -380,6 +380,7 @@ def example_keyword(day: datetime, interval: timedelta):
 """
 
 import datetime
+import math
 import sys
 import time
 from typing import Literal, overload, Union
@@ -732,7 +733,14 @@ class Date:
         raise ValueError(f"Unsupported input '{date}'.")
 
     def _epoch_seconds_to_datetime(self, secs: float) -> datetime.datetime:
-        return datetime.datetime.fromtimestamp(secs)
+        if isinstance(secs, float) and not math.isfinite(secs):
+            raise ValueError(f"Epoch time '{secs}' is not finite.")
+        try:
+            return datetime.datetime.fromtimestamp(secs)
+        except (OverflowError, OSError, ValueError):
+            raise ValueError(
+                f"Epoch time '{secs}' is outside the supported date range."
+            ) from None
 
     def _string_to_datetime(
         self,
@@ -758,7 +766,12 @@ class Date:
         dt = self.datetime
         if not millis:
             secs = 1 if dt.microsecond >= 5e5 else 0
-            dt = dt.replace(microsecond=0) + datetime.timedelta(seconds=secs)
+            try:
+                dt = dt.replace(microsecond=0) + datetime.timedelta(seconds=secs)
+            except OverflowError:
+                raise ValueError(
+                    "Resulting date is outside the supported date range."
+                ) from None
         if "%" in format:
             return self._convert_to_custom_timestamp(dt, format)
         format = format.lower()
@@ -780,7 +793,12 @@ class Date:
             return dt.strftime("%Y-%m-%d %H:%M:%S")
         ms = round(dt.microsecond / 1000)
         if ms == 1000:
-            dt += datetime.timedelta(seconds=1)
+            try:
+                dt += datetime.timedelta(seconds=1)
+            except OverflowError:
+                raise ValueError(
+                    "Resulting date is outside the supported date range."
+                ) from None
             ms = 0
         return dt.strftime("%Y-%m-%d %H:%M:%S") + f".{ms:03d}"
 
@@ -793,7 +811,13 @@ class Date:
 
     def __add__(self, other: "Time") -> "Date":
         if isinstance(other, Time):
-            return Date(self.datetime + other.timedelta)
+            delta = other.timedelta
+            try:
+                return Date(self.datetime + delta)
+            except OverflowError:
+                raise ValueError(
+                    "Resulting date is outside the supported date range."
+                ) from None
         raise TypeError(f"Can only add Time to Date, got {type_name(other)}.")
 
     @overload
@@ -806,7 +830,13 @@ class Date:
         if isinstance(other, Date):
             return Time(self.datetime - other.datetime)
         if isinstance(other, Time):
-            return Date(self.datetime - other.timedelta)
+            delta = other.timedelta
+            try:
+                return Date(self.datetime - delta)
+            except OverflowError:
+                raise ValueError(
+                    "Resulting date is outside the supported date range."
+                ) from None
         raise TypeError(
             f"Can only subtract Date or Time from Date, got {type_name(other)}."
         )
@@ -815,11 +845,16 @@ class Date:
 class Time:
 
     def __init__(self, time: TimeInput):
-        self.seconds = timestr_to_secs(time, round_to=None)
+        try:
+            self.seconds = timestr_to_secs(time, round_to=None)
+        except OverflowError:
+            raise ValueError(f"Time value '{time}' is too large.") from None
+        if not math.isfinite(self.seconds):
+            raise ValueError(f"Time value '{time}' is not finite.")
 
     @property
     def timedelta(self) -> datetime.timedelta:
-        return datetime.timedelta(seconds=self.seconds)
+        return self._convert_to_timedelta(self.seconds, None)
 
     def convert(self, format: str, millis: bool = True) -> TimeOutput:
         try:
