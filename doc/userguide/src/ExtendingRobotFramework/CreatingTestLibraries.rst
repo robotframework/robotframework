@@ -929,7 +929,7 @@ Free keyword arguments (`**kwargs`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework supports `Python's **kwargs syntax`__.
-How to use use keywords that accept *free keyword arguments*,
+How to use keywords that accept *free keyword arguments*,
 also known as *free named arguments*, is `discussed under the Creating test
 cases section`__. In this section we take a look at how to create such keywords.
 
@@ -1315,7 +1315,7 @@ __ `Implicit argument types based on default values`_
 
 The type to use can be specified either using concrete types (e.g. list_),
 by using abstract base classes (ABC) (e.g. Sequence_), or by using sub
-classes of these types (e.g. MutableSequence_). Also types in in the typing_
+classes of these types (e.g. MutableSequence_). Also types in the typing_
 module that map to the supported concrete types or ABCs (e.g. `List`) are
 supported. In all these cases the argument is converted to the concrete type.
 

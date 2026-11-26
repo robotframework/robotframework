@@ -515,7 +515,7 @@ Example:
     [robot]: http://robotframework.org
     [foundation]: http://robotframework.org/foundation "Join us!"
 
-If the link text matches the reference name, it is possible to omit the refence
+If the link text matches the reference name, it is possible to omit the reference
 name like `[reference][]`. The empty reference part can also be dropped altogether
 like `[reference]`, but this syntax is not supported by all Markdown flavors.
 Reference matching is case-insensitive in general and in with Robot Framework

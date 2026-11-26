@@ -980,7 +980,7 @@ When creating dictionaries, items must be specified using the `name=value` synta
 Scope
 '''''
 
-Variables created with the `VAR` syntax are are available only within the test
+Variables created with the `VAR` syntax are available only within the test
 or user keyword where they are created. That can, however, be altered by using
 the `scope` configuration option. Supported values are:
 
