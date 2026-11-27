@@ -802,7 +802,7 @@ class _List:
             Index 2 (Email): jane@example.com != john@example.com
 
         The optional `ignore_order` argument can be used to ignore the order
-        of the elements in the lists. Using it requires items to be sortable.
+        of the elements in the lists. Using it does not require items to be sortable.
         This option works recursively with nested lists starting from Robot
         Framework 7.0.
 
@@ -1452,7 +1452,7 @@ class _Dictionary:
 
         The `ignore_value_order` argument can be used to make comparison in case of
         list-like values to ignore the order of the elements in the lists.
-        Using it requires items to be sortable.
+        Using it does not require items to be sortable.
         This option is new in Robot Framework 7.2.
         """
         values = deprecate_no_values(values)
@@ -1531,7 +1531,7 @@ class _Dictionary:
 
         The `ignore_value_order` argument can be used to make comparison in case of
         list-like values to ignore the order of the elements in the lists.
-        Using it requires items to be sortable.
+        Using it does not require items to be sortable.
         This option is new in Robot Framework 7.2.
         """
         values = deprecate_no_values(values)

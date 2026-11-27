@@ -166,3 +166,6 @@ NO VALUES is deprecated
     ...    Following keys have different values:
     ...    Key list: ['a', 'B'] != ['B', 'a']
     Dictionaries Should Be Equal    ${D10A}    ${D10B}
+
+`ignore_value_order` with nested dictionaries
+    Dictionaries Should Be Equal    ${D10C}    ${D10D}    ignore_value_order=True

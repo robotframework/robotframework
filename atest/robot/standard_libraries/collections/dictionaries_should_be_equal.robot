@@ -81,3 +81,6 @@ NO VALUES is deprecated
 
 `ignore_value_order` set to False and dictionaries have lists in different order
     Check Test Case    ${TESTNAME}
+
+`ignore_value_order` with nested dictionaries
+    Check Test Case    ${TESTNAME}

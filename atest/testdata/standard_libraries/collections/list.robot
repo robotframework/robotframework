@@ -370,6 +370,12 @@ Lists Should be equal with Ignore Case and Order
 Ignore Order Is Recursive
     Lists Should Be Equal    [(1, 2, 3), (4, 5, 6)]    [(6, 4, 5), (3, 1, 2)]    ignore_order=yes
 
+Ignore Order With Unsortable Items
+    Lists Should Be Equal
+    ...    ${{[{'a': 1}, {'a': 2}]}}
+    ...    ${{[{'a': 2}, {'a': 1}]}}
+    ...    ignore_order=yes
+
 List Should Contain Sub List
     List Should Contain Sub List    ${LONG}    ${L4}
 
